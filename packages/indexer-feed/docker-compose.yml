@@ -1,0 +1,33 @@
+services:
+    indexer-mongodb:
+        image: mongo:8.0.3
+        restart: always
+        ports:
+            - '27099:27017'
+        volumes:
+            - mongodb-feed-data:/data/db
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: root
+            MONGO_INITDB_ROOT_PASSWORD: example
+
+    indexer-feed:
+        build: .
+        restart: always
+        depends_on:
+            - indexer-mongodb
+        ports:
+            - '3939:3939'
+        environment:
+            PORT: 3939
+            API_URLS: 'https://atomone-api.allinbits.com,https://atomone-rest.publicnode.com'
+            START_BLOCK: '2403341'
+            BATCH_SIZE: 50
+            MONGO_URI: mongodb://root:example@indexer-mongodb:27017/
+            # MEMO_PREFIX: "0xTest"
+            # RECEIVER: process.env.RECEIVER,
+            # SENDER: process.env.SENDER,
+            # LOG: process.env.LOG === 'true' ? true : false,
+        command: ['pnpm', 'start']
+
+volumes:
+    mongodb-feed-data:
