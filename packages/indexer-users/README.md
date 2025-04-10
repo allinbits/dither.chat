@@ -1,14 +1,14 @@
-# Indexer Feed
+# Indexer Search
 
 This is a mini-indexer that parses feed data and inserts it into the database.
 
+
 ## Messages
 
-These are the messages / memos this service is parsing.
+TO BE DETERMINED
 
 ```
-dither.Post
-dither.Reply
+dither.User.
 ```
 
 ## Tech

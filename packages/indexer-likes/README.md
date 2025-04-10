@@ -1,4 +1,4 @@
-# Indexer Feed
+# Indexer Likes
 
 This is a mini-indexer that parses feed data and inserts it into the database.
 
@@ -7,8 +7,7 @@ This is a mini-indexer that parses feed data and inserts it into the database.
 These are the messages / memos this service is parsing.
 
 ```
-dither.Post
-dither.Reply
+dither.Vote(action)
 ```
 
 ## Tech
