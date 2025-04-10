@@ -34,8 +34,5 @@ export function useConfig(): Config & TemporaSyncConfig {
         DATABASE_NAME: process.env.DATABASE_NAME ?? 'indexer',
     };
 
-    console.log(`Configuration`);
-    console.log(config);
-
     return config;
 }

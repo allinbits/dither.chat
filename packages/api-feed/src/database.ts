@@ -33,9 +33,6 @@ export function useDatabase() {
                 const results = await cursor.toArray();
                 const total = await posts.countDocuments();
 
-                console.log(results);
-                console.log(total);
-
                 return {
                     page,
                     limit,
