@@ -7,31 +7,7 @@ import { useConfig } from './config';
 const db = useDatabase();
 const config = useConfig();
 
-async function getPosts({ query }: { query: { limit: string; page: string } }) {
-    try {
-        let limit = Number(query.limit) || 100;
-        let page = Number(query.page) || 0;
-
-        if (limit > 100) {
-            limit = 100;
-        }
-
-        if (limit <= 0) {
-            limit = 1;
-        }
-
-        if (page < 0) {
-            page = 0;
-        }
-
-        return await db.posts.findPaginated(page, limit);
-    } catch (error) {
-        console.error(error);
-        return { error: 'failed to read data from database' };
-    }
-}
-
-async function getPost({ query }: { query: { hash: string } }) {
+async function getPostLikes({ query }: { query: { hash: string} }) {
     try {
         if (!query.hash) {
             return {
@@ -40,7 +16,16 @@ async function getPost({ query }: { query: { hash: string } }) {
             };
         }
 
-        return await db.posts.findOne(query.hash);
+        const result = await db.likes.findOne(query.hash);
+
+        if (!result) {
+            return {
+                status: 400,
+                error: 'Unable to locate likes for post'
+            }
+        }
+
+        return result;
     } catch (error) {
         console.error(error);
         return { error: 'failed to read data from database' };
@@ -56,8 +41,7 @@ async function start() {
 
     const app = new Elysia({ adapter: node() });
     app.use(cors());
-    app.get('/posts', getPosts);
-    app.get('/post', getPost);
+    app.get('/post', getPostLikes);
     app.get('/health', getHealth);
     app.listen(config.PORT ?? 3939);
     console.log(`[API Feed] Running on ${config.PORT ?? 3939}`);

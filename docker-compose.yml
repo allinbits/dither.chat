@@ -125,6 +125,19 @@ services:
         ports:
             - 3000:3000
 
+    api-likes:
+        container_name: "api-likes"
+        build: ./packages/api-likes
+        restart: always
+        command: ['pnpm', 'start']
+        depends_on:
+            - mongodb-indexer-likes
+        environment:
+            MONGO_URI: mongodb://username:password@mongodb-indexer-likes:27017/
+            PORT: 3001
+        ports:
+            - 3001:3001
+
     # ================================
     # Gateway Service
     # ================================

@@ -33,6 +33,31 @@ importers:
         specifier: ^4.19.3
         version: 4.19.3
 
+  packages/api-likes:
+    dependencies:
+      '@atomone/chronostate':
+        specifier: ^2.0.2
+        version: 2.0.4
+      '@elysiajs/cors':
+        specifier: ^1.2.0
+        version: 1.2.0(elysia@1.2.25(@sinclair/typebox@0.34.33)(typescript@5.8.3))
+      '@elysiajs/node':
+        specifier: ^1.2.6
+        version: 1.2.6(elysia@1.2.25(@sinclair/typebox@0.34.33)(typescript@5.8.3))(formidable@3.5.2)(ws@8.18.1)
+      elysia:
+        specifier: ^1.2.25
+        version: 1.2.25(@sinclair/typebox@0.34.33)(typescript@5.8.3)
+      mongodb:
+        specifier: ^6.15.0
+        version: 6.15.0
+    devDependencies:
+      '@types/node':
+        specifier: ^22.13.10
+        version: 22.14.0
+      tsx:
+        specifier: ^4.19.3
+        version: 4.19.3
+
   packages/indexer-feed:
     dependencies:
       '@atomone/chronostate':
@@ -55,8 +80,8 @@ importers:
   packages/indexer-likes:
     dependencies:
       '@atomone/chronostate':
-        specifier: ^2.0.2
-        version: 2.0.2
+        specifier: ^2.0.4
+        version: 2.0.4
       '@types/node':
         specifier: ^22.13.10
         version: 22.14.0
