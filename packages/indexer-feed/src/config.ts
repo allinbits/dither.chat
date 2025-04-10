@@ -1,7 +1,6 @@
 import { Config } from '@atomone/chronostate/dist/types';
 
 type TemporaSyncConfig = {
-    PORT: number;
     MONGO_URI: string;
     DATABASE_NAME: string;
 };
@@ -31,7 +30,6 @@ export function useConfig(): Config & TemporaSyncConfig {
         RECEIVER: process.env.RECEIVER,
         SENDER: process.env.SENDER,
         LOG: process.env.LOG === 'true' ? true : false,
-        PORT: process.env.PORT ? parseInt(process.env.PORT) : 3939,
         MONGO_URI: process.env.MONGO_URI,
         DATABASE_NAME: process.env.DATABASE_NAME ?? 'indexer',
     };
