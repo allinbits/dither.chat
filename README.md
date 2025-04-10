@@ -11,7 +11,7 @@ The entire repository is built as a micro-service architecture meant to evolve a
 ## Usage
 
 ```
-docker compose up
+docker compose up --build
 ```
 
 ## Project Structure Explanation
