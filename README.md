@@ -1,6 +1,12 @@
-# Dither
+# Dither Service
 
-A decentralized megaphone for decentralized people.
+Dither Service is a provider engine for individual front-end applications to listen to the Dither Protcol.
+
+The Dither Service uses event-sourcing data to rebuild application state from Cosmos based chains, specifically AtomOne.
+
+Dither itself takes the information from the chain as it is created, and indexes it into compartmentalized databases.
+
+The entire repository is built as a micro-service architecture meant to evolve and scale at a rapid pace.
 
 ## Usage
 
