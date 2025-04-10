@@ -112,3 +112,27 @@ services:
     # ================================
     # REST Services
     # ================================
+    api-feed:
+        container_name: "api-feed"
+        build: ./packages/api-feed
+        restart: always
+        command: ['pnpm', 'start']
+        depends_on:
+            - mongodb-indexer-feed
+        environment:
+            MONGO_URI: mongodb://username:password@mongodb-indexer-feed:27017/
+            PORT: 3000
+        ports:
+            - 3000:3000
+
+    # ================================
+    # Gateway Service
+    # ================================
+    nginx:
+        image: nginx:latest
+        volumes:
+        - ./packages/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+        ports:
+        - "80:80"
+        depends_on:
+        - api-feed

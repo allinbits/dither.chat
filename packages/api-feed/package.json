@@ -1,5 +1,5 @@
 {
-    "name": "indexer-feed",
+    "name": "api-feed",
     "version": "1.0.0",
     "description": "",
     "author": "stuyk",
@@ -10,9 +10,14 @@
         "build": "tsc"
     },
     "dependencies": {
-        "@atomone/chronostate": "^2.0.4",
+        "@atomone/chronostate": "^2.0.2",
+        "@elysiajs/cors": "^1.2.0",
+        "@elysiajs/node": "^1.2.6",
+        "elysia": "^1.2.25",
+        "mongodb": "^6.15.0"
+    },
+    "devDependencies": {
         "@types/node": "^22.13.10",
-        "mongodb": "^6.15.0",
         "tsx": "^4.19.3"
     },
     "prettier": {
@@ -20,8 +25,5 @@
         "singleQuote": true,
         "semi": true,
         "printWidth": 120
-    },
-    "devDependencies": {
-        "typescript": "^5.8.2"
     }
 }

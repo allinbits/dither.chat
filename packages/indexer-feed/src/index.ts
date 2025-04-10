@@ -1,4 +1,4 @@
-import { ChronoState } from '@atomone/chronostate';
+import { ChronoState, extractMemoContent } from '@atomone/chronostate';
 import { useConfig } from './config';
 import { initDatabase, useDatabase } from './database';
 import { Action } from '@atomone/chronostate/dist/types';
@@ -10,20 +10,57 @@ let state: ChronoState;
 let lastBlock: string;
 let lastAction: Action;
 
+async function handlePost(action: Action) {
+    const [msg] = extractMemoContent(action.memo, 'dither.Post');
+
+    if (!msg) {
+        console.warn(`Failed to process ${action.hash}, malformed post`);
+        return;
+    }
+
+    try {
+        await db.posts.insert(action, msg);
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+async function handleReply(action: Action) {
+    const [hash, msg] = extractMemoContent(action.memo, 'dither.Reply');
+
+    if (!hash) {
+        console.warn(`Failed to process ${action.hash}, malformed reply`);
+        return;
+    }
+
+    if (!msg) {
+        console.warn(`Failed to process ${action.hash}, malformed msg`);
+        return;
+    }
+
+    try {
+        await db.replies.insert(action, hash, msg);
+    } catch (err) {
+        console.error(err);
+    }
+}
+
 async function handleAction(action: Action) {
     if (lastAction && lastAction.hash === action.hash) {
         return;
     }
 
-    const result = await db.action.findOne(action.hash);
+    const result = await db.posts.findOne(action.hash);
     if (result) {
         return;
     }
 
-    try {
-        await db.action.insert(action);
-    } catch (err) {
-        console.error(err);
+    if (action.memo.startsWith('dither.Post')) {
+        handlePost(action);
+    }
+
+    if (action.memo.startsWith('dither.Reply')) {
+        handleReply(action);
     }
 
     lastAction = action;

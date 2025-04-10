@@ -1,11 +1,13 @@
 import { MongoClient, Db, Collection } from 'mongodb';
 import { useConfig } from './config';
+import { Action } from '@atomone/chronostate/dist/types';
+import { Message, Post } from './types';
 
 const config = useConfig();
 
 let db: Db;
-let actions: Collection;
 let lastBlock: Collection;
+let posts: Collection;
 
 export async function initDatabase() {
     const client = new MongoClient(config.MONGO_URI);
@@ -16,9 +18,9 @@ export async function initDatabase() {
     });
 
     // Initialize database, and collections
-    db = client.db('data');
-    actions = db.collection('actions');
+    db = client.db('feed');
     lastBlock = db.collection('lastBlock');
+    posts = db.collection('posts');
 
     // Initialize last block insertion if it does not exist
     const result = await lastBlock.findOne<{ block: string }>({ id: 0 });
@@ -29,12 +31,40 @@ export async function initDatabase() {
 
 export function useDatabase() {
     return {
-        action: {
+        posts: {
             findOne: async (hash: string) => {
-                return actions.findOne({ hash });
+                return posts.findOne({ hash });
             },
-            insert: async (actionData: any) => {
-                return actions.insertOne(actionData);
+            insert: async (actionData: Action, msg: string) => {
+                const post: Post = {
+                    message: msg,
+                    from: actionData.from,
+                    amounts: actionData.amounts,
+                    hash: actionData.hash,
+                    timestamp: actionData.timestamp,
+                    replies: [],
+                };
+
+                return posts.insertOne(post);
+            },
+        },
+        replies: {
+            insert: async (actionData: Action, hash: string, msg: string) => {
+                const post = await posts.findOne<Post>({ hash });
+                if (!post) {
+                    return;
+                }
+
+                const reply: Message = {
+                    message: msg,
+                    from: actionData.from,
+                    amounts: actionData.amounts,
+                    hash: actionData.hash,
+                    timestamp: actionData.timestamp,
+                };
+
+                post.replies.push(reply);
+                return posts.updateOne({ hash: post.hash }, { $set: { replies: post.replies } }, { upsert: true });
             },
         },
         lastBlock: {
