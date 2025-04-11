@@ -47,6 +47,37 @@ async function getPost({ query }: { query: { hash: string } }) {
     }
 }
 
+async function getPostByAuthor({ query }: { query: { author: string, limit: string; page: string }}) {
+    try {
+        if (!query.author) {
+            return {
+                status: 400,
+                error: 'Malformed query, no author provided',
+            };
+        }
+
+        let limit = Number(query.limit) || 100;
+        let page = Number(query.page) || 0;
+
+        if (limit > 100) {
+            limit = 100;
+        }
+
+        if (limit <= 0) {
+            limit = 1;
+        }
+
+        if (page < 0) {
+            page = 0;
+        }
+
+        return await db.posts.findByAuthor(query.author, page, limit);
+    } catch (error) {
+        console.error(error);
+        return { error: 'failed to read data from database' };
+    }
+}
+
 function getHealth() {
     return { status: 'ok' };
 }
@@ -58,6 +89,7 @@ async function start() {
     app.use(cors());
     app.get('/posts', getPosts);
     app.get('/post', getPost);
+    app.get('/user', getPostByAuthor);
     app.get('/health', getHealth);
     app.listen(config.PORT ?? 3939);
     console.log(`[API Feed] Running on ${config.PORT ?? 3939}`);

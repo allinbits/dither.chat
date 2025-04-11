@@ -25,8 +25,22 @@ export function useDatabase() {
             findOne: async (hash: string) => {
                 return posts.findOne({ hash });
             },
-            findPaginated: async (page: number, limit: number = 100) => {
+            findByAuthor: async(author: string, page: number, limit: number = 100) => {
+                const skip = page * limit;
+                const cursor = posts.find({ from: author }).skip(skip).limit(limit).sort({ _id: -1 });
 
+                const results = await cursor.toArray();
+                const total = await posts.countDocuments();
+                
+                return {
+                    page,
+                    limit,
+                    total,
+                    pages: Math.ceil(total / limit),
+                    results,
+                };
+            },
+            findPaginated: async (page: number, limit: number = 100) => {
                 const skip = page * limit;
                 const cursor = posts.find({}).skip(skip).limit(limit).sort({ _id: -1 });
 
