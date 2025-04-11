@@ -43,3 +43,17 @@ A mini-indexer that parses memos from a given starting block, and builds followe
 ### nginx
 
 Just an nginx configuration for gateway access to APIs
+
+## Infrastructure Question(s)
+
+Q. Why would running multiple MongoDB instances be a good idea?
+
+A. Resilience and fault tolerance which allows for the database structure to scale for its individual lane. Meaning that if feeds is only feeds, then that's all it is ever worried about.
+
+Q. What happens during traffic spikes?
+
+A. If there is a traffic spike, this infrastructure allows additional instances to easily be added to continue querying data quickly. Additionally, more databases can be introduced with the exact same data sets to horizontally scale the availability of the data. Additionally, MongoDB supports sharding. We can scale quickly.
+
+Q. What happens when a service fails?
+
+A. Depending on the individual service it will only fail partially, and not effect the entire service. This allows for services to fail, be fixed, and work independently from each other. For example if a Database server goes down, it only effects the individual service. However, if we sharded the service into another region then the service can failover to the next database with the same data in the same lane.
