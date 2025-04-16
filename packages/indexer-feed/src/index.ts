@@ -50,11 +50,6 @@ async function handleAction(action: Action) {
         return;
     }
 
-    const result = await db.posts.findOne(action.hash);
-    if (result) {
-        return;
-    }
-
     if (action.memo.startsWith('dither.Post')) {
         handlePost(action);
     }

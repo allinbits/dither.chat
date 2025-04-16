@@ -1,7 +1,7 @@
 import { Config } from '@atomone/chronostate/dist/types';
 
 type TemporaSyncConfig = {
-    MONGO_URI: string;
+    PG_URI: string;
     DATABASE_NAME: string;
 };
 
@@ -17,8 +17,8 @@ export function useConfig(): Config & TemporaSyncConfig {
         process.exit(1);
     }
 
-    if (!process.env.MONGO_URI) {
-        console.error(`Failed to specify MONGO_URI in configuration`);
+    if (!process.env.PG_URI) {
+        console.error(`Failed to specify PG_URI in configuration`);
         process.exit(1);
     }
 
@@ -30,7 +30,7 @@ export function useConfig(): Config & TemporaSyncConfig {
         RECEIVER: process.env.RECEIVER,
         SENDER: process.env.SENDER,
         LOG: process.env.LOG === 'true' ? true : false,
-        MONGO_URI: process.env.MONGO_URI,
+        PG_URI: process.env.PG_URI,
         DATABASE_NAME: process.env.DATABASE_NAME ?? 'indexer',
     };
 
