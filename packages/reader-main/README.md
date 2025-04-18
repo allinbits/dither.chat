@@ -1,26 +1,22 @@
-# Indexer Feed
+# Reader Main
 
-This is a mini-indexer that parses feed data and inserts it into the database.
+This is a fork of ChronoSync that simply reads the content from the chain, and the re-routes it through an event system.
 
 ## Messages
 
 These are the messages / memos this service is parsing.
 
 ```
-dither.Post
-dither.Reply
+dither.*
 ```
 
 ## Tech
 
-- MongoDB
 - ChronoState
 
 **Docker is required** to easily spin up and tear down this service.
 
 ## Usage
-
-Keep in mind that when building the `data.sqlite` file will automatically be copied over if present.
 
 ```
 docker-compose up
