@@ -2,16 +2,6 @@ services:
   # ================================
   # Database Services
   # ================================
-  # mongodb-indexer-feed:
-  #     container_name: "mongodb-indexer-feed"
-  #     image: mongo:8.0.3
-  #     restart: always
-  #     ports:
-  #         - '27099:27017'
-  #     environment:
-  #         MONGO_INITDB_ROOT_USERNAME: username
-  #         MONGO_INITDB_ROOT_PASSWORD: password
-
   postgres-feed:
     image: postgres:16
     restart: always
@@ -22,37 +12,21 @@ services:
     ports:
       - "5432:5432"
 
-  postgrest-feed:
-    image: postgrest/postgrest:v11.2.0
-    restart: always
-    depends_on:
-      - postgres-feed
-    ports:
-      - "3000:3000"
-    environment:
-      PGRST_DB_URI: postgres://username:password@postgres-feed:5432/feed
-      PGRST_DB_ANON_ROLE: web_anon
-      PGRST_DB_SCHEMA: public
-      PGRST_SERVER_PORT: 3000
-
   # ================================
-  # Indexer Services
+  # ChronoSync Services (Readers)
   # ================================
-  indexer-feed:
-    container_name: "indexer-feed"
-    build: ./packages/indexer-feed
+  reader-main:
+    container_name: "reader-main"
+    build: ./packages/reader-main
     restart: always
     command: ["pnpm", "start"]
-    depends_on:
-      - postgres-feed
-      - postgrest-feed
     environment:
       API_URLS: "https://atomone-api.allinbits.com,https://atomone-rest.publicnode.com"
       START_BLOCK: "2605764"
       BATCH_SIZE: 50
-      PG_URI: postgres://username:password@postgres-feed:5432/feed
-      MEMO_PREFIX: "dither.Post,dither.Reply"
+      MEMO_PREFIX: "dither."
       RECEIVER: "atone1uq6zjslvsa29cy6uu75y8txnl52mw06j6fzlep"
+      # PG_URI: postgres://username:password@postgres-feed:5432/feed
       # LOG: process.env.LOG === 'true' ? true : false,
 
   # ================================

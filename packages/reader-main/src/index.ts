@@ -1,10 +1,8 @@
 import { ChronoState } from '@atomone/chronostate';
 import { useConfig } from './config';
-import { initDatabase, useDatabase } from './database';
 import { Action } from '@atomone/chronostate/dist/types';
 
 const config = useConfig();
-const db = useDatabase();
 
 let state: ChronoState;
 let lastBlock: string;
@@ -15,30 +13,27 @@ async function handleAction(action: Action) {
         return;
     }
 
-    const result = await db.action.findOne(action.hash);
-    if (result) {
-        return;
+    if (action.memo.startsWith('dither.Post')) {
+        //
     }
 
-    try {
-        await db.action.insert(action);
-    } catch (err) {
-        console.error(err);
+    if (action.memo.startsWith('dither.Reply')) {
+        //
     }
 
     lastAction = action;
 }
 
 function handleLastBlock(block: string | String) {
-    db.lastBlock.update(block as string);
+    // db.lastBlock.update(block as string);
+    // Need to switch this out to store last block somewhere, otherwise rely on
     console.log(`Updated Block | ${block}`);
 }
 
 export async function start() {
-    await initDatabase();
-
-    lastBlock = await db.lastBlock.select();
-    state = new ChronoState({ ...config, START_BLOCK: lastBlock });
+    // lastBlock = await db.lastBlock.select();
+    // state = new ChronoState({ ...config, START_BLOCK: lastBlock });
+    state = new ChronoState({ ...config });
     state.onLastBlock(handleLastBlock);
     state.onAction(handleAction);
     state.start();
