@@ -33,31 +33,6 @@ importers:
         specifier: ^4.19.3
         version: 4.19.3
 
-  packages/api-likes:
-    dependencies:
-      '@atomone/chronostate':
-        specifier: ^2.0.2
-        version: 2.0.4
-      '@elysiajs/cors':
-        specifier: ^1.2.0
-        version: 1.2.0(elysia@1.2.25(@sinclair/typebox@0.34.33)(typescript@5.8.3))
-      '@elysiajs/node':
-        specifier: ^1.2.6
-        version: 1.2.6(elysia@1.2.25(@sinclair/typebox@0.34.33)(typescript@5.8.3))(formidable@3.5.2)(ws@8.18.1)
-      elysia:
-        specifier: ^1.2.25
-        version: 1.2.25(@sinclair/typebox@0.34.33)(typescript@5.8.3)
-      mongodb:
-        specifier: ^6.15.0
-        version: 6.15.0
-    devDependencies:
-      '@types/node':
-        specifier: ^22.13.10
-        version: 22.14.0
-      tsx:
-        specifier: ^4.19.3
-        version: 4.19.3
-
   packages/indexer-feed:
     dependencies:
       '@atomone/chronostate':
@@ -66,70 +41,13 @@ importers:
       '@types/node':
         specifier: ^22.13.10
         version: 22.14.0
-      mongodb:
-        specifier: ^6.15.0
-        version: 6.15.0
       tsx:
         specifier: ^4.19.3
         version: 4.19.3
     devDependencies:
-      typescript:
-        specifier: ^5.8.2
-        version: 5.8.3
-
-  packages/indexer-likes:
-    dependencies:
-      '@atomone/chronostate':
-        specifier: ^2.0.4
-        version: 2.0.4
-      '@types/node':
-        specifier: ^22.13.10
-        version: 22.14.0
-      mongodb:
-        specifier: ^6.15.0
-        version: 6.15.0
-      tsx:
-        specifier: ^4.19.3
-        version: 4.19.3
-    devDependencies:
-      typescript:
-        specifier: ^5.8.2
-        version: 5.8.3
-
-  packages/indexer-search:
-    dependencies:
-      '@atomone/chronostate':
-        specifier: ^2.0.2
-        version: 2.0.2
-      '@types/node':
-        specifier: ^22.13.10
-        version: 22.14.0
-      mongodb:
-        specifier: ^6.15.0
-        version: 6.15.0
-      tsx:
-        specifier: ^4.19.3
-        version: 4.19.3
-    devDependencies:
-      typescript:
-        specifier: ^5.8.2
-        version: 5.8.3
-
-  packages/indexer-users:
-    dependencies:
-      '@atomone/chronostate':
-        specifier: ^2.0.2
-        version: 2.0.2
-      '@types/node':
-        specifier: ^22.13.10
-        version: 22.14.0
-      mongodb:
-        specifier: ^6.15.0
-        version: 6.15.0
-      tsx:
-        specifier: ^4.19.3
-        version: 4.19.3
-    devDependencies:
+      '@types/pg':
+        specifier: ^8.11.12
+        version: 8.11.12
       typescript:
         specifier: ^5.8.2
         version: 5.8.3
@@ -317,6 +235,9 @@ packages:
   '@types/node@22.14.0':
     resolution: {integrity: sha512-Kmpl+z84ILoG+3T/zQFyAJsU6EPTmOCj8/2+83fSN6djd6I4o7uOuGIH6vq3PrjY5BGitSbFuMN18j3iknubbA==}
 
+  '@types/pg@8.11.12':
+    resolution: {integrity: sha512-D8qPxnq0rgpvZPYwMxAZffxvlk2mtgimLC5kos8uM7+3wPKfTESxtpD49cfB5w1UnodZL7oYnjFHT5+cB3Gw9Q==}
+
   '@types/webidl-conversions@7.0.3':
     resolution: {integrity: sha512-CiJJvcRtIgzadHCYXw7dqEnMNRjhGZlYK05Mj9OyktqV8uVT8fD2BFOB7S1uwBE3Kj2Z+4UyPmFw/Ixgw/LAlA==}
 
@@ -405,8 +326,45 @@ packages:
       socks:
         optional: true
 
+  obuf@1.1.2:
+    resolution: {integrity: sha512-PX1wu0AmAdPqOL1mWhqmlOd8kOIZQwGZw6rh7uby9fTc5lhaOWFLX3I6R1hrF9k3zUY40e6igsLGkDXK92LJNg==}
+
   once@1.4.0:
     resolution: {integrity: sha512-lNaJgI+2Q5URQBkccEKHTQOPaXdUxnZZElQTZY0MFUAuaEqe1E+Nyvgdz/aIyNi6Z9MzO5dv1H8n58/GELp3+w==}
+
+  pg-int8@1.0.1:
+    resolution: {integrity: sha512-WCtabS6t3c8SkpDBUlb1kjOs7l66xsGdKpIPZsg4wR+B3+u9UAum2odSsF9tnvxg80h4ZxLWMy4pRjOsFIqQpw==}
+    engines: {node: '>=4.0.0'}
+
+  pg-numeric@1.0.2:
+    resolution: {integrity: sha512-BM/Thnrw5jm2kKLE5uJkXqqExRUY/toLHda65XgFTBTFYZyopbKjBe29Ii3RbkvlsMoFwD+tHeGaCjjv0gHlyw==}
+    engines: {node: '>=4'}
+
+  pg-protocol@1.8.0:
+    resolution: {integrity: sha512-jvuYlEkL03NRvOoyoRktBK7+qU5kOvlAwvmrH8sr3wbLrOdVWsRxQfz8mMy9sZFsqJ1hEWNfdWKI4SAmoL+j7g==}
+
+  pg-types@4.0.2:
+    resolution: {integrity: sha512-cRL3JpS3lKMGsKaWndugWQoLOCoP+Cic8oseVcbr0qhPzYD5DWXK+RZ9LY9wxRf7RQia4SCwQlXk0q6FCPrVng==}
+    engines: {node: '>=10'}
+
+  postgres-array@3.0.4:
+    resolution: {integrity: sha512-nAUSGfSDGOaOAEGwqsRY27GPOea7CNipJPOA7lPbdEpx5Kg3qzdP0AaWC5MlhTWV9s4hFX39nomVZ+C4tnGOJQ==}
+    engines: {node: '>=12'}
+
+  postgres-bytea@3.0.0:
+    resolution: {integrity: sha512-CNd4jim9RFPkObHSjVHlVrxoVQXz7quwNFpz7RY1okNNme49+sVyiTvTRobiLV548Hx/hb1BG+iE7h9493WzFw==}
+    engines: {node: '>= 6'}
+
+  postgres-date@2.1.0:
+    resolution: {integrity: sha512-K7Juri8gtgXVcDfZttFKVmhglp7epKb1K4pgrkLxehjqkrgPhfG6OO8LHLkfaqkbpjNRnra018XwAr1yQFWGcA==}
+    engines: {node: '>=12'}
+
+  postgres-interval@3.0.0:
+    resolution: {integrity: sha512-BSNDnbyZCXSxgA+1f5UU2GmwhoI0aU5yMxRGO8CdFEcY2BQF9xm/7MqKnYoM1nJDk8nONNWDk9WeSmePFhQdlw==}
+    engines: {node: '>=12'}
+
+  postgres-range@1.1.4:
+    resolution: {integrity: sha512-i/hbxIE9803Alj/6ytL7UHQxRvZkI9O4Sy+J3HGc4F4oo/2eQAjTSNJ0bfxyse3bH0nuVesCk+3IRLaMtG3H6w==}
 
   punycode@2.3.1:
     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
@@ -559,6 +517,12 @@ snapshots:
     dependencies:
       undici-types: 6.21.0
 
+  '@types/pg@8.11.12':
+    dependencies:
+      '@types/node': 22.14.0
+      pg-protocol: 1.8.0
+      pg-types: 4.0.2
+
   '@types/webidl-conversions@7.0.3': {}
 
   '@types/whatwg-url@11.0.5':
@@ -642,9 +606,39 @@ snapshots:
       bson: 6.10.3
       mongodb-connection-string-url: 3.0.2
 
+  obuf@1.1.2: {}
+
   once@1.4.0:
     dependencies:
       wrappy: 1.0.2
+
+  pg-int8@1.0.1: {}
+
+  pg-numeric@1.0.2: {}
+
+  pg-protocol@1.8.0: {}
+
+  pg-types@4.0.2:
+    dependencies:
+      pg-int8: 1.0.1
+      pg-numeric: 1.0.2
+      postgres-array: 3.0.4
+      postgres-bytea: 3.0.0
+      postgres-date: 2.1.0
+      postgres-interval: 3.0.0
+      postgres-range: 1.1.4
+
+  postgres-array@3.0.4: {}
+
+  postgres-bytea@3.0.0:
+    dependencies:
+      obuf: 1.1.2
+
+  postgres-date@2.1.0: {}
+
+  postgres-interval@3.0.0: {}
+
+  postgres-range@1.1.4: {}
 
   punycode@2.3.1: {}
 
