@@ -15,8 +15,8 @@ export async function Likes(query: typeof LikesQuery.static) {
         };
     }
 
-    let limit = Number(query.limit) || 100;
-    let offset = Number(query.offset) || 0;
+    let limit = Number(query.limit) ?? 100;
+    let offset = Number(query.offset) ?? 0;
 
     if (limit > 100) {
         limit = 100;
