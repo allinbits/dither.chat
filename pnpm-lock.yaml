@@ -8,11 +8,11 @@ importers:
 
   .: {}
 
-  packages/api-feed:
+  packages/api-main:
     dependencies:
       '@atomone/chronostate':
         specifier: ^2.0.2
-        version: 2.0.2
+        version: 2.0.4
       '@elysiajs/cors':
         specifier: ^1.2.0
         version: 1.2.0(elysia@1.2.25(@sinclair/typebox@0.34.33)(typescript@5.8.3))
@@ -33,7 +33,7 @@ importers:
         specifier: ^4.19.3
         version: 4.19.3
 
-  packages/indexer-feed:
+  packages/reader-main:
     dependencies:
       '@atomone/chronostate':
         specifier: ^2.0.4
@@ -53,9 +53,6 @@ importers:
         version: 5.8.3
 
 packages:
-
-  '@atomone/chronostate@2.0.2':
-    resolution: {integrity: sha512-SHFD4m9WAV6EE0LXEpHl7k2mT3NUEYwqwoyvHQBh5X5VM62/PS5d5YpDrE/2ze72IuFzsWT6Wda0J0Bp/Obv3g==}
 
   '@atomone/chronostate@2.0.4':
     resolution: {integrity: sha512-nAc3kgQsNkFLuCTY0uVsRBftZE571HUc3s1TWrqZdf4BcG353+T426iop6BZSD6He+lHOQsdh8ZfeP+YlASkIw==}
@@ -417,8 +414,6 @@ packages:
         optional: true
 
 snapshots:
-
-  '@atomone/chronostate@2.0.2': {}
 
   '@atomone/chronostate@2.0.4': {}
 
