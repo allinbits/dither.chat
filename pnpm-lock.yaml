@@ -8,11 +8,11 @@ importers:
 
   .: {}
 
-  packages/api-feed:
+  packages/api-main:
     dependencies:
       '@atomone/chronostate':
         specifier: ^2.0.2
-        version: 2.0.2
+        version: 2.2.0
       '@elysiajs/cors':
         specifier: ^1.2.0
         version: 1.2.0(elysia@1.2.25(@sinclair/typebox@0.34.33)(typescript@5.8.3))
@@ -33,11 +33,11 @@ importers:
         specifier: ^4.19.3
         version: 4.19.3
 
-  packages/indexer-feed:
+  packages/reader-main:
     dependencies:
       '@atomone/chronostate':
-        specifier: ^2.0.4
-        version: 2.0.4
+        specifier: 2.2.0
+        version: 2.2.0
       '@types/node':
         specifier: ^22.13.10
         version: 22.14.0
@@ -54,11 +54,8 @@ importers:
 
 packages:
 
-  '@atomone/chronostate@2.0.2':
-    resolution: {integrity: sha512-SHFD4m9WAV6EE0LXEpHl7k2mT3NUEYwqwoyvHQBh5X5VM62/PS5d5YpDrE/2ze72IuFzsWT6Wda0J0Bp/Obv3g==}
-
-  '@atomone/chronostate@2.0.4':
-    resolution: {integrity: sha512-nAc3kgQsNkFLuCTY0uVsRBftZE571HUc3s1TWrqZdf4BcG353+T426iop6BZSD6He+lHOQsdh8ZfeP+YlASkIw==}
+  '@atomone/chronostate@2.2.0':
+    resolution: {integrity: sha512-sVQV+D6yBEyK//U+eoEF4+6/QR9TQ2ICeYjDJDX6a6VIP4OagPSO30aUS66XT3VIqV3hT25WIzuRkCY9/U1cSA==}
 
   '@elysiajs/cors@1.2.0':
     resolution: {integrity: sha512-qsJwDAg6WfdQRMfj6uSMcDPSpXvm/zQFeAX1uuJXhIgazH8itSfcDxcH9pMuXVRX1yQNi2pPwNQLJmAcw5mzvw==}
@@ -418,9 +415,7 @@ packages:
 
 snapshots:
 
-  '@atomone/chronostate@2.0.2': {}
-
-  '@atomone/chronostate@2.0.4': {}
+  '@atomone/chronostate@2.2.0': {}
 
   '@elysiajs/cors@1.2.0(elysia@1.2.25(@sinclair/typebox@0.34.33)(typescript@5.8.3))':
     dependencies:

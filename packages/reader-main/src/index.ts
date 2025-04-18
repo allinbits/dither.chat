@@ -6,13 +6,8 @@ const config = useConfig();
 
 let state: ChronoState;
 let lastBlock: string;
-let lastAction: Action;
 
 async function handleAction(action: Action) {
-    if (lastAction && lastAction.hash === action.hash) {
-        return;
-    }
-
     if (action.memo.startsWith('dither.Post')) {
         //
     }
@@ -20,8 +15,6 @@ async function handleAction(action: Action) {
     if (action.memo.startsWith('dither.Reply')) {
         //
     }
-
-    lastAction = action;
 }
 
 function handleLastBlock(block: string | String) {
