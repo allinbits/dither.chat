@@ -1,4 +1,4 @@
-import { Elysia, t } from 'elysia';
+import { Elysia } from 'elysia';
 import node from '@elysiajs/node';
 import { cors } from '@elysiajs/cors';
 import { initDatabase, useDatabase } from './database';

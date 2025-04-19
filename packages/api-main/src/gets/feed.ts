@@ -3,19 +3,19 @@ import { t } from 'elysia';
 export const FeedQuery = t.Object({ limit: t.Optional(t.String()), offset: t.Optional(t.String()) });
 
 export async function Feed(query: typeof FeedQuery.static) {
-    let limit = Number(query.limit) ?? 100;
-    let offset = Number(query.offset) ?? 0;
+    let limit = typeof query.limit !== 'undefined' ? Number(query.limit) : 100;
+    let offset = typeof query.offset !== 'undefined' ? Number(query.offset) : 0;
 
     if (limit > 100) {
         limit = 100;
     }
 
     if (limit <= 0) {
-        limit = 1;
+        return { status: 400, error: 'limit must be at least 1' };
     }
 
     if (offset < 0) {
-        offset = 0;
+        return { status: 400, error: 'offset must be at least 0' };
     }
 
     try {
