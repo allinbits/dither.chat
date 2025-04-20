@@ -10,7 +10,7 @@ export async function Replies(query: typeof RepliesQuery.static) {
     if (!query.hash) {
         return {
             status: 400,
-            error: 'Malformed query, no hash provided',
+            error: 'malformed query, no hash provided',
         };
     }
 

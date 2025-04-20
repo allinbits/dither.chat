@@ -10,7 +10,7 @@ export async function Followers(query: typeof FollowersQuery.static) {
     if (!query.address) {
         return {
             status: 400,
-            error: 'Malformed query, no address provided',
+            error: 'malformed query, no address provided',
         };
     }
 

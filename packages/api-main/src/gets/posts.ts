@@ -10,7 +10,7 @@ export async function Posts(query: typeof PostsQuery.static) {
     if (!query.address) {
         return {
             status: 400,
-            error: 'Malformed query, no address provided',
+            error: 'malformed query, no address provided',
         };
     }
 

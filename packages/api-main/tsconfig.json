@@ -11,8 +11,8 @@
         "esModuleInterop": true,
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
-        "rootDir": "src"
+        "rootDir": "."
     },
-    "include": ["src"],
+    "include": ["src", "drizzle.config.ts", "db"],
     "exclude": ["node_modules", "dist"]
 }

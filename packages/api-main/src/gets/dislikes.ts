@@ -11,7 +11,7 @@ export async function Dislikes(query: typeof DislikesQuery.static) {
     if (!query.hash) {
         return {
             status: 400,
-            error: 'Malformed query, no hash provided',
+            error: 'malformed query, no hash provided',
         };
     }
 

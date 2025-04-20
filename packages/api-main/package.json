@@ -10,14 +10,19 @@
         "build": "tsc"
     },
     "dependencies": {
-        "@atomone/chronostate": "^2.0.2",
+        "@atomone/chronostate": "^2.2.0",
         "@elysiajs/cors": "^1.2.0",
         "@elysiajs/node": "^1.2.6",
+        "dotenv": "^16.5.0",
+        "drizzle-orm": "^0.42.0",
         "elysia": "^1.2.25",
-        "mongodb": "^6.15.0"
+        "mongodb": "^6.15.0",
+        "pg": "^8.14.1"
     },
     "devDependencies": {
-        "@types/node": "^22.13.10",
+        "@types/node": "^22.14.1",
+        "@types/pg": "^8.11.13",
+        "drizzle-kit": "^0.31.0",
         "tsx": "^4.19.3"
     },
     "prettier": {

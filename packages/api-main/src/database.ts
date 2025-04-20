@@ -1,22 +1,13 @@
-import { MongoClient, Db, Collection } from 'mongodb';
 import { useConfig } from './config';
+import { drizzle } from 'drizzle-orm/node-postgres';
+
 
 const DATABASE_NAME = 'feed';
 const config = useConfig();
-
-let db: Db;
-let posts: Collection;
+const db = drizzle(config.PG_URI);
 
 export async function initDatabase() {
-    // const client = new MongoClient(config.MONGO_URI);
-    // await client.connect().catch((err) => {
-    //     console.error(`Failed to connect to database, bad connection string?`);
-    //     console.error(err);
-    //     process.exit(1);
-    // });
-
-    // db = client.db(DATABASE_NAME);
-    // posts = db.collection('posts');
+    //
 }
 
 export function useDatabase() {
