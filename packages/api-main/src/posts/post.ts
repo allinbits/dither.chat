@@ -2,6 +2,7 @@ import { t } from 'elysia';
 import { FeedTable } from '../../drizzle/schema';
 import { db } from '../../drizzle/db';
 import { getTransferMessage } from '../utility';
+import { extractMemoContent } from '@atomone/chronostate';
 
 export const PostBody = t.Object({
     hash: t.String(),
@@ -17,11 +18,21 @@ export async function Post(body: typeof PostBody.static) {
         return { status: 400, error: 'transfer message must exist to be logged as a post' };
     }
 
-    return await db
-        .insert(FeedTable)
-        .values({
-            ...body,
-            author: msgTransfer.from_address,
-        })
-        .onConflictDoNothing();
+    const [message] = extractMemoContent(body.memo, 'dither.Post');
+
+    try {
+        await db
+            .insert(FeedTable)
+            .values({
+                ...body,
+                message,
+                author: msgTransfer.from_address,
+            })
+            .onConflictDoNothing();
+
+        return { status: 200 };
+    } catch (err) {
+        console.error(err);
+        return { status: 400, error: 'failed to upsert data for post' };
+    }
 }

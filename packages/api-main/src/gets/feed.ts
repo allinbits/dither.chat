@@ -1,4 +1,6 @@
 import { t } from 'elysia';
+import { db } from '../../drizzle/db';
+import { FeedTable } from '../../drizzle/schema';
 
 export const FeedQuery = t.Object({ limit: t.Optional(t.String()), offset: t.Optional(t.String()) });
 
@@ -19,7 +21,7 @@ export async function Feed(query: typeof FeedQuery.static) {
     }
 
     try {
-        return 'hi';
+        return await db.select().from(FeedTable).limit(limit).offset(offset);
     } catch (error) {
         console.error(error);
         return { status: 400, error: 'failed to read data from database' };

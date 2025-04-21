@@ -13,7 +13,7 @@
         "db:push": "drizzle-kit push"
     },
     "dependencies": {
-        "@atomone/chronostate": "^2.2.0",
+        "@atomone/chronostate": "^2.2.1",
         "@elysiajs/cors": "^1.2.0",
         "@elysiajs/node": "^1.2.6",
         "dotenv": "^16.5.0",
