@@ -1,4 +1,7 @@
 import { t } from 'elysia';
+import { LikesTable } from '../../drizzle/schema';
+import { db } from '../../drizzle/db';
+import { eq } from 'drizzle-orm';
 
 export const LikesQuery = t.Object({
     limit: t.Optional(t.String()),
@@ -8,13 +11,6 @@ export const LikesQuery = t.Object({
 });
 
 export async function Likes(query: typeof LikesQuery.static) {
-    if (!query.hash) {
-        return {
-            status: 400,
-            error: 'malformed query, no hash provided',
-        };
-    }
-
     let limit = typeof query.limit !== 'undefined' ? Number(query.limit) : 100;
     let offset = typeof query.offset !== 'undefined' ? Number(query.offset) : 0;
 
@@ -31,9 +27,9 @@ export async function Likes(query: typeof LikesQuery.static) {
     }
 
     try {
-        // return await db.
+        return await db.select().from(LikesTable).where(eq(LikesTable.hash, query.hash));
     } catch (error) {
         console.error(error);
-        return { error: 'failed to read data from database' };
+        return { status: 404, error: 'failed to find matching likes' };
     }
 }

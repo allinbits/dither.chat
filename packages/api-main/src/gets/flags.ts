@@ -8,13 +8,6 @@ export const FlagsQuery = t.Object({
 });
 
 export async function Flags(query: typeof FlagsQuery.static) {
-    if (!query.hash) {
-        return {
-            status: 400,
-            error: 'malformed query, no hash provided',
-        };
-    }
-
     let limit = typeof query.limit !== 'undefined' ? Number(query.limit) : 100;
     let offset = typeof query.offset !== 'undefined' ? Number(query.offset) : 0;
 

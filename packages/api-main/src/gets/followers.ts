@@ -33,6 +33,6 @@ export async function Followers(query: typeof FollowersQuery.static) {
         // return await db.
     } catch (error) {
         console.error(error);
-        return { error: 'failed to read data from database' };
+        return { status: 404, error: 'failed to find matching followers' };
     }
 }

@@ -7,7 +7,10 @@
     "type": "module",
     "scripts": {
         "start": "tsx ./src/index.ts",
-        "build": "tsc"
+        "build": "tsc",
+        "db:generate": "drizzle-kit generate",
+        "db:migrate": "drizzle-kit migrate",
+        "db:push": "drizzle-kit push"
     },
     "dependencies": {
         "@atomone/chronostate": "^2.2.0",
@@ -17,7 +20,8 @@
         "drizzle-orm": "^0.42.0",
         "elysia": "^1.2.25",
         "mongodb": "^6.15.0",
-        "pg": "^8.14.1"
+        "pg": "^8.14.1",
+        "postgres": "^3.4.5"
     },
     "devDependencies": {
         "@types/node": "^22.14.1",

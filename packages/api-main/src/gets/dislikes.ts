@@ -1,4 +1,7 @@
 import { t } from 'elysia';
+import { DislikesTable } from '../../drizzle/schema';
+import { db } from '../../drizzle/db';
+import { eq } from 'drizzle-orm';
 
 export const DislikesQuery = t.Object({
     hash: t.String(),
@@ -31,8 +34,7 @@ export async function Dislikes(query: typeof DislikesQuery.static) {
     }
 
     try {
-        return 'hi';
-        // return await db.
+        return await db.select().from(DislikesTable).where(eq(DislikesTable.hash, query.hash));
     } catch (error) {
         console.error(error);
         return { error: 'failed to read data from database' };

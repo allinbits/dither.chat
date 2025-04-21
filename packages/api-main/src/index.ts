@@ -1,12 +1,11 @@
 import { Elysia } from 'elysia';
 import node from '@elysiajs/node';
 import { cors } from '@elysiajs/cors';
-import { initDatabase, useDatabase } from './database';
 import { useConfig } from './config';
 
 import * as GetRequests from './gets/index';
+import * as PostRequests from './posts/index';
 
-const db = useDatabase();
 const config = useConfig();
 
 function startReadOnlyServer() {
@@ -29,14 +28,13 @@ function startWriteOnlyServer() {
     const app = new Elysia({ adapter: node(), prefix: '/v1' });
     app.use(cors());
 
-    // app.post('/post', )
+    app.post('/post', ({ body }) => PostRequests.Post(body), { body: PostRequests.PostBody });
 
     app.listen(config.WRITE_ONLY_PORT ?? 3001);
     console.log(`[API Write Only] Running on ${config.WRITE_ONLY_PORT ?? 3001}`);
 }
 
-async function start() {
-    await initDatabase();
+function start() {
     startReadOnlyServer();
     startWriteOnlyServer();
 }

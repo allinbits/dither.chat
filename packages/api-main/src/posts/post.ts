@@ -1,32 +1,27 @@
-type Query = { query: { limit: string; offset: string, address: string } };
+import { t } from 'elysia';
+import { FeedTable } from '../../drizzle/schema';
+import { db } from '../../drizzle/db';
+import { getTransferMessage } from '../utility';
 
-export async function post({ query }: Query) {
-    if (!query.address) {
-        return {
-            status: 400,
-            error: 'Malformed query, no address provided',
-        };
+export const PostBody = t.Object({
+    hash: t.String(),
+    height: t.String(),
+    timestamp: t.String(),
+    memo: t.String(),
+    messages: t.Array(t.Record(t.String(), t.Any())),
+});
+
+export async function Post(body: typeof PostBody.static) {
+    const msgTransfer = getTransferMessage(body.messages);
+    if (!msgTransfer) {
+        return { status: 400, error: 'transfer message must exist to be logged as a post' };
     }
 
-    let limit = typeof query.limit !== 'undefined' ? Number(query.limit) : 100;
-    let offset = typeof query.offset !== 'undefined' ? Number(query.offset) : 0;
-
-    if (limit > 100) {
-        limit = 100;
-    }
-
-    if (limit <= 0) {
-        return { status: 400, error: 'limit must be at least 1' };
-    }
-
-    if (offset < 0) {
-        return { status: 400, error: 'offset must be at least 0' };
-    }
-
-    try {
-        // return await db.
-    } catch (error) {
-        console.error(error);
-        return { error: 'failed to read data from database' };
-    }
+    return await db
+        .insert(FeedTable)
+        .values({
+            ...body,
+            author: msgTransfer.from_address,
+        })
+        .onConflictDoNothing();
 }

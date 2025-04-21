@@ -13,6 +13,6 @@
         "forceConsistentCasingInFileNames": true,
         "rootDir": "."
     },
-    "include": ["src", "drizzle.config.ts", "db"],
+    "include": ["src", "drizzle.config.ts", "db", "drizzle/schema.ts", "drizzle/db.ts"],
     "exclude": ["node_modules", "dist"]
 }
