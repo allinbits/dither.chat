@@ -1,12 +1,25 @@
-import { pgTable, varchar, jsonb, index, integer } from 'drizzle-orm/pg-core';
-
-type TokenBurn = { hash: string; address: string; amount: { denom: string; amount: string }[] };
+import { pgTable, varchar, jsonb, index, integer, customType } from 'drizzle-orm/pg-core';
 
 const ADDRESS_LENGTH = 44;
 const TRANSACTION_HASH_LENGTH = 64;
 const HEIGHT_LENGTH = 20;
 const TIMESTAMP_LENGTH = 26;
 const MEMO_LENGTH = 512;
+
+type AuthorType = { address: string; hash: string; amount: string };
+
+const AuthorComposite = customType<{ data: AuthorType; driverData: string }>({
+    dataType() {
+        return 'text';
+    },
+    fromDriver(value): AuthorType {
+        const [address, hash, amount] = value.slice(1, -1).split(',');
+        return { address, hash, amount };
+    },
+    toDriver(value: AuthorType) {
+        return `(${value.address},${value.hash},${value.amount})`;
+    },
+});
 
 export const FeedTable = pgTable(
     'feed',
@@ -37,17 +50,17 @@ export const ReplyTable = pgTable(
 
 export const LikesTable = pgTable('likes', {
     hash: varchar({ length: TRANSACTION_HASH_LENGTH }).primaryKey(),
-    data: jsonb().notNull().$type<TokenBurn>(),
+    data: AuthorComposite().array().default([]),
 });
 
 export const DislikesTable = pgTable('dislikes', {
     hash: varchar({ length: TRANSACTION_HASH_LENGTH }).primaryKey(),
-    data: jsonb().notNull().$type<TokenBurn>(),
+    data: AuthorComposite().array().default([]),
 });
 
 export const FlagsTable = pgTable('flags', {
     hash: varchar({ length: TRANSACTION_HASH_LENGTH }).primaryKey(),
-    data: jsonb().notNull().$type<TokenBurn>(),
+    data: AuthorComposite().array().default([]),
 });
 
 export const UsersTable = pgTable('users', {

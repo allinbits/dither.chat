@@ -26,7 +26,7 @@ export async function Replies(query: typeof RepliesQuery.static) {
     }
 
     try {
-        return await db.select().from(ReplyTable).where(eq(ReplyTable.hash, query.hash));
+        return await db.select().from(ReplyTable).where(eq(ReplyTable.hash, query.hash)).limit(limit).offset(offset);
     } catch (error) {
         console.error(error);
         return { status: 404, error: 'failed to find matching reply' };

@@ -26,7 +26,7 @@ export async function Posts(query: typeof PostsQuery.static) {
     }
 
     try {
-        return await db.select().from(FeedTable).where(eq(FeedTable.author, query.address));
+        return await db.select().from(FeedTable).where(eq(FeedTable.author, query.address)).limit(limit).offset(offset);
     } catch (error) {
         console.error(error);
         return { status: 404, error: 'failed to find matching reply' };
