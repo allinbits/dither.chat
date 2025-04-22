@@ -38,7 +38,7 @@ export const ReplyTable = pgTable(
     'replies',
     {
         hash: varchar({ length: TRANSACTION_HASH_LENGTH }).primaryKey(),
-        post_hash: varchar({ length: TRANSACTION_HASH_LENGTH }).primaryKey(),
+        post_hash: varchar({ length: TRANSACTION_HASH_LENGTH }).notNull(),
         author: varchar({ length: ADDRESS_LENGTH }).notNull(),
         height: varchar({ length: HEIGHT_LENGTH }).notNull(),
         timestamp: varchar({ length: TIMESTAMP_LENGTH }).notNull(),
@@ -67,6 +67,4 @@ export const UsersTable = pgTable('users', {
     address: varchar({ length: TRANSACTION_HASH_LENGTH }).primaryKey(),
     followers: varchar({ length: ADDRESS_LENGTH }).array().default([]),
     following: varchar({ length: ADDRESS_LENGTH }).array().default([]),
-    followersCount: integer().default(0),
-    followingCount: integer().default(0),
 });

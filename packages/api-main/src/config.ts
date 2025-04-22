@@ -1,3 +1,7 @@
+import dotenv from 'dotenv'
+
+dotenv.config();
+
 type Config = {
     READ_ONLY_PORT: number;
     WRITE_ONLY_PORT: number;

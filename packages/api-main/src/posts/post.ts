@@ -24,9 +24,12 @@ export async function Post(body: typeof PostBody.static) {
         await db
             .insert(FeedTable)
             .values({
-                ...body,
-                message,
+                hash: body.hash,
+                height: body.height,
+                messages: body.messages,
+                timestamp: body.timestamp,
                 author: msgTransfer.from_address,
+                message,
             })
             .onConflictDoNothing();
 

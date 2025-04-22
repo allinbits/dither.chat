@@ -18,6 +18,9 @@ export async function Follow(body: typeof FollowBody.static) {
     }
 
     const [follow_hash] = extractMemoContent(body.memo, 'dither.Follow');
+    if (!follow_hash) {
+        return { status: 400, error: 'memo must contain a follow address for dither.Follow' };
+    }
 
     try {
         // Add follow to the executor
@@ -25,16 +28,13 @@ export async function Follow(body: typeof FollowBody.static) {
             .insert(UsersTable)
             .values({
                 address: msgTransfer.from_address,
-                followersCount: 0,
-                followingCount: 0,
                 followers: [],
                 following: [follow_hash],
             })
             .onConflictDoUpdate({
                 target: UsersTable.address,
                 set: {
-                    following: sql`${UsersTable.following} || ARRAY[${follow_hash}]`,
-                    followingCount: sql`${UsersTable.followingCount} + 1`,
+                    following: sql`(SELECT ARRAY(SELECT DISTINCT UNNEST(${UsersTable.following} || ARRAY[${follow_hash}])))`,
                 },
             });
 
@@ -43,16 +43,13 @@ export async function Follow(body: typeof FollowBody.static) {
             .insert(UsersTable)
             .values({
                 address: follow_hash,
-                followersCount: 0,
-                followingCount: 0,
                 followers: [msgTransfer.from_address],
                 following: [],
             })
             .onConflictDoUpdate({
                 target: UsersTable.address,
                 set: {
-                    followers: sql`${UsersTable.followers} || ARRAY[${msgTransfer.from_address}]`,
-                    followersCount: sql`${UsersTable.followersCount} + 1`,
+                    followers: sql`(SELECT ARRAY(SELECT DISTINCT UNNEST(${UsersTable.followers} || ARRAY[${msgTransfer.from_address}])))`,
                 },
             });
 
