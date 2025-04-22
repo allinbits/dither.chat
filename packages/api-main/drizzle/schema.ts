@@ -2,11 +2,9 @@ import { pgTable, varchar, customType, timestamp } from 'drizzle-orm/pg-core';
 import { bech32 } from 'bech32';
 import { hexToUint8Array, uint8ArrayToHex } from '../src/utility';
 
-const ADDRESS_LENGTH = 44;
-const TRANSACTION_HASH_LENGTH = 64;
 const MEMO_LENGTH = 512;
 
-type AuthorType = { address: string; hash: string; amount: string };
+type AuthorType = { address: string; hash: string; amount?: string };
 
 export const AuthorComposite = customType<{ data: AuthorType[]; driverData: string }>({
     dataType() {
@@ -21,7 +19,6 @@ export const AuthorComposite = customType<{ data: AuthorType[]; driverData: stri
         } else if (value === null) {
             return [];
         } else {
-            // Value is already an object
             return value;
         }
     },
@@ -67,22 +64,22 @@ export const ReplyTable = pgTable('replies', {
 });
 
 export const LikesTable = pgTable('likes', {
-    hash: varchar({ length: TRANSACTION_HASH_LENGTH }).primaryKey(),
+    hash: Sha256Composite().primaryKey(),
     data: AuthorComposite().default([]),
 });
 
 export const DislikesTable = pgTable('dislikes', {
-    hash: varchar({ length: TRANSACTION_HASH_LENGTH }).primaryKey(),
+    hash: Sha256Composite().primaryKey(),
     data: AuthorComposite().default([]),
 });
 
 export const FlagsTable = pgTable('flags', {
-    hash: varchar({ length: TRANSACTION_HASH_LENGTH }).primaryKey(),
+    hash: Sha256Composite().primaryKey(),
     data: AuthorComposite().default([]),
 });
 
 export const UsersTable = pgTable('users', {
     address: AddressComposite().primaryKey(),
-    followers: varchar({ length: ADDRESS_LENGTH }).array().default([]),
-    following: varchar({ length: ADDRESS_LENGTH }).array().default([]),
+    followers: AuthorComposite().default([]),
+    following: AuthorComposite().default([]),
 });

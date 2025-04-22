@@ -11,7 +11,7 @@ export function getTransferMessage(messages: Array<T.MsgGeneric>) {
     return msgTransfer as T.MsgTransfer;
 }
 
-export function getTransferQuantities(messages: Array<T.MsgGeneric>) {
+export function getTransferQuantities(messages: Array<T.MsgGeneric>, denom = 'uatone') {
     const msgTransfers = messages.filter((msg) => msg['@type'] === '/cosmos.bank.v1beta1.MsgSend') as T.MsgTransfer[];
     let amount = BigInt('0');
 
@@ -19,7 +19,7 @@ export function getTransferQuantities(messages: Array<T.MsgGeneric>) {
         console.log(msg);
 
         for (let quantity of msg.amount) {
-            if (quantity.denom !== 'uatone') {
+            if (quantity.denom !== denom) {
                 continue;
             }
 

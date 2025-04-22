@@ -6,6 +6,7 @@ import { extractMemoContent } from '@atomone/chronostate';
 import { sql } from 'drizzle-orm';
 
 export const FollowBody = t.Object({
+    hash: t.String(),
     address: t.String(),
     memo: t.String(),
     messages: t.Array(t.Record(t.String(), t.Any())),
@@ -24,32 +25,34 @@ export async function Follow(body: typeof FollowBody.static) {
 
     try {
         // Add follow to the executor
+        const followingUser = { hash: body.hash, address: follow_hash };
         await db
             .insert(UsersTable)
             .values({
                 address: msgTransfer.from_address,
                 followers: [],
-                following: [follow_hash],
+                following: [followingUser],
             })
             .onConflictDoUpdate({
                 target: UsersTable.address,
                 set: {
-                    following: sql`(SELECT ARRAY(SELECT DISTINCT UNNEST(${UsersTable.following} || ARRAY[${follow_hash}])))`,
+                    following: sql`${UsersTable.following} || ${followingUser}::jsonb`,
                 },
             });
 
         // Add executor to the target
+        const followerUser = { hash: body.hash, address: msgTransfer.from_address };
         await db
             .insert(UsersTable)
             .values({
                 address: follow_hash,
-                followers: [msgTransfer.from_address],
+                followers: [followerUser],
                 following: [],
             })
             .onConflictDoUpdate({
                 target: UsersTable.address,
                 set: {
-                    followers: sql`(SELECT ARRAY(SELECT DISTINCT UNNEST(${UsersTable.followers} || ARRAY[${msgTransfer.from_address}])))`,
+                    followers: sql`${UsersTable.followers} || ${followerUser}::jsonb`,
                 },
             });
 
