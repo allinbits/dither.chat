@@ -1,4 +1,4 @@
-import { pgTable, varchar, jsonb, index, integer, customType } from 'drizzle-orm/pg-core';
+import { pgTable, varchar, jsonb, index, customType } from 'drizzle-orm/pg-core';
 
 const ADDRESS_LENGTH = 44;
 const TRANSACTION_HASH_LENGTH = 64;
@@ -8,7 +8,7 @@ const MEMO_LENGTH = 512;
 
 type AuthorType = { address: string; hash: string; amount: string };
 
-const AuthorComposite = customType<{ data: AuthorType; driverData: string }>({
+export const AuthorComposite = customType<{ data: AuthorType; driverData: string }>({
     dataType() {
         return 'text';
     },

@@ -11,6 +11,25 @@ export function getTransferMessage(messages: Array<T.MsgGeneric>) {
     return msgTransfer as T.MsgTransfer;
 }
 
+export function getTransferQuantities(messages: Array<T.MsgGeneric>) {
+    const msgTransfers = messages.filter((msg) => msg['@type'] === '/cosmos.bank.v1beta1.MsgSend') as T.MsgTransfer[];
+    let amount = BigInt('0');
+
+    for(let msg of msgTransfers) {
+        console.log(msg);
+
+        for(let quantity of msg.amount) {
+            if (quantity.denom !== 'uatone') {
+                continue;
+            }
+
+            amount += BigInt(quantity.amount)
+        }
+    }
+
+    return amount.toString();
+}
+
 export async function getJsonbArrayCount(hash: string, tableName: string) {
     const result = await db.execute(sql`
         SELECT jsonb_array_length(data)::integer AS array_count
