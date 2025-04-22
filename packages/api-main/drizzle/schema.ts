@@ -1,6 +1,4 @@
 import { pgTable, varchar, customType, timestamp } from 'drizzle-orm/pg-core';
-import { bech32 } from 'bech32';
-import { hexToUint8Array, uint8ArrayToHex } from '../src/utility';
 
 const MEMO_LENGTH = 512;
 
@@ -24,62 +22,38 @@ export const AuthorComposite = customType<{ data: AuthorType[]; driverData: stri
     },
 });
 
-export const AddressComposite = customType<{ data: string; driverData: number[] }>({
-    dataType() {
-        return 'smallint[]';
-    },
-    fromDriver(value) {
-        return bech32.encode('atone', value);
-    },
-    toDriver(value: string) {
-        return bech32.decode(value).words;
-    },
-});
-
-export const Sha256Composite = customType<{ data: string; driverData: number[] }>({
-    dataType() {
-        return 'smallint[]';
-    },
-    fromDriver(value) {
-        return uint8ArrayToHex(value);
-    },
-    toDriver(value: string) {
-        return hexToUint8Array(value);
-    },
-});
-
 export const FeedTable = pgTable('feed', {
-    hash: Sha256Composite().primaryKey(), // Plain string
-    author: AddressComposite().notNull(), // Bech32 String -> Uint8Array
-    timestamp: timestamp({ withTimezone: true }).notNull(), // JS Date -> TimestampZ
-    message: varchar({ length: MEMO_LENGTH }).notNull(), // Plaintext from memo dither.Post("Hello world")
+    hash: varchar({ length: 64 }).primaryKey(),
+    author: varchar({ length: 44 }).notNull(),
+    timestamp: timestamp({ withTimezone: true }).notNull(),
+    message: varchar({ length: MEMO_LENGTH }).notNull(),
 });
 
 export const ReplyTable = pgTable('replies', {
-    hash: Sha256Composite().primaryKey(), // binary
-    post_hash: Sha256Composite().notNull(), // SHA256 String -> uint8Array
-    author: AddressComposite().notNull(), // Bech32 String -> Uint8Array
-    timestamp: timestamp({ withTimezone: true }).notNull(), // JS Date -> TimestampZ
-    message: varchar({ length: MEMO_LENGTH }).notNull(), // Plaintext from memo dither.Post("Hello world")
+    hash: varchar({ length: 64 }).primaryKey(),
+    post_hash: varchar({ length: 64 }).notNull(),
+    author: varchar({ length: 44 }).notNull(),
+    timestamp: timestamp({ withTimezone: true }).notNull(),
+    message: varchar({ length: MEMO_LENGTH }).notNull(),
 });
 
 export const LikesTable = pgTable('likes', {
-    hash: Sha256Composite().primaryKey(),
+    hash: varchar({ length: 64 }).primaryKey(),
     data: AuthorComposite().default([]),
 });
 
 export const DislikesTable = pgTable('dislikes', {
-    hash: Sha256Composite().primaryKey(),
+    hash: varchar({ length: 64 }).primaryKey(),
     data: AuthorComposite().default([]),
 });
 
 export const FlagsTable = pgTable('flags', {
-    hash: Sha256Composite().primaryKey(),
+    hash: varchar({ length: 64 }).primaryKey(),
     data: AuthorComposite().default([]),
 });
 
 export const UsersTable = pgTable('users', {
-    address: AddressComposite().primaryKey(),
+    address: varchar({ length: 44 }).primaryKey(),
     followers: AuthorComposite().default([]),
     following: AuthorComposite().default([]),
 });
