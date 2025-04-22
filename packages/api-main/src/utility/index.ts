@@ -15,15 +15,15 @@ export function getTransferQuantities(messages: Array<T.MsgGeneric>) {
     const msgTransfers = messages.filter((msg) => msg['@type'] === '/cosmos.bank.v1beta1.MsgSend') as T.MsgTransfer[];
     let amount = BigInt('0');
 
-    for(let msg of msgTransfers) {
+    for (let msg of msgTransfers) {
         console.log(msg);
 
-        for(let quantity of msg.amount) {
+        for (let quantity of msg.amount) {
             if (quantity.denom !== 'uatone') {
                 continue;
             }
 
-            amount += BigInt(quantity.amount)
+            amount += BigInt(quantity.amount);
         }
     }
 
@@ -38,4 +38,21 @@ export async function getJsonbArrayCount(hash: string, tableName: string) {
         `);
 
     return result.rows.length > 0 ? result.rows[0].array_count : 0;
+}
+
+export function hexToUint8Array(hex: string) {
+    if (hex.length % 2 !== 0) {
+        throw new Error('Input hex string must have an even length');
+    }
+    const result = [];
+    for (let i = 0; i < hex.length; i += 2) {
+        result.push(parseInt(hex.substring(i, i + 2), 16));
+    }
+    return result;
+}
+
+export function uint8ArrayToHex(uint8Array: number[]) {
+    return Array.from(uint8Array)
+        .map((byte) => byte.toString(16).padStart(2, '0'))
+        .join('');
 }

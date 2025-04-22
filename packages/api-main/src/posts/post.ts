@@ -25,9 +25,7 @@ export async function Post(body: typeof PostBody.static) {
             .insert(FeedTable)
             .values({
                 hash: body.hash,
-                height: body.height,
-                messages: body.messages,
-                timestamp: body.timestamp,
+                timestamp: new Date(body.timestamp),
                 author: msgTransfer.from_address,
                 message,
             })

@@ -27,9 +27,14 @@ export async function Like(body: typeof LikeBody.static) {
     try {
         const results = await db.select().from(LikesTable).where(eq(LikesTable.hash, like_hash));
         if (results.length >= 1) {
-            const driverData = `(${msgTransfer.from_address},${body.hash},${amount})`;
+            const author = JSON.stringify([{
+                hash: body.hash,
+                amount,
+                address: msgTransfer.from_address,
+            }]);
+
             await db.update(LikesTable).set({
-                data: sql`${LikesTable.data} || ARRAY[${driverData}]`,
+                data: sql`${LikesTable.data} || ${author}::jsonb`
             });
         } else {
             await db
