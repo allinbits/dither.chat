@@ -21,7 +21,8 @@
         "elysia": "^1.2.25",
         "mongodb": "^6.15.0",
         "pg": "^8.14.1",
-        "postgres": "^3.4.5"
+        "postgres": "^3.4.5",
+        "vitest": "^3.1.2"
     },
     "devDependencies": {
         "@types/node": "^22.14.1",

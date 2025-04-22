@@ -31,7 +31,7 @@ export const FeedTable = pgTable(
         message: varchar({ length: MEMO_LENGTH }).notNull(),
         messages: jsonb().notNull().$type<{ [key: string]: any }>(),
     },
-    (table) => [index('author_idx').on(table.author)]
+    (table) => [index('feed_author_idx').on(table.author)]
 );
 
 export const ReplyTable = pgTable(
@@ -45,7 +45,7 @@ export const ReplyTable = pgTable(
         memo: varchar({ length: MEMO_LENGTH }).notNull(),
         messages: jsonb().notNull().$type<{ [key: string]: any }>(),
     },
-    (table) => [index('post_hash_idx').on(table.post_hash), index('author_idx').on(table.author)]
+    (table) => [index('replies_post_hash_idx').on(table.post_hash), index('replies_author_idx').on(table.author)]
 );
 
 export const LikesTable = pgTable('likes', {
