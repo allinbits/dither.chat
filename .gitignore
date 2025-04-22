@@ -1,3 +1,5 @@
 node_modules/
 data.json
-data.sqlite
+data.sqlite 
+packages/api-main/drizzle/migrations
+packages/api-main/data
