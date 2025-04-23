@@ -26,7 +26,7 @@ jobs:
       - name: Run Docker Compose Up
         run: |
           cd ./packages/api-main
-          docker compose up --build -d --wait --wait-timeout 30
+          docker compose -f ./docker-compose-github.yml up --build -d --wait --wait-timeout 30
 
       - name: Push database migrations
         run: |
