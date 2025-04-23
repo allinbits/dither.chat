@@ -17,18 +17,21 @@ export async function Unfollow(body: typeof UnfollowBody.static) {
         return { status: 400, error: 'transfer message must exist to be logged as a post' };
     }
 
-    
     const [follow_hash] = extractMemoContent(body.memo, 'dither.Unfollow');
     if (!follow_hash) {
         return { status: 400, error: 'memo must contain a follow hash for dither.Unfollow' };
     }
-    
+
     try {
         // Remove the following from the executor
         await db
             .update(UsersTable)
             .set({
-                following: sql`array_remove(${UsersTable.following}, ${follow_hash})`,
+                following: sql`(
+                    SELECT coalesce(jsonb_agg(author), '[]'::jsonb)
+                    FROM jsonb_array_elements(${UsersTable.following}) AS author
+                    WHERE NOT (author->>'address' LIKE ${follow_hash} || '%')
+                )`,
             })
             .where(eq(UsersTable.address, msgTransfer.from_address));
 
@@ -36,7 +39,11 @@ export async function Unfollow(body: typeof UnfollowBody.static) {
         await db
             .update(UsersTable)
             .set({
-                followers: sql`array_remove(${UsersTable.followers}, ${msgTransfer.from_address})`,
+                followers: sql`(
+                    SELECT coalesce(jsonb_agg(author), '[]'::jsonb)
+                    FROM jsonb_array_elements(${UsersTable.followers}) AS author
+                    WHERE NOT (author->>'address' LIKE ${msgTransfer.from_address} || '%')
+                )`,
             })
             .where(eq(UsersTable.address, follow_hash));
 

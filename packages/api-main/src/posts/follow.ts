@@ -21,7 +21,7 @@ export async function hasAddress(address: string, type: 'followers' | 'following
             FROM jsonb_array_elements(${UsersTable[type]}) AS element
             WHERE (element->>'address') LIKE ${address} || '%'
         )`
-        );
+    );
 
     return results.length >= 1;
 }
@@ -46,6 +46,7 @@ export async function Follow(body: typeof FollowBody.static) {
             .select()
             .from(UsersTable)
             .where(eq(UsersTable.address, msgTransfer.from_address));
+
         if (fromUserExists.length <= 0) {
             await db.insert(UsersTable).values({
                 address: msgTransfer.from_address,
@@ -68,6 +69,7 @@ export async function Follow(body: typeof FollowBody.static) {
             .select()
             .from(UsersTable)
             .where(eq(UsersTable.address, followingUser.address));
+
         if (followerUserExists.length <= 0) {
             await db.insert(UsersTable).values({
                 address: followingUser.address,
