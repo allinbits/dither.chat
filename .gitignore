@@ -3,3 +3,4 @@ data.json
 data.sqlite 
 packages/api-main/drizzle/migrations
 packages/api-main/data
+.env
