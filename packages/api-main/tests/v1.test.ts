@@ -1,5 +1,5 @@
 import '../src/index';
-import { it, expect, describe } from 'vitest';
+import { it, expect, describe, assert } from 'vitest';
 import { db } from '../drizzle/db';
 import { sql } from 'drizzle-orm';
 import { tables } from '../drizzle/schema';
@@ -32,6 +32,7 @@ async function post<T = { status: number }>(endpoint: string, body: any, port: '
     });
 
     if (!response?.ok) {
+        console.log(await response?.json());
         return null;
     }
 
@@ -112,5 +113,35 @@ describe('v1', { sequential: true }, () => {
         const response = await get<Array<any>>(`posts?address=${addressUserA}`);
         expect(response, 'failed to fetch posts data');
         expect(Array.isArray(response) && response.length >= 1, 'feed result was not an array type');
+    });
+
+    it('POST - /like', async () => {
+        const response = await get<Array<{ hash: string }>>(`posts?address=${addressUserA}`);
+        expect(response, 'failed to fetch posts data');
+        expect(Array.isArray(response) && response.length >= 1, 'feed result was not an array type');
+        if (!response) {
+            assert.fail('Failed to obtain a response from posts query');
+        }
+
+        const likeResponse = await post(
+            `like`,
+            generateFakeData(`dither.Like("${response[0].hash}")`, addressUserA, addressReceiver)
+        );
+
+        expect(likeResponse != null);
+        expect(likeResponse && likeResponse.status === 200, 'response was not okay');
+    });
+
+    it('GET - /likes', async () => {
+        const response = await get<Array<{ hash: string }>>(`posts?address=${addressUserA}`);
+        expect(response, 'failed to fetch posts data');
+        expect(Array.isArray(response) && response.length >= 1, 'feed result was not an array type');
+        if (!response) {
+            assert.fail('Failed to obtain a response from posts query');
+        }
+
+        const responseLikes = await get<Array<{ hash: string }>>(`likes?hash=${response[0].hash}`);
+        expect(responseLikes, 'failed to fetch posts data');
+        expect(Array.isArray(responseLikes) && responseLikes.length >= 1, 'feed result was not an array type');
     });
 });

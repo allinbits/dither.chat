@@ -7,7 +7,6 @@ import { eq, sql } from 'drizzle-orm';
 
 export const LikeBody = t.Object({
     hash: t.String(),
-    address: t.String(),
     memo: t.String(),
     messages: t.Array(t.Record(t.String(), t.Any())),
 });
@@ -36,6 +35,8 @@ export async function Like(body: typeof LikeBody.static) {
             await db.update(LikesTable).set({
                 data: sql`${LikesTable.data} || ${author}::jsonb`
             });
+
+            console.log('upserting like...')
         } else {
             await db
                 .insert(LikesTable)
@@ -44,6 +45,8 @@ export async function Like(body: typeof LikeBody.static) {
                     data: [{ address: msgTransfer.from_address, hash: body.hash, amount }],
                 })
                 .onConflictDoNothing();
+
+            console.log('creating like...')
         }
 
         return { status: 200 };
