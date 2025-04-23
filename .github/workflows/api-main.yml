@@ -1,4 +1,4 @@
-name: Pull Request Test
+name: api-main tests
 
 on:
   pull_request:
@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-and-test:
+  api-main-test:
     runs-on: ubuntu-latest
 
     steps:
