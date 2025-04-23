@@ -32,6 +32,7 @@ jobs:
       - name: Push database migrations
         run: |
           cd ./packages/api-main
+          cp .env.example .env
           pnpm db:push:force
 
       - name: Run tests with pnpm
