@@ -1,0 +1,35 @@
+name: Pull Request Test
+
+on:
+  pull_request:
+    branches:
+      - main # Adjust this to your target branch
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set working directory
+        run: cd ./packages/api-main
+
+      - name: Set up Docker
+        uses: docker/setup-docker-action@v4
+
+      - name: Run Docker Compose Up
+        run: docker compose up --build -d
+
+      - name: Install pnpm with npm
+        run: npm install -g pnpm
+
+      - name: Install dependencies with pnpm
+        run: pnpm install
+
+      - name: Push database migrations
+        run: pnpm db:push
+
+      - name: Run tests with pnpm
+        run: pnpm test
