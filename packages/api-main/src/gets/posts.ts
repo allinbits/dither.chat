@@ -4,8 +4,8 @@ import { db } from '../../drizzle/db';
 import { eq } from 'drizzle-orm';
 
 export const PostsQuery = t.Object({
-    limit: t.Optional(t.String()),
-    offset: t.Optional(t.String()),
+    limit: t.Optional(t.Number()),
+    offset: t.Optional(t.Number()),
     address: t.String(),
 });
 

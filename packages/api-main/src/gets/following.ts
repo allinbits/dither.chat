@@ -1,8 +1,8 @@
 import { t } from 'elysia';
 
 export const FollowingQuery = t.Object({
-    limit: t.Optional(t.String()),
-    offset: t.Optional(t.String()),
+    limit: t.Optional(t.Number()),
+    offset: t.Optional(t.Number()),
     address: t.String(),
 });
 

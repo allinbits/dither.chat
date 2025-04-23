@@ -8,6 +8,7 @@
     "scripts": {
         "start": "tsx ./src/index.ts",
         "build": "tsc",
+        "test": "vitest",
         "db:generate": "drizzle-kit generate",
         "db:migrate": "drizzle-kit migrate",
         "db:push": "drizzle-kit push"

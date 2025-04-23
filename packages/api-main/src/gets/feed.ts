@@ -2,7 +2,10 @@ import { t } from 'elysia';
 import { db } from '../../drizzle/db';
 import { FeedTable } from '../../drizzle/schema';
 
-export const FeedQuery = t.Object({ limit: t.Optional(t.String()), offset: t.Optional(t.String()) });
+export const FeedQuery = t.Object({
+    limit: t.Optional(t.Number()),
+    offset: t.Optional(t.Number()),
+});
 
 export async function Feed(query: typeof FeedQuery.static) {
     let limit = typeof query.limit !== 'undefined' ? Number(query.limit) : 100;
@@ -21,7 +24,14 @@ export async function Feed(query: typeof FeedQuery.static) {
     }
 
     try {
-        return await db.select().from(FeedTable).limit(limit).offset(offset);
+        const defaultSelection: { [K in keyof typeof FeedTable._.columns]: (typeof FeedTable)[K] } = {
+            author: FeedTable.author,
+            hash: FeedTable.hash,
+            timestamp: FeedTable.timestamp,
+            message: FeedTable.message,
+        };
+
+        return await db.select(defaultSelection).from(FeedTable).limit(limit).offset(offset);
     } catch (error) {
         console.error(error);
         return { status: 400, error: 'failed to read data from database' };

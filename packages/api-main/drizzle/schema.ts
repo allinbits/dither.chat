@@ -57,3 +57,5 @@ export const UsersTable = pgTable('users', {
     followers: AuthorComposite().default([]),
     following: AuthorComposite().default([]),
 });
+
+export const tables = ['feed', 'replies', 'likes', 'dislikes', 'flags', 'users'];
