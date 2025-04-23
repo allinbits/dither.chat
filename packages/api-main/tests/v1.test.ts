@@ -3,6 +3,10 @@ import '../src/index';
 import { db } from '../drizzle/db';
 import { sql } from 'drizzle-orm';
 import { tables } from '../drizzle/schema';
+import { createHash, randomBytes } from 'crypto';
+import { bech32 } from 'bech32';
+
+let lastHeight = 1_000_000;
 
 async function get<T>(endpoint: string, port: 'WRITE' | 'READ' = 'READ') {
     const response = await fetch(`http://localhost:${port === 'WRITE' ? 3001 : 3000}/v1/${endpoint}`).catch((err) => {
@@ -34,7 +38,45 @@ async function post<T = { status: number }>(endpoint: string, body: any, port: '
     return (await response.json()) as T;
 }
 
+function getSha256Hash(input: string): string {
+    const hash = createHash('sha256');
+    hash.update(input);
+    return hash.digest('hex');
+}
+
+function getAtomOneAddress(): string {
+    const randomData = randomBytes(32);
+    const hash = createHash('sha256').update(randomData).digest();
+    const addressBytes = hash.slice(0, 20);
+    const encodedAddress = bech32.encode('atone', bech32.toWords(addressBytes));
+    return encodedAddress;
+}
+
+function generateFakeData(memo: string, from_address: string, to_address: string) {
+    lastHeight++;
+
+    return {
+        hash: getSha256Hash(randomBytes(256).toString()),
+        height: lastHeight.toString(),
+        timestamp: '2025-04-16T19:46:42Z', // Doesn't matter, just need to store some timestamps
+        memo,
+        messages: [
+            {
+                '@type': '/cosmos.bank.v1beta1.MsgSend',
+                from_address: from_address,
+                to_address: to_address,
+                amount: [{ denom: 'uatone', amount: '1' }],
+            },
+        ],
+    };
+}
+
 describe('v1', { sequential: true }, () => {
+    const addressReceiver = getAtomOneAddress();
+    const addressUserA = getAtomOneAddress();
+    const genericPostMessage =
+        'hello world, this is a really intereresting post $@!($)@!()@!$21,4214,12,42142,14,12,421,';
+
     it('EMPTY ALL TABLES', async () => {
         for (let tableName of tables) {
             await db.execute(sql`TRUNCATE TABLE ${sql.raw(tableName)};`);
@@ -48,21 +90,10 @@ describe('v1', { sequential: true }, () => {
     });
 
     it('POST - /post', async () => {
-        const response = await post(`post`, {
-            hash: '2447B2E9614A10523357F38B49ED2C322F35B901ADD61987CC3F1A42EB6F2443',
-            height: '42412412',
-            timestamp: '2025-04-16T19:46:42Z',
-            memo: 'dither.Post("hello world")',
-            messages: [
-                {
-                    '@type': '/cosmos.bank.v1beta1.MsgSend',
-                    from_address: 'atone16k0xnxqr48qdwxreu6rgcghg0xp9hn7vpn06nm',
-                    to_address: 'atone1uq6zjslvsa29cy6uu75y8txnl52mw06j6fzlep',
-                    amount: [{ denom: 'uatone', amount: '1' }],
-                },
-            ],
-        });
-
+        const response = await post(
+            `post`,
+            generateFakeData(`dither.Post("${genericPostMessage}")`, addressUserA, addressReceiver)
+        );
         expect(response?.status === 200, 'response was not okay');
     });
 
@@ -70,5 +101,10 @@ describe('v1', { sequential: true }, () => {
         const response = await get<Array<any>>(`feed`);
         expect(response, 'failed to fetch feed data');
         expect(Array.isArray(response) && response.length >= 1, 'feed result was not an array type');
+        expect(Array.isArray(response) && response[0].author === addressUserA, 'author address did not match poster');
+        expect(
+            Array.isArray(response) && response[0].message === genericPostMessage,
+            'message did not match original post'
+        );
     });
 });
