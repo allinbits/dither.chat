@@ -14,23 +14,24 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set working directory
-        run: cd ./packages/api-main
-
-      - name: Set up Docker
-        uses: docker/setup-docker-action@v4
-
-      - name: Run Docker Compose Up
-        run: docker compose up --build -d
-
-      - name: Wait for PostgreSQL to be ready
-        run: docker compose wait postgres
-
       - name: Install pnpm with npm
         run: npm install -g pnpm
 
       - name: Install dependencies with pnpm
         run: pnpm install
+
+      - name: Set up Docker
+        uses: docker/setup-docker-action@v4
+
+      - name: Run Docker Compose Up
+        run: |
+          cd ./packages/api-main
+          docker compose up --build -d
+
+      - name: Wait for PostgreSQL to be ready
+        run: |
+          cd ./packages/api-main
+          docker compose wait postgres
 
       - name: Push database migrations
         run: |
