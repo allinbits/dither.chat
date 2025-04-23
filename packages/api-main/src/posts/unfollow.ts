@@ -6,7 +6,6 @@ import { extractMemoContent } from '@atomone/chronostate';
 import { eq, sql } from 'drizzle-orm';
 
 export const UnfollowBody = t.Object({
-    address: t.String(),
     memo: t.String(),
     messages: t.Array(t.Record(t.String(), t.Any())),
 });

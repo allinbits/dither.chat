@@ -37,7 +37,10 @@ describe('v1', { sequential: true }, () => {
         const response = await get<Array<any>>(`feed`);
         assert.isOk(response, 'failed to fetch feed data');
         assert.isOk(Array.isArray(response) && response.length >= 1, 'feed result was not an array type');
-        assert.isOk(Array.isArray(response) && response[0].author === addressUserA, 'author address did not match poster');
+        assert.isOk(
+            Array.isArray(response) && response[0].author === addressUserA,
+            'author address did not match poster'
+        );
         assert.isOk(
             Array.isArray(response) && response[0].message === genericPostMessage,
             'message did not match original post'
@@ -109,7 +112,10 @@ describe('v1', { sequential: true }, () => {
 
         const responseDislikes = await get<Array<{ hash: string }>>(`dislikes?hash=${response[0].hash}`);
         assert.isOk(responseDislikes, 'failed to fetch posts data');
-        assert.isOk(Array.isArray(responseDislikes) && responseDislikes.length >= 1, 'feed result was not an array type');
+        assert.isOk(
+            Array.isArray(responseDislikes) && responseDislikes.length >= 1,
+            'feed result was not an array type'
+        );
     });
 
     // Flags
@@ -168,7 +174,37 @@ describe('v1', { sequential: true }, () => {
                 following: Array<{ hash: string; address: string }>;
             }>
         >(`following?address=${addressUserA}`);
-        assert.isOk(response && Array.isArray(response), 'followers response was not an array');
+        assert.isOk(response && Array.isArray(response), 'following response was not an array');
         assert.isOk(response && response[0].following.find((x) => x.address === addressUserB));
+    });
+
+    // Unfollow
+    it('POST - /unfollow', async () => {
+        const response = await post(
+            `unfollow`,
+            generateFakeData(`dither.Unfollow("${addressUserB}")`, addressUserA, addressReceiver)
+        );
+        assert.isOk(response?.status === 200, 'response was not okay');
+    });
+
+    it('GET - /followers', async () => {
+        const response = await get<
+            Array<{
+                followers: Array<{ hash: string; address: string }>;
+            }>
+        >(`followers?address=${addressUserB}`);
+
+        assert.isOk(response && Array.isArray(response), 'followers response was not an array');
+        assert.isOk(response && response[0].followers.length <= 0, 'did not unfollow all users');
+    });
+
+    it('GET - /following', async () => {
+        const response = await get<
+            Array<{
+                following: Array<{ hash: string; address: string }>;
+            }>
+        >(`following?address=${addressUserA}`);
+        assert.isOk(response && Array.isArray(response), 'following response was not an array');
+        assert.isOk(response && response[0].following.length <= 0, 'did not unfollow all users');
     });
 });
