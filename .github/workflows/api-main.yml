@@ -23,6 +23,9 @@ jobs:
       - name: Run Docker Compose Up
         run: docker compose up --build -d
 
+      - name: Wait for PostgreSQL to be ready
+        run: docker compose wait postgres
+
       - name: Install pnpm with npm
         run: npm install -g pnpm
 
