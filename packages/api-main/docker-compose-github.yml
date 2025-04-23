@@ -1,7 +1,7 @@
 
 services:
   postgres:
-    # network_mode: host
+    network_mode: host
     image: postgres:latest
     container_name: postgres_db
     restart: always

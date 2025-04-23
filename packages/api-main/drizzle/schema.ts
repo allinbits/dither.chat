@@ -1,4 +1,4 @@
-import { pgTable, varchar, customType, timestamp } from 'drizzle-orm/pg-core';
+import { pgTable, varchar, customType, timestamp, serial, index } from 'drizzle-orm/pg-core';
 
 const MEMO_LENGTH = 512;
 
@@ -22,20 +22,30 @@ export const AuthorComposite = customType<{ data: AuthorType[]; driverData: stri
     },
 });
 
-export const FeedTable = pgTable('feed', {
-    hash: varchar({ length: 64 }).primaryKey(),
-    author: varchar({ length: 44 }).notNull(),
-    timestamp: timestamp({ withTimezone: true }).notNull(),
-    message: varchar({ length: MEMO_LENGTH }).notNull(),
-});
+export const FeedTable = pgTable(
+    'feed',
+    {
+        id: serial('id').primaryKey(),
+        hash: varchar({ length: 64 }).notNull(),
+        author: varchar({ length: 44 }).notNull(),
+        timestamp: timestamp({ withTimezone: true }).notNull(),
+        message: varchar({ length: MEMO_LENGTH }).notNull(),
+    },
+    (table) => [index('feed_hash_index').on(table.hash)]
+);
 
-export const ReplyTable = pgTable('replies', {
-    hash: varchar({ length: 64 }).primaryKey(),
-    post_hash: varchar({ length: 64 }).notNull(),
-    author: varchar({ length: 44 }).notNull(),
-    timestamp: timestamp({ withTimezone: true }).notNull(),
-    message: varchar({ length: MEMO_LENGTH }).notNull(),
-});
+export const ReplyTable = pgTable(
+    'replies',
+    {
+        id: serial('id').primaryKey(),
+        hash: varchar({ length: 64 }).notNull(),
+        post_hash: varchar({ length: 64 }).notNull(),
+        author: varchar({ length: 44 }).notNull(),
+        timestamp: timestamp({ withTimezone: true }).notNull(),
+        message: varchar({ length: MEMO_LENGTH }).notNull(),
+    },
+    (table) => [index('reply_hash_index').on(table.hash)]
+);
 
 export const LikesTable = pgTable('likes', {
     hash: varchar({ length: 64 }).primaryKey(),
