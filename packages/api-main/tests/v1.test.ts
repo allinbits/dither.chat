@@ -1,5 +1,5 @@
 import '../src/index';
-import { it, expect, describe, assert } from 'vitest';
+import { it, describe, assert } from 'vitest';
 import { db } from '../drizzle/db';
 import { sql } from 'drizzle-orm';
 import { tables } from '../drizzle/schema';
