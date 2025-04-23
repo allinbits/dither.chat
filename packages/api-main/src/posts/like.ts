@@ -26,17 +26,17 @@ export async function Like(body: typeof LikeBody.static) {
     try {
         const results = await db.select().from(LikesTable).where(eq(LikesTable.hash, like_hash));
         if (results.length >= 1) {
-            const author = JSON.stringify([{
-                hash: body.hash,
-                amount,
-                address: msgTransfer.from_address,
-            }]);
+            const author = JSON.stringify([
+                {
+                    hash: body.hash,
+                    amount,
+                    address: msgTransfer.from_address,
+                },
+            ]);
 
             await db.update(LikesTable).set({
-                data: sql`${LikesTable.data} || ${author}::jsonb`
+                data: sql`${LikesTable.data} || ${author}::jsonb`,
             });
-
-            console.log('upserting like...')
         } else {
             await db
                 .insert(LikesTable)
@@ -45,8 +45,6 @@ export async function Like(body: typeof LikeBody.static) {
                     data: [{ address: msgTransfer.from_address, hash: body.hash, amount }],
                 })
                 .onConflictDoNothing();
-
-            console.log('creating like...')
         }
 
         return { status: 200 };
