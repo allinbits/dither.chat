@@ -1,4 +1,4 @@
-import { it, expect, describe, assert } from 'vitest';
+import { it, expect, describe } from 'vitest';
 import { getTransferMessage, getTransferQuantities } from '../src/utility';
 import { generateFakeData, getAtomOneAddress } from './shared';
 

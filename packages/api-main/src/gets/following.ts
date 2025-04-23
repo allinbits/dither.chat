@@ -1,4 +1,7 @@
 import { t } from 'elysia';
+import { UsersTable } from '../../drizzle/schema';
+import { db } from '../../drizzle/db';
+import { eq } from 'drizzle-orm';
 
 export const FollowingQuery = t.Object({
     limit: t.Optional(t.Number()),
@@ -7,13 +10,6 @@ export const FollowingQuery = t.Object({
 });
 
 export async function Following(query: typeof FollowingQuery.static) {
-    if (!query.address) {
-        return {
-            status: 400,
-            error: 'malformed query, no address provided',
-        };
-    }
-
     let limit = typeof query.limit !== 'undefined' ? Number(query.limit) : 100;
     let offset = typeof query.offset !== 'undefined' ? Number(query.offset) : 0;
 
@@ -30,7 +26,12 @@ export async function Following(query: typeof FollowingQuery.static) {
     }
 
     try {
-        // return await db.
+        return await db
+            .select({ following: UsersTable.following })
+            .from(UsersTable)
+            .where(eq(UsersTable.address, query.address))
+            .limit(limit)
+            .offset(offset);
     } catch (error) {
         console.error(error);
         return { status: 404, error: 'failed to find matching following' };

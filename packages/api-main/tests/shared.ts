@@ -13,7 +13,12 @@ export async function get<T>(endpoint: string, port: 'WRITE' | 'READ' = 'READ') 
         return null;
     }
 
-    return (await response.json()) as T;
+    const jsonData = await response.json() as { status: number };
+    if (jsonData.status && jsonData.status !== 200) {
+        return null;
+    }
+
+    return jsonData as T;
 }
 
 export async function post<T = { status: number }>(endpoint: string, body: any, port: 'WRITE' | 'READ' = 'WRITE') {
@@ -31,7 +36,12 @@ export async function post<T = { status: number }>(endpoint: string, body: any, 
         return null;
     }
 
-    return (await response.json()) as T;
+    const jsonData = await response.json() as { status: number };
+    if (jsonData.status && jsonData.status !== 200) {
+        return null;
+    }
+
+    return jsonData as T;
 }
 
 export function getSha256Hash(input: string): string {

@@ -16,8 +16,6 @@ export function getTransferQuantities(messages: Array<T.MsgGeneric>, denom = 'ua
     let amount = BigInt('0');
 
     for (let msg of msgTransfers) {
-        console.log(msg);
-
         for (let quantity of msg.amount) {
             if (quantity.denom !== denom) {
                 continue;
