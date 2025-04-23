@@ -1,0 +1,40 @@
+name: api-main tests
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  api-main-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install pnpm with npm
+        run: npm install -g pnpm
+
+      - name: Install dependencies with pnpm
+        run: pnpm install
+
+      - name: Set up Docker
+        uses: docker/setup-docker-action@v4
+
+      - name: Run Docker Compose Up
+        run: |
+          cd ./packages/api-main
+          docker compose up --build -d --wait --wait-timeout 30
+
+      - name: Push database migrations
+        run: |
+          cd ./packages/api-main
+          cp .env.example .env
+          pnpm db:push:force
+
+      - name: Run tests with pnpm
+        run: |
+          cd ./packages/api-main
+          pnpm test
