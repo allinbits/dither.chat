@@ -30,7 +30,11 @@ jobs:
         run: pnpm install
 
       - name: Push database migrations
-        run: pnpm db:push
+        run: |
+          cd ./packages/api-main
+          pnpm db:push:force
 
       - name: Run tests with pnpm
-        run: pnpm test
+        run: |
+          cd ./packages/api-main
+          pnpm test
