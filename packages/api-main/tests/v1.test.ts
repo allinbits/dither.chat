@@ -1,5 +1,5 @@
-import { it, expect, describe } from 'vitest';
 import '../src/index';
+import { it, expect, describe } from 'vitest';
 import { db } from '../drizzle/db';
 import { sql } from 'drizzle-orm';
 import { tables } from '../drizzle/schema';
@@ -106,5 +106,11 @@ describe('v1', { sequential: true }, () => {
             Array.isArray(response) && response[0].message === genericPostMessage,
             'message did not match original post'
         );
+    });
+
+    it('GET - /posts', async () => {
+        const response = await get<Array<any>>(`posts?address=${addressUserA}`);
+        expect(response, 'failed to fetch posts data');
+        expect(Array.isArray(response) && response.length >= 1, 'feed result was not an array type');
     });
 });
