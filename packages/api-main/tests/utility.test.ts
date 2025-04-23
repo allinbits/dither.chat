@@ -22,8 +22,10 @@ describe('utility tests', () => {
     it('getTransferQuantities', () => {
         let totalQuantity = BigInt('0');
 
-        for(let i = 0; i < 100; i++) {
-            totalQuantity += BigInt(getTransferQuantities([generateFakeData('whatever', getAtomOneAddress(), getAtomOneAddress())]));
+        for (let i = 0; i < 100; i++) {
+            totalQuantity += BigInt(
+                getTransferQuantities([generateFakeData('whatever', getAtomOneAddress(), getAtomOneAddress())])
+            );
         }
 
         expect(totalQuantity === BigInt('100'));
