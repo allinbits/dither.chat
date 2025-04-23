@@ -19,7 +19,7 @@ export function useConfig(): Config {
         START_BLOCK: process.env.START_BLOCK,
         RECEIVER: process.env.RECEIVER,
         SENDER: process.env.SENDER,
-        LOG: process.env.LOG === 'true' ? true : false,
+        LOG: process.env.LOG === 'true'
     };
 
     return config;
