@@ -35,7 +35,11 @@ export const DislikesTable = pgTable(
         hash: varchar({ length: 64 }).notNull(),
         quantity: text().notNull(),
     },
-    (t) => [primaryKey({ columns: [t.post_hash, t.hash] }), index('dislike_author_idx').on(t.author)]
+    (t) => [
+        primaryKey({ columns: [t.post_hash, t.hash] }),
+        index('dislike_post_hash_idx').on(t.post_hash),
+        index('dislike_author_idx').on(t.author),
+    ]
 );
 
 export const LikesTable = pgTable(
@@ -46,7 +50,11 @@ export const LikesTable = pgTable(
         hash: varchar({ length: 64 }).notNull(),
         quantity: text().notNull(),
     },
-    (t) => [primaryKey({ columns: [t.post_hash, t.hash] }), index('like_author_idx').on(t.author)]
+    (t) => [
+        primaryKey({ columns: [t.post_hash, t.hash] }),
+        index('like_post_hash_idx').on(t.post_hash),
+        index('like_author_idx').on(t.author),
+    ]
 );
 
 export const FlagsTable = pgTable(
@@ -57,7 +65,11 @@ export const FlagsTable = pgTable(
         hash: varchar({ length: 64 }).notNull(),
         quantity: text().notNull(),
     },
-    (t) => [primaryKey({ columns: [t.post_hash, t.hash] }), index('flag_author_idx').on(t.author)]
+    (t) => [
+        primaryKey({ columns: [t.post_hash, t.hash] }),
+        index('flags_post_hash_idx').on(t.post_hash),
+        index('flag_author_idx').on(t.author),
+    ]
 );
 
 export const FollowsTable = pgTable(
