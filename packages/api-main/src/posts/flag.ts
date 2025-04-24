@@ -1,9 +1,9 @@
 import { t } from 'elysia';
-import { FlagsTable } from '../../drizzle/schema';
+import { FeedTable, FlagsTable } from '../../drizzle/schema';
 import { getDatabase } from '../../drizzle/db';
 import { getTransferMessage, getTransferQuantities } from '../utility';
 import { extractMemoContent } from '@atomone/chronostate';
-import { sql } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 
 export const FlagBody = t.Object({
     hash: t.String(),
@@ -21,6 +21,12 @@ const statement = getDatabase()
     })
     .prepare('stmnt_add_flag');
 
+const statementAddFlagCount = getDatabase()
+    .update(FeedTable)
+    .set({ flags: sql`${FeedTable.flags} + 1` })
+    .where(eq(FeedTable.hash, sql.placeholder('post_hash')))
+    .prepare('stmnt_add_flag_count');
+
 export async function Flag(body: typeof FlagBody.static) {
     const msgTransfer = getTransferMessage(body.messages);
     if (!msgTransfer) {
@@ -28,13 +34,14 @@ export async function Flag(body: typeof FlagBody.static) {
     }
 
     const quantity = getTransferQuantities(body.messages);
-    const [hash] = extractMemoContent(body.memo, 'dither.Flag');
-    if (!hash) {
+    const [post_hash] = extractMemoContent(body.memo, 'dither.Flag');
+    if (!post_hash) {
         return { status: 400, error: 'memo must contain a like address for dither.Flag' };
     }
 
     try {
-        await statement.execute({ post_hash: hash, hash: body.hash, author: msgTransfer.from_address, quantity })
+        await statement.execute({ post_hash, hash: body.hash, author: msgTransfer.from_address, quantity });
+        await statementAddFlagCount.execute({ post_hash });
         return { status: 200 };
     } catch (err) {
         console.error(err);

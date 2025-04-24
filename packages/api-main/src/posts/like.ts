@@ -1,9 +1,9 @@
 import { t } from 'elysia';
-import { LikesTable } from '../../drizzle/schema';
+import { FeedTable, LikesTable } from '../../drizzle/schema';
 import { getDatabase } from '../../drizzle/db';
 import { getTransferMessage, getTransferQuantities } from '../utility';
 import { extractMemoContent } from '@atomone/chronostate';
-import { sql } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 
 export const LikeBody = t.Object({
     hash: t.String(),
@@ -21,6 +21,12 @@ const statement = getDatabase()
     })
     .prepare('stmnt_add_like');
 
+const statementAddLikeCount = getDatabase()
+    .update(FeedTable)
+    .set({ likes: sql`${FeedTable.likes} + 1` })
+    .where(eq(FeedTable.hash, sql.placeholder('post_hash')))
+    .prepare('stmnt_add_like_count');
+
 export async function Like(body: typeof LikeBody.static) {
     const msgTransfer = getTransferMessage(body.messages);
     if (!msgTransfer) {
@@ -28,13 +34,15 @@ export async function Like(body: typeof LikeBody.static) {
     }
 
     const quantity = getTransferQuantities(body.messages);
-    const [hash] = extractMemoContent(body.memo, 'dither.Like');
-    if (!hash) {
+    const [post_hash] = extractMemoContent(body.memo, 'dither.Like');
+    if (!post_hash) {
         return { status: 400, error: 'memo must contain a like address for dither.Like' };
     }
 
     try {
-        await statement.execute({ post_hash: hash, hash: body.hash, author: msgTransfer.from_address, quantity });
+        await statement.execute({ post_hash, hash: body.hash, author: msgTransfer.from_address, quantity });
+        await statementAddLikeCount.execute({ post_hash });
+
         return { status: 200 };
     } catch (err) {
         console.error(err);

@@ -1,9 +1,9 @@
 import { t } from 'elysia';
-import { DislikesTable } from '../../drizzle/schema';
+import { DislikesTable, FeedTable } from '../../drizzle/schema';
 import { getDatabase } from '../../drizzle/db';
 import { getTransferMessage, getTransferQuantities } from '../utility';
 import { extractMemoContent } from '@atomone/chronostate';
-import { sql } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 
 export const DislikeBody = t.Object({
     hash: t.String(),
@@ -17,9 +17,15 @@ const statement = getDatabase()
         post_hash: sql.placeholder('post_hash'),
         hash: sql.placeholder('hash'),
         author: sql.placeholder('author'),
-        quantity: sql.placeholder('quantity')
+        quantity: sql.placeholder('quantity'),
     })
     .prepare('stmnt_add_dislike');
+
+const statementAddDislikeCount = getDatabase()
+    .update(FeedTable)
+    .set({ dislikes: sql`${FeedTable.dislikes} + 1` })
+    .where(eq(FeedTable.hash, sql.placeholder('post_hash')))
+    .prepare('stmnt_add_dislike_count');
 
 export async function Dislike(body: typeof DislikeBody.static) {
     const msgTransfer = getTransferMessage(body.messages);
@@ -28,13 +34,14 @@ export async function Dislike(body: typeof DislikeBody.static) {
     }
 
     const quantity = getTransferQuantities(body.messages);
-    const [hash] = extractMemoContent(body.memo, 'dither.Dislike');
-    if (!hash) {
+    const [post_hash] = extractMemoContent(body.memo, 'dither.Dislike');
+    if (!post_hash) {
         return { status: 400, error: 'memo must contain a like address for dither.Dislike' };
     }
 
     try {
-        await statement.execute({ post_hash: hash, hash: body.hash, author: msgTransfer.from_address, quantity })
+        await statement.execute({ post_hash, hash: body.hash, author: msgTransfer.from_address, quantity });
+        await statementAddDislikeCount.execute({ post_hash });
         return { status: 200 };
     } catch (err) {
         console.error(err);

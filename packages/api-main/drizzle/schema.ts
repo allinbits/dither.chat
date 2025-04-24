@@ -10,7 +10,11 @@ export const FeedTable = pgTable(
         author: varchar({ length: 44 }).notNull(),
         timestamp: timestamp({ withTimezone: true }).notNull(),
         message: varchar({ length: MEMO_LENGTH }).notNull(),
-        replies: integer().default(0)
+        quantity: text().notNull(),
+        replies: integer().default(0),
+        likes: integer().default(0),
+        dislikes: integer().default(0),
+        flags: integer().default(0),
     },
     (t) => [index('feed_hash_index').on(t.hash)]
 );
@@ -23,7 +27,11 @@ export const ReplyTable = pgTable(
         post_hash: varchar({ length: 64 }).notNull(),
         author: varchar({ length: 44 }).notNull(),
         timestamp: timestamp({ withTimezone: true }).notNull(),
+        quantity: text().notNull(),
         message: varchar({ length: MEMO_LENGTH }).notNull(),
+        likes: integer().default(0),
+        dislikes: integer().default(0),
+        flags: integer().default(0),
     },
     (t) => [unique('unique_reply').on(t.post_hash, t.hash), index('reply_hash_index').on(t.hash)]
 );

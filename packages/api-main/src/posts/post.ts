@@ -1,7 +1,7 @@
 import { t } from 'elysia';
 import { FeedTable } from '../../drizzle/schema';
 import { getDatabase } from '../../drizzle/db';
-import { getTransferMessage } from '../utility';
+import { getTransferMessage, getTransferQuantities } from '../utility';
 import { extractMemoContent } from '@atomone/chronostate';
 import { sql } from 'drizzle-orm';
 
@@ -20,6 +20,7 @@ const statement = getDatabase()
         timestamp: sql.placeholder('timestamp'),
         author: sql.placeholder('author'),
         message: sql.placeholder('message'),
+        quantity: sql.placeholder('quantity')
     })
     .onConflictDoNothing()
     .prepare('stmnt_post');
@@ -35,12 +36,15 @@ export async function Post(body: typeof PostBody.static) {
         return { status: 400, error: 'post message contains no content' };
     }
 
+    const quantity = getTransferQuantities(body.messages);
+
     try {
         await statement.execute({
             hash: body.hash,
             timestamp: new Date(body.timestamp),
             author: msgTransfer.from_address,
             message,
+            quantity
         });
 
         return { status: 200 };

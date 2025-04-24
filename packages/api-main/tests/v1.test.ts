@@ -84,9 +84,10 @@ describe('v1', { sequential: true }, () => {
     });
 
     it('GET - /likes', async () => {
-        const response = await get<{ status: number; rows: { hash: string }[] }>(`posts?address=${addressUserA}`);
+        const response = await get<{ status: number; rows: { hash: string, likes: number }[] }>(`posts?address=${addressUserA}`);
         assert.isOk(response, 'failed to fetch posts data');
         assert.isOk(Array.isArray(response.rows) && response.rows.length >= 1, 'feed result was not an array type');
+        assert.isOk(response && response.rows[0].likes >= 50, 'likes were not incremented on post');
 
         const getResponse = await get<{ status: number; rows: Array<{ hash: string }> }>(
             `likes?hash=${response.rows[0].hash}`
@@ -119,14 +120,12 @@ describe('v1', { sequential: true }, () => {
     });
 
     it('GET - /dislikes', async () => {
-        const response = await get<{ status: number; rows: { hash: string; author: string; message: string }[] }>(
+        const response = await get<{ status: number; rows: { hash: string; author: string; message: string, dislikes: number }[] }>(
             `posts?address=${addressUserA}`
         );
         assert.isOk(response, 'failed to fetch posts data');
         assert.isOk(Array.isArray(response.rows) && response.rows.length >= 1, 'feed result was not an array type');
-        if (!response) {
-            assert.fail('Failed to obtain a response from posts query');
-        }
+        assert.isOk(response && response.rows[0].dislikes >= 50, 'likes were not incremented on post');
 
         const getResponse = await get<{ status: number; rows: Array<{ hash: string }> }>(
             `dislikes?hash=${response.rows[0].hash}`
@@ -162,14 +161,12 @@ describe('v1', { sequential: true }, () => {
     });
 
     it('GET - /flags', async () => {
-        const response = await get<{ status: number; rows: { hash: string; author: string; message: string }[] }>(
+        const response = await get<{ status: number; rows: { hash: string; author: string; message: string, flags: number }[] }>(
             `posts?address=${addressUserA}`
         );
         assert.isOk(response, 'failed to fetch posts data');
         assert.isOk(Array.isArray(response.rows) && response.rows.length >= 1, 'feed result was not an array type');
-        if (!response) {
-            assert.fail('Failed to obtain a response from posts query');
-        }
+        assert.isOk(response && response.rows[0].flags >= 50, 'likes were not incremented on post');
 
         const getResponse = await get<{ status: number; rows: Array<{ hash: string }> }>(
             `flags?hash=${response.rows[0].hash}`
