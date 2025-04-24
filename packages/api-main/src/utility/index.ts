@@ -37,24 +37,3 @@ export async function getJsonbArrayCount(hash: string, tableName: string) {
 
     return result.rows.length > 0 ? result.rows[0].array_count : 0;
 }
-
-export function transactionBuilder() {
-    const txs: T.TransactionFunction[] = [];
-
-    function add(trx: T.TransactionFunction) {
-        txs.push(trx);
-    }
-
-    async function execute() {
-        return await getDatabase().transaction(async (tx) => {
-            for (const trx of txs) {
-                await trx(tx as any);
-            }
-        });
-    }
-
-    return {
-        add,
-        execute,
-    };
-}
