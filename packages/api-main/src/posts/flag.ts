@@ -1,5 +1,5 @@
 import { t } from 'elysia';
-import { FeedTable, FlagsTable } from '../../drizzle/schema';
+import { FeedTable, FlagsTable, ReplyTable } from '../../drizzle/schema';
 import { getDatabase } from '../../drizzle/db';
 import { getTransferMessage, getTransferQuantities } from '../utility';
 import { extractMemoContent } from '@atomone/chronostate';
@@ -9,6 +9,7 @@ export const FlagBody = t.Object({
     hash: t.String(),
     memo: t.String(),
     messages: t.Array(t.Record(t.String(), t.Any())),
+    isReply: t.Optional(t.Boolean()),
 });
 
 const statement = getDatabase()
@@ -17,15 +18,21 @@ const statement = getDatabase()
         post_hash: sql.placeholder('post_hash'),
         hash: sql.placeholder('hash'),
         author: sql.placeholder('author'),
-        quantity: sql.placeholder('quantity')
+        quantity: sql.placeholder('quantity'),
     })
     .prepare('stmnt_add_flag');
 
-const statementAddFlagCount = getDatabase()
+const statementAddFlagToPost = getDatabase()
     .update(FeedTable)
     .set({ flags: sql`${FeedTable.flags} + 1` })
     .where(eq(FeedTable.hash, sql.placeholder('post_hash')))
-    .prepare('stmnt_add_flag_count');
+    .prepare('stmnt_add_flag_count_to_post');
+
+const statementAddFlagToReply = getDatabase()
+    .update(ReplyTable)
+    .set({ likes: sql`${ReplyTable.likes} + 1` })
+    .where(eq(ReplyTable.hash, sql.placeholder('post_hash')))
+    .prepare('stmnt_add_flag_count_to_reply');
 
 export async function Flag(body: typeof FlagBody.static) {
     const msgTransfer = getTransferMessage(body.messages);
@@ -41,7 +48,12 @@ export async function Flag(body: typeof FlagBody.static) {
 
     try {
         await statement.execute({ post_hash, hash: body.hash, author: msgTransfer.from_address, quantity });
-        await statementAddFlagCount.execute({ post_hash });
+        if (body.isReply) {
+            await statementAddFlagToReply.execute({ post_hash });
+        } else {
+            await statementAddFlagToPost.execute({ post_hash });
+        }
+
         return { status: 200 };
     } catch (err) {
         console.error(err);

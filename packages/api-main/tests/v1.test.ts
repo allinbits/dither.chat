@@ -84,7 +84,9 @@ describe('v1', { sequential: true }, () => {
     });
 
     it('GET - /likes', async () => {
-        const response = await get<{ status: number; rows: { hash: string, likes: number }[] }>(`posts?address=${addressUserA}`);
+        const response = await get<{ status: number; rows: { hash: string; likes: number }[] }>(
+            `posts?address=${addressUserA}`
+        );
         assert.isOk(response, 'failed to fetch posts data');
         assert.isOk(Array.isArray(response.rows) && response.rows.length >= 1, 'feed result was not an array type');
         assert.isOk(response && response.rows[0].likes >= 50, 'likes were not incremented on post');
@@ -120,9 +122,10 @@ describe('v1', { sequential: true }, () => {
     });
 
     it('GET - /dislikes', async () => {
-        const response = await get<{ status: number; rows: { hash: string; author: string; message: string, dislikes: number }[] }>(
-            `posts?address=${addressUserA}`
-        );
+        const response = await get<{
+            status: number;
+            rows: { hash: string; author: string; message: string; dislikes: number }[];
+        }>(`posts?address=${addressUserA}`);
         assert.isOk(response, 'failed to fetch posts data');
         assert.isOk(Array.isArray(response.rows) && response.rows.length >= 1, 'feed result was not an array type');
         assert.isOk(response && response.rows[0].dislikes >= 50, 'likes were not incremented on post');
@@ -161,9 +164,10 @@ describe('v1', { sequential: true }, () => {
     });
 
     it('GET - /flags', async () => {
-        const response = await get<{ status: number; rows: { hash: string; author: string; message: string, flags: number }[] }>(
-            `posts?address=${addressUserA}`
-        );
+        const response = await get<{
+            status: number;
+            rows: { hash: string; author: string; message: string; flags: number }[];
+        }>(`posts?address=${addressUserA}`);
         assert.isOk(response, 'failed to fetch posts data');
         assert.isOk(Array.isArray(response.rows) && response.rows.length >= 1, 'feed result was not an array type');
         assert.isOk(response && response.rows[0].flags >= 50, 'likes were not incremented on post');

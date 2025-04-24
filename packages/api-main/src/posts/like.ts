@@ -1,5 +1,5 @@
 import { t } from 'elysia';
-import { FeedTable, LikesTable } from '../../drizzle/schema';
+import { FeedTable, ReplyTable, LikesTable } from '../../drizzle/schema';
 import { getDatabase } from '../../drizzle/db';
 import { getTransferMessage, getTransferQuantities } from '../utility';
 import { extractMemoContent } from '@atomone/chronostate';
@@ -9,6 +9,7 @@ export const LikeBody = t.Object({
     hash: t.String(),
     memo: t.String(),
     messages: t.Array(t.Record(t.String(), t.Any())),
+    isReply: t.Optional(t.Boolean()),
 });
 
 const statement = getDatabase()
@@ -21,11 +22,17 @@ const statement = getDatabase()
     })
     .prepare('stmnt_add_like');
 
-const statementAddLikeCount = getDatabase()
+const statementAddLikeToPost = getDatabase()
     .update(FeedTable)
     .set({ likes: sql`${FeedTable.likes} + 1` })
     .where(eq(FeedTable.hash, sql.placeholder('post_hash')))
-    .prepare('stmnt_add_like_count');
+    .prepare('stmnt_add_like_count_to_post');
+
+const statementAddLikeToReply = getDatabase()
+    .update(ReplyTable)
+    .set({ likes: sql`${ReplyTable.likes} + 1` })
+    .where(eq(ReplyTable.hash, sql.placeholder('post_hash')))
+    .prepare('stmnt_add_like_count_to_reply');
 
 export async function Like(body: typeof LikeBody.static) {
     const msgTransfer = getTransferMessage(body.messages);
@@ -41,7 +48,11 @@ export async function Like(body: typeof LikeBody.static) {
 
     try {
         await statement.execute({ post_hash, hash: body.hash, author: msgTransfer.from_address, quantity });
-        await statementAddLikeCount.execute({ post_hash });
+        if (body.isReply) {
+            await statementAddLikeToReply.execute({ post_hash });
+        } else {
+            await statementAddLikeToPost.execute({ post_hash });
+        }
 
         return { status: 200 };
     } catch (err) {

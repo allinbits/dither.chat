@@ -15,6 +15,8 @@ export const FeedTable = pgTable(
         likes: integer().default(0),
         dislikes: integer().default(0),
         flags: integer().default(0),
+        deleted_at: timestamp({ withTimezone: true }),
+        deleted_reason: text(),
     },
     (t) => [index('feed_hash_index').on(t.hash)]
 );
@@ -32,6 +34,8 @@ export const ReplyTable = pgTable(
         likes: integer().default(0),
         dislikes: integer().default(0),
         flags: integer().default(0),
+        deleted_at: timestamp({ withTimezone: true }),
+        deleted_reason: text(),
     },
     (t) => [unique('unique_reply').on(t.post_hash, t.hash), index('reply_hash_index').on(t.hash)]
 );

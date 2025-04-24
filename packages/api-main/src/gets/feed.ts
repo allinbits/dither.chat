@@ -1,7 +1,7 @@
 import { t } from 'elysia';
 import { getDatabase } from '../../drizzle/db';
 import { FeedTable } from '../../drizzle/schema';
-import { count, sql } from 'drizzle-orm';
+import { count, sql, isNull } from 'drizzle-orm';
 
 export const FeedQuery = t.Object({
     limit: t.Optional(t.Number()),
@@ -14,6 +14,7 @@ const statement = getDatabase()
     .from(FeedTable)
     .limit(sql.placeholder('limit'))
     .offset(sql.placeholder('offset'))
+    .where(isNull(FeedTable.deleted_at))
     .prepare('stmnt_get_feed');
 
 export async function Feed(query: typeof FeedQuery.static) {
