@@ -40,8 +40,6 @@ describe('v1', { sequential: true }, () => {
         const response = await get<{ status: number; rows: { hash: string; author: string; message: string }[] }>(
             `feed`
         );
-        console.log(response);
-
         assert.isOk(response, 'failed to fetch feed data');
         assert.isOk(
             response && Array.isArray(response.rows) && response.rows.length >= 1,

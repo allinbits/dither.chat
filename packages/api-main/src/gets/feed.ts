@@ -1,13 +1,20 @@
 import { t } from 'elysia';
 import { getDatabase } from '../../drizzle/db';
 import { FeedTable } from '../../drizzle/schema';
-import { count } from 'drizzle-orm';
+import { count, sql } from 'drizzle-orm';
 
 export const FeedQuery = t.Object({
     limit: t.Optional(t.Number()),
     offset: t.Optional(t.Number()),
     count: t.Optional(t.Boolean()),
 });
+
+const statement = getDatabase()
+    .select()
+    .from(FeedTable)
+    .limit(sql.placeholder('limit'))
+    .offset(sql.placeholder('offset'))
+    .prepare('stmnt_get_feed');
 
 export async function Feed(query: typeof FeedQuery.static) {
     if (query.count) {
@@ -35,15 +42,7 @@ export async function Feed(query: typeof FeedQuery.static) {
     }
 
     try {
-        const defaultSelection: { [K in keyof typeof FeedTable._.columns]: (typeof FeedTable)[K] } = {
-            id: FeedTable.id,
-            author: FeedTable.author,
-            hash: FeedTable.hash,
-            timestamp: FeedTable.timestamp,
-            message: FeedTable.message,
-        };
-
-        const results = await getDatabase().select(defaultSelection).from(FeedTable).limit(limit).offset(offset);
+        const results = await statement.execute({ offset, limit });
         return { status: 200, rows: results };
     } catch (error) {
         console.error(error);
