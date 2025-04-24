@@ -34,7 +34,8 @@ export async function Replies(query: typeof RepliesQuery.static) {
     }
 
     try {
-        return await statement.execute({ hash: query.hash, limit, offset });
+        const results = await statement.execute({ hash: query.hash, limit, offset });
+        return { status: 200, rows: results };
     } catch (error) {
         console.error(error);
         return { status: 404, error: 'failed to find matching reply' };

@@ -30,6 +30,7 @@ function startWriteOnlyServer() {
 
     app.get('/health', GetRequests.health);
     app.post('/post', ({ body }) => PostRequests.Post(body), { body: PostRequests.PostBody });
+    app.post('/reply', ({ body }) => PostRequests.Reply(body), { body: PostRequests.ReplyBody });
     app.post('/follow', ({ body }) => PostRequests.Follow(body), { body: PostRequests.FollowBody });
     app.post('/unfollow', ({ body }) => PostRequests.Unfollow(body), { body: PostRequests.UnfollowBody });
     app.post('/like', ({ body }) => PostRequests.Like(body), { body: PostRequests.LikeBody });

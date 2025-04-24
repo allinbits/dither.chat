@@ -1,4 +1,4 @@
-import { pgTable, varchar, timestamp, serial, index, primaryKey, text } from 'drizzle-orm/pg-core';
+import { pgTable, varchar, timestamp, serial, index, primaryKey, text, unique } from 'drizzle-orm/pg-core';
 
 const MEMO_LENGTH = 512;
 
@@ -11,7 +11,7 @@ export const FeedTable = pgTable(
         timestamp: timestamp({ withTimezone: true }).notNull(),
         message: varchar({ length: MEMO_LENGTH }).notNull(),
     },
-    (table) => [index('feed_hash_index').on(table.hash)]
+    (t) => [index('feed_hash_index').on(t.hash)]
 );
 
 export const ReplyTable = pgTable(
@@ -24,7 +24,7 @@ export const ReplyTable = pgTable(
         timestamp: timestamp({ withTimezone: true }).notNull(),
         message: varchar({ length: MEMO_LENGTH }).notNull(),
     },
-    (table) => [index('reply_hash_index').on(table.hash)]
+    (t) => [unique('unique_reply').on(t.post_hash, t.hash), index('reply_hash_index').on(t.hash)]
 );
 
 export const DislikesTable = pgTable(

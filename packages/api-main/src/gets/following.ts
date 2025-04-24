@@ -34,7 +34,8 @@ export async function Following(query: typeof FollowingQuery.static) {
     }
 
     try {
-        return await statementGetFollowing.execute({ follower: query.address, limit, offset });
+        const results = await statementGetFollowing.execute({ follower: query.address, limit, offset });
+        return { status: 200, rows: results };
     } catch (error) {
         console.error(error);
         return { status: 404, error: 'failed to find matching following' };

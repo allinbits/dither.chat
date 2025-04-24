@@ -43,7 +43,8 @@ export async function Feed(query: typeof FeedQuery.static) {
             message: FeedTable.message,
         };
 
-        return await getDatabase().select(defaultSelection).from(FeedTable).limit(limit).offset(offset);
+        const results = await getDatabase().select(defaultSelection).from(FeedTable).limit(limit).offset(offset);
+        return { status: 200, rows: results };
     } catch (error) {
         console.error(error);
         return { status: 400, error: 'failed to read data from database' };
