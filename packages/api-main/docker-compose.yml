@@ -1,4 +1,5 @@
 services:
+<<<<<<< HEAD
     postgres:
         # network_mode: host
         image: postgres:latest
@@ -30,6 +31,20 @@ services:
         #         '-c',
         #         'max_parallel_workers=8',
         #     ]
+=======
+  postgres:
+    # network_mode: host
+    image: postgres:latest
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRES_USER: default
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data/postgres_data:/var/lib/postgresql/data
+>>>>>>> ee04ab0f78609567b80dac38a721abc30e2d3f5c
 
 volumes:
     postgres_data:

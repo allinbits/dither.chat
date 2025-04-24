@@ -1,4 +1,4 @@
-import { pgTable, varchar, timestamp, serial, index, primaryKey, text, unique } from 'drizzle-orm/pg-core';
+import { pgTable, varchar, timestamp, serial, index, primaryKey, text, unique, integer } from 'drizzle-orm/pg-core';
 
 const MEMO_LENGTH = 512;
 
@@ -10,6 +10,7 @@ export const FeedTable = pgTable(
         author: varchar({ length: 44 }).notNull(),
         timestamp: timestamp({ withTimezone: true }).notNull(),
         message: varchar({ length: MEMO_LENGTH }).notNull(),
+        replies: integer().default(0)
     },
     (t) => [index('feed_hash_index').on(t.hash)]
 );
