@@ -1,5 +1,8 @@
 services:
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 87c2632abea0276313d27a9a67aa2ca7eacab40a
     postgres:
         # network_mode: host
         image: postgres:latest
@@ -31,6 +34,7 @@ services:
         #         '-c',
         #         'max_parallel_workers=8',
         #     ]
+<<<<<<< HEAD
 =======
   postgres:
     # network_mode: host
@@ -45,6 +49,8 @@ services:
     volumes:
       - ./data/postgres_data:/var/lib/postgresql/data
 >>>>>>> ee04ab0f78609567b80dac38a721abc30e2d3f5c
+=======
+>>>>>>> 87c2632abea0276313d27a9a67aa2ca7eacab40a
 
 volumes:
     postgres_data:
