@@ -1,4 +1,4 @@
-import { pgTable, varchar, timestamp, serial, index, primaryKey, text, unique, integer } from 'drizzle-orm/pg-core';
+import { pgTable, varchar, timestamp, serial, index, primaryKey, text, unique, integer, bigint } from 'drizzle-orm/pg-core';
 
 const MEMO_LENGTH = 512;
 
@@ -15,6 +15,9 @@ export const FeedTable = pgTable(
         likes: integer().default(0),
         dislikes: integer().default(0),
         flags: integer().default(0),
+        likes_burnt: bigint({ mode: 'number' }).default(0),
+        dislikes_burnt: bigint({ mode: 'number' }).default(0),
+        flags_burnt: bigint({ mode: 'number' }).default(0),
         deleted_at: timestamp({ withTimezone: true }),
         deleted_reason: text(),
     },
@@ -34,6 +37,9 @@ export const ReplyTable = pgTable(
         likes: integer().default(0),
         dislikes: integer().default(0),
         flags: integer().default(0),
+        likes_burnt: bigint({ mode: 'number' }).default(0),
+        dislikes_burnt: bigint({ mode: 'number' }).default(0),
+        flags_burnt: bigint({ mode: 'number' }).default(0),
         deleted_at: timestamp({ withTimezone: true }),
         deleted_reason: text(),
     },

@@ -24,13 +24,19 @@ const statement = getDatabase()
 
 const statementAddDislikeToPost = getDatabase()
     .update(FeedTable)
-    .set({ dislikes: sql`${FeedTable.dislikes} + 1` })
+    .set({
+        dislikes: sql`${FeedTable.dislikes} + 1`,
+        dislikes_burnt: sql`${FeedTable.dislikes_burnt} + ${sql.placeholder('quantity')}`,
+    })
     .where(eq(FeedTable.hash, sql.placeholder('post_hash')))
     .prepare('stmnt_add_dislike_count_to_post');
 
 const statementAddDislikeToReply = getDatabase()
     .update(ReplyTable)
-    .set({ likes: sql`${ReplyTable.likes} + 1` })
+    .set({
+        likes: sql`${ReplyTable.likes} + 1`,
+        dislikes_burnt: sql`${FeedTable.dislikes_burnt} + ${sql.placeholder('quantity')}`,
+    })
     .where(eq(ReplyTable.hash, sql.placeholder('post_hash')))
     .prepare('stmnt_add_flag_count_to_reply');
 
@@ -49,9 +55,9 @@ export async function Dislike(body: typeof DislikeBody.static) {
     try {
         await statement.execute({ post_hash, hash: body.hash, author: msgTransfer.from_address, quantity });
         if (body.isReply) {
-            await statementAddDislikeToReply.execute({ post_hash });
+            await statementAddDislikeToReply.execute({ post_hash, quantity });
         } else {
-            await statementAddDislikeToPost.execute({ post_hash });
+            await statementAddDislikeToPost.execute({ post_hash, quantity });
         }
 
         return { status: 200 };

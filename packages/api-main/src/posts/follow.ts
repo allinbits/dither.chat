@@ -18,7 +18,7 @@ const statementAddFollower = getDatabase()
         following: sql.placeholder('following'),
         hash: sql.placeholder('hash'),
     })
-    .prepare('stmnt_add_follower')
+    .prepare('stmnt_add_follower');
 
 export async function Follow(body: typeof FollowBody.static) {
     const msgTransfer = getTransferMessage(body.messages);

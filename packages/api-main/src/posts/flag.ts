@@ -24,13 +24,19 @@ const statement = getDatabase()
 
 const statementAddFlagToPost = getDatabase()
     .update(FeedTable)
-    .set({ flags: sql`${FeedTable.flags} + 1` })
+    .set({
+        flags: sql`${FeedTable.flags} + 1`,
+        flags_burnt: sql`${FeedTable.flags_burnt} + ${sql.placeholder('quantity')}`,
+    })
     .where(eq(FeedTable.hash, sql.placeholder('post_hash')))
     .prepare('stmnt_add_flag_count_to_post');
 
 const statementAddFlagToReply = getDatabase()
     .update(ReplyTable)
-    .set({ likes: sql`${ReplyTable.likes} + 1` })
+    .set({
+        likes: sql`${ReplyTable.likes} + 1`,
+        flags_burnt: sql`${FeedTable.flags_burnt} + ${sql.placeholder('quantity')}`,
+    })
     .where(eq(ReplyTable.hash, sql.placeholder('post_hash')))
     .prepare('stmnt_add_flag_count_to_reply');
 
@@ -49,9 +55,9 @@ export async function Flag(body: typeof FlagBody.static) {
     try {
         await statement.execute({ post_hash, hash: body.hash, author: msgTransfer.from_address, quantity });
         if (body.isReply) {
-            await statementAddFlagToReply.execute({ post_hash });
+            await statementAddFlagToReply.execute({ post_hash, quantity });
         } else {
-            await statementAddFlagToPost.execute({ post_hash });
+            await statementAddFlagToPost.execute({ post_hash, quantity });
         }
 
         return { status: 200 };

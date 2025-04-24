@@ -24,13 +24,13 @@ const statement = getDatabase()
 
 const statementAddLikeToPost = getDatabase()
     .update(FeedTable)
-    .set({ likes: sql`${FeedTable.likes} + 1` })
+    .set({ likes: sql`${FeedTable.likes} + 1`, likes_burnt: sql`${FeedTable.likes_burnt} + ${sql.placeholder('quantity')}` })
     .where(eq(FeedTable.hash, sql.placeholder('post_hash')))
     .prepare('stmnt_add_like_count_to_post');
 
 const statementAddLikeToReply = getDatabase()
     .update(ReplyTable)
-    .set({ likes: sql`${ReplyTable.likes} + 1` })
+    .set({ likes: sql`${ReplyTable.likes} + 1`, likes_burnt: sql`${FeedTable.likes_burnt} + ${sql.placeholder('quantity')}` })
     .where(eq(ReplyTable.hash, sql.placeholder('post_hash')))
     .prepare('stmnt_add_like_count_to_reply');
 
@@ -49,9 +49,9 @@ export async function Like(body: typeof LikeBody.static) {
     try {
         await statement.execute({ post_hash, hash: body.hash, author: msgTransfer.from_address, quantity });
         if (body.isReply) {
-            await statementAddLikeToReply.execute({ post_hash });
+            await statementAddLikeToReply.execute({ post_hash, quantity });
         } else {
-            await statementAddLikeToPost.execute({ post_hash });
+            await statementAddLikeToPost.execute({ post_hash, quantity });
         }
 
         return { status: 200 };
