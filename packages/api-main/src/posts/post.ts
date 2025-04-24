@@ -1,8 +1,9 @@
 import { t } from 'elysia';
 import { FeedTable } from '../../drizzle/schema';
-import { db } from '../../drizzle/db';
+import { getDatabase } from '../../drizzle/db';
 import { getTransferMessage } from '../utility';
 import { extractMemoContent } from '@atomone/chronostate';
+import { sql } from 'drizzle-orm';
 
 export const PostBody = t.Object({
     hash: t.String(),
@@ -11,6 +12,17 @@ export const PostBody = t.Object({
     memo: t.String(),
     messages: t.Array(t.Record(t.String(), t.Any())),
 });
+
+const statement = getDatabase()
+    .insert(FeedTable)
+    .values({
+        hash: sql.placeholder('hash'),
+        timestamp: sql.placeholder('timestamp'),
+        author: sql.placeholder('author'),
+        message: sql.placeholder('message'),
+    })
+    .onConflictDoNothing()
+    .prepare('stmnt_post');
 
 export async function Post(body: typeof PostBody.static) {
     const msgTransfer = getTransferMessage(body.messages);
@@ -21,15 +33,12 @@ export async function Post(body: typeof PostBody.static) {
     const [message] = extractMemoContent(body.memo, 'dither.Post');
 
     try {
-        await db
-            .insert(FeedTable)
-            .values({
-                hash: body.hash,
-                timestamp: new Date(body.timestamp),
-                author: msgTransfer.from_address,
-                message,
-            })
-            .onConflictDoNothing();
+        await statement.execute({
+            hash: body.hash,
+            timestamp: new Date(body.timestamp),
+            author: msgTransfer.from_address,
+            message,
+        });
 
         return { status: 200 };
     } catch (err) {

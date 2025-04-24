@@ -1,13 +1,24 @@
 import { t } from 'elysia';
-import { db } from '../../drizzle/db';
+import { getDatabase } from '../../drizzle/db';
 import { FeedTable } from '../../drizzle/schema';
+import { count } from 'drizzle-orm';
 
 export const FeedQuery = t.Object({
     limit: t.Optional(t.Number()),
     offset: t.Optional(t.Number()),
+    count: t.Optional(t.Boolean()),
 });
 
 export async function Feed(query: typeof FeedQuery.static) {
+    if (query.count) {
+        try {
+            return await getDatabase().select({ count: count() }).from(FeedTable);
+        } catch (err) {
+            console.error(err);
+            return { status: 400, error: 'failed to read data from database' };
+        }
+    }
+
     let limit = typeof query.limit !== 'undefined' ? Number(query.limit) : 100;
     let offset = typeof query.offset !== 'undefined' ? Number(query.offset) : 0;
 
@@ -25,13 +36,14 @@ export async function Feed(query: typeof FeedQuery.static) {
 
     try {
         const defaultSelection: { [K in keyof typeof FeedTable._.columns]: (typeof FeedTable)[K] } = {
+            id: FeedTable.id,
             author: FeedTable.author,
             hash: FeedTable.hash,
             timestamp: FeedTable.timestamp,
             message: FeedTable.message,
         };
 
-        return await db.select(defaultSelection).from(FeedTable).limit(limit).offset(offset);
+        return await getDatabase().select(defaultSelection).from(FeedTable).limit(limit).offset(offset);
     } catch (error) {
         console.error(error);
         return { status: 400, error: 'failed to read data from database' };

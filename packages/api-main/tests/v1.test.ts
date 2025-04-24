@@ -1,9 +1,9 @@
 import '../src/index';
 import { it, describe, assert } from 'vitest';
-import { db } from '../drizzle/db';
+import { getDatabase } from '../drizzle/db';
 import { sql } from 'drizzle-orm';
 import { tables } from '../drizzle/schema';
-import { generateFakeData, get, getAtomOneAddress, post } from './shared';
+import { generateFakeData, get, getAtomOneAddress, post, sleep } from './shared';
 
 describe('v1', { sequential: true }, () => {
     const addressReceiver = getAtomOneAddress();
@@ -14,7 +14,7 @@ describe('v1', { sequential: true }, () => {
 
     it('EMPTY ALL TABLES', async () => {
         for (let tableName of tables) {
-            await db.execute(sql`TRUNCATE TABLE ${sql.raw(tableName)};`);
+            await getDatabase().execute(sql`TRUNCATE TABLE ${sql.raw(tableName)};`);
         }
     });
 
@@ -62,13 +62,15 @@ describe('v1', { sequential: true }, () => {
             assert.fail('Failed to obtain a response from posts query');
         }
 
-        const likeResponse = await post(
-            `like`,
-            generateFakeData(`dither.Like("${response[0].hash}")`, addressUserA, addressReceiver)
-        );
+        for (let i = 0; i < 50; i++) {
+            const likeResponse = await post(
+                `like`,
+                generateFakeData(`dither.Like("${response[0].hash}")`, addressUserA, addressReceiver)
+            );
 
-        assert.isOk(likeResponse != null);
-        assert.isOk(likeResponse && likeResponse.status === 200, 'response was not okay');
+            assert.isOk(likeResponse != null);
+            assert.isOk(likeResponse && likeResponse.status === 200, 'response was not okay');
+        }
     });
 
     it('GET - /likes', async () => {
@@ -79,9 +81,15 @@ describe('v1', { sequential: true }, () => {
             assert.fail('Failed to obtain a response from posts query');
         }
 
-        const responseLikes = await get<Array<{ hash: string }>>(`likes?hash=${response[0].hash}`);
-        assert.isOk(responseLikes, 'failed to fetch posts data');
-        assert.isOk(Array.isArray(responseLikes) && responseLikes.length >= 1, 'feed result was not an array type');
+        const getResponse = await get<{ status: number; rows: Array<{ hash: string }> }>(
+            `likes?hash=${response[0].hash}`
+        );
+        assert.isOk(getResponse, 'failed to fetch posts data');
+        assert.isOk(getResponse.status == 200, 'likes result was not valid');
+        assert.isOk(
+            getResponse && Array.isArray(getResponse.rows) && getResponse.rows.length >= 50,
+            'feed result was not an array type'
+        );
     });
 
     // Dislikes
@@ -93,13 +101,15 @@ describe('v1', { sequential: true }, () => {
             assert.fail('Failed to obtain a response from posts query');
         }
 
-        const dislikeResponse = await post(
-            `dislike`,
-            generateFakeData(`dither.Dislike("${response[0].hash}")`, addressUserA, addressReceiver)
-        );
+        for (let i = 0; i < 50; i++) {
+            const dislikeResponse = await post(
+                `dislike`,
+                generateFakeData(`dither.Dislike("${response[0].hash}")`, addressUserA, addressReceiver)
+            );
 
-        assert.isOk(dislikeResponse != null);
-        assert.isOk(dislikeResponse && dislikeResponse.status === 200, 'response was not okay');
+            assert.isOk(dislikeResponse != null);
+            assert.isOk(dislikeResponse && dislikeResponse.status === 200, 'response was not okay');
+        }
     });
 
     it('GET - /dislikes', async () => {
@@ -110,10 +120,13 @@ describe('v1', { sequential: true }, () => {
             assert.fail('Failed to obtain a response from posts query');
         }
 
-        const responseDislikes = await get<Array<{ hash: string }>>(`dislikes?hash=${response[0].hash}`);
-        assert.isOk(responseDislikes, 'failed to fetch posts data');
+        const getResponse = await get<{ status: number; rows: Array<{ hash: string }> }>(
+            `dislikes?hash=${response[0].hash}`
+        );
+        assert.isOk(getResponse, 'failed to fetch posts data');
+        assert.isOk(getResponse.status == 200, 'dislikes result was not valid');
         assert.isOk(
-            Array.isArray(responseDislikes) && responseDislikes.length >= 1,
+            getResponse && Array.isArray(getResponse.rows) && getResponse.rows.length >= 50,
             'feed result was not an array type'
         );
     });
@@ -127,13 +140,15 @@ describe('v1', { sequential: true }, () => {
             assert.fail('Failed to obtain a response from posts query');
         }
 
-        const flagResponse = await post(
-            `flag`,
-            generateFakeData(`dither.Flag("${response[0].hash}")`, addressUserA, addressReceiver)
-        );
+        for (let i = 0; i < 50; i++) {
+            const flagResponse = await post(
+                `flag`,
+                generateFakeData(`dither.Flag("${response[0].hash}")`, addressUserA, addressReceiver)
+            );
 
-        assert.isOk(flagResponse != null);
-        assert.isOk(flagResponse && flagResponse.status === 200, 'response was not okay');
+            assert.isOk(flagResponse != null);
+            assert.isOk(flagResponse && flagResponse.status === 200, 'response was not okay');
+        }
     });
 
     it('GET - /flags', async () => {
@@ -144,9 +159,15 @@ describe('v1', { sequential: true }, () => {
             assert.fail('Failed to obtain a response from posts query');
         }
 
-        const responseFlags = await get<Array<{ hash: string }>>(`flags?hash=${response[0].hash}`);
-        assert.isOk(responseFlags, 'failed to fetch posts data');
-        assert.isOk(Array.isArray(responseFlags) && responseFlags.length >= 1, 'feed result was not an array type');
+        const getResponse = await get<{ status: number; rows: Array<{ hash: string }> }>(
+            `flags?hash=${response[0].hash}`
+        );
+        assert.isOk(getResponse, 'failed to fetch posts data');
+        assert.isOk(getResponse.status == 200, 'flags result was not valid');
+        assert.isOk(
+            getResponse && Array.isArray(getResponse.rows) && getResponse.rows.length >= 50,
+            'feed result was not an array type'
+        );
     });
 
     // Follows
@@ -155,27 +176,31 @@ describe('v1', { sequential: true }, () => {
             `follow`,
             generateFakeData(`dither.Follow("${addressUserB}")`, addressUserA, addressReceiver)
         );
+
         assert.isOk(response?.status === 200, 'response was not okay');
     });
 
-    it('GET - /followers', async () => {
-        const response = await get<
-            Array<{
-                followers: Array<{ hash: string; address: string }>;
-            }>
-        >(`followers?address=${addressUserB}`);
-        assert.isOk(response && Array.isArray(response), 'followers response was not an array');
-        assert.isOk(response && response[0].followers.find((x) => x.address === addressUserA));
+    it('POST - /follow - no duplicates', async () => {
+        const response = await post(
+            `follow`,
+            generateFakeData(`dither.Follow("${addressUserB}")`, addressUserA, addressReceiver)
+        );
+
+        assert.isOk(response?.status === 400, 'additional follow was allowed somehow');
     });
 
     it('GET - /following', async () => {
-        const response = await get<
-            Array<{
-                following: Array<{ hash: string; address: string }>;
-            }>
-        >(`following?address=${addressUserA}`);
+        const response = await get<Array<{ address: string; hash: string }>>(`following?address=${addressUserA}`);
+
         assert.isOk(response && Array.isArray(response), 'following response was not an array');
-        assert.isOk(response && response[0].following.find((x) => x.address === addressUserB));
+        assert.isOk(response && response.find((x) => x.address === addressUserB));
+    });
+
+    it('GET - /followers', async () => {
+        const response = await get<Array<{ address: string; hash: string }>>(`followers?address=${addressUserB}`);
+
+        assert.isOk(response && Array.isArray(response), 'following response was not an array');
+        assert.isOk(response && response.find((x) => x.address === addressUserA));
     });
 
     // Unfollow
@@ -188,23 +213,14 @@ describe('v1', { sequential: true }, () => {
     });
 
     it('GET - /followers', async () => {
-        const response = await get<
-            Array<{
-                followers: Array<{ hash: string; address: string }>;
-            }>
-        >(`followers?address=${addressUserB}`);
-
+        const response = await get<Array<{ hash: string }>>(`followers?address=${addressUserB}`);
         assert.isOk(response && Array.isArray(response), 'followers response was not an array');
-        assert.isOk(response && response[0].followers.length <= 0, 'did not unfollow all users');
+        assert.isOk(response && response.length <= 0, 'did not unfollow all users');
     });
 
     it('GET - /following', async () => {
-        const response = await get<
-            Array<{
-                following: Array<{ hash: string; address: string }>;
-            }>
-        >(`following?address=${addressUserA}`);
+        const response = await get<Array<{ hash: string }>>(`following?address=${addressUserA}`);
         assert.isOk(response && Array.isArray(response), 'following response was not an array');
-        assert.isOk(response && response[0].following.length <= 0, 'did not unfollow all users');
+        assert.isOk(response && response.length <= 0, 'did not unfollow all users');
     });
 });

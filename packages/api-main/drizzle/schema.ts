@@ -1,26 +1,6 @@
-import { pgTable, varchar, customType, timestamp, serial, index } from 'drizzle-orm/pg-core';
+import { pgTable, varchar, timestamp, serial, index, primaryKey, text } from 'drizzle-orm/pg-core';
 
 const MEMO_LENGTH = 512;
-
-type AuthorType = { address: string; hash: string; amount?: string };
-
-export const AuthorComposite = customType<{ data: AuthorType[]; driverData: string }>({
-    dataType() {
-        return 'jsonb';
-    },
-    toDriver(value: AuthorType[]): string {
-        return JSON.stringify(value);
-    },
-    fromDriver(value): AuthorType[] {
-        if (typeof value === 'string') {
-            return JSON.parse(value);
-        } else if (value === null) {
-            return [];
-        } else {
-            return value;
-        }
-    },
-});
 
 export const FeedTable = pgTable(
     'feed',
@@ -47,25 +27,51 @@ export const ReplyTable = pgTable(
     (table) => [index('reply_hash_index').on(table.hash)]
 );
 
-export const LikesTable = pgTable('likes', {
-    hash: varchar({ length: 64 }).primaryKey(),
-    data: AuthorComposite().default([]),
-});
+export const DislikesTable = pgTable(
+    'dislikes',
+    {
+        post_hash: varchar({ length: 64 }).notNull(),
+        author: varchar({ length: 44 }).notNull(),
+        hash: varchar({ length: 64 }).notNull(),
+        quantity: text().notNull(),
+    },
+    (t) => [primaryKey({ columns: [t.post_hash, t.hash] }), index('dislike_author_idx').on(t.author)]
+);
 
-export const DislikesTable = pgTable('dislikes', {
-    hash: varchar({ length: 64 }).primaryKey(),
-    data: AuthorComposite().default([]),
-});
+export const LikesTable = pgTable(
+    'likes',
+    {
+        post_hash: varchar({ length: 64 }).notNull(),
+        author: varchar({ length: 44 }).notNull(),
+        hash: varchar({ length: 64 }).notNull(),
+        quantity: text().notNull(),
+    },
+    (t) => [primaryKey({ columns: [t.post_hash, t.hash] }), index('like_author_idx').on(t.author)]
+);
 
-export const FlagsTable = pgTable('flags', {
-    hash: varchar({ length: 64 }).primaryKey(),
-    data: AuthorComposite().default([]),
-});
+export const FlagsTable = pgTable(
+    'flags',
+    {
+        post_hash: varchar({ length: 64 }).notNull(),
+        author: varchar({ length: 44 }).notNull(),
+        hash: varchar({ length: 64 }).notNull(),
+        quantity: text().notNull(),
+    },
+    (t) => [primaryKey({ columns: [t.post_hash, t.hash] }), index('flag_author_idx').on(t.author)]
+);
 
-export const UsersTable = pgTable('users', {
-    address: varchar({ length: 44 }).primaryKey(),
-    followers: AuthorComposite().default([]),
-    following: AuthorComposite().default([]),
-});
+export const FollowsTable = pgTable(
+    'follows',
+    {
+        follower: varchar({ length: 44 }).notNull(),
+        following: varchar({ length: 44 }).notNull(),
+        hash: varchar({ length: 64 }).notNull(),
+    },
+    (t) => [
+        primaryKey({ columns: [t.follower, t.following] }),
+        index('follower_id_idx').on(t.follower),
+        index('following_id_idx').on(t.following),
+    ]
+);
 
-export const tables = ['feed', 'replies', 'likes', 'dislikes', 'flags', 'users'];
+export const tables = ['feed', 'replies', 'likes', 'dislikes', 'flags', 'follows'];

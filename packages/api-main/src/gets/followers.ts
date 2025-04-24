@@ -1,13 +1,21 @@
 import { t } from 'elysia';
-import { UsersTable } from '../../drizzle/schema';
-import { db } from '../../drizzle/db';
-import { eq } from 'drizzle-orm';
+import { FollowsTable } from '../../drizzle/schema';
+import { getDatabase } from '../../drizzle/db';
+import { eq, sql } from 'drizzle-orm';
 
 export const FollowersQuery = t.Object({
     limit: t.Optional(t.Number()),
     offset: t.Optional(t.Number()),
     address: t.String(),
 });
+
+const statementGetFollowers = getDatabase()
+    .select({ address: FollowsTable.follower, hash: FollowsTable.hash })
+    .from(FollowsTable)
+    .where(eq(FollowsTable.following, sql.placeholder('following')))
+    .limit(sql.placeholder('limit'))
+    .offset(sql.placeholder('offset'))
+    .prepare('stmnt_get_followers');
 
 export async function Followers(query: typeof FollowersQuery.static) {
     let limit = typeof query.limit !== 'undefined' ? Number(query.limit) : 100;
@@ -26,12 +34,7 @@ export async function Followers(query: typeof FollowersQuery.static) {
     }
 
     try {
-        return await db
-            .select({ followers: UsersTable.followers })
-            .from(UsersTable)
-            .where(eq(UsersTable.address, query.address))
-            .limit(limit)
-            .offset(offset);
+        return await statementGetFollowers.execute({ limit, offset, following: query.address });
     } catch (error) {
         console.error(error);
         return { status: 404, error: 'failed to find matching followers' };

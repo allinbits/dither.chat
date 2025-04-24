@@ -1,6 +1,6 @@
 import { t } from 'elysia';
-import { db } from '../../drizzle/db';
-import { eq } from 'drizzle-orm';
+import { getDatabase } from '../../drizzle/db';
+import { eq, sql } from 'drizzle-orm';
 import { ReplyTable } from '../../drizzle/schema';
 
 export const RepliesQuery = t.Object({
@@ -8,6 +8,14 @@ export const RepliesQuery = t.Object({
     offset: t.Optional(t.String()),
     hash: t.String(),
 });
+
+const statement = getDatabase()
+    .select()
+    .from(ReplyTable)
+    .where(eq(ReplyTable.hash, sql.placeholder('hash')))
+    .limit(sql.placeholder('limit'))
+    .offset(sql.placeholder('offset'))
+    .prepare('stmnt_get_replies');
 
 export async function Replies(query: typeof RepliesQuery.static) {
     let limit = typeof query.limit !== 'undefined' ? Number(query.limit) : 100;
@@ -26,7 +34,7 @@ export async function Replies(query: typeof RepliesQuery.static) {
     }
 
     try {
-        return await db.select().from(ReplyTable).where(eq(ReplyTable.hash, query.hash)).limit(limit).offset(offset);
+        return await statement.execute({ hash: query.hash, limit, offset });
     } catch (error) {
         console.error(error);
         return { status: 404, error: 'failed to find matching reply' };
