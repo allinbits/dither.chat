@@ -1,13 +1,21 @@
 import { t } from 'elysia';
 import { FeedTable } from '../../drizzle/schema';
-import { db } from '../../drizzle/db';
-import { eq } from 'drizzle-orm';
+import { getDatabase } from '../../drizzle/db';
+import { eq, sql } from 'drizzle-orm';
 
 export const PostsQuery = t.Object({
     limit: t.Optional(t.Number()),
     offset: t.Optional(t.Number()),
     address: t.String(),
 });
+
+const statement = getDatabase()
+    .select()
+    .from(FeedTable)
+    .where(eq(FeedTable.author, sql.placeholder('author')))
+    .limit(sql.placeholder('limit'))
+    .offset(sql.placeholder('offset'))
+    .prepare('stmnt_get_posts');
 
 export async function Posts(query: typeof PostsQuery.static) {
     let limit = typeof query.limit !== 'undefined' ? Number(query.limit) : 100;
@@ -26,7 +34,8 @@ export async function Posts(query: typeof PostsQuery.static) {
     }
 
     try {
-        return await db.select().from(FeedTable).where(eq(FeedTable.author, query.address)).limit(limit).offset(offset);
+        const results = await statement.execute({ author: query.address, limit, offset })
+        return { status: 200, rows: results };
     } catch (error) {
         console.error(error);
         return { status: 404, error: 'failed to find matching reply' };

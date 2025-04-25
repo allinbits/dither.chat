@@ -13,11 +13,7 @@ export async function get<T>(endpoint: string, port: 'WRITE' | 'READ' = 'READ') 
         return null;
     }
 
-    const jsonData = await response.json() as { status: number };
-    if (jsonData.status && jsonData.status !== 200) {
-        return null;
-    }
-
+    const jsonData = await response.json();
     return jsonData as T;
 }
 
@@ -38,7 +34,7 @@ export async function post<T = { status: number }>(endpoint: string, body: any, 
 
     const jsonData = await response.json() as { status: number };
     if (jsonData.status && jsonData.status !== 200) {
-        return null;
+        return jsonData;
     }
 
     return jsonData as T;
@@ -75,4 +71,8 @@ export function generateFakeData(memo: string, from_address: string, to_address:
             },
         ],
     };
+}
+
+export function sleep(ms: number) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
 }

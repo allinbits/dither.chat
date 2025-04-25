@@ -1,11 +1,11 @@
 import { t } from 'elysia';
-import { FeedTable } from '../../drizzle/schema';
+import { FeedTable, ReplyTable } from '../../drizzle/schema';
 import { getDatabase } from '../../drizzle/db';
 import { getTransferMessage, getTransferQuantities } from '../utility';
 import { extractMemoContent } from '@atomone/chronostate';
-import { sql } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 
-export const PostBody = t.Object({
+export const ReplyBody = t.Object({
     hash: t.String(),
     height: t.String(),
     timestamp: t.String(),
@@ -14,24 +14,35 @@ export const PostBody = t.Object({
 });
 
 const statement = getDatabase()
-    .insert(FeedTable)
+    .insert(ReplyTable)
     .values({
         hash: sql.placeholder('hash'),
+        post_hash: sql.placeholder('post_hash'),
         timestamp: sql.placeholder('timestamp'),
         author: sql.placeholder('author'),
         message: sql.placeholder('message'),
-        quantity: sql.placeholder('quantity')
+        quantity: sql.placeholder('quantity'),
     })
     .onConflictDoNothing()
-    .prepare('stmnt_post');
+    .prepare('stmnt_reply');
 
-export async function Post(body: typeof PostBody.static) {
+const statementAddReplyCount = getDatabase()
+    .update(FeedTable)
+    .set({ replies: sql`${FeedTable.replies} + 1` })
+    .where(eq(FeedTable.hash, sql.placeholder('post_hash')))
+    .prepare('stmnt_add_reply_count');
+
+export async function Reply(body: typeof ReplyBody.static) {
     const msgTransfer = getTransferMessage(body.messages);
     if (!msgTransfer) {
-        return { status: 400, error: 'transfer message must exist to be logged as a post' };
+        return { status: 400, error: 'transfer message must exist to be logged as a reply' };
     }
 
-    const [message] = extractMemoContent(body.memo, 'dither.Post');
+    const [post_hash, message] = extractMemoContent(body.memo, 'dither.Reply');
+    if (!post_hash) {
+        return { status: 400, error: 'post_hash was not supplied' };
+    }
+
     if (!message) {
         return { status: 400, error: 'post message contains no content' };
     }
@@ -40,11 +51,16 @@ export async function Post(body: typeof PostBody.static) {
 
     try {
         await statement.execute({
-            hash: body.hash,
-            timestamp: new Date(body.timestamp),
             author: msgTransfer.from_address,
+            hash: body.hash,
             message,
-            quantity
+            post_hash,
+            quantity,
+            timestamp: new Date(body.timestamp),
+        });
+
+        await statementAddReplyCount.execute({
+            post_hash,
         });
 
         return { status: 200 };

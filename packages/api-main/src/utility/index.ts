@@ -1,6 +1,6 @@
 import { sql } from 'drizzle-orm';
 import * as T from '../types/index';
-import { db } from '../../drizzle/db';
+import { getDatabase } from '../../drizzle/db';
 
 export function getTransferMessage(messages: Array<T.MsgGeneric>) {
     const msgTransfer = messages.find((msg) => msg['@type'] === '/cosmos.bank.v1beta1.MsgSend');
@@ -29,7 +29,7 @@ export function getTransferQuantities(messages: Array<T.MsgGeneric>, denom = 'ua
 }
 
 export async function getJsonbArrayCount(hash: string, tableName: string) {
-    const result = await db.execute(sql`
+    const result = await getDatabase().execute(sql`
         SELECT jsonb_array_length(data)::integer AS array_count
         FROM ${tableName}
         WHERE hash = ${hash}
