@@ -13,6 +13,21 @@ services:
       - "5432:5432"
 
   # ================================
+  # Event Consuming Services
+  # ================================
+  posts-service:
+    container_name: "posts-service"
+    build: ./packages/posts-service
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
+      RABBITMQ_EXCHANGE: "dither"
+    restart: always
+    command: ["pnpm", "start"]
+    
+  # ================================
   # ChronoSync Services (Readers)
   # ================================
   reader-main:
@@ -20,7 +35,12 @@ services:
     build: ./packages/reader-main
     restart: always
     command: ["pnpm", "start"]
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
     environment:
+      RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
+      RABBITMQ_EXCHANGE: "dither"
       API_URLS: "https://atomone-api.allinbits.com,https://atomone-rest.publicnode.com"
       START_BLOCK: "2605764"
       BATCH_SIZE: 50
@@ -28,6 +48,35 @@ services:
       RECEIVER: "atone1uq6zjslvsa29cy6uu75y8txnl52mw06j6fzlep"
       # PG_URI: postgres://username:password@postgres-feed:5432/feed
       # LOG: process.env.LOG === 'true' ? true : false,
+
+  # ================================
+  # RabbitMQ Service (event system)
+  # ================================
+  rabbitmq:
+    image: rabbitmq:latest
+    build: ./packages/rabbit-mq
+    container_name: rabbitmq
+    restart: always
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq-lib:/var/lib/rabbitmq/
+      - rabbitmq-log:/var/log/rabbitmq
+
+volumes:
+  rabbitmq-lib:
+    driver: local
+  rabbitmq-log:
+    driver: local
 
   # ================================
   # REST Services
