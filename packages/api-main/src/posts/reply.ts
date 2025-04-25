@@ -24,7 +24,7 @@ const statement = getDatabase()
         quantity: sql.placeholder('quantity'),
     })
     .onConflictDoNothing()
-    .prepare('stmnt_post');
+    .prepare('stmnt_reply');
 
 const statementAddReplyCount = getDatabase()
     .update(FeedTable)

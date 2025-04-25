@@ -36,6 +36,27 @@ describe('v1', { sequential: true }, () => {
         assert.isOk(response?.status === 200, 'response was not okay');
     });
 
+    it('POST - /reply', async () => {
+        const response = await get<{ status: number; rows: { hash: string; author: string; message: string }[] }>(
+            `feed`
+        );
+        assert.isOk(response, 'failed to fetch feed data');
+        assert.isOk(
+            response && Array.isArray(response.rows) && response.rows.length >= 1,
+            'feed result was not an array type'
+        );
+
+        const replyResponse = await post(
+            `reply`,
+            generateFakeData(
+                `dither.Reply("${response.rows[0].hash}","${genericPostMessage}")`,
+                addressUserA,
+                addressReceiver
+            )
+        );
+        assert.isOk(replyResponse?.status === 200, 'response was not okay');
+    });
+
     it('GET - /feed', async () => {
         const response = await get<{ status: number; rows: { hash: string; author: string; message: string }[] }>(
             `feed`
