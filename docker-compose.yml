@@ -15,9 +15,9 @@ services:
   # ================================
   # Event Consuming Services
   # ================================
-  posts-service:
-    container_name: "posts-service"
-    build: ./packages/posts-service
+  post-service:
+    container_name: "post-service"
+    build: ./packages/post-service
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -27,6 +27,75 @@ services:
     restart: always
     command: ["pnpm", "start"]
     
+  reply-service:
+    container_name: "reply-service"
+    build: ./packages/reply-service
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
+      RABBITMQ_EXCHANGE: "dither"
+    restart: always
+    command: ["pnpm", "start"]
+
+  like-service:
+    container_name: "like-service"
+    build: ./packages/like-service
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
+      RABBITMQ_EXCHANGE: "dither"
+    restart: always
+    command: ["pnpm", "start"]
+
+  dislike-service:
+    container_name: "dislike-service"
+    build: ./packages/dislike-service
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
+      RABBITMQ_EXCHANGE: "dither"
+    restart: always
+    command: ["pnpm", "start"]
+
+  follow-service:
+    container_name: "follow-service"
+    build: ./packages/follow-service
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
+      RABBITMQ_EXCHANGE: "dither"
+    restart: always
+    command: ["pnpm", "start"]
+  unfollow-service:
+    container_name: "unfollow-service"
+    build: ./packages/unfollow-service
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
+      RABBITMQ_EXCHANGE: "dither"
+    restart: always
+    command: ["pnpm", "start"]
+  flag-service:
+    container_name: "flag-service"
+    build: ./packages/flag-service
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
+      RABBITMQ_EXCHANGE: "dither"
+    restart: always
+    command: ["pnpm", "start"]
   # ================================
   # ChronoSync Services (Readers)
   # ================================

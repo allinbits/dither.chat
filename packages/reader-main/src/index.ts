@@ -6,7 +6,7 @@ import { useEventConfig } from './event-config';
 
 const config = useConfig();
 const eventConfig = useEventConfig();
-const actionTypes = ['Post', 'Reply', 'Like', 'Follow', 'Unfollow', 'Repost']; // Extend as required;
+const actionTypes = ['Post', 'Reply', 'Like', 'Flag', 'Dislike', 'Follow', 'Unfollow']; // Extend as required;
 
 let state: ChronoState;
 let lastBlock: string;
