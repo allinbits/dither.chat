@@ -1,14 +1,13 @@
 import { t } from 'elysia';
 import { DislikesTable, FeedTable, ReplyTable } from '../../drizzle/schema';
 import { getDatabase } from '../../drizzle/db';
-import { getTransferMessage, getTransferQuantities } from '../utility';
-import { extractMemoContent } from '@atomone/chronostate';
 import { eq, sql } from 'drizzle-orm';
 
 export const DislikeBody = t.Object({
     hash: t.String(),
-    memo: t.String(),
-    messages: t.Array(t.Record(t.String(), t.Any())),
+    from: t.String(),
+    postHash: t.String(),
+    quantity: t.String(),
     isReply: t.Optional(t.Boolean()),
 });
 
@@ -41,23 +40,18 @@ const statementAddDislikeToReply = getDatabase()
     .prepare('stmnt_add_flag_count_to_reply');
 
 export async function Dislike(body: typeof DislikeBody.static) {
-    const msgTransfer = getTransferMessage(body.messages);
-    if (!msgTransfer) {
-        return { status: 400, error: 'transfer message must exist to be logged as a post' };
-    }
-
-    const quantity = getTransferQuantities(body.messages);
-    const [post_hash] = extractMemoContent(body.memo, 'dither.Dislike');
-    if (!post_hash) {
-        return { status: 400, error: 'memo must contain a like address for dither.Dislike' };
-    }
-
     try {
-        await statement.execute({ post_hash, hash: body.hash, author: msgTransfer.from_address, quantity });
+        await statement.execute({
+            post_hash: body.postHash,
+            hash: body.hash,
+            author: body.from,
+            quantity: body.quantity,
+        });
+
         if (body.isReply) {
-            await statementAddDislikeToReply.execute({ post_hash, quantity });
+            await statementAddDislikeToReply.execute({ post_hash: body.postHash, quantity: body.quantity });
         } else {
-            await statementAddDislikeToPost.execute({ post_hash, quantity });
+            await statementAddDislikeToPost.execute({ post_hash: body.postHash, quantity: body.quantity });
         }
 
         return { status: 200 };

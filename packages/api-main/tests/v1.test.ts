@@ -3,10 +3,10 @@ import { it, describe, assert } from 'vitest';
 import { getDatabase } from '../drizzle/db';
 import { sql } from 'drizzle-orm';
 import { tables } from '../drizzle/schema';
-import { generateFakeData, get, getAtomOneAddress, post } from './shared';
+import { get, getAtomOneAddress, getRandomHash, post } from './shared';
+import * as Posts from '../src/posts/index';
 
 describe('v1', { sequential: true }, () => {
-    const addressReceiver = getAtomOneAddress();
     const addressUserA = getAtomOneAddress();
     const addressUserB = getAtomOneAddress();
     const genericPostMessage =
@@ -29,10 +29,15 @@ describe('v1', { sequential: true }, () => {
     });
 
     it('POST - /post', async () => {
-        const response = await post(
-            `post`,
-            generateFakeData(`dither.Post("${genericPostMessage}")`, addressUserA, addressReceiver)
-        );
+        const body: typeof Posts.PostBody.static = {
+            from: addressUserA,
+            hash: getRandomHash(),
+            msg: genericPostMessage,
+            quantity: '1',
+            timestamp: '2025-04-16T19:46:42Z',
+        };
+
+        const response = await post(`post`, body);
         assert.isOk(response?.status === 200, 'response was not okay');
     });
 
@@ -46,14 +51,16 @@ describe('v1', { sequential: true }, () => {
             'feed result was not an array type'
         );
 
-        const replyResponse = await post(
-            `reply`,
-            generateFakeData(
-                `dither.Reply("${response.rows[0].hash}","${genericPostMessage}")`,
-                addressUserA,
-                addressReceiver
-            )
-        );
+        const body: typeof Posts.ReplyBody.static = {
+            from: addressUserA,
+            hash: getRandomHash(),
+            postHash: response.rows[0].hash,
+            msg: genericPostMessage,
+            quantity: '1',
+            timestamp: '2025-04-16T19:46:42Z',
+        };
+
+        const replyResponse = await post(`reply`, body);
         assert.isOk(replyResponse?.status === 200, 'response was not okay');
     });
 
@@ -94,11 +101,14 @@ describe('v1', { sequential: true }, () => {
         }
 
         for (let i = 0; i < 50; i++) {
-            const likeResponse = await post(
-                `like`,
-                generateFakeData(`dither.Like("${response.rows[0].hash}")`, addressUserA, addressReceiver)
-            );
+            const body: typeof Posts.LikeBody.static = {
+                from: addressUserA,
+                hash: getRandomHash(),
+                postHash: response.rows[0].hash,
+                quantity: '1',
+            };
 
+            const likeResponse = await post(`like`, body);
             assert.isOk(likeResponse != null);
             assert.isOk(likeResponse && likeResponse.status === 200, 'response was not okay');
         }
@@ -132,11 +142,14 @@ describe('v1', { sequential: true }, () => {
         assert.isOk(Array.isArray(response.rows) && response.rows.length >= 1, 'feed result was not an array type');
 
         for (let i = 0; i < 50; i++) {
-            const dislikeResponse = await post(
-                `dislike`,
-                generateFakeData(`dither.Dislike("${response.rows[0].hash}")`, addressUserA, addressReceiver)
-            );
+            const body: typeof Posts.DislikeBody.static = {
+                from: addressUserA,
+                hash: getRandomHash(),
+                postHash: response.rows[0].hash,
+                quantity: '1',
+            };
 
+            const dislikeResponse = await post(`dislike`, body);
             assert.isOk(dislikeResponse != null);
             assert.isOk(dislikeResponse && dislikeResponse.status === 200, 'response was not okay');
         }
@@ -174,11 +187,14 @@ describe('v1', { sequential: true }, () => {
         }
 
         for (let i = 0; i < 50; i++) {
-            const flagResponse = await post(
-                `flag`,
-                generateFakeData(`dither.Flag("${response.rows[0].hash}")`, addressUserA, addressReceiver)
-            );
+            const body: typeof Posts.FlagBody.static = {
+                from: addressUserA,
+                hash: getRandomHash(),
+                postHash: response.rows[0].hash,
+                quantity: '1',
+            };
 
+            const flagResponse = await post(`flag`, body);
             assert.isOk(flagResponse != null);
             assert.isOk(flagResponse && flagResponse.status === 200, 'response was not okay');
         }
@@ -206,20 +222,24 @@ describe('v1', { sequential: true }, () => {
 
     // Follows
     it('POST - /follow', async () => {
-        const response = await post(
-            `follow`,
-            generateFakeData(`dither.Follow("${addressUserB}")`, addressUserA, addressReceiver)
-        );
+        const body: typeof Posts.FollowBody.static = {
+            from: addressUserA,
+            hash: getRandomHash(),
+            address: addressUserB,
+        };
 
+        const response = await post(`follow`, body);
         assert.isOk(response?.status === 200, 'response was not okay');
     });
 
     it('POST - /follow - no duplicates', async () => {
-        const response = await post(
-            `follow`,
-            generateFakeData(`dither.Follow("${addressUserB}")`, addressUserA, addressReceiver)
-        );
+        const body: typeof Posts.FollowBody.static = {
+            hash: getRandomHash(),
+            from: addressUserA,
+            address: addressUserB,
+        };
 
+        const response = await post(`follow`, body);
         assert.isOk(response?.status === 400, 'additional follow was allowed somehow');
     });
 
@@ -243,10 +263,14 @@ describe('v1', { sequential: true }, () => {
 
     // Unfollow
     it('POST - /unfollow', async () => {
-        const response = await post(
-            `unfollow`,
-            generateFakeData(`dither.Unfollow("${addressUserB}")`, addressUserA, addressReceiver)
-        );
+        const body: typeof Posts.UnfollowBody.static = {
+            hash: getRandomHash(),
+            from: addressUserA,
+            address: addressUserB,
+        };
+
+        const response = await post(`unfollow`, body);
+        console.log(response);
         assert.isOk(response?.status === 200, 'response was not okay');
     });
 
