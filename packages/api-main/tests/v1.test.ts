@@ -254,7 +254,6 @@ describe('v1', { sequential: true }, () => {
             `following?address=${addressUserA}`
         );
 
-        console.log(response);
         assert.isOk(response && Array.isArray(response.rows), 'following response was not an array');
         assert.isOk(response && response.rows.find((x) => x.address === addressUserB));
     });
