@@ -1,7 +1,7 @@
 import { t } from 'elysia';
 import { FeedTable, LikesTable } from '../../drizzle/schema';
 import { getDatabase } from '../../drizzle/db';
-import { eq, sql  } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 
 export const LikeBody = t.Object({
     hash: t.String(),
