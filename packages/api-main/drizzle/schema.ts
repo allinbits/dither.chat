@@ -6,21 +6,22 @@ export const FeedTable = pgTable(
     'feed',
     {
         id: serial('id').primaryKey(),
-        hash: varchar({ length: 64 }).notNull(),
-        author: varchar({ length: 44 }).notNull(),
-        timestamp: timestamp({ withTimezone: true }).notNull(),
-        message: varchar({ length: MEMO_LENGTH }).notNull(),
-        quantity: bigint({ mode: 'number' }).notNull(),
-        replies: integer().default(0),
-        likes: integer().default(0),
-        dislikes: integer().default(0),
-        flags: integer().default(0),
-        likes_burnt: bigint({ mode: 'number' }).default(0),
-        dislikes_burnt: bigint({ mode: 'number' }).default(0),
-        flags_burnt: bigint({ mode: 'number' }).default(0),
-        deleted_at: timestamp({ withTimezone: true }),
-        deleted_reason: text(),
-        post_hash: varchar({ length: 64 }),
+        hash: varchar({ length: 64 }).notNull(), // Main hash from the transaction
+        post_hash: varchar({ length: 64 }), // Optional, this makes a post a reply, provided through memo
+        author: varchar({ length: 44 }).notNull(), // Address of user, usually in the transfer message
+        timestamp: timestamp({ withTimezone: true }).notNull(), // Timestamp parsed with new Date()
+        message: varchar({ length: MEMO_LENGTH }).notNull(), // The message inside of the memo
+        quantity: bigint({ mode: 'number' }).notNull(), // The total amount of tokens the user spent to post this message
+        replies: integer().default(0), // The amount of replies this post / reply has
+        likes: integer().default(0), // The amount of likes this post / reply has
+        dislikes: integer().default(0), // The amount of dislikes this post / reply has
+        flags: integer().default(0), // The amount of flags this post / reply has
+        likes_burnt: bigint({ mode: 'number' }).default(0), // The amount of tokens burnt from each user who liked this post / reply
+        dislikes_burnt: bigint({ mode: 'number' }).default(0), // The amount of tokens burnt from each user who disliked this post / reply
+        flags_burnt: bigint({ mode: 'number' }).default(0), // The amount of tokens burnt from each user who wante dto flag this post / reply
+        deleted_at: timestamp({ withTimezone: true }), // When this post was marked as 'deleted'
+        deleted_reason: text(), // What the reason was why the post was deleted
+        deleted_hash: varchar({ length: 64 }), // The hash that corresponds with the soft delete request
     },
     (t) => [index('feed_hash_index').on(t.hash), index('post_hash_index').on(t.post_hash)]
 );

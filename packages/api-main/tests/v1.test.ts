@@ -276,7 +276,6 @@ describe('v1', { sequential: true }, () => {
         };
 
         const response = await post(`unfollow`, body);
-        console.log(response);
         assert.isOk(response?.status === 200, 'response was not okay');
     });
 
@@ -294,5 +293,33 @@ describe('v1', { sequential: true }, () => {
         );
         assert.isOk(response && Array.isArray(response.rows), 'following response was not an array');
         assert.isOk(response && response.rows.length <= 0, 'did not unfollow all users');
+    });
+
+    // PostRemove
+    it('POST - /post-remove', async () => {
+        const response = await get<{ status: number; rows: { hash: string; author: string; message: string }[] }>(
+            `posts?address=${addressUserA}`
+        );
+        assert.isOk(response, 'failed to fetch posts data');
+        assert.isOk(Array.isArray(response.rows) && response.rows.length >= 1, 'feed result was not an array type');
+
+        const body: typeof Posts.PostRemoveBody.static = {
+            from: addressUserA,
+            hash: getRandomHash(),
+            timestamp: '2025-04-16T19:46:42Z',
+            post_hash: response.rows[0].hash,
+            reason: ''
+        };
+
+        const replyResponse = await post(`post-remove`, body);
+        assert.isOk(replyResponse?.status === 200, 'response was not okay');
+
+        const postsResponse = await get<{ status: number; rows: { hash: string; author: string; message: string, deleted_at: Date, deleted_reason: string, deleted_hash: string }[] }>(
+            `posts?address=${addressUserA}`
+        );
+
+        assert.isOk(postsResponse?.status === 200, 'posts did not resolve');
+        const data = postsResponse?.rows.find(x => x.hash === response.rows[0].hash);
+        assert.isUndefined(data, 'data was not hidden')
     });
 });
