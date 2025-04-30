@@ -57,6 +57,34 @@ importers:
         specifier: ^3.1.2
         version: 3.1.2(@types/node@22.14.1)(tsx@4.19.3)
 
+  packages/dislike-service:
+    dependencies:
+      '@atomone/chronostate':
+        specifier: file:../../../chronolibrary/packages/chronostate
+        version: file:../chronolibrary/packages/chronostate
+      '@atomone/event-consumer':
+        specifier: ^1.0.2
+        version: 1.0.2
+      '@atomone/indexer-feed':
+        specifier: workspace:*
+        version: link:../reader-main
+      '@types/node':
+        specifier: ^22.13.10
+        version: 22.14.1
+      amqplib:
+        specifier: ^0.10.7
+        version: 0.10.7
+      tsx:
+        specifier: ^4.19.3
+        version: 4.19.3
+    devDependencies:
+      '@types/amqplib':
+        specifier: ^0.10.7
+        version: 0.10.7
+      typescript:
+        specifier: ^5.8.2
+        version: 5.8.3
+
   packages/event-consumer:
     dependencies:
       '@types/amqplib':
@@ -76,11 +104,101 @@ importers:
         specifier: ^3.0.9
         version: 3.1.2(@types/node@22.14.1)(tsx@4.19.3)
 
-  packages/posts-service:
+  packages/flag-service:
     dependencies:
+      '@atomone/chronostate':
+        specifier: file:../../../chronolibrary/packages/chronostate
+        version: file:../chronolibrary/packages/chronostate
       '@atomone/event-consumer':
         specifier: ^1.0.2
         version: 1.0.2
+      '@atomone/indexer-feed':
+        specifier: workspace:*
+        version: link:../reader-main
+      '@types/node':
+        specifier: ^22.13.10
+        version: 22.14.1
+      amqplib:
+        specifier: ^0.10.7
+        version: 0.10.7
+      tsx:
+        specifier: ^4.19.3
+        version: 4.19.3
+    devDependencies:
+      '@types/amqplib':
+        specifier: ^0.10.7
+        version: 0.10.7
+      typescript:
+        specifier: ^5.8.2
+        version: 5.8.3
+
+  packages/follow-service:
+    dependencies:
+      '@atomone/chronostate':
+        specifier: file:../../../chronolibrary/packages/chronostate
+        version: file:../chronolibrary/packages/chronostate
+      '@atomone/event-consumer':
+        specifier: ^1.0.2
+        version: 1.0.2
+      '@atomone/indexer-feed':
+        specifier: workspace:*
+        version: link:../reader-main
+      '@types/node':
+        specifier: ^22.13.10
+        version: 22.14.1
+      amqplib:
+        specifier: ^0.10.7
+        version: 0.10.7
+      tsx:
+        specifier: ^4.19.3
+        version: 4.19.3
+    devDependencies:
+      '@types/amqplib':
+        specifier: ^0.10.7
+        version: 0.10.7
+      typescript:
+        specifier: ^5.8.2
+        version: 5.8.3
+
+  packages/like-service:
+    dependencies:
+      '@atomone/chronostate':
+        specifier: file:../../../chronolibrary/packages/chronostate
+        version: file:../chronolibrary/packages/chronostate
+      '@atomone/event-consumer':
+        specifier: ^1.0.2
+        version: 1.0.2
+      '@atomone/indexer-feed':
+        specifier: workspace:*
+        version: link:../reader-main
+      '@types/node':
+        specifier: ^22.13.10
+        version: 22.14.1
+      amqplib:
+        specifier: ^0.10.7
+        version: 0.10.7
+      tsx:
+        specifier: ^4.19.3
+        version: 4.19.3
+    devDependencies:
+      '@types/amqplib':
+        specifier: ^0.10.7
+        version: 0.10.7
+      typescript:
+        specifier: ^5.8.2
+        version: 5.8.3
+
+  packages/post-service:
+    dependencies:
+      '@atomone/chronostate':
+        specifier: file:../../../chronolibrary/packages/chronostate
+        version: file:../chronolibrary/packages/chronostate
+      '@atomone/event-consumer':
+        specifier: ^1.0.2
+        version: 1.0.2
+      '@atomone/indexer-feed':
+        specifier: workspace:*
+        version: link:../reader-main
       '@types/node':
         specifier: ^22.13.10
         version: 22.14.1
@@ -101,8 +219,8 @@ importers:
   packages/reader-main:
     dependencies:
       '@atomone/chronostate':
-        specifier: 2.2.0
-        version: 2.2.0
+        specifier: file:../../../chronolibrary/packages/chronostate
+        version: file:../chronolibrary/packages/chronostate
       '@types/node':
         specifier: ^22.13.10
         version: 22.14.1
@@ -123,13 +241,69 @@ importers:
         specifier: ^5.8.2
         version: 5.8.3
 
-packages:
+  packages/reply-service:
+    dependencies:
+      '@atomone/chronostate':
+        specifier: file:../../../chronolibrary/packages/chronostate
+        version: file:../chronolibrary/packages/chronostate
+      '@atomone/event-consumer':
+        specifier: ^1.0.2
+        version: 1.0.2
+      '@atomone/indexer-feed':
+        specifier: workspace:*
+        version: link:../reader-main
+      '@types/node':
+        specifier: ^22.13.10
+        version: 22.14.1
+      amqplib:
+        specifier: ^0.10.7
+        version: 0.10.7
+      tsx:
+        specifier: ^4.19.3
+        version: 4.19.3
+    devDependencies:
+      '@types/amqplib':
+        specifier: ^0.10.7
+        version: 0.10.7
+      typescript:
+        specifier: ^5.8.2
+        version: 5.8.3
 
-  '@atomone/chronostate@2.2.0':
-    resolution: {integrity: sha512-sVQV+D6yBEyK//U+eoEF4+6/QR9TQ2ICeYjDJDX6a6VIP4OagPSO30aUS66XT3VIqV3hT25WIzuRkCY9/U1cSA==}
+  packages/unfollow-service:
+    dependencies:
+      '@atomone/chronostate':
+        specifier: file:../../../chronolibrary/packages/chronostate
+        version: file:../chronolibrary/packages/chronostate
+      '@atomone/event-consumer':
+        specifier: ^1.0.2
+        version: 1.0.2
+      '@atomone/indexer-feed':
+        specifier: workspace:*
+        version: link:../reader-main
+      '@types/node':
+        specifier: ^22.13.10
+        version: 22.14.1
+      amqplib:
+        specifier: ^0.10.7
+        version: 0.10.7
+      tsx:
+        specifier: ^4.19.3
+        version: 4.19.3
+    devDependencies:
+      '@types/amqplib':
+        specifier: ^0.10.7
+        version: 0.10.7
+      typescript:
+        specifier: ^5.8.2
+        version: 5.8.3
+
+packages:
 
   '@atomone/chronostate@2.2.1':
     resolution: {integrity: sha512-0HeE8SFEyvouHRSXsJdyuQQFcIpz/80o6DH8pSy4YTgYNGvb5W6+s7McCc19g/Zn5iPAslRSJsuSo1DjqJWhww==}
+
+  '@atomone/chronostate@file:../chronolibrary/packages/chronostate':
+    resolution: {directory: ../chronolibrary/packages/chronostate, type: directory}
 
   '@atomone/event-consumer@1.0.2':
     resolution: {integrity: sha512-50DbXJyvLDjyX5orKkpUxIprDMrgFr2J6UIllc91gXWgIHi8ig2vLlkyY/R2E/A0sDFv2NGMicHSdL5X4pyfqg==}
@@ -1100,9 +1274,9 @@ packages:
 
 snapshots:
 
-  '@atomone/chronostate@2.2.0': {}
-
   '@atomone/chronostate@2.2.1': {}
+
+  '@atomone/chronostate@file:../chronolibrary/packages/chronostate': {}
 
   '@atomone/event-consumer@1.0.2':
     dependencies:

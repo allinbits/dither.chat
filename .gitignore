@@ -4,3 +4,5 @@ data.sqlite
 packages/api-main/drizzle/migrations
 packages/api-main/data
 .env
+dist
+dist/

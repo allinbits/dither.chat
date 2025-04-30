@@ -1,6 +1,14 @@
 import { EventConsumer } from "@atomone/event-consumer";
 import { useConfig } from "./config";
 import amqplib from 'amqplib';
+import { extractMemoContent } from "@atomone/chronostate";
+import { DitherActions } from '@atomone/indexer-feed';
+declare module '@atomone/chronostate' {
+  export namespace MemoExtractor {
+    export interface TypeMap extends DitherActions {
+    }
+  }
+}
 
 const config = useConfig();
 const apiRoot = process.env.API_ROOT || 'http://localhost:3000';
@@ -9,12 +17,12 @@ const unfollowsHandler = async (msg: amqplib.Message) => {
     try {
         const content = msg.content.toString();
         const parsedContent = JSON.parse(content);
+        const [following_address] = extractMemoContent(parsedContent.memo, "dither.Follow");
         const postBody = {
             hash: parsedContent.hash,
-            height: parsedContent.height,
-            timestamp: parsedContent.timestamp,
-            memo: parsedContent.memo,
-            messages: parsedContent.messages,
+            from: parsedContent.sender,
+            address: following_address,
+            //timestamp: parsedContent.timestamp,
         };
         const rawResponse = await fetch(apiRoot+'/unfollow', {
             method: 'POST',

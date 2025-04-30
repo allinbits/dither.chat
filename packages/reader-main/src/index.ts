@@ -3,6 +3,17 @@ import { useConfig } from './config';
 import { Action } from '@atomone/chronostate/dist/types';
 import amqplib from 'amqplib';
 import { useEventConfig } from './event-config';
+import { MsgGeneric, MsgTransfer } from './types';
+
+export interface DitherActions { 
+    'dither.Post':  [string];
+    'dither.Reply': [string, string];
+    'dither.Like': [string];
+    'dither.Dislike': [string];
+    'dither.Flag': [string];
+    'dither.Follow': [string];
+    'dither.Unfollow': [string];
+}
 
 const config = useConfig();
 const eventConfig = useEventConfig();
@@ -12,11 +23,38 @@ let state: ChronoState;
 let lastBlock: string;
 let channel: amqplib.Channel;
 
+export function getTransferMessage(messages: Array<MsgGeneric>) {
+    const msgTransfer = messages.find((msg) => msg['@type'] === '/cosmos.bank.v1beta1.MsgSend');
+    if (!msgTransfer) {
+        return null;
+    }
+
+    return msgTransfer as MsgTransfer
+}
+
+export function getTransferQuantities(messages: Array<MsgGeneric>, denom = 'uatone') {
+    const msgTransfers = messages.filter((msg) => msg['@type'] === '/cosmos.bank.v1beta1.MsgSend') as MsgTransfer[];
+    let amount = BigInt('0');
+
+    for (let msg of msgTransfers) {
+        for (let quantity of msg.amount) {
+            if (quantity.denom !== denom) {
+                continue;
+            }
+
+            amount += BigInt(quantity.amount);
+        }
+    }
+
+    return amount.toString();
+}
 async function handleAction(action: Action) {
     
     for (const actionType of actionTypes) {
-        if (action.memo.startsWith(config.MEMO_PREFIX+actionType)) {            
-            await channel.publish(eventConfig.exchange, actionType, Buffer.from(JSON.stringify(action)));            
+        if (action.memo.startsWith(config.MEMO_PREFIX+actionType)) {      
+            const transfer = getTransferMessage(action.messages);
+            const quantity = getTransferQuantities(action.messages);
+            await channel.publish(eventConfig.exchange, actionType, Buffer.from(JSON.stringify({ sender: transfer?.from_address, quantity: quantity, ...action })));            
             break;
         }else{
             continue;

@@ -10,7 +10,9 @@
         "build": "tsc"
     },
     "dependencies": {
+        "@atomone/chronostate": "^2.2.2",
         "@atomone/event-consumer": "^1.0.2",
+        "@atomone/indexer-feed": "workspace:*",
         "@types/node": "^22.13.10",
         "amqplib": "^0.10.7",
         "tsx": "^4.19.3"

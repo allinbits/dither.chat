@@ -1,5 +1,5 @@
 {
-    "name": "indexer-feed",
+    "name": "@atomone/indexer-feed",
     "version": "1.0.0",
     "description": "",
     "author": "stuyk",
@@ -10,7 +10,7 @@
         "build": "tsc"
     },
     "dependencies": {
-        "@atomone/chronostate": "2.2.0",
+        "@atomone/chronostate": "^2.2.2",
         "@types/node": "^22.13.10",
         "amqplib": "^0.10.7",
         "tsx": "^4.19.3"
