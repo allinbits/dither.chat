@@ -1,14 +1,14 @@
 import { t } from 'elysia';
-import { FeedTable, ReplyTable, LikesTable } from '../../drizzle/schema';
+import { FeedTable, LikesTable } from '../../drizzle/schema';
 import { getDatabase } from '../../drizzle/db';
-import { eq, sql } from 'drizzle-orm';
+import { eq, sql  } from 'drizzle-orm';
 
 export const LikeBody = t.Object({
     hash: t.String(),
     from: t.String(),
     postHash: t.String(),
     quantity: t.String(),
-    isReply: t.Optional(t.Boolean()),
+    timestamp: t.String(),
 });
 
 const statement = getDatabase()
@@ -18,6 +18,7 @@ const statement = getDatabase()
         hash: sql.placeholder('hash'),
         author: sql.placeholder('author'),
         quantity: sql.placeholder('quantity'),
+        timestamp: sql.placeholder('timestamp'),
     })
     .prepare('stmnt_add_like');
 
@@ -30,15 +31,6 @@ const statementAddLikeToPost = getDatabase()
     .where(eq(FeedTable.hash, sql.placeholder('post_hash')))
     .prepare('stmnt_add_like_count_to_post');
 
-const statementAddLikeToReply = getDatabase()
-    .update(ReplyTable)
-    .set({
-        likes: sql`${ReplyTable.likes} + 1`,
-        likes_burnt: sql`${FeedTable.likes_burnt} + ${sql.placeholder('quantity')}`,
-    })
-    .where(eq(ReplyTable.hash, sql.placeholder('post_hash')))
-    .prepare('stmnt_add_like_count_to_reply');
-
 export async function Like(body: typeof LikeBody.static) {
     try {
         await statement.execute({
@@ -46,13 +38,10 @@ export async function Like(body: typeof LikeBody.static) {
             hash: body.hash,
             author: body.from,
             quantity: body.quantity,
+            timestamp: new Date(body.timestamp),
         });
 
-        if (body.isReply) {
-            await statementAddLikeToReply.execute({ post_hash: body.postHash, quantity: body.quantity });
-        } else {
-            await statementAddLikeToPost.execute({ post_hash: body.postHash, quantity: body.quantity });
-        }
+        await statementAddLikeToPost.execute({ post_hash: body.postHash, quantity: body.quantity });
 
         return { status: 200 };
     } catch (err) {

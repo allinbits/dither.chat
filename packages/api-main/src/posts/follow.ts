@@ -7,6 +7,7 @@ export const FollowBody = t.Object({
     hash: t.String(),
     from: t.String(),
     address: t.String(),
+    timestamp: t.String(),
 });
 
 const statementAddFollower = getDatabase()
@@ -15,6 +16,7 @@ const statementAddFollower = getDatabase()
         follower: sql.placeholder('follower'),
         following: sql.placeholder('following'),
         hash: sql.placeholder('hash'),
+        timestamp: sql.placeholder('timestamp')
     })
     .prepare('stmnt_add_follower');
 
@@ -24,6 +26,7 @@ export async function Follow(body: typeof FollowBody.static) {
             follower: body.from,
             following: body.address,
             hash: body.hash,
+            timestamp: new Date(body.timestamp)
         });
 
         return { status: 200 };

@@ -1,5 +1,5 @@
 import { t } from 'elysia';
-import { FeedTable, ReplyTable } from '../../drizzle/schema';
+import { FeedTable } from '../../drizzle/schema';
 import { getDatabase } from '../../drizzle/db';
 import { eq, sql } from 'drizzle-orm';
 
@@ -13,7 +13,7 @@ export const ReplyBody = t.Object({
 });
 
 const statement = getDatabase()
-    .insert(ReplyTable)
+    .insert(FeedTable)
     .values({
         author: sql.placeholder('author'),
         hash: sql.placeholder('hash'),

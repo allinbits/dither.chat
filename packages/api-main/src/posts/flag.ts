@@ -1,5 +1,5 @@
 import { t } from 'elysia';
-import { FeedTable, FlagsTable, ReplyTable } from '../../drizzle/schema';
+import { FeedTable, FlagsTable } from '../../drizzle/schema';
 import { getDatabase } from '../../drizzle/db';
 import { eq, sql } from 'drizzle-orm';
 
@@ -8,7 +8,7 @@ export const FlagBody = t.Object({
     from: t.String(),
     postHash: t.String(),
     quantity: t.String(),
-    isReply: t.Optional(t.Boolean()),
+    timestamp: t.String(),
 });
 
 const statement = getDatabase()
@@ -18,6 +18,7 @@ const statement = getDatabase()
         hash: sql.placeholder('hash'),
         author: sql.placeholder('author'),
         quantity: sql.placeholder('quantity'),
+        timestamp: sql.placeholder('timestamp'),
     })
     .prepare('stmnt_add_flag');
 
@@ -30,15 +31,6 @@ const statementAddFlagToPost = getDatabase()
     .where(eq(FeedTable.hash, sql.placeholder('post_hash')))
     .prepare('stmnt_add_flag_count_to_post');
 
-const statementAddFlagToReply = getDatabase()
-    .update(ReplyTable)
-    .set({
-        likes: sql`${ReplyTable.likes} + 1`,
-        flags_burnt: sql`${FeedTable.flags_burnt} + ${sql.placeholder('quantity')}`,
-    })
-    .where(eq(ReplyTable.hash, sql.placeholder('post_hash')))
-    .prepare('stmnt_add_flag_count_to_reply');
-
 export async function Flag(body: typeof FlagBody.static) {
     try {
         await statement.execute({
@@ -46,13 +38,10 @@ export async function Flag(body: typeof FlagBody.static) {
             hash: body.hash,
             author: body.from,
             quantity: body.quantity,
+            timestamp: new Date(body.timestamp),
         });
-        
-        if (body.isReply) {
-            await statementAddFlagToReply.execute({ post_hash: body.postHash, quantity: body.quantity });
-        } else {
-            await statementAddFlagToPost.execute({ post_hash: body.postHash, quantity: body.quantity });
-        }
+
+        await statementAddFlagToPost.execute({ post_hash: body.postHash, quantity: body.quantity });
 
         return { status: 200 };
     } catch (err) {

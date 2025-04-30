@@ -10,7 +10,8 @@ export const UnfollowBody = t.Object({
 });
 
 const statementRemoveFollowing = getDatabase()
-    .delete(FollowsTable)
+    .update(FollowsTable)
+    .set({ deleted_at: sql`CURRENT_TIMESTAMP` })
     .where(
         and(
             eq(FollowsTable.follower, sql.placeholder('follower')),
