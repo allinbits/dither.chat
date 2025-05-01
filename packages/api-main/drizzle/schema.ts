@@ -19,9 +19,9 @@ export const FeedTable = pgTable(
         likes_burnt: bigint({ mode: 'number' }).default(0), // The amount of tokens burnt from each user who liked this post / reply
         dislikes_burnt: bigint({ mode: 'number' }).default(0), // The amount of tokens burnt from each user who disliked this post / reply
         flags_burnt: bigint({ mode: 'number' }).default(0), // The amount of tokens burnt from each user who wante dto flag this post / reply
-        deleted_at: timestamp({ withTimezone: true }), // When this post was marked as 'deleted'
-        deleted_reason: text(), // What the reason was why the post was deleted
-        deleted_hash: varchar({ length: 64 }), // The hash that corresponds with the soft delete request
+        removed_hash: varchar({ length: 64 }), // The hash that corresponds with the soft delete request
+        removed_at: timestamp({ withTimezone: true }), // When this post was removed
+        removed_by: varchar({ length: 44 }) // Who removed this post
     },
     (t) => [index('feed_hash_index').on(t.hash), index('post_hash_index').on(t.post_hash)]
 );
@@ -90,4 +90,14 @@ export const FollowsTable = pgTable(
     ]
 );
 
-export const tables = ['feed', 'likes', 'dislikes', 'flags', 'follows'];
+// Audits are append only
+export const AuditTable = pgTable('audits', {
+    id: serial('id').primaryKey(),
+    post_hash: varchar({ length: 64 }), // This is a post removal
+    user_hash: varchar({ length: 64 }), // This is a user removal
+    created_by: varchar({ length: 44 }),
+    created_at: timestamp({ withTimezone: true }),
+    created_reason: text(),
+})
+
+export const tables = ['feed', 'likes', 'dislikes', 'flags', 'follows', 'audits'];

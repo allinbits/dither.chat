@@ -14,7 +14,7 @@ const statement = getDatabase()
     .from(FeedTable)
     .limit(sql.placeholder('limit'))
     .offset(sql.placeholder('offset'))
-    .where(and(isNull(FeedTable.deleted_at), isNull(FeedTable.post_hash)))
+    .where(and(isNull(FeedTable.removed_at), isNull(FeedTable.post_hash)))
     .prepare('stmnt_get_feed');
 
 export async function Feed(query: typeof FeedQuery.static) {

@@ -12,7 +12,7 @@ export const PostsQuery = t.Object({
 const statement = getDatabase()
     .select()
     .from(FeedTable)
-    .where(and(eq(FeedTable.author, sql.placeholder('author')), isNull(FeedTable.deleted_at)))
+    .where(and(eq(FeedTable.author, sql.placeholder('author')), isNull(FeedTable.removed_at)))
     .limit(sql.placeholder('limit'))
     .offset(sql.placeholder('offset'))
     .prepare('stmnt_get_posts');

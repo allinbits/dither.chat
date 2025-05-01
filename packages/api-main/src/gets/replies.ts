@@ -12,7 +12,7 @@ export const RepliesQuery = t.Object({
 const statement = getDatabase()
     .select()
     .from(FeedTable)
-    .where(and(eq(FeedTable.hash, sql.placeholder('hash')), isNull(FeedTable.deleted_at)))
+    .where(and(eq(FeedTable.hash, sql.placeholder('hash')), isNull(FeedTable.removed_at)))
     .limit(sql.placeholder('limit'))
     .offset(sql.placeholder('offset'))
     .prepare('stmnt_get_replies');
