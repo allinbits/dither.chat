@@ -36,6 +36,7 @@ function startWriteOnlyServer() {
     app.post('/like', ({ body }) => PostRequests.Like(body), { body: PostRequests.LikeBody });
     app.post('/dislike', ({ body }) => PostRequests.Dislike(body), { body: PostRequests.DislikeBody });
     app.post('/flag', ({ body }) => PostRequests.Flag(body), { body: PostRequests.FlagBody });
+    app.post('/post-remove', ({ body }) => PostRequests.PostRemove(body), { body: PostRequests.PostRemoveBody });
 
     app.listen(config.WRITE_ONLY_PORT ?? 3001);
     console.log(`[API Write Only] Running on ${config.WRITE_ONLY_PORT ?? 3001}`);

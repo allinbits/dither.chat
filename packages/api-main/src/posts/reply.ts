@@ -1,27 +1,26 @@
 import { t } from 'elysia';
-import { FeedTable, ReplyTable } from '../../drizzle/schema';
+import { FeedTable } from '../../drizzle/schema';
 import { getDatabase } from '../../drizzle/db';
-import { getTransferMessage, getTransferQuantities } from '../utility';
-import { extractMemoContent } from '@atomone/chronostate';
 import { eq, sql } from 'drizzle-orm';
 
 export const ReplyBody = t.Object({
     hash: t.String(),
-    height: t.String(),
+    postHash: t.String(),
     timestamp: t.String(),
-    memo: t.String(),
-    messages: t.Array(t.Record(t.String(), t.Any())),
+    from: t.String(),
+    msg: t.String(),
+    quantity: t.String(),
 });
 
 const statement = getDatabase()
-    .insert(ReplyTable)
+    .insert(FeedTable)
     .values({
-        hash: sql.placeholder('hash'),
-        post_hash: sql.placeholder('post_hash'),
-        timestamp: sql.placeholder('timestamp'),
         author: sql.placeholder('author'),
+        hash: sql.placeholder('hash'),
         message: sql.placeholder('message'),
+        post_hash: sql.placeholder('post_hash'),
         quantity: sql.placeholder('quantity'),
+        timestamp: sql.placeholder('timestamp'),
     })
     .onConflictDoNothing()
     .prepare('stmnt_reply');
@@ -33,34 +32,18 @@ const statementAddReplyCount = getDatabase()
     .prepare('stmnt_add_reply_count');
 
 export async function Reply(body: typeof ReplyBody.static) {
-    const msgTransfer = getTransferMessage(body.messages);
-    if (!msgTransfer) {
-        return { status: 400, error: 'transfer message must exist to be logged as a reply' };
-    }
-
-    const [post_hash, message] = extractMemoContent(body.memo, 'dither.Reply');
-    if (!post_hash) {
-        return { status: 400, error: 'post_hash was not supplied' };
-    }
-
-    if (!message) {
-        return { status: 400, error: 'post message contains no content' };
-    }
-
-    const quantity = getTransferQuantities(body.messages);
-
     try {
         await statement.execute({
-            author: msgTransfer.from_address,
+            author: body.from,
             hash: body.hash,
-            message,
-            post_hash,
-            quantity,
+            message: body.msg,
+            post_hash: body.postHash,
+            quantity: body.quantity,
             timestamp: new Date(body.timestamp),
         });
 
         await statementAddReplyCount.execute({
-            post_hash,
+            post_hash: body.postHash,
         });
 
         return { status: 200 };

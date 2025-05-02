@@ -1,7 +1,7 @@
 import { t } from 'elysia';
 import { FollowsTable } from '../../drizzle/schema';
 import { getDatabase } from '../../drizzle/db';
-import { eq, sql } from 'drizzle-orm';
+import { and, eq, isNull, sql } from 'drizzle-orm';
 
 export const FollowersQuery = t.Object({
     limit: t.Optional(t.Number()),
@@ -12,7 +12,7 @@ export const FollowersQuery = t.Object({
 const statementGetFollowers = getDatabase()
     .select({ address: FollowsTable.follower, hash: FollowsTable.hash })
     .from(FollowsTable)
-    .where(eq(FollowsTable.following, sql.placeholder('following')))
+    .where(and(eq(FollowsTable.following, sql.placeholder('following')), isNull(FollowsTable.removed_at)))
     .limit(sql.placeholder('limit'))
     .offset(sql.placeholder('offset'))
     .prepare('stmnt_get_followers');
