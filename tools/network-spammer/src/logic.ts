@@ -1,5 +1,5 @@
 import { LoremIpsum } from "lorem-ipsum";
-import { getCosmosClient, sendMemo } from "./client";
+import { spammerClient, sendMemo } from "./client";
 
 const lorem = new LoremIpsum({
   sentencesPerParagraph: {
@@ -43,17 +43,8 @@ function chooseRandomAction(): ActionType {
   return actions[Math.floor(Math.random() * actions.length)];
 }
 
-let lastBlock = 0;
-
-export async function publishSomething() {
+export async function publishSomething(client: spammerClient) {
   const action = chooseRandomAction();
-  const client = await getCosmosClient();
-  const currentBlock = await client.client.getHeight();
-
-  // do nothing if we are on the same block
-  if (currentBlock === lastBlock) return;
-
-  lastBlock = currentBlock;
 
   const postHash = getRandomHash();
   let memo = "";

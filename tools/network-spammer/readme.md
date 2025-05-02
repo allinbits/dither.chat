@@ -6,8 +6,8 @@ This is a minimalist TypeScript project that continuously spams the Atone Networ
 
 - Posts mock messages to the network.
 - Auto-replies chosing randomly between the set of previously posted messages to simulate threaded conversations.
-- Delete Posts (TODO)
-- Like / Dislike Posts (TODO)
+- Delete Posts
+- Like / Dislike Posts
 - Runs continuously at a configurable interval.
 
 ## Project Structure
@@ -25,5 +25,5 @@ mock-tools/
 ```
 
 ## Next Steps
-- integrate several clients ?
+- integrate several clients ✅ 
 - integrate a different logic to generate messages not LoremIpsum but maybe some fun facts API, News API to give more natural data for test 
