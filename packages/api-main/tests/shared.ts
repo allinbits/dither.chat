@@ -54,6 +54,10 @@ export function getAtomOneAddress(): string {
     return encodedAddress;
 }
 
+export function getRandomHash() {
+    return getSha256Hash(randomBytes(256).toString());
+}
+
 export function generateFakeData(memo: string, from_address: string, to_address: string) {
     lastHeight++;
 

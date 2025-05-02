@@ -1,7 +1,7 @@
 import { t } from 'elysia';
 import { getDatabase } from '../../drizzle/db';
 import { and, eq, isNull, sql } from 'drizzle-orm';
-import { ReplyTable } from '../../drizzle/schema';
+import { FeedTable } from '../../drizzle/schema';
 
 export const RepliesQuery = t.Object({
     limit: t.Optional(t.String()),
@@ -11,8 +11,8 @@ export const RepliesQuery = t.Object({
 
 const statement = getDatabase()
     .select()
-    .from(ReplyTable)
-    .where(and(eq(ReplyTable.hash, sql.placeholder('hash')), isNull(ReplyTable.deleted_at)))
+    .from(FeedTable)
+    .where(and(eq(FeedTable.hash, sql.placeholder('hash')), isNull(FeedTable.removed_at)))
     .limit(sql.placeholder('limit'))
     .offset(sql.placeholder('offset'))
     .prepare('stmnt_get_replies');

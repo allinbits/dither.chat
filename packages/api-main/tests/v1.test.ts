@@ -3,10 +3,10 @@ import { it, describe, assert } from 'vitest';
 import { getDatabase } from '../drizzle/db';
 import { sql } from 'drizzle-orm';
 import { tables } from '../drizzle/schema';
-import { generateFakeData, get, getAtomOneAddress, post } from './shared';
+import { get, getAtomOneAddress, getRandomHash, post } from './shared';
+import * as Posts from '../src/posts/index';
 
 describe('v1', { sequential: true }, () => {
-    const addressReceiver = getAtomOneAddress();
     const addressUserA = getAtomOneAddress();
     const addressUserB = getAtomOneAddress();
     const genericPostMessage =
@@ -29,10 +29,15 @@ describe('v1', { sequential: true }, () => {
     });
 
     it('POST - /post', async () => {
-        const response = await post(
-            `post`,
-            generateFakeData(`dither.Post("${genericPostMessage}")`, addressUserA, addressReceiver)
-        );
+        const body: typeof Posts.PostBody.static = {
+            from: addressUserA,
+            hash: getRandomHash(),
+            msg: genericPostMessage,
+            quantity: '1',
+            timestamp: '2025-04-16T19:46:42Z',
+        };
+
+        const response = await post(`post`, body);
         assert.isOk(response?.status === 200, 'response was not okay');
     });
 
@@ -46,14 +51,16 @@ describe('v1', { sequential: true }, () => {
             'feed result was not an array type'
         );
 
-        const replyResponse = await post(
-            `reply`,
-            generateFakeData(
-                `dither.Reply("${response.rows[0].hash}","${genericPostMessage}")`,
-                addressUserA,
-                addressReceiver
-            )
-        );
+        const body: typeof Posts.ReplyBody.static = {
+            from: addressUserA,
+            hash: getRandomHash(),
+            postHash: response.rows[0].hash,
+            msg: genericPostMessage,
+            quantity: '1',
+            timestamp: '2025-04-16T19:46:42Z',
+        };
+
+        const replyResponse = await post(`reply`, body);
         assert.isOk(replyResponse?.status === 200, 'response was not okay');
     });
 
@@ -94,11 +101,15 @@ describe('v1', { sequential: true }, () => {
         }
 
         for (let i = 0; i < 50; i++) {
-            const likeResponse = await post(
-                `like`,
-                generateFakeData(`dither.Like("${response.rows[0].hash}")`, addressUserA, addressReceiver)
-            );
+            const body: typeof Posts.LikeBody.static = {
+                from: addressUserA,
+                hash: getRandomHash(),
+                postHash: response.rows[1].hash,
+                quantity: '1',
+                timestamp: '2025-04-16T19:46:42Z',
+            };
 
+            const likeResponse = await post(`like`, body);
             assert.isOk(likeResponse != null);
             assert.isOk(likeResponse && likeResponse.status === 200, 'response was not okay');
         }
@@ -108,12 +119,13 @@ describe('v1', { sequential: true }, () => {
         const response = await get<{ status: number; rows: { hash: string; likes: number }[] }>(
             `posts?address=${addressUserA}`
         );
+
         assert.isOk(response, 'failed to fetch posts data');
         assert.isOk(Array.isArray(response.rows) && response.rows.length >= 1, 'feed result was not an array type');
-        assert.isOk(response && response.rows[0].likes >= 50, 'likes were not incremented on post');
+        assert.isOk(response && response.rows[1].likes >= 50, 'likes were not incremented on post');
 
         const getResponse = await get<{ status: number; rows: Array<{ hash: string }> }>(
-            `likes?hash=${response.rows[0].hash}`
+            `likes?hash=${response.rows[1].hash}`
         );
         assert.isOk(getResponse, 'failed to fetch posts data');
         assert.isOk(getResponse.status == 200, 'likes result was not valid');
@@ -132,11 +144,15 @@ describe('v1', { sequential: true }, () => {
         assert.isOk(Array.isArray(response.rows) && response.rows.length >= 1, 'feed result was not an array type');
 
         for (let i = 0; i < 50; i++) {
-            const dislikeResponse = await post(
-                `dislike`,
-                generateFakeData(`dither.Dislike("${response.rows[0].hash}")`, addressUserA, addressReceiver)
-            );
+            const body: typeof Posts.DislikeBody.static = {
+                from: addressUserA,
+                hash: getRandomHash(),
+                postHash: response.rows[1].hash,
+                quantity: '1',
+                timestamp: '2025-04-16T19:46:42Z',
+            };
 
+            const dislikeResponse = await post(`dislike`, body);
             assert.isOk(dislikeResponse != null);
             assert.isOk(dislikeResponse && dislikeResponse.status === 200, 'response was not okay');
         }
@@ -149,10 +165,10 @@ describe('v1', { sequential: true }, () => {
         }>(`posts?address=${addressUserA}`);
         assert.isOk(response, 'failed to fetch posts data');
         assert.isOk(Array.isArray(response.rows) && response.rows.length >= 1, 'feed result was not an array type');
-        assert.isOk(response && response.rows[0].dislikes >= 50, 'likes were not incremented on post');
+        assert.isOk(response && response.rows[1].dislikes >= 50, 'likes were not incremented on post');
 
         const getResponse = await get<{ status: number; rows: Array<{ hash: string }> }>(
-            `dislikes?hash=${response.rows[0].hash}`
+            `dislikes?hash=${response.rows[1].hash}`
         );
         assert.isOk(getResponse, 'failed to fetch posts data');
         assert.isOk(getResponse.status == 200, 'dislikes result was not valid');
@@ -174,11 +190,15 @@ describe('v1', { sequential: true }, () => {
         }
 
         for (let i = 0; i < 50; i++) {
-            const flagResponse = await post(
-                `flag`,
-                generateFakeData(`dither.Flag("${response.rows[0].hash}")`, addressUserA, addressReceiver)
-            );
+            const body: typeof Posts.FlagBody.static = {
+                from: addressUserA,
+                hash: getRandomHash(),
+                postHash: response.rows[1].hash,
+                quantity: '1',
+                timestamp: '2025-04-16T19:46:42Z',
+            };
 
+            const flagResponse = await post(`flag`, body);
             assert.isOk(flagResponse != null);
             assert.isOk(flagResponse && flagResponse.status === 200, 'response was not okay');
         }
@@ -191,10 +211,10 @@ describe('v1', { sequential: true }, () => {
         }>(`posts?address=${addressUserA}`);
         assert.isOk(response, 'failed to fetch posts data');
         assert.isOk(Array.isArray(response.rows) && response.rows.length >= 1, 'feed result was not an array type');
-        assert.isOk(response && response.rows[0].flags >= 50, 'likes were not incremented on post');
+        assert.isOk(response && response.rows[1].flags >= 50, 'likes were not incremented on post');
 
         const getResponse = await get<{ status: number; rows: Array<{ hash: string }> }>(
-            `flags?hash=${response.rows[0].hash}`
+            `flags?hash=${response.rows[1].hash}`
         );
         assert.isOk(getResponse, 'failed to fetch posts data');
         assert.isOk(getResponse.status == 200, 'flags result was not valid');
@@ -206,20 +226,26 @@ describe('v1', { sequential: true }, () => {
 
     // Follows
     it('POST - /follow', async () => {
-        const response = await post(
-            `follow`,
-            generateFakeData(`dither.Follow("${addressUserB}")`, addressUserA, addressReceiver)
-        );
+        const body: typeof Posts.FollowBody.static = {
+            from: addressUserA,
+            hash: getRandomHash(),
+            address: addressUserB,
+            timestamp: '2025-04-16T19:46:42Z',
+        };
 
+        const response = await post(`follow`, body);
         assert.isOk(response?.status === 200, 'response was not okay');
     });
 
     it('POST - /follow - no duplicates', async () => {
-        const response = await post(
-            `follow`,
-            generateFakeData(`dither.Follow("${addressUserB}")`, addressUserA, addressReceiver)
-        );
+        const body: typeof Posts.FollowBody.static = {
+            hash: getRandomHash(),
+            from: addressUserA,
+            address: addressUserB,
+            timestamp: '2025-04-16T19:46:42Z',
+        };
 
+        const response = await post(`follow`, body);
         assert.isOk(response?.status === 400, 'additional follow was allowed somehow');
     });
 
@@ -243,10 +269,15 @@ describe('v1', { sequential: true }, () => {
 
     // Unfollow
     it('POST - /unfollow', async () => {
-        const response = await post(
-            `unfollow`,
-            generateFakeData(`dither.Unfollow("${addressUserB}")`, addressUserA, addressReceiver)
-        );
+        const body: typeof Posts.UnfollowBody.static = {
+            hash: getRandomHash(),
+            from: addressUserA,
+            address: addressUserB,
+            timestamp: '2025-04-16T19:46:42Z'
+        };
+
+        const response = await post(`unfollow`, body);
+        console.log(response);
         assert.isOk(response?.status === 200, 'response was not okay');
     });
 
@@ -264,5 +295,74 @@ describe('v1', { sequential: true }, () => {
         );
         assert.isOk(response && Array.isArray(response.rows), 'following response was not an array');
         assert.isOk(response && response.rows.length <= 0, 'did not unfollow all users');
+    });
+
+    // PostRemove
+    it('POST - /post-remove', async () => {
+        const response = await get<{ status: number; rows: { hash: string; author: string; message: string }[] }>(
+            `posts?address=${addressUserA}`
+        );
+        assert.isOk(response, 'failed to fetch posts data');
+        assert.isOk(Array.isArray(response.rows) && response.rows.length >= 1, 'feed result was not an array type');
+
+        const body: typeof Posts.PostRemoveBody.static = {
+            from: addressUserA,
+            hash: getRandomHash(),
+            timestamp: '2025-04-16T19:46:42Z',
+            post_hash: response.rows[0].hash,
+        };
+
+        const replyResponse = await post(`post-remove`, body);
+        assert.isOk(replyResponse?.status === 200, 'response was not okay');
+
+        const postsResponse = await get<{
+            status: number;
+            rows: {
+                hash: string;
+                author: string;
+                message: string;
+                deleted_at: Date;
+                deleted_reason: string;
+                deleted_hash: string;
+            }[];
+        }>(`posts?address=${addressUserA}`);
+
+        assert.isOk(postsResponse?.status === 200, 'posts did not resolve');
+        const data = postsResponse?.rows.find((x) => x.hash === response.rows[0].hash);
+        assert.isUndefined(data, 'data was not hidden');
+    });
+
+    it('POST - /post-remove - No Permission', async () => {
+        const response = await get<{ status: number; rows: { hash: string; author: string; message: string }[] }>(
+            `posts?address=${addressUserA}`
+        );
+        assert.isOk(response, 'failed to fetch posts data');
+        assert.isOk(Array.isArray(response.rows) && response.rows.length >= 1, 'feed result was not an array type');
+
+        const body: typeof Posts.PostRemoveBody.static = {
+            from: addressUserA + 'abcd',
+            hash: getRandomHash(),
+            timestamp: '2025-04-16T19:46:42Z',
+            post_hash: response.rows[0].hash,
+        };
+
+        const replyResponse = await post(`post-remove`, body);
+        assert.isOk(replyResponse?.status === 200, 'response was not okay');
+
+        const postsResponse = await get<{
+            status: number;
+            rows: {
+                hash: string;
+                author: string;
+                message: string;
+                deleted_at: Date;
+                deleted_reason: string;
+                deleted_hash: string;
+            }[];
+        }>(`posts?address=${addressUserA}`);
+
+        assert.isOk(postsResponse?.status === 200, 'posts did not resolve');
+        const data = postsResponse?.rows.find((x) => x.hash === response.rows[0].hash);
+        assert.isOk(data, 'data was hidden');
     });
 });

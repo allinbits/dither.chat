@@ -23,3 +23,7 @@ A blockchain reader that parses memos, and re-routes them through an event syste
 ### nginx
 
 Just an nginx configuration for gateway access to APIs
+
+### [frontend-main](./packages/frontend-main/README.md)
+
+An frontend Single Page Application for Dither as a whole.

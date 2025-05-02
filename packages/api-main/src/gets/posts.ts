@@ -1,7 +1,7 @@
 import { t } from 'elysia';
 import { FeedTable } from '../../drizzle/schema';
 import { getDatabase } from '../../drizzle/db';
-import { eq, sql } from 'drizzle-orm';
+import { eq, sql, and, isNull } from 'drizzle-orm';
 
 export const PostsQuery = t.Object({
     limit: t.Optional(t.Number()),
@@ -12,7 +12,7 @@ export const PostsQuery = t.Object({
 const statement = getDatabase()
     .select()
     .from(FeedTable)
-    .where(eq(FeedTable.author, sql.placeholder('author')))
+    .where(and(eq(FeedTable.author, sql.placeholder('author')), isNull(FeedTable.removed_at)))
     .limit(sql.placeholder('limit'))
     .offset(sql.placeholder('offset'))
     .prepare('stmnt_get_posts');
