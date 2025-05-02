@@ -1,16 +1,28 @@
-import path from 'node:path';
-
-import tailwindcss from '@tailwindcss/vite';
-import vue from '@vitejs/plugin-vue';
 import { defineConfig } from 'vite';
+import { fileURLToPath, URL } from "node:url";
+import vue from '@vitejs/plugin-vue';
+import tailwindcss from '@tailwindcss/vite';
+import { nodePolyfills } from "vite-plugin-node-polyfills";
 
 // https://vite.dev/config/
 export default defineConfig({
-    plugins: [vue(), tailwindcss()],
+    plugins: [
+      nodePolyfills({
+        // Whether to polyfill specific globals.
+        globals: {
+          Buffer: true, // can also be 'build', 'dev', or false
+          global: true,
+          process: true,
+        },
+      }),
+      vue(), 
+      tailwindcss(),
+    ],
     resolve: {
         alias: {
-            '@': path.resolve(__dirname, './src'),
-            'api-main/types': path.resolve(__dirname, '../api-main/src/types'),
+          "@": fileURLToPath(new URL("./src", import.meta.url)),
+          "~": fileURLToPath(new URL("./src", import.meta.url)),
+          "api-main/types": fileURLToPath(new URL("../api-main/src/types", import.meta.url)),
         },
     },
 });
