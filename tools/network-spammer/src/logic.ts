@@ -11,34 +11,42 @@ const lorem = new LoremIpsum({
     min: 2,
   },
 });
+type hash = {
+  hash: string;
+  isReply: boolean;
+};
 
-let postHashes: string[] = [];
+let hashes: hash[] = [];
 
-function storePostHash(hash: string) {
-  if (hash != "") postHashes.push(hash);
+function storeHash(hash: string, isReply: boolean) {
+  if (hash == "") return;
+  hashes.push({
+    hash,
+    isReply,
+  });
 }
 
-function removePostHash(hash: string) {
-  postHashes = postHashes.filter((h) => h != hash);
+function removeHash(hash: string) {
+  hashes = hashes.filter((h) => h.hash != hash);
 }
 
-function getRandomPostHash(): string {
-  if (postHashes.length === 0) return "";
-  return postHashes[Math.floor(Math.random() * postHashes.length)];
+function getRandomHash(): hash {
+  if (hashes.length === 0) return { hash: "", isReply: false };
+  return hashes[Math.floor(Math.random() * hashes.length)];
 }
 
-const actions = ["post", "reply", "like", "dislike", "delete"] as const;
+const actions = ["post", "reply", "like", "dislike", "delete", "flag"] as const;
 type ActionType = (typeof actions)[number];
 
 function chooseRandomAction(): ActionType {
-  if (postHashes.length === 0) return "post";
+  if (hashes.length === 0) return "post";
   return actions[Math.floor(Math.random() * actions.length)];
 }
 
 export async function publishSomething() {
   const action = chooseRandomAction();
   const client = await getCosmosClient();
-  const postHash = getRandomPostHash();
+  const postHash = getRandomHash();
   let memo = "";
 
   switch (action) {
@@ -49,19 +57,23 @@ export async function publishSomething() {
     }
     case "reply": {
       const reply = lorem.generateSentences(1);
-      memo = `dither.Reply("${postHash}","${reply}")`;
+      memo = `dither.Reply("${postHash.hash}","${reply}")`;
       break;
     }
     case "like": {
-      memo = `dither.Like("${postHash}")`;
+      memo = `dither.Like("${postHash.hash}",${postHash.isReply})`;
       break;
     }
     case "dislike": {
-      memo = `dither.Dislike("${postHash}")`;
+      memo = `dither.Dislike("${postHash.hash}",${postHash.isReply})`;
+      break;
+    }
+    case "flag": {
+      memo = `dither.Flag("${postHash.hash}",${postHash.isReply})`;
       break;
     }
     case "delete": {
-      memo = `dither.PostRemove("${postHash}")`;
+      memo = `dither.PostRemove("${postHash.hash}")`;
       break;
     }
   }
@@ -73,11 +85,11 @@ export async function publishSomething() {
 
   console.log(`[${action}] Result: ${result.transactionHash}`);
 
-  if (action === "post") {
-    storePostHash(result?.transactionHash || "");
+  if (["post", "reply"].includes(action)) {
+    storeHash(result?.transactionHash || "", action === "reply");
   }
 
   if (action === "delete") {
-    removePostHash(postHash);
+    removeHash(postHash.hash);
   }
 }
