@@ -1,3 +1,4 @@
+export * from './auth';
 export * from './dislike';
 export * from './flag';
 export * from './follow';

@@ -1,5 +1,5 @@
 import { t } from 'elysia';
-import { encodeSecp256k1Pubkey, Pubkey, pubkeyToAddress } from '@cosmjs/amino';
+import { encodeSecp256k1Pubkey, pubkeyToAddress } from '@cosmjs/amino';
 import { fromBase64 } from '@cosmjs/encoding'
 import { verifyADR36Amino } from '@keplr-wallet/cosmos';
 
@@ -14,15 +14,6 @@ function getSignerAddressFromPublicKey(publicKeyBase64: string, prefix: string =
     return pubkeyToAddress(secp256k1Pubkey, prefix);
 }
 
-async function verify(message: string, pubkey: Pubkey, signature: string) {
-    try {
-        return verifyADR36Amino('atone', getSignerAddressFromPublicKey(pubkey.value, 'atone'), message, fromBase64(pubkey.value), fromBase64(signature));
-    } catch (err) {
-        console.error(err);
-        return false;
-    }
-}
-
 // Example Body:
 // {
 //     "pub_key": {
@@ -34,8 +25,7 @@ async function verify(message: string, pubkey: Pubkey, signature: string) {
 
 export async function Auth(body: typeof AuthBody.static) {
     try {
-        // Stil need to build the system to verify this part correctly
-        const result = await verify('hello', body.pub_key, body.signature);
+        const result = verifyADR36Amino('atone', getSignerAddressFromPublicKey(body.pub_key.value, 'atone'), 'hello', fromBase64(body.pub_key.value), fromBase64(body.signature));
         return { status: 200, result };
     } catch (err) {
         console.error(err);
