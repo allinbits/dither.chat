@@ -21,7 +21,7 @@ export const FeedTable = pgTable(
         flags_burnt: bigint({ mode: 'number' }).default(0), // The amount of tokens burnt from each user who wante dto flag this post / reply
         removed_hash: varchar({ length: 64 }), // The hash that corresponds with the soft delete request
         removed_at: timestamp({ withTimezone: true }), // When this post was removed
-        removed_by: varchar({ length: 44 }) // Who removed this post
+        removed_by: varchar({ length: 44 }), // Who removed this post
     },
     (t) => [index('feed_hash_index').on(t.hash), index('post_hash_index').on(t.post_hash)]
 );
@@ -32,7 +32,7 @@ export const DislikesTable = pgTable(
         post_hash: varchar({ length: 64 }).notNull(),
         author: varchar({ length: 44 }).notNull(),
         hash: varchar({ length: 64 }).notNull(),
-        quantity: text().notNull(),
+        quantity: bigint({ mode: 'number' }).default(0),
         timestamp: timestamp({ withTimezone: true }).notNull(),
     },
     (t) => [
@@ -48,7 +48,7 @@ export const LikesTable = pgTable(
         post_hash: varchar({ length: 64 }).notNull(),
         author: varchar({ length: 44 }).notNull(),
         hash: varchar({ length: 64 }).notNull(),
-        quantity: text().notNull(),
+        quantity: bigint({ mode: 'number' }).default(0),
         timestamp: timestamp({ withTimezone: true }).notNull(),
     },
     (t) => [
@@ -64,7 +64,7 @@ export const FlagsTable = pgTable(
         post_hash: varchar({ length: 64 }).notNull(),
         author: varchar({ length: 44 }).notNull(),
         hash: varchar({ length: 64 }).notNull(),
-        quantity: text().notNull(),
+        quantity: bigint({ mode: 'number' }).default(0),
         timestamp: timestamp({ withTimezone: true }).notNull(),
     },
     (t) => [
@@ -81,7 +81,7 @@ export const FollowsTable = pgTable(
         following: varchar({ length: 44 }).notNull(),
         hash: varchar({ length: 64 }).notNull(),
         timestamp: timestamp({ withTimezone: true }).notNull(),
-        deleted_at: timestamp({ withTimezone: true }),
+        removed_at: timestamp({ withTimezone: true }),
     },
     (t) => [
         primaryKey({ columns: [t.follower, t.following] }),
@@ -98,6 +98,6 @@ export const AuditTable = pgTable('audits', {
     created_by: varchar({ length: 44 }),
     created_at: timestamp({ withTimezone: true }),
     created_reason: text(),
-})
+});
 
 export const tables = ['feed', 'likes', 'dislikes', 'flags', 'follows', 'audits'];

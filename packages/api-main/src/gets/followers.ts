@@ -12,7 +12,7 @@ export const FollowersQuery = t.Object({
 const statementGetFollowers = getDatabase()
     .select({ address: FollowsTable.follower, hash: FollowsTable.hash })
     .from(FollowsTable)
-    .where(and(eq(FollowsTable.following, sql.placeholder('following')), isNull(FollowsTable.deleted_at)))
+    .where(and(eq(FollowsTable.following, sql.placeholder('following')), isNull(FollowsTable.removed_at)))
     .limit(sql.placeholder('limit'))
     .offset(sql.placeholder('offset'))
     .prepare('stmnt_get_followers');

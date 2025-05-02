@@ -7,11 +7,12 @@ export const UnfollowBody = t.Object({
     hash: t.String(),
     from: t.String(),
     address: t.String(),
+    timestamp: t.String(),
 });
 
 const statementRemoveFollowing = getDatabase()
     .update(FollowsTable)
-    .set({ deleted_at: sql`CURRENT_TIMESTAMP` })
+    .set({ removed_at: sql.placeholder('removed_at') as never }) // Drizzle Type Issue atm.
     .where(
         and(
             eq(FollowsTable.follower, sql.placeholder('follower')),
@@ -22,7 +23,7 @@ const statementRemoveFollowing = getDatabase()
 
 export async function Unfollow(body: typeof UnfollowBody.static) {
     try {
-        await statementRemoveFollowing.execute({ follower: body.from, following: body.address });
+        await statementRemoveFollowing.execute({ follower: body.from, following: body.address, removed_at: new Date(body.timestamp) });
 
         return { status: 200 };
     } catch (err) {

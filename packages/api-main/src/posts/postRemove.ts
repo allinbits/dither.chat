@@ -16,12 +16,11 @@ export async function PostRemove(body: typeof PostRemoveBody.static) {
             .select()
             .from(FeedTable)
             .where(and(eq(FeedTable.hash, body.post_hash), eq(FeedTable.author, body.from)));
-            
+
         const hasOwnership = selectResults.length >= 1;
         if (!hasOwnership) {
-            return { status: 200, error: 'did not have ownership for post removal, ignored removal'}
+            return { status: 200, error: 'did not have ownership for post removal, ignored removal' };
         }
-
 
         const statement = getDatabase()
             .update(FeedTable)

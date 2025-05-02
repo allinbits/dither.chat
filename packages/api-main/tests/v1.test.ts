@@ -273,9 +273,11 @@ describe('v1', { sequential: true }, () => {
             hash: getRandomHash(),
             from: addressUserA,
             address: addressUserB,
+            timestamp: '2025-04-16T19:46:42Z'
         };
 
         const response = await post(`unfollow`, body);
+        console.log(response);
         assert.isOk(response?.status === 200, 'response was not okay');
     });
 
