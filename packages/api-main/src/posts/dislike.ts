@@ -49,17 +49,3 @@ export async function Dislike(body: typeof DislikeBody.static) {
         return { status: 400, error: 'failed to upsert data for dislike, dislike already exists' };
     }
 }
-
-function extractMemoContent<T extends { [key: string]: any }>(memo: string, commandPrefix: keyof T) {
-    /// Implementation
-    return ['', '', 5] as Pick<T, typeof commandPrefix>[typeof commandPrefix];
-}
-
-type Memos = {
-    'dither.Post': [string, string, number];
-    'dither.Reply': [string, string, string, number];
-};
-
-const a = extractMemoContent<Memos>('a memo', 'dither.Post');
-
-const result = extractMemoContent<Memos>('whatever', 'dither.Post');
