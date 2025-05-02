@@ -43,9 +43,18 @@ function chooseRandomAction(): ActionType {
   return actions[Math.floor(Math.random() * actions.length)];
 }
 
+let lastBlock = 0;
+
 export async function publishSomething() {
   const action = chooseRandomAction();
   const client = await getCosmosClient();
+  const currentBlock = await client.client.getHeight();
+
+  // do nothing if we are on the same block
+  if (currentBlock === lastBlock) return;
+
+  lastBlock = currentBlock;
+
   const postHash = getRandomHash();
   let memo = "";
 
