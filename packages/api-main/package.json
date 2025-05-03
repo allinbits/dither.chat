@@ -17,6 +17,7 @@
     "dependencies": {
         "@atomone/chronostate": "^2.2.1",
         "@cosmjs/amino": "^0.33.1",
+        "@cosmjs/crypto": "^0.33.1",
         "@cosmjs/encoding": "^0.33.1",
         "@elysiajs/cors": "^1.2.0",
         "@elysiajs/node": "^1.2.6",
@@ -25,11 +26,13 @@
         "dotenv": "^16.5.0",
         "drizzle-orm": "^0.43.1",
         "elysia": "^1.2.25",
+        "jsonwebtoken": "^9.0.2",
         "pg": "^8.14.1",
         "postgres": "^3.4.5"
     },
     "devDependencies": {
         "@types/bech32": "^1.1.8",
+        "@types/jsonwebtoken": "^9.0.9",
         "@types/node": "^22.14.1",
         "@types/pg": "^8.11.13",
         "drizzle-kit": "^0.31.0",
