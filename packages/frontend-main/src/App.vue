@@ -1,4 +1,6 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { Button } from '@/components/ui/button'
+</script>
 
 <template>
     <div class="flex flex-col w-screen h-screen overflow-x-hidden overflow-y-auto items-center">
@@ -6,7 +8,7 @@
             <div class="flex flex-col p-6 h-full w-[380px] gap-6">
                 <!-- This should probably stick -->
                 <div class="text-2xl">Dither</div>
-                <button class="bg-black text-white p-2">Connect</button>
+                <Button size="lg">Connect</Button>
             </div>
             <div class="flex flex-col border-x border-neutral-200 h-full grow min-w-[600px]">
                 <!-- Fill with Feed -->
