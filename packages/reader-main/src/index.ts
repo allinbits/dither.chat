@@ -1,11 +1,13 @@
+import type { Action } from '@atomone/chronostate/dist/types';
+
 import { ChronoState } from '@atomone/chronostate';
+
 import { useConfig } from './config';
-import { Action } from '@atomone/chronostate/dist/types';
 
 const config = useConfig();
 
 let state: ChronoState;
-let lastBlock: string;
+let _lastBlock: string;
 
 async function handleAction(action: Action) {
     if (action.memo.startsWith('dither.Post')) {
@@ -17,6 +19,7 @@ async function handleAction(action: Action) {
     }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-wrapper-object-types
 function handleLastBlock(block: string | String) {
     // db.lastBlock.update(block as string);
     // Need to switch this out to store last block somewhere, otherwise rely on

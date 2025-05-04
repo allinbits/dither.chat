@@ -1,5 +1,7 @@
-import { it, expect, describe } from 'vitest';
+import { describe, expect, it } from 'vitest';
+
 import { getTransferMessage, getTransferQuantities } from '../src/utility';
+
 import { generateFakeData, getAtomOneAddress } from './shared';
 
 describe('utility tests', () => {
@@ -24,7 +26,7 @@ describe('utility tests', () => {
 
         for (let i = 0; i < 100; i++) {
             totalQuantity += BigInt(
-                getTransferQuantities([generateFakeData('whatever', getAtomOneAddress(), getAtomOneAddress())])
+                getTransferQuantities([generateFakeData('whatever', getAtomOneAddress(), getAtomOneAddress())]),
             );
         }
 

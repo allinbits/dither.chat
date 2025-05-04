@@ -1,4 +1,4 @@
-import { pgTable, varchar, timestamp, serial, index, primaryKey, text, integer, bigint } from 'drizzle-orm/pg-core';
+import { bigint, index, integer, pgTable, primaryKey, serial, text, timestamp, varchar } from 'drizzle-orm/pg-core';
 
 const MEMO_LENGTH = 512;
 
@@ -23,7 +23,7 @@ export const FeedTable = pgTable(
         removed_at: timestamp({ withTimezone: true }), // When this post was removed
         removed_by: varchar({ length: 44 }), // Who removed this post
     },
-    (t) => [index('feed_hash_index').on(t.hash), index('post_hash_index').on(t.post_hash)]
+    t => [index('feed_hash_index').on(t.hash), index('post_hash_index').on(t.post_hash)],
 );
 
 export const DislikesTable = pgTable(
@@ -35,11 +35,11 @@ export const DislikesTable = pgTable(
         quantity: bigint({ mode: 'number' }).default(0),
         timestamp: timestamp({ withTimezone: true }).notNull(),
     },
-    (t) => [
+    t => [
         primaryKey({ columns: [t.post_hash, t.hash] }),
         index('dislike_post_hash_idx').on(t.post_hash),
         index('dislike_author_idx').on(t.author),
-    ]
+    ],
 );
 
 export const LikesTable = pgTable(
@@ -51,11 +51,11 @@ export const LikesTable = pgTable(
         quantity: bigint({ mode: 'number' }).default(0),
         timestamp: timestamp({ withTimezone: true }).notNull(),
     },
-    (t) => [
+    t => [
         primaryKey({ columns: [t.post_hash, t.hash] }),
         index('like_post_hash_idx').on(t.post_hash),
         index('like_author_idx').on(t.author),
-    ]
+    ],
 );
 
 export const FlagsTable = pgTable(
@@ -67,11 +67,11 @@ export const FlagsTable = pgTable(
         quantity: bigint({ mode: 'number' }).default(0),
         timestamp: timestamp({ withTimezone: true }).notNull(),
     },
-    (t) => [
+    t => [
         primaryKey({ columns: [t.post_hash, t.hash] }),
         index('flags_post_hash_idx').on(t.post_hash),
         index('flag_author_idx').on(t.author),
-    ]
+    ],
 );
 
 export const FollowsTable = pgTable(
@@ -83,11 +83,11 @@ export const FollowsTable = pgTable(
         timestamp: timestamp({ withTimezone: true }).notNull(),
         removed_at: timestamp({ withTimezone: true }),
     },
-    (t) => [
+    t => [
         primaryKey({ columns: [t.follower, t.following] }),
         index('follower_id_idx').on(t.follower),
         index('following_id_idx').on(t.following),
-    ]
+    ],
 );
 
 // Audits are append only
