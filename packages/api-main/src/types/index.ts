@@ -7,6 +7,6 @@ export type MsgTransfer = {
     "amount": Array<{ amount: string; denom: string }>;
 };
 
-export type MsgGeneric = { [key: string]: any };
+export type MsgGeneric = { [key: string]: unknown };
 
 export type TransactionFunction = (tx: ReturnType<typeof getDatabase>) => Promise<void>;

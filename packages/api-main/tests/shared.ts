@@ -18,7 +18,7 @@ export async function get<T>(endpoint: string, port: "WRITE" | "READ" = "READ") 
     return jsonData as T;
 }
 
-export async function post<T = { status: number }>(endpoint: string, body: any, port: "WRITE" | "READ" = "WRITE") {
+export async function post<T = { status: number }>(endpoint: string, body: object, port: "WRITE" | "READ" = "WRITE") {
     const response = await fetch(`http://localhost:${port === "WRITE" ? 3001 : 3000}/v1/${endpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
