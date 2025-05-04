@@ -47,6 +47,21 @@ export default [
                     fixStyle: "separate-type-imports",
                 },
             ],
+            "@typescript-eslint/no-explicit-any": [
+                "warn",
+                { ignoreRestArgs: true },
+            ],
+            "@typescript-eslint/no-unused-vars": [
+                "error",
+                {
+                    args: "all",
+                    argsIgnorePattern: "^_",
+                    caughtErrors: "all",
+                    caughtErrorsIgnorePattern: "^_",
+                    destructuredArrayIgnorePattern: "^_",
+                    varsIgnorePattern: "^_",
+                },
+            ],
         },
     },
     {
