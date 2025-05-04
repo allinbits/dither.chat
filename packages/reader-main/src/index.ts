@@ -7,7 +7,7 @@ import { useConfig } from "./config";
 const config = useConfig();
 
 let state: ChronoState;
-// let lastBlock: string;
+let _lastBlock: string;
 
 async function handleAction(action: Action) {
     if (action.memo.startsWith("dither.Post")) {

@@ -52,18 +52,16 @@ export async function Dislike(body: typeof DislikeBody.static) {
     }
 }
 
-// function extractMemoContent<T extends { [key: string]: any }>(
-//     // memo: string,
-//     commandPrefix: keyof T) {
-//     /// Implementation
-//     return ["", "", 5] as Pick<T, typeof commandPrefix>[typeof commandPrefix];
-// }
+function extractMemoContent<T extends { [key: string]: unknown }>(_memo: string, _commandPrefix: keyof T) {
+    /// Implementation
+    return ["", "", 5] as Pick<T, typeof _commandPrefix>[typeof _commandPrefix];
+}
 
-// type Memos = {
-//     "dither.Post": [string, string, number];
-//     "dither.Reply": [string, string, string, number];
-// };
+type Memos = {
+    "dither.Post": [string, string, number];
+    "dither.Reply": [string, string, string, number];
+};
 
-// const a = extractMemoContent<Memos>("a memo", "dither.Post");
+const _a = extractMemoContent<Memos>("a memo", "dither.Post");
 
-// const result = extractMemoContent<Memos>("whatever", "dither.Post");
+const _result = extractMemoContent<Memos>("whatever", "dither.Post");
