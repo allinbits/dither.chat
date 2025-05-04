@@ -1,7 +1,8 @@
-import { t } from 'elysia';
-import { FeedTable } from '../../drizzle/schema';
-import { getDatabase } from '../../drizzle/db';
-import { sql } from 'drizzle-orm';
+import { sql } from "drizzle-orm";
+import { t } from "elysia";
+
+import { getDatabase } from "../../drizzle/db";
+import { FeedTable } from "../../drizzle/schema";
 
 export const PostBody = t.Object({
     hash: t.String(),
@@ -14,14 +15,14 @@ export const PostBody = t.Object({
 const statement = getDatabase()
     .insert(FeedTable)
     .values({
-        hash: sql.placeholder('hash'),
-        timestamp: sql.placeholder('timestamp'),
-        author: sql.placeholder('author'),
-        message: sql.placeholder('message'),
-        quantity: sql.placeholder('quantity'),
+        hash: sql.placeholder("hash"),
+        timestamp: sql.placeholder("timestamp"),
+        author: sql.placeholder("author"),
+        message: sql.placeholder("message"),
+        quantity: sql.placeholder("quantity"),
     })
     .onConflictDoNothing()
-    .prepare('stmnt_post');
+    .prepare("stmnt_post");
 
 export async function Post(body: typeof PostBody.static) {
     try {
@@ -34,8 +35,9 @@ export async function Post(body: typeof PostBody.static) {
         });
 
         return { status: 200 };
-    } catch (err) {
+    }
+    catch (err) {
         console.error(err);
-        return { status: 400, error: 'failed to upsert data for post' };
+        return { status: 400, error: "failed to upsert data for post" };
     }
 }

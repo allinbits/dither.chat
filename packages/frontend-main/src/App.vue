@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button } from '@/components/ui/button'
+import { Button } from "@/components/ui/button";
 </script>
 
 <template>
@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/button'
                 <!-- Fill with Feed -->
                 <div class="sticky min-w-[600px] min-h-full top-0">
                     Yea, this isn't really ready.
-                    <div v-for="i in 1000">
+                    <div v-for="i in 1000" :key="i">
                         {{ i }}
                     </div>
                 </div>

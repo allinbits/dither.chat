@@ -1,9 +1,11 @@
-import { sql } from 'drizzle-orm';
-import * as T from '../types/index';
-import { getDatabase } from '../../drizzle/db';
+import type * as T from "../types/index";
+
+import { sql } from "drizzle-orm";
+
+import { getDatabase } from "../../drizzle/db";
 
 export function getTransferMessage(messages: Array<T.MsgGeneric>) {
-    const msgTransfer = messages.find((msg) => msg['@type'] === '/cosmos.bank.v1beta1.MsgSend');
+    const msgTransfer = messages.find(msg => msg["@type"] === "/cosmos.bank.v1beta1.MsgSend");
     if (!msgTransfer) {
         return null;
     }
@@ -11,12 +13,12 @@ export function getTransferMessage(messages: Array<T.MsgGeneric>) {
     return msgTransfer as T.MsgTransfer;
 }
 
-export function getTransferQuantities(messages: Array<T.MsgGeneric>, denom = 'uatone') {
-    const msgTransfers = messages.filter((msg) => msg['@type'] === '/cosmos.bank.v1beta1.MsgSend') as T.MsgTransfer[];
-    let amount = BigInt('0');
+export function getTransferQuantities(messages: Array<T.MsgGeneric>, denom = "uatone") {
+    const msgTransfers = messages.filter(msg => msg["@type"] === "/cosmos.bank.v1beta1.MsgSend") as T.MsgTransfer[];
+    let amount = BigInt("0");
 
-    for (let msg of msgTransfers) {
-        for (let quantity of msg.amount) {
+    for (const msg of msgTransfers) {
+        for (const quantity of msg.amount) {
             if (quantity.denom !== denom) {
                 continue;
             }

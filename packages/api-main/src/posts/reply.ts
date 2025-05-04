@@ -1,7 +1,8 @@
-import { t } from 'elysia';
-import { FeedTable } from '../../drizzle/schema';
-import { getDatabase } from '../../drizzle/db';
-import { eq, sql } from 'drizzle-orm';
+import { eq, sql } from "drizzle-orm";
+import { t } from "elysia";
+
+import { getDatabase } from "../../drizzle/db";
+import { FeedTable } from "../../drizzle/schema";
 
 export const ReplyBody = t.Object({
     hash: t.String(),
@@ -15,21 +16,21 @@ export const ReplyBody = t.Object({
 const statement = getDatabase()
     .insert(FeedTable)
     .values({
-        author: sql.placeholder('author'),
-        hash: sql.placeholder('hash'),
-        message: sql.placeholder('message'),
-        post_hash: sql.placeholder('post_hash'),
-        quantity: sql.placeholder('quantity'),
-        timestamp: sql.placeholder('timestamp'),
+        author: sql.placeholder("author"),
+        hash: sql.placeholder("hash"),
+        message: sql.placeholder("message"),
+        post_hash: sql.placeholder("post_hash"),
+        quantity: sql.placeholder("quantity"),
+        timestamp: sql.placeholder("timestamp"),
     })
     .onConflictDoNothing()
-    .prepare('stmnt_reply');
+    .prepare("stmnt_reply");
 
 const statementAddReplyCount = getDatabase()
     .update(FeedTable)
     .set({ replies: sql`${FeedTable.replies} + 1` })
-    .where(eq(FeedTable.hash, sql.placeholder('post_hash')))
-    .prepare('stmnt_add_reply_count');
+    .where(eq(FeedTable.hash, sql.placeholder("post_hash")))
+    .prepare("stmnt_add_reply_count");
 
 export async function Reply(body: typeof ReplyBody.static) {
     try {
@@ -47,8 +48,9 @@ export async function Reply(body: typeof ReplyBody.static) {
         });
 
         return { status: 200 };
-    } catch (err) {
+    }
+    catch (err) {
         console.error(err);
-        return { status: 400, error: 'failed to upsert data for post' };
+        return { status: 400, error: "failed to upsert data for post" };
     }
 }
