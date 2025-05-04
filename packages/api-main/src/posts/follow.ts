@@ -1,8 +1,8 @@
-import { sql } from "drizzle-orm";
-import { t } from "elysia";
+import { sql } from 'drizzle-orm';
+import { t } from 'elysia';
 
-import { getDatabase } from "../../drizzle/db";
-import { FollowsTable } from "../../drizzle/schema";
+import { getDatabase } from '../../drizzle/db';
+import { FollowsTable } from '../../drizzle/schema';
 
 export const FollowBody = t.Object({
     hash: t.String(),
@@ -14,12 +14,12 @@ export const FollowBody = t.Object({
 const statementAddFollower = getDatabase()
     .insert(FollowsTable)
     .values({
-        follower: sql.placeholder("follower"),
-        following: sql.placeholder("following"),
-        hash: sql.placeholder("hash"),
-        timestamp: sql.placeholder("timestamp"),
+        follower: sql.placeholder('follower'),
+        following: sql.placeholder('following'),
+        hash: sql.placeholder('hash'),
+        timestamp: sql.placeholder('timestamp'),
     })
-    .prepare("stmnt_add_follower");
+    .prepare('stmnt_add_follower');
 
 export async function Follow(body: typeof FollowBody.static) {
     try {
@@ -34,6 +34,6 @@ export async function Follow(body: typeof FollowBody.static) {
     }
     catch (err) {
         console.error(err);
-        return { status: 400, error: "failed to add follow, follow likely already exists" };
+        return { status: 400, error: 'failed to add follow, follow likely already exists' };
     }
 }

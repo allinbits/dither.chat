@@ -1,8 +1,8 @@
-import { and, count, isNull, sql } from "drizzle-orm";
-import { t } from "elysia";
+import { and, count, isNull, sql } from 'drizzle-orm';
+import { t } from 'elysia';
 
-import { getDatabase } from "../../drizzle/db";
-import { FeedTable } from "../../drizzle/schema";
+import { getDatabase } from '../../drizzle/db';
+import { FeedTable } from '../../drizzle/schema';
 
 export const FeedQuery = t.Object({
     limit: t.Optional(t.Number()),
@@ -13,10 +13,10 @@ export const FeedQuery = t.Object({
 const statement = getDatabase()
     .select()
     .from(FeedTable)
-    .limit(sql.placeholder("limit"))
-    .offset(sql.placeholder("offset"))
+    .limit(sql.placeholder('limit'))
+    .offset(sql.placeholder('offset'))
     .where(and(isNull(FeedTable.removed_at), isNull(FeedTable.post_hash)))
-    .prepare("stmnt_get_feed");
+    .prepare('stmnt_get_feed');
 
 export async function Feed(query: typeof FeedQuery.static) {
     if (query.count) {
@@ -25,23 +25,23 @@ export async function Feed(query: typeof FeedQuery.static) {
         }
         catch (err) {
             console.error(err);
-            return { status: 400, error: "failed to read data from database" };
+            return { status: 400, error: 'failed to read data from database' };
         }
     }
 
-    let limit = typeof query.limit !== "undefined" ? Number(query.limit) : 100;
-    const offset = typeof query.offset !== "undefined" ? Number(query.offset) : 0;
+    let limit = typeof query.limit !== 'undefined' ? Number(query.limit) : 100;
+    const offset = typeof query.offset !== 'undefined' ? Number(query.offset) : 0;
 
     if (limit > 100) {
         limit = 100;
     }
 
     if (limit <= 0) {
-        return { status: 400, error: "limit must be at least 1" };
+        return { status: 400, error: 'limit must be at least 1' };
     }
 
     if (offset < 0) {
-        return { status: 400, error: "offset must be at least 0" };
+        return { status: 400, error: 'offset must be at least 0' };
     }
 
     try {
@@ -50,6 +50,6 @@ export async function Feed(query: typeof FeedQuery.static) {
     }
     catch (error) {
         console.error(error);
-        return { status: 400, error: "failed to read data from database" };
+        return { status: 400, error: 'failed to read data from database' };
     }
 }

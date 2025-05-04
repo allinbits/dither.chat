@@ -1,8 +1,8 @@
-import { eq, sql } from "drizzle-orm";
-import { t } from "elysia";
+import { eq, sql } from 'drizzle-orm';
+import { t } from 'elysia';
 
-import { getDatabase } from "../../drizzle/db";
-import { DislikesTable, FeedTable } from "../../drizzle/schema";
+import { getDatabase } from '../../drizzle/db';
+import { DislikesTable, FeedTable } from '../../drizzle/schema';
 
 export const DislikeBody = t.Object({
     hash: t.String(),
@@ -15,22 +15,22 @@ export const DislikeBody = t.Object({
 const statement = getDatabase()
     .insert(DislikesTable)
     .values({
-        post_hash: sql.placeholder("post_hash"),
-        hash: sql.placeholder("hash"),
-        author: sql.placeholder("author"),
-        quantity: sql.placeholder("quantity"),
-        timestamp: sql.placeholder("timestamp"),
+        post_hash: sql.placeholder('post_hash'),
+        hash: sql.placeholder('hash'),
+        author: sql.placeholder('author'),
+        quantity: sql.placeholder('quantity'),
+        timestamp: sql.placeholder('timestamp'),
     })
-    .prepare("stmnt_add_dislike");
+    .prepare('stmnt_add_dislike');
 
 const statementAddDislikeToPost = getDatabase()
     .update(FeedTable)
     .set({
         dislikes: sql`${FeedTable.dislikes} + 1`,
-        dislikes_burnt: sql`${FeedTable.dislikes_burnt} + ${sql.placeholder("quantity")}`,
+        dislikes_burnt: sql`${FeedTable.dislikes_burnt} + ${sql.placeholder('quantity')}`,
     })
-    .where(eq(FeedTable.hash, sql.placeholder("post_hash")))
-    .prepare("stmnt_add_dislike_count_to_post");
+    .where(eq(FeedTable.hash, sql.placeholder('post_hash')))
+    .prepare('stmnt_add_dislike_count_to_post');
 
 export async function Dislike(body: typeof DislikeBody.static) {
     try {
@@ -48,20 +48,20 @@ export async function Dislike(body: typeof DislikeBody.static) {
     }
     catch (err) {
         console.error(err);
-        return { status: 400, error: "failed to upsert data for dislike, dislike already exists" };
+        return { status: 400, error: 'failed to upsert data for dislike, dislike already exists' };
     }
 }
 
 function extractMemoContent<T extends { [key: string]: unknown }>(_memo: string, _commandPrefix: keyof T) {
     /// Implementation
-    return ["", "", 5] as Pick<T, typeof _commandPrefix>[typeof _commandPrefix];
+    return ['', '', 5] as Pick<T, typeof _commandPrefix>[typeof _commandPrefix];
 }
 
 type Memos = {
-    "dither.Post": [string, string, number];
-    "dither.Reply": [string, string, string, number];
+    'dither.Post': [string, string, number];
+    'dither.Reply': [string, string, string, number];
 };
 
-const _a = extractMemoContent<Memos>("a memo", "dither.Post");
+const _a = extractMemoContent<Memos>('a memo', 'dither.Post');
 
-const _result = extractMemoContent<Memos>("whatever", "dither.Post");
+const _result = extractMemoContent<Memos>('whatever', 'dither.Post');

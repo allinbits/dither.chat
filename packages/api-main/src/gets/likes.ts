@@ -1,9 +1,9 @@
-import { eq, sql } from "drizzle-orm";
-import { t } from "elysia";
+import { eq, sql } from 'drizzle-orm';
+import { t } from 'elysia';
 
-import { getDatabase } from "../../drizzle/db";
-import { LikesTable } from "../../drizzle/schema";
-import { getJsonbArrayCount } from "../utility";
+import { getDatabase } from '../../drizzle/db';
+import { LikesTable } from '../../drizzle/schema';
+import { getJsonbArrayCount } from '../utility';
 
 export const LikesQuery = t.Object({
     hash: t.String(),
@@ -15,32 +15,32 @@ export const LikesQuery = t.Object({
 const statement = getDatabase()
     .select()
     .from(LikesTable)
-    .where(eq(LikesTable.post_hash, sql.placeholder("post_hash")))
-    .limit(sql.placeholder("limit"))
-    .offset(sql.placeholder("offset"))
-    .prepare("stmnt_get_likes");
+    .where(eq(LikesTable.post_hash, sql.placeholder('post_hash')))
+    .limit(sql.placeholder('limit'))
+    .offset(sql.placeholder('offset'))
+    .prepare('stmnt_get_likes');
 
 export async function Likes(query: typeof LikesQuery.static) {
     if (!query.hash) {
         return {
             status: 400,
-            error: "malformed query, no hash provided",
+            error: 'malformed query, no hash provided',
         };
     }
 
-    let limit = typeof query.limit !== "undefined" ? Number(query.limit) : 100;
-    const offset = typeof query.offset !== "undefined" ? Number(query.offset) : 0;
+    let limit = typeof query.limit !== 'undefined' ? Number(query.limit) : 100;
+    const offset = typeof query.offset !== 'undefined' ? Number(query.offset) : 0;
 
     if (limit > 100) {
         limit = 100;
     }
 
     if (limit <= 0) {
-        return { status: 400, error: "limit must be at least 1" };
+        return { status: 400, error: 'limit must be at least 1' };
     }
 
     if (offset < 0) {
-        return { status: 400, error: "offset must be at least 0" };
+        return { status: 400, error: 'offset must be at least 0' };
     }
 
     try {
@@ -53,6 +53,6 @@ export async function Likes(query: typeof LikesQuery.static) {
     }
     catch (error) {
         console.error(error);
-        return { error: "failed to read data from database" };
+        return { error: 'failed to read data from database' };
     }
 }

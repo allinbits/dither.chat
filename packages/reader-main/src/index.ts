@@ -1,8 +1,8 @@
-import type { Action } from "@atomone/chronostate/dist/types";
+import type { Action } from '@atomone/chronostate/dist/types';
 
-import { ChronoState } from "@atomone/chronostate";
+import { ChronoState } from '@atomone/chronostate';
 
-import { useConfig } from "./config";
+import { useConfig } from './config';
 
 const config = useConfig();
 
@@ -10,11 +10,11 @@ let state: ChronoState;
 let _lastBlock: string;
 
 async function handleAction(action: Action) {
-    if (action.memo.startsWith("dither.Post")) {
+    if (action.memo.startsWith('dither.Post')) {
         //
     }
 
-    if (action.memo.startsWith("dither.Reply")) {
+    if (action.memo.startsWith('dither.Reply')) {
         //
     }
 }

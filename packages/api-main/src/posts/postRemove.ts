@@ -1,8 +1,8 @@
-import { and, eq } from "drizzle-orm";
-import { t } from "elysia";
+import { and, eq } from 'drizzle-orm';
+import { t } from 'elysia';
 
-import { getDatabase } from "../../drizzle/db";
-import { FeedTable } from "../../drizzle/schema";
+import { getDatabase } from '../../drizzle/db';
+import { FeedTable } from '../../drizzle/schema';
 
 export const PostRemoveBody = t.Object({
     hash: t.String(),
@@ -20,7 +20,7 @@ export async function PostRemove(body: typeof PostRemoveBody.static) {
 
         const hasOwnership = selectResults.length >= 1;
         if (!hasOwnership) {
-            return { status: 200, error: "did not have ownership for post removal, ignored removal" };
+            return { status: 200, error: 'did not have ownership for post removal, ignored removal' };
         }
 
         const statement = getDatabase()
@@ -39,6 +39,6 @@ export async function PostRemove(body: typeof PostRemoveBody.static) {
     }
     catch (err) {
         console.error(err);
-        return { status: 400, error: "failed to delete post, maybe invalid" };
+        return { status: 400, error: 'failed to delete post, maybe invalid' };
     }
 }

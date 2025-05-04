@@ -1,8 +1,8 @@
-import { eq, sql } from "drizzle-orm";
-import { t } from "elysia";
+import { eq, sql } from 'drizzle-orm';
+import { t } from 'elysia';
 
-import { getDatabase } from "../../drizzle/db";
-import { FeedTable, FlagsTable } from "../../drizzle/schema";
+import { getDatabase } from '../../drizzle/db';
+import { FeedTable, FlagsTable } from '../../drizzle/schema';
 
 export const FlagBody = t.Object({
     hash: t.String(),
@@ -15,22 +15,22 @@ export const FlagBody = t.Object({
 const statement = getDatabase()
     .insert(FlagsTable)
     .values({
-        post_hash: sql.placeholder("post_hash"),
-        hash: sql.placeholder("hash"),
-        author: sql.placeholder("author"),
-        quantity: sql.placeholder("quantity"),
-        timestamp: sql.placeholder("timestamp"),
+        post_hash: sql.placeholder('post_hash'),
+        hash: sql.placeholder('hash'),
+        author: sql.placeholder('author'),
+        quantity: sql.placeholder('quantity'),
+        timestamp: sql.placeholder('timestamp'),
     })
-    .prepare("stmnt_add_flag");
+    .prepare('stmnt_add_flag');
 
 const statementAddFlagToPost = getDatabase()
     .update(FeedTable)
     .set({
         flags: sql`${FeedTable.flags} + 1`,
-        flags_burnt: sql`${FeedTable.flags_burnt} + ${sql.placeholder("quantity")}`,
+        flags_burnt: sql`${FeedTable.flags_burnt} + ${sql.placeholder('quantity')}`,
     })
-    .where(eq(FeedTable.hash, sql.placeholder("post_hash")))
-    .prepare("stmnt_add_flag_count_to_post");
+    .where(eq(FeedTable.hash, sql.placeholder('post_hash')))
+    .prepare('stmnt_add_flag_count_to_post');
 
 export async function Flag(body: typeof FlagBody.static) {
     try {
@@ -48,6 +48,6 @@ export async function Flag(body: typeof FlagBody.static) {
     }
     catch (err) {
         console.error(err);
-        return { status: 400, error: "failed to upsert data for flag, flag already exists" };
+        return { status: 400, error: 'failed to upsert data for flag, flag already exists' };
     }
 }

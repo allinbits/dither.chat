@@ -1,4 +1,4 @@
-import dotenv from "dotenv";
+import dotenv from 'dotenv';
 
 dotenv.config();
 
@@ -11,11 +11,11 @@ type Config = {
 let config: Config;
 
 export function useConfig(): Config {
-    if (typeof config !== "undefined") {
+    if (typeof config !== 'undefined') {
         return config;
     }
 
-    if (typeof process.env.PG_URI === "undefined") {
+    if (typeof process.env.PG_URI === 'undefined') {
         console.error(`Failed to specify PG_URI, no database uri provided`);
         process.exit(1);
     }
