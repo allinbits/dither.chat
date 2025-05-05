@@ -1,5 +1,5 @@
-import amqplib from 'amqplib';
-import { EventConsumerConfig } from './types';
+import type amqplib from 'amqplib';
+import type { EventConsumerConfig } from './types';
 export declare class EventConsumer {
     private channel;
     private config;

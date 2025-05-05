@@ -9,7 +9,7 @@ export function useConfig(): EventConsumerConfig {
 
     config = {
         exchange: process.env.RABBITMQ_EXCHANGE || 'dither',
-        queue: 'Reply',
+        queue: 'Remove',
         durable: true,
         rabbitMQEndpoint: process.env.RABBITMQ_ENDPOINT || 'amqp://localhost',
     };

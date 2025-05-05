@@ -32,6 +32,7 @@ services:
     environment:
       RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
       RABBITMQ_EXCHANGE: "dither"
+      API_ROOT: "http://api-main:3001/v1"
     restart: always
     command: ["pnpm", "start"]
     
@@ -44,6 +45,7 @@ services:
     environment:
       RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
       RABBITMQ_EXCHANGE: "dither"
+      API_ROOT: "http://api-main:3001/v1"
     restart: always
     command: ["pnpm", "start"]
 
@@ -56,6 +58,7 @@ services:
     environment:
       RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
       RABBITMQ_EXCHANGE: "dither"
+      API_ROOT: "http://api-main:3001/v1"
     restart: always
     command: ["pnpm", "start"]
 
@@ -68,6 +71,7 @@ services:
     environment:
       RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
       RABBITMQ_EXCHANGE: "dither"
+      API_ROOT: "http://api-main:3001/v1"
     restart: always
     command: ["pnpm", "start"]
 
@@ -80,6 +84,7 @@ services:
     environment:
       RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
       RABBITMQ_EXCHANGE: "dither"
+      API_ROOT: "http://api-main:3001/v1"
     restart: always
     command: ["pnpm", "start"]
   unfollow-service:
@@ -91,6 +96,7 @@ services:
     environment:
       RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
       RABBITMQ_EXCHANGE: "dither"
+      API_ROOT: "http://api-main:3001/v1"
     restart: always
     command: ["pnpm", "start"]
   flag-service:
@@ -102,6 +108,19 @@ services:
     environment:
       RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
       RABBITMQ_EXCHANGE: "dither"
+      API_ROOT: "http://api-main:3001/v1"
+    restart: always
+    command: ["pnpm", "start"]
+  post-remove-service:
+    container_name: "post-remove-service"
+    build: ./packages/post-remove-service
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
+      RABBITMQ_EXCHANGE: "dither"
+      API_ROOT: "http://api-main:3001/v1"
     restart: always
     command: ["pnpm", "start"]
   # ================================
@@ -114,6 +133,8 @@ services:
     command: ["pnpm", "start"]
     depends_on:
       rabbitmq:
+        condition: service_healthy
+      postgres:
         condition: service_healthy
     environment:
       RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
@@ -149,12 +170,6 @@ services:
       - rabbitmq-lib:/var/lib/rabbitmq/
       - rabbitmq-log:/var/log/rabbitmq
 
-volumes:
-  rabbitmq-lib:
-    driver: local
-  rabbitmq-log:
-    driver: local
-
   # ================================
   # REST Services
   # ================================
@@ -183,3 +198,9 @@ volumes:
     depends_on:
       - postgres
       - api-main
+
+volumes:
+  rabbitmq-lib:
+    driver: local
+  rabbitmq-log:
+    driver: local

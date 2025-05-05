@@ -1,12 +1,12 @@
+import type { EventConsumerConfig } from './types';
+
 import amqplib from 'amqplib';
-import { EventConsumerConfig } from './types';
 
 export class EventConsumer {
     private channel!: amqplib.Channel;
     private config: EventConsumerConfig;
     private handler: (msg: amqplib.Message) => Promise<boolean>;
     constructor(config: EventConsumerConfig, handler: (msg: amqplib.Message) => Promise<boolean>) {
-        
         this.config = config;
         this.handler = handler;
     }
@@ -25,10 +25,12 @@ export class EventConsumer {
                     const res = await this.handler(msg);
                     if (res) {
                         this.channel.ack(msg);
-                    } else {
+                    }
+                    else {
                         this.channel.nack(msg);
                     }
-                } catch (error) {
+                }
+                catch (error) {
                     console.error('Error processing message:', error);
                     this.channel.nack(msg);
                 }

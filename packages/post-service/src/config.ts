@@ -1,5 +1,4 @@
-import type { EventConsumerConfig } from "@atomone/event-consumer";
-
+import type { EventConsumerConfig } from '@atomone/event-consumer';
 
 let config: EventConsumerConfig;
 

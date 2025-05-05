@@ -1,13 +1,17 @@
-import { EventConsumer } from "@atomone/event-consumer";
-import { useConfig } from "./config";
-import amqplib from 'amqplib';
-import { extractMemoContent } from "@atomone/chronostate";
-import { DitherActions } from '@atomone/indexer-feed';
+/* eslint-disable @typescript-eslint/no-namespace */
+import type amqplib from 'amqplib';
+
+import { extractMemoContent } from '@atomone/chronostate';
+import { EventConsumer } from '@atomone/event-consumer';
+
+import { useConfig } from './config';
+
 declare module '@atomone/chronostate' {
-  export namespace MemoExtractor {
-    export interface TypeMap extends DitherActions {
+    export namespace MemoExtractor {
+        export interface TypeMap {
+            'dither.Follow': [string];
+        }
     }
-  }
 }
 const config = useConfig();
 const apiRoot = process.env.API_ROOT || 'http://localhost:3000';
@@ -16,34 +20,37 @@ const followsHandler = async (msg: amqplib.Message) => {
     try {
         const content = msg.content.toString();
         const parsedContent = JSON.parse(content);
-        const [following_address] = extractMemoContent(parsedContent.memo, "dither.Follow");
+        const [following_address] = extractMemoContent(parsedContent.memo, 'dither.Follow');
         const postBody = {
             hash: parsedContent.hash,
             from: parsedContent.sender,
             address: following_address,
-            //timestamp: parsedContent.timestamp,
+            timestamp: parsedContent.timestamp,
         };
-        const rawResponse = await fetch(apiRoot+'/follow', {
+        const rawResponse = await fetch(apiRoot + '/follow', {
             method: 'POST',
             headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
             },
-            body: JSON.stringify(postBody)
+            body: JSON.stringify(postBody),
         });
         if (rawResponse.status !== 200) {
-            console.error('Error posting to API:', rawResponse.statusText);
+            console.error('Error posting to API:', rawResponse);
             return false;
-        }else{
+        }
+        else {
+            console.log(`dither.Follow message processed successfully: ${parsedContent.hash}`);
             return true;
         }
-    } catch (error) {
+    }
+    catch (error) {
         console.error('Error processing message:', error);
-        return false
+        return false;
     };
 };
 
-export const start = async() => {
+export const start = async () => {
     const consumer = new EventConsumer(config, followsHandler);
     await consumer.connect();
     await consumer.consume();

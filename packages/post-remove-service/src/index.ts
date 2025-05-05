@@ -5,29 +5,29 @@ import { extractMemoContent } from '@atomone/chronostate';
 import { EventConsumer } from '@atomone/event-consumer';
 
 import { useConfig } from './config';
+
 declare module '@atomone/chronostate' {
     export namespace MemoExtractor {
         export interface TypeMap {
-            'dither.Dislike': [string];
+            'dither.Remove': [string];
         }
     }
 }
 const config = useConfig();
 const apiRoot = process.env.API_ROOT || 'http://localhost:3000';
 
-const dislikesHandler = async (msg: amqplib.Message) => {
+const postsHandler = async (msg: amqplib.Message) => {
     try {
         const content = msg.content.toString();
         const parsedContent = JSON.parse(content);
-        const [post_hash] = extractMemoContent(parsedContent.memo, 'dither.Dislike');
+        const [post_hash] = extractMemoContent(parsedContent.memo, 'dither.Remove');
         const postBody = {
             hash: parsedContent.hash,
             from: parsedContent.sender,
             postHash: post_hash,
             timestamp: parsedContent.timestamp,
-            quantity: parsedContent.quantity,
         };
-        const rawResponse = await fetch(apiRoot + '/dislike', {
+        const rawResponse = await fetch(apiRoot + '/post', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -40,7 +40,7 @@ const dislikesHandler = async (msg: amqplib.Message) => {
             return false;
         }
         else {
-            console.log(`dither.Dislike message processed successfully: ${parsedContent.hash}`);
+            console.log(`dither.Remove message processed successfully: ${parsedContent.hash}`);
             return true;
         }
     }
@@ -51,7 +51,7 @@ const dislikesHandler = async (msg: amqplib.Message) => {
 };
 
 export const start = async () => {
-    const consumer = new EventConsumer(config, dislikesHandler);
+    const consumer = new EventConsumer(config, postsHandler);
     await consumer.connect();
     await consumer.consume();
 };

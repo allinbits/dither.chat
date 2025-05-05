@@ -7,19 +7,9 @@ import amqplib from 'amqplib';
 import { useConfig } from './config';
 import { useEventConfig } from './event-config';
 
-export interface DitherActions {
-    'dither.Post': [string];
-    'dither.Reply': [string, string];
-    'dither.Like': [string];
-    'dither.Dislike': [string];
-    'dither.Flag': [string];
-    'dither.Follow': [string];
-    'dither.Unfollow': [string];
-}
-
 const config = useConfig();
 const eventConfig = useEventConfig();
-const actionTypes = ['Post', 'Reply', 'Like', 'Flag', 'Dislike', 'Follow', 'Unfollow']; // Extend as required;
+const actionTypes = ['Post', 'Reply', 'Like', 'Flag', 'Dislike', 'Follow', 'Unfollow', 'Remove']; // Extend as required;
 
 let state: ChronoState;
 let channel: amqplib.Channel;

@@ -1,13 +1,17 @@
-import { EventConsumer } from "@atomone/event-consumer";
-import { useConfig } from "./config";
-import amqplib from 'amqplib';
-import { extractMemoContent } from "@atomone/chronostate";
-import { DitherActions } from '@atomone/indexer-feed';
+/* eslint-disable @typescript-eslint/no-namespace */
+import type amqplib from 'amqplib';
+
+import { extractMemoContent } from '@atomone/chronostate';
+import { EventConsumer } from '@atomone/event-consumer';
+
+import { useConfig } from './config';
+
 declare module '@atomone/chronostate' {
-  export namespace MemoExtractor {
-    export interface TypeMap extends DitherActions {
+    export namespace MemoExtractor {
+        export interface TypeMap {
+            'dither.Reply': [string, string];
+        }
     }
-  }
 }
 const config = useConfig();
 const apiRoot = process.env.API_ROOT || 'http://localhost:3000';
@@ -19,33 +23,36 @@ const repliesHandler = async (msg: amqplib.Message) => {
         const [post_hash, message] = extractMemoContent(parsedContent.memo, 'dither.Reply');
         const postBody = {
             hash: parsedContent.hash,
-            author: parsedContent.sender,
+            from: parsedContent.sender,
             postHash: post_hash,
             msg: message,
             quantity: parsedContent.quantity,
             timestamp: parsedContent.timestamp,
         };
-        const rawResponse = await fetch(apiRoot+'/reply', {
+        const rawResponse = await fetch(apiRoot + '/reply', {
             method: 'POST',
             headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
             },
-            body: JSON.stringify(postBody)
+            body: JSON.stringify(postBody),
         });
         if (rawResponse.status !== 200) {
-            console.error('Error posting to API:', rawResponse.statusText);
+            console.error('Error posting to API:', rawResponse);
             return false;
-        }else{
+        }
+        else {
+            console.log(`dither.Reply message processed successfully: ${parsedContent.hash}`);
             return true;
         }
-    } catch (error) {
+    }
+    catch (error) {
         console.error('Error processing message:', error);
-        return false
+        return false;
     };
 };
 
-export const start = async() => {
+export const start = async () => {
     const consumer = new EventConsumer(config, repliesHandler);
     await consumer.connect();
     await consumer.consume();
