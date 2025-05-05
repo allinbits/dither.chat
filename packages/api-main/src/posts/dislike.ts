@@ -1,7 +1,8 @@
-import { t } from 'elysia';
-import { DislikesTable, FeedTable } from '../../drizzle/schema';
-import { getDatabase } from '../../drizzle/db';
 import { eq, sql } from 'drizzle-orm';
+import { t } from 'elysia';
+
+import { getDatabase } from '../../drizzle/db';
+import { DislikesTable, FeedTable } from '../../drizzle/schema';
 
 export const DislikeBody = t.Object({
     hash: t.String(),
@@ -44,15 +45,16 @@ export async function Dislike(body: typeof DislikeBody.static) {
         await statementAddDislikeToPost.execute({ post_hash: body.postHash, quantity: body.quantity });
 
         return { status: 200 };
-    } catch (err) {
+    }
+    catch (err) {
         console.error(err);
         return { status: 400, error: 'failed to upsert data for dislike, dislike already exists' };
     }
 }
 
-function extractMemoContent<T extends { [key: string]: any }>(memo: string, commandPrefix: keyof T) {
+function extractMemoContent<T extends { [key: string]: unknown }>(_memo: string, _commandPrefix: keyof T) {
     /// Implementation
-    return ['', '', 5] as Pick<T, typeof commandPrefix>[typeof commandPrefix];
+    return ['', '', 5] as Pick<T, typeof _commandPrefix>[typeof _commandPrefix];
 }
 
 type Memos = {
@@ -60,6 +62,6 @@ type Memos = {
     'dither.Reply': [string, string, string, number];
 };
 
-const a = extractMemoContent<Memos>('a memo', 'dither.Post');
+const _a = extractMemoContent<Memos>('a memo', 'dither.Post');
 
-const result = extractMemoContent<Memos>('whatever', 'dither.Post');
+const _result = extractMemoContent<Memos>('whatever', 'dither.Post');

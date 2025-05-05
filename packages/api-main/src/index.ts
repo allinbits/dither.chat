@@ -1,10 +1,10 @@
-import { Elysia } from 'elysia';
-import node from '@elysiajs/node';
 import { cors } from '@elysiajs/cors';
-import { useConfig } from './config';
+import node from '@elysiajs/node';
+import { Elysia } from 'elysia';
 
 import * as GetRequests from './gets/index';
 import * as PostRequests from './posts/index';
+import { useConfig } from './config';
 
 const config = useConfig();
 

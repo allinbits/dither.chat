@@ -1,7 +1,8 @@
-import { t } from 'elysia';
-import { FeedTable, LikesTable } from '../../drizzle/schema';
-import { getDatabase } from '../../drizzle/db';
 import { eq, sql } from 'drizzle-orm';
+import { t } from 'elysia';
+
+import { getDatabase } from '../../drizzle/db';
+import { FeedTable, LikesTable } from '../../drizzle/schema';
 
 export const LikeBody = t.Object({
     hash: t.String(),
@@ -44,7 +45,8 @@ export async function Like(body: typeof LikeBody.static) {
         await statementAddLikeToPost.execute({ post_hash: body.postHash, quantity: body.quantity });
 
         return { status: 200 };
-    } catch (err) {
+    }
+    catch (err) {
         console.error(err);
         return { status: 400, error: 'failed to upsert data for like, like already exists' };
     }

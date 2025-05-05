@@ -1,4 +1,5 @@
 import { createHash, randomBytes } from 'crypto';
+
 import { bech32 } from 'bech32';
 
 let lastHeight = 1_000_000;
@@ -17,7 +18,7 @@ export async function get<T>(endpoint: string, port: 'WRITE' | 'READ' = 'READ') 
     return jsonData as T;
 }
 
-export async function post<T = { status: number }>(endpoint: string, body: any, port: 'WRITE' | 'READ' = 'WRITE') {
+export async function post<T = { status: number }>(endpoint: string, body: object, port: 'WRITE' | 'READ' = 'WRITE') {
     const response = await fetch(`http://localhost:${port === 'WRITE' ? 3001 : 3000}/v1/${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -69,14 +70,14 @@ export function generateFakeData(memo: string, from_address: string, to_address:
         messages: [
             {
                 '@type': '/cosmos.bank.v1beta1.MsgSend',
-                from_address: from_address,
-                to_address: to_address,
-                amount: [{ denom: 'uatone', amount: '1' }],
+                'from_address': from_address,
+                'to_address': to_address,
+                'amount': [{ denom: 'uatone', amount: '1' }],
             },
         ],
     };
 }
 
 export function sleep(ms: number) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
+    return new Promise(resolve => setTimeout(resolve, ms));
 }

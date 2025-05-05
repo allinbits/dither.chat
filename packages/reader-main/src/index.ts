@@ -1,12 +1,14 @@
-import { ChronoState } from '@atomone/chronostate';
-import { useConfig } from './config';
-import { Action } from '@atomone/chronostate/dist/types';
-import amqplib from 'amqplib';
-import { useEventConfig } from './event-config';
-import { MsgGeneric, MsgTransfer } from './types';
+import type { Action } from '@atomone/chronostate/dist/types';
+import type { MsgGeneric, MsgTransfer } from './types';
 
-export interface DitherActions { 
-    'dither.Post':  [string];
+import { ChronoState } from '@atomone/chronostate';
+import amqplib from 'amqplib';
+
+import { useConfig } from './config';
+import { useEventConfig } from './event-config';
+
+export interface DitherActions {
+    'dither.Post': [string];
     'dither.Reply': [string, string];
     'dither.Like': [string];
     'dither.Dislike': [string];
@@ -20,24 +22,24 @@ const eventConfig = useEventConfig();
 const actionTypes = ['Post', 'Reply', 'Like', 'Flag', 'Dislike', 'Follow', 'Unfollow']; // Extend as required;
 
 let state: ChronoState;
-let lastBlock: string;
 let channel: amqplib.Channel;
+let _lastBlock: string;
 
 export function getTransferMessage(messages: Array<MsgGeneric>) {
-    const msgTransfer = messages.find((msg) => msg['@type'] === '/cosmos.bank.v1beta1.MsgSend');
+    const msgTransfer = messages.find(msg => msg['@type'] === '/cosmos.bank.v1beta1.MsgSend');
     if (!msgTransfer) {
         return null;
     }
 
-    return msgTransfer as MsgTransfer
+    return msgTransfer as MsgTransfer;
 }
 
 export function getTransferQuantities(messages: Array<MsgGeneric>, denom = 'uatone') {
-    const msgTransfers = messages.filter((msg) => msg['@type'] === '/cosmos.bank.v1beta1.MsgSend') as MsgTransfer[];
+    const msgTransfers = messages.filter(msg => msg['@type'] === '/cosmos.bank.v1beta1.MsgSend') as MsgTransfer[];
     let amount = BigInt('0');
 
-    for (let msg of msgTransfers) {
-        for (let quantity of msg.amount) {
+    for (const msg of msgTransfers) {
+        for (const quantity of msg.amount) {
             if (quantity.denom !== denom) {
                 continue;
             }
@@ -49,20 +51,20 @@ export function getTransferQuantities(messages: Array<MsgGeneric>, denom = 'uato
     return amount.toString();
 }
 async function handleAction(action: Action) {
-    
     for (const actionType of actionTypes) {
-        if (action.memo.startsWith(config.MEMO_PREFIX+actionType)) {      
-            const transfer = getTransferMessage(action.messages);
-            const quantity = getTransferQuantities(action.messages);
-            await channel.publish(eventConfig.exchange, actionType, Buffer.from(JSON.stringify({ sender: transfer?.from_address, quantity: quantity, ...action })));            
+        if (action.memo.startsWith(config.MEMO_PREFIX + actionType)) {
+            const transfer = getTransferMessage(action.messages as Array<MsgGeneric>);
+            const quantity = getTransferQuantities(action.messages as Array<MsgGeneric>);
+            await channel.publish(eventConfig.exchange, actionType, Buffer.from(JSON.stringify({ sender: transfer?.from_address, quantity: quantity, ...action })));
             break;
-        }else{
+        }
+        else {
             continue;
         }
     }
-
 }
 
+// eslint-disable-next-line @typescript-eslint/no-wrapper-object-types
 function handleLastBlock(block: string | String) {
     // db.lastBlock.update(block as string);
     // Need to switch this out to store last block somewhere, otherwise rely on

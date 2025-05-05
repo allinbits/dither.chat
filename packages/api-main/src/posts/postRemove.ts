@@ -1,7 +1,8 @@
+import { and, eq } from 'drizzle-orm';
 import { t } from 'elysia';
-import { FeedTable } from '../../drizzle/schema';
+
 import { getDatabase } from '../../drizzle/db';
-import { eq, and } from 'drizzle-orm';
+import { FeedTable } from '../../drizzle/schema';
 
 export const PostRemoveBody = t.Object({
     hash: t.String(),
@@ -27,7 +28,7 @@ export async function PostRemove(body: typeof PostRemoveBody.static) {
             .set({
                 removed_at: new Date(body.timestamp),
                 removed_hash: body.hash,
-                removed_by: body.from
+                removed_by: body.from,
             })
             .where(eq(FeedTable.hash, body.post_hash))
             .returning();
@@ -35,7 +36,8 @@ export async function PostRemove(body: typeof PostRemoveBody.static) {
         await statement.execute();
 
         return { status: 200 };
-    } catch (err) {
+    }
+    catch (err) {
         console.error(err);
         return { status: 400, error: 'failed to delete post, maybe invalid' };
     }

@@ -12,7 +12,8 @@
         "db:generate": "drizzle-kit generate",
         "db:migrate": "drizzle-kit migrate",
         "db:push": "drizzle-kit push",
-        "db:push:force": "drizzle-kit push --force"
+        "db:push:force": "drizzle-kit push --force",
+        "push-and-start": "drizzle-kit push --force && pnpm start"
     },
     "dependencies": {
         "@atomone/chronostate": "^2.2.1",

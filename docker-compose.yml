@@ -2,15 +2,23 @@ services:
   # ================================
   # Database Services
   # ================================
-  postgres-feed:
-    image: postgres:16
+  postgres:
+    image: postgres:latest
+    container_name: postgres_db
     restart: always
     environment:
-      POSTGRES_DB: feed
-      POSTGRES_USER: username
+      POSTGRES_USER: default
       POSTGRES_PASSWORD: password
     ports:
       - "5432:5432"
+    volumes:
+      - ./data/postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "default"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
 
   # ================================
   # Event Consuming Services
@@ -150,40 +158,28 @@ volumes:
   # ================================
   # REST Services
   # ================================
-  # api-feed:
-  #     container_name: "api-feed"
-  #     build: ./packages/api-feed
-  #     restart: always
-  #     command: ['pnpm', 'start']
-  #     depends_on:
-  #         - mongodb-indexer-feed
-  #     environment:
-  #         MONGO_URI: mongodb://username:password@mongodb-indexer-feed:27017/
-  #         PORT: 3000
-  #     ports:
-  #         - 3000:3000
-
-  # api-likes:
-  #     container_name: "api-likes"
-  #     build: ./packages/api-likes
-  #     restart: always
-  #     command: ['pnpm', 'start']
-  #     depends_on:
-  #         - mongodb-indexer-likes
-  #     environment:
-  #         MONGO_URI: mongodb://username:password@mongodb-indexer-likes:27017/
-  #         PORT: 3001
-  #     ports:
-  #         - 3001:3001
+  api-main:
+    container_name: "api-main"
+    build: ./packages/api-main
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      PG_URI: "postgresql://default:password@postgres:5432/postgres"
+    ports:
+      - 3000:3000
+      - 3001:3001
 
   # ================================
   # Gateway Service
   # ================================
-  # nginx:
-  #     image: nginx:latest
-  #     volumes:
-  #     - ./packages/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
-  #     ports:
-  #     - "80:80"
-  #     depends_on:
-  #     - api-feed
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./packages/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    ports:
+      - "80:80"
+    depends_on:
+      - postgres
+      - api-main

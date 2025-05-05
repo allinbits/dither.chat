@@ -6,3 +6,4 @@ packages/api-main/data
 .env
 dist
 dist/
+data/*
