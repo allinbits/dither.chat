@@ -114,6 +114,7 @@ export default [
         ignores: [
             'node_modules',
             '**/node_modules',
+            '**/components/ui/**',
             '**/*.conf',
             '**/nginx/**',
         ],
