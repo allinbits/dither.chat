@@ -97,8 +97,8 @@ export default [
             // see more vue rules: https://eslint.vuejs.org/rules/
             'vue/no-mutating-props': 'error',
             'vue/multi-word-component-names': 'off',
+            'vue/html-indent': ['error', 2],
         },
-
     },
     // see: https://eslint.style/guide/getting-started
     // see: https://github.com/eslint-stylistic/eslint-stylistic/blob/main/packages/eslint-plugin/configs/disable-legacy.ts

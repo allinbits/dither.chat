@@ -7,3 +7,5 @@ packages/api-main/data
 dist
 dist/
 data/*
+.vscode/
+.idea/
