@@ -159,7 +159,7 @@ importers:
         specifier: ^5.8.2
         version: 5.8.3
 
-  tools/network-spammer:
+  packages/tool-network-spammer:
     dependencies:
       '@cosmjs/proto-signing':
         specifier: ^0.33.1
