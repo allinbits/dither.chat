@@ -1,0 +1,19 @@
+{
+    "name": "network-spammer",
+    "version": "1.0.0",
+    "main": "dist/index.js",
+    "scripts": {
+        "dev": "tsx src/index.ts",
+        "build": "tsc"
+    },
+    "dependencies": {
+        "@cosmjs/proto-signing": "^0.33.1",
+        "@cosmjs/stargate": "^0.33.1",
+        "dotenv": "^16.3.1",
+        "lorem-ipsum": "^2.0.8"
+    },
+    "devDependencies": {
+        "tsx": "^4.19.3",
+        "typescript": "^5.2.2"
+    }
+}
