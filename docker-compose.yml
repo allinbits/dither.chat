@@ -21,6 +21,109 @@ services:
       start_period: 5s
 
   # ================================
+  # Event Consuming Services
+  # ================================
+  post-service:
+    container_name: "post-service"
+    build: ./packages/post-service
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
+      RABBITMQ_EXCHANGE: "dither"
+      API_ROOT: "http://api-main:3001/v1"
+    restart: always
+    command: ["pnpm", "start"]
+    
+  reply-service:
+    container_name: "reply-service"
+    build: ./packages/reply-service
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
+      RABBITMQ_EXCHANGE: "dither"
+      API_ROOT: "http://api-main:3001/v1"
+    restart: always
+    command: ["pnpm", "start"]
+
+  like-service:
+    container_name: "like-service"
+    build: ./packages/like-service
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
+      RABBITMQ_EXCHANGE: "dither"
+      API_ROOT: "http://api-main:3001/v1"
+    restart: always
+    command: ["pnpm", "start"]
+
+  dislike-service:
+    container_name: "dislike-service"
+    build: ./packages/dislike-service
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
+      RABBITMQ_EXCHANGE: "dither"
+      API_ROOT: "http://api-main:3001/v1"
+    restart: always
+    command: ["pnpm", "start"]
+
+  follow-service:
+    container_name: "follow-service"
+    build: ./packages/follow-service
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
+      RABBITMQ_EXCHANGE: "dither"
+      API_ROOT: "http://api-main:3001/v1"
+    restart: always
+    command: ["pnpm", "start"]
+  unfollow-service:
+    container_name: "unfollow-service"
+    build: ./packages/unfollow-service
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
+      RABBITMQ_EXCHANGE: "dither"
+      API_ROOT: "http://api-main:3001/v1"
+    restart: always
+    command: ["pnpm", "start"]
+  flag-service:
+    container_name: "flag-service"
+    build: ./packages/flag-service
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
+      RABBITMQ_EXCHANGE: "dither"
+      API_ROOT: "http://api-main:3001/v1"
+    restart: always
+    command: ["pnpm", "start"]
+  post-remove-service:
+    container_name: "post-remove-service"
+    build: ./packages/post-remove-service
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
+      RABBITMQ_EXCHANGE: "dither"
+      API_ROOT: "http://api-main:3001/v1"
+    restart: always
+    command: ["pnpm", "start"]
+  # ================================
   # ChronoSync Services (Readers)
   # ================================
   reader-main:
@@ -28,7 +131,14 @@ services:
     build: ./packages/reader-main
     restart: always
     command: ["pnpm", "start"]
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
     environment:
+      RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
+      RABBITMQ_EXCHANGE: "dither"
       API_URLS: "https://atomone-api.allinbits.com,https://atomone-rest.publicnode.com"
       START_BLOCK: "2605764"
       BATCH_SIZE: 50
@@ -36,6 +146,29 @@ services:
       RECEIVER: "atone1uq6zjslvsa29cy6uu75y8txnl52mw06j6fzlep"
       # PG_URI: postgres://username:password@postgres-feed:5432/feed
       # LOG: process.env.LOG === 'true' ? true : false,
+
+  # ================================
+  # RabbitMQ Service (event system)
+  # ================================
+  rabbitmq:
+    image: rabbitmq:latest
+    build: ./packages/rabbit-mq
+    container_name: rabbitmq
+    restart: always
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq-lib:/var/lib/rabbitmq/
+      - rabbitmq-log:/var/log/rabbitmq
 
   # ================================
   # REST Services
@@ -65,3 +198,9 @@ services:
     depends_on:
       - postgres
       - api-main
+
+volumes:
+  rabbitmq-lib:
+    driver: local
+  rabbitmq-log:
+    driver: local
