@@ -5,5 +5,5 @@ packages/api-main/drizzle/migrations
 packages/api-main/data
 .env
 data/*
-/.vscode
-/.idea
+.vscode/
+.idea/
