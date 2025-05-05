@@ -11,11 +11,11 @@ let _lastBlock: string;
 
 async function handleAction(action: Action) {
     if (action.memo.startsWith('dither.Post')) {
-        //
+    //
     }
 
     if (action.memo.startsWith('dither.Reply')) {
-        //
+    //
     }
 }
 
