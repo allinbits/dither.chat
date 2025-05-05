@@ -27,3 +27,7 @@ Just an nginx configuration for gateway access to APIs
 ### [frontend-main](./packages/frontend-main/README.md)
 
 An frontend Single Page Application for Dither as a whole.
+
+## [tool-network-spammer](./packages/tool-network-spammer/README.md)
+
+A tool for spamming devnet / testnet and building test data to be consumed by the event system.
