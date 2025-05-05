@@ -98,6 +98,14 @@ export const AuditTable = pgTable('audits', {
     created_by: varchar({ length: 44 }),
     created_at: timestamp({ withTimezone: true }),
     created_reason: text(),
+    restored_by: varchar({ length: 44 }), // the post or user that was restored
+    restored_at: timestamp({ withTimezone: true }), // the time the post or user was restored
 });
 
-export const tables = ['feed', 'likes', 'dislikes', 'flags', 'follows', 'audits'];
+export const ModeratorTable = pgTable('moderators', {
+    address: varchar({ length: 44 }).primaryKey(),
+    alias: varchar({ length: 16 }), // Optional short name
+    deleted_at: timestamp({ withTimezone: true }),
+});
+
+export const tables = ['feed', 'likes', 'dislikes', 'flags', 'follows', 'audits', 'moderators'];
