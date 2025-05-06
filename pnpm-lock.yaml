@@ -7,10 +7,6 @@ settings:
 importers:
 
   .:
-    dependencies:
-      vue-router:
-        specifier: ^4.5.1
-        version: 4.5.1(vue@3.5.13(typescript@5.8.3))
     devDependencies:
       '@eslint/js':
         specifier: ^9.26.0
@@ -218,6 +214,9 @@ importers:
       vue:
         specifier: ^3.5.13
         version: 3.5.13(typescript@5.7.3)
+      vue-router:
+        specifier: ^4.5.1
+        version: 4.5.1(vue@3.5.13(typescript@5.7.3))
     devDependencies:
       '@types/node':
         specifier: ^22.15.3
@@ -3802,12 +3801,6 @@ snapshots:
       '@vue/shared': 3.5.13
       vue: 3.5.13(typescript@5.7.3)
 
-  '@vue/server-renderer@3.5.13(vue@3.5.13(typescript@5.8.3))':
-    dependencies:
-      '@vue/compiler-ssr': 3.5.13
-      '@vue/shared': 3.5.13
-      vue: 3.5.13(typescript@5.8.3)
-
   '@vue/shared@3.5.13': {}
 
   '@vue/tsconfig@0.7.0(typescript@5.7.3)(vue@3.5.13(typescript@5.7.3))':
@@ -5222,10 +5215,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  vue-router@4.5.1(vue@3.5.13(typescript@5.8.3)):
+  vue-router@4.5.1(vue@3.5.13(typescript@5.7.3)):
     dependencies:
       '@vue/devtools-api': 6.6.4
-      vue: 3.5.13(typescript@5.8.3)
+      vue: 3.5.13(typescript@5.7.3)
 
   vue-tsc@2.2.10(typescript@5.7.3):
     dependencies:
@@ -5242,16 +5235,6 @@ snapshots:
       '@vue/shared': 3.5.13
     optionalDependencies:
       typescript: 5.7.3
-
-  vue@3.5.13(typescript@5.8.3):
-    dependencies:
-      '@vue/compiler-dom': 3.5.13
-      '@vue/compiler-sfc': 3.5.13
-      '@vue/runtime-dom': 3.5.13
-      '@vue/server-renderer': 3.5.13(vue@3.5.13(typescript@5.8.3))
-      '@vue/shared': 3.5.13
-    optionalDependencies:
-      typescript: 5.8.3
 
   which@2.0.2:
     dependencies:
