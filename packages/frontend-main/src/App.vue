@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import ToggleThemeButton from './components/ui/ToggleThemeButton.vue';
+
 import { Button } from '@/components/ui/button';
+
 </script>
 
 <template>
@@ -27,6 +30,7 @@ import { Button } from '@/components/ui/button';
       <!-- TODO: Make right menu -->
       <!-- This should probably stick -->
       <div class="flex flex-col w-[380px] p-6 h-full">
+        <ToggleThemeButton/>
         <input placeholder="search" class="bg-neutral-200 p-2 w-full" />
       </div>
     </div>
