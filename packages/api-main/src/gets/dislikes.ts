@@ -1,7 +1,8 @@
-import { t } from 'elysia';
-import { DislikesTable } from '../../drizzle/schema';
-import { getDatabase } from '../../drizzle/db';
 import { eq, sql } from 'drizzle-orm';
+import { t } from 'elysia';
+
+import { getDatabase } from '../../drizzle/db';
+import { DislikesTable } from '../../drizzle/schema';
 import { getJsonbArrayCount } from '../utility';
 
 export const DislikesQuery = t.Object({
@@ -28,7 +29,7 @@ export async function Dislikes(query: typeof DislikesQuery.static) {
     }
 
     let limit = typeof query.limit !== 'undefined' ? Number(query.limit) : 100;
-    let offset = typeof query.offset !== 'undefined' ? Number(query.offset) : 0;
+    const offset = typeof query.offset !== 'undefined' ? Number(query.offset) : 0;
 
     if (limit > 100) {
         limit = 100;
@@ -49,7 +50,8 @@ export async function Dislikes(query: typeof DislikesQuery.static) {
 
         const results = await statement.execute({ post_hash: query.hash, limit, offset });
         return { status: 200, rows: results };
-    } catch (error) {
+    }
+    catch (error) {
         console.error(error);
         return { error: 'failed to read data from database' };
     }

@@ -1,7 +1,8 @@
-import { t } from 'elysia';
-import { FeedTable } from '../../drizzle/schema';
-import { getDatabase } from '../../drizzle/db';
 import { eq, sql } from 'drizzle-orm';
+import { t } from 'elysia';
+
+import { getDatabase } from '../../drizzle/db';
+import { FeedTable } from '../../drizzle/schema';
 
 export const ReplyBody = t.Object({
     hash: t.String(),
@@ -47,7 +48,8 @@ export async function Reply(body: typeof ReplyBody.static) {
         });
 
         return { status: 200 };
-    } catch (err) {
+    }
+    catch (err) {
         console.error(err);
         return { status: 400, error: 'failed to upsert data for post' };
     }

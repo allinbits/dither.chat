@@ -1,4 +1,4 @@
-import { Config } from '@atomone/chronostate/dist/types';
+import type { Config } from '@atomone/chronostate/dist/types';
 
 let config: Config;
 
@@ -19,7 +19,7 @@ export function useConfig(): Config {
         START_BLOCK: process.env.START_BLOCK,
         RECEIVER: process.env.RECEIVER,
         SENDER: process.env.SENDER,
-        LOG: process.env.LOG === 'true'
+        LOG: process.env.LOG === 'true',
     };
 
     return config;

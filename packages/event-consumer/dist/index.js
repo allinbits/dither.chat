@@ -1,0 +1,1 @@
+export { EventConsumer } from './consumer';

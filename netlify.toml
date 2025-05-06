@@ -1,0 +1,3 @@
+[build]
+publish = "./packages/frontend-main/dist"
+command = "pnpm -F ./packages/frontend-main build"

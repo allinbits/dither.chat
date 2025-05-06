@@ -1,7 +1,10 @@
+import dotenv from 'dotenv';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import pg from 'pg';
 
-const { Pool } = pg
+dotenv.config();
+
+const { Pool } = pg;
 
 let db: ReturnType<typeof drizzle>;
 
