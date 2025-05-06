@@ -7,8 +7,18 @@ import { shorten } from "@/utility";
 import { bus } from "@/bus";
 import UserBalance from "@/components/helper/UserBalance.vue";
 import { bech32 } from "bech32";
+import { Button } from '@/components/ui/button'
+import {
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogOverlay,
+  DialogPortal,
+  DialogRoot,
+  DialogTitle,
+  DialogTrigger,
+} from 'reka-ui'
 
-const isOpen = ref(false);
 const isConnecting = ref(false);
 const isError = ref(false);
 const isSlowConnecting = ref(false);
@@ -19,18 +29,18 @@ const publicAddress = ref("");
 const { connect, signOut, address, loggedIn, keplr, leap, cosmostation } = useWallet();
 
 const connectState = computed(
-  () => !isConnecting.value && !isOpen.value && !loggedIn.value && !isError.value && !isAddressOnlyConnection.value,
+  () => !isConnecting.value && !loggedIn.value && !isError.value && !isAddressOnlyConnection.value,
 );
 const selectState = computed(
-  () => !isConnecting.value && isOpen.value && !loggedIn.value && !isError.value && !isAddressOnlyConnection.value,
+  () => !isConnecting.value && !loggedIn.value && !isError.value && !isAddressOnlyConnection.value,
 );
 const addressState = computed(
-  () => !isConnecting.value && isOpen.value && !loggedIn.value && !isError.value && isAddressOnlyConnection.value,
+  () => !isConnecting.value  && !loggedIn.value && !isError.value && isAddressOnlyConnection.value,
 );
-const connectingState = computed(() => isConnecting.value && isOpen.value && !loggedIn.value && !isError.value);
-const connectedState = computed(() => !isConnecting.value && !isOpen.value && loggedIn.value && !isError.value);
-const viewState = computed(() => !isConnecting.value && isOpen.value && loggedIn.value && !isError.value);
-const errorState = computed(() => isOpen.value && isError.value);
+const connectingState = computed(() => isConnecting.value  && !loggedIn.value && !isError.value);
+const connectedState = computed(() => !isConnecting.value && loggedIn.value && !isError.value);
+const viewState = computed(() => !isConnecting.value && loggedIn.value && !isError.value);
+const errorState = computed(() => isError.value);
 
 const controller: Ref<AbortController | null> = ref(null);
 const chosenWallet: Ref<Wallets> = ref(Wallets.keplr);
@@ -54,7 +64,6 @@ const connectWallet = async (walletType: Wallets, address?: string) => {
   isAddressOnlyConnection.value = false;
   isError.value = false;
   isConnecting.value = true;
-  isOpen.value = true;
   isSlowConnecting.value = false;
   chosenWallet.value = walletType;
   let slow: ReturnType<typeof setTimeout> | null = null;
@@ -68,7 +77,6 @@ const connectWallet = async (walletType: Wallets, address?: string) => {
     }
     isConnecting.value = false;
     isSlowConnecting.value = false;
-    isOpen.value = false;
     if (slow) {
       clearTimeout(slow);
       slow = null;
@@ -88,7 +96,6 @@ const cancelConnect = () => {
   controller.value?.abort();
   isConnecting.value = false;
   isSlowConnecting.value = false;
-  isOpen.value = false;
   isError.value = false;
   isAddressOnlyConnection.value = false;
   publicAddress.value = "";
@@ -111,25 +118,19 @@ bus.on("open", () => {
 </script>
 
 <template>
-  <div>
+   <DialogRoot>
     <!-- Normal signed out button -->
-    <template v-if="connectState">
-      <button
-        class="justify-center px-6 py-4 rounded bg-grey-400 text-300 text-center hover:bg-light hover:text-dark duration-200"
-        @click="
-          () => {
-            isOpen = true;
-          }
-        "
-      >
+    <DialogTrigger>
+      <Button>
         {{ $t("components.WalletConnect.button") }}
-      </button>
-    </template>
-
+      </Button>
+</DialogTrigger>
     <!-- Wallet Selection -->
-    <Transition name="fade">
+    <DialogPortal>
+      <DialogOverlay class="bg-black bg-opacity[5%] data-[state=open]:animate-overlayShow fixed inset-0 z-30" />
+      <DialogContent  class="data-[state=open]:animate-contentShow fixed top-[50%] left-[50%] max-h-[85vh] w-[90vw] max-w-[450px] translate-x-[-50%] translate-y-[-50%] rounded-[6px] bg-white p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] focus:outline-none z-[100]">
       <template v-if="selectState">
-        <div class="absolute right-0 top-4 z-10">
+        <div>
           <div class="flex flex-col gap-6 px-8 py-6 bg-grey-300 rounded w-80 relative">
             <Icon
               class="absolute top-3 right-4 cursor-pointer text-light"
@@ -302,7 +303,6 @@ bus.on("open", () => {
           </div>
         </div>
       </template>
-    </Transition>
 
     <!-- Connection failed -->
     <template v-if="errorState">
@@ -349,7 +349,9 @@ bus.on("open", () => {
         </div>
       </div>
     </template>
-  </div>
+    </DialogContent>
+  </DialogPortal>
+  </DialogRoot>
 </template>
 
 <style>
