@@ -26,13 +26,13 @@
         "bech32": "^2.0.0",
         "dotenv": "^16.5.0",
         "drizzle-orm": "^0.43.1",
-        "jsonwebtoken": "^9.0.2",
         "elysia": "~1.2.25",
+        "elysia-ip": "^1.0.8",
+        "jsonwebtoken": "^9.0.2",
         "pg": "^8.14.1",
         "postgres": "^3.4.5"
     },
     "devDependencies": {
-        "@types/bech32": "^1.1.8",
         "@types/jsonwebtoken": "^9.0.9",
         "@types/node": "^22.14.1",
         "@types/pg": "^8.11.13",
