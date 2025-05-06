@@ -1,7 +1,8 @@
+import { createHash } from 'crypto';
+
 import { encodeSecp256k1Pubkey, pubkeyToAddress } from '@cosmjs/amino';
 import { fromBase64 } from '@cosmjs/encoding';
 import { verifyADR36Amino } from '@keplr-wallet/cosmos';
-import { createHash } from 'crypto';
 import jwt from 'jsonwebtoken';
 
 type UserRequest = { publicKey: string; expiration: number };
@@ -20,7 +21,7 @@ function cleanupRequests() {
         return;
     }
 
-    for (let key of Object.keys(requests)) {
+    for (const key of Object.keys(requests)) {
         if (Date.now() < requests[key].expiration) {
             continue;
         }
@@ -59,7 +60,7 @@ export function useUserAuth() {
             publicAddress,
             message,
             fromBase64(publicKey),
-            fromBase64(signature)
+            fromBase64(signature),
         );
 
         if (!didVerify) {
