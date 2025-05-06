@@ -8,7 +8,7 @@ import { assert, describe, it } from 'vitest';
 import { getDatabase } from '../drizzle/db';
 import { tables } from '../drizzle/schema';
 
-import { get, getAtomOneAddress, getRandomHash, post } from './shared';
+import { createWallet, get, getAtomOneAddress, getRandomHash, post, signADR36Document } from './shared';
 
 describe('v1', { sequential: true }, () => {
     const addressUserA = getAtomOneAddress();
@@ -281,7 +281,6 @@ describe('v1', { sequential: true }, () => {
         };
 
         const response = await post(`unfollow`, body);
-        console.log(response);
         assert.isOk(response?.status === 200, 'response was not okay');
     });
 
@@ -368,5 +367,28 @@ describe('v1', { sequential: true }, () => {
         assert.isOk(postsResponse?.status === 200, 'posts did not resolve');
         const data = postsResponse?.rows.find(x => x.hash === response.rows[0].hash);
         assert.isOk(data, 'data was hidden');
+    });
+});
+
+describe('v1/auth', async () => {
+    const walletA = await createWallet();
+
+    it('create and verify request for wallet', async () => {
+        const body: typeof Posts.AuthCreateBody.static = {
+            address: walletA.publicKey,
+        };
+
+        const response = await post(`auth-create`, body, 'READ') as ({ status: 200; id: number; message: string });
+        assert.isOk(response?.status === 200, 'response was not okay');
+
+        const signData = await signADR36Document(walletA.mnemonic, response.message);
+        const verifyBody: typeof Posts.AuthBody.static = {
+            id: response.id,
+            ...signData.signature,
+        };
+
+        const responseVerify = await post(`auth`, verifyBody, 'READ') as ({ status: 200; bearer: string });
+        assert.isOk(responseVerify?.status === 200, 'response was not verified and confirmed okay');
+        assert.isOk(responseVerify.bearer.length >= 1, 'bearer was not passed back');
     });
 });

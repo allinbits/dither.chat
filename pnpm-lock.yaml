@@ -47,9 +47,6 @@ importers:
       '@atomone/chronostate':
         specifier: ^2.2.1
         version: 2.2.1
-      '@cosmjs/amino':
-        specifier: ^0.33.1
-        version: 0.33.1
       '@cosmjs/crypto':
         specifier: ^0.33.1
         version: 0.33.1
@@ -65,9 +62,6 @@ importers:
       '@keplr-wallet/cosmos':
         specifier: ^0.12.230
         version: 0.12.230(bitcoinjs-lib@6.1.7)(starknet@6.24.1)
-      bech32:
-        specifier: ^2.0.0
-        version: 2.0.0
       dotenv:
         specifier: ^16.5.0
         version: 16.5.0
@@ -90,6 +84,9 @@ importers:
         specifier: ^3.4.5
         version: 3.4.5
     devDependencies:
+      '@cosmjs/amino':
+        specifier: ^0.33.1
+        version: 0.33.1
       '@types/jsonwebtoken':
         specifier: ^9.0.9
         version: 9.0.9

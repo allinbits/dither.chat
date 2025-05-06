@@ -23,6 +23,7 @@ function startReadOnlyServer() {
 
     app.post('/auth', ({ body }) => PostRequests.Auth(body), { body: PostRequests.AuthBody });
     app.post('/auth-create', ({ body }) => PostRequests.AuthCreate(body), { body: PostRequests.AuthCreateBody });
+
     app.listen(config.READ_ONLY_PORT ?? 3000);
     console.log(`[API Read Only] Running on ${config.READ_ONLY_PORT ?? 3000}`);
 }
