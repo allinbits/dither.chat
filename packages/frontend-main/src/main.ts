@@ -3,6 +3,7 @@ import './style.css';
 import router from './router.ts';
 import { createI18n } from "vue-i18n";
 import { messages } from "@/localization";
+import { VueQueryPlugin } from '@tanstack/vue-query';
 import App from './App.vue';
 
 const app = createApp(App);
@@ -11,7 +12,8 @@ const i18n = createI18n({
     locale: "en",
     fallbackLocale: "en",
     messages,
-  });
+});
 app.use(i18n);
 app.use(router);
+app.use(VueQueryPlugin);
 app.mount('#app');
