@@ -2,7 +2,7 @@ FROM node:23-slim
 
 WORKDIR /app
 
-RUN apt-get update && rm -rf /var/lib/apt/lists/* && corepack enable
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/* && corepack enable
 
 COPY package.json ./
 COPY src ./src
