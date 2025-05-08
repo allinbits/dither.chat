@@ -12,7 +12,7 @@
       "@/*": [
         "./src/*"
       ],
-      "api-main/schema": ["../api-main/drizzle/schema"]
+      "api-main/types/*": ["../api-main/src/types/*"]
     }
   },
   "include": [

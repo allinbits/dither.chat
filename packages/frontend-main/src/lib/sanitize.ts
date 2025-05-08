@@ -1,12 +1,19 @@
-import type z from 'zod';
+import type { TSchema } from '@sinclair/typebox';
+import type { Static } from '@sinclair/typebox';
+import type { ValueError } from '@sinclair/typebox/compiler';
 
-export const zodTryParse = <T extends z.ZodType>(
-    zodSchema: T,
+import { TypeCompiler } from '@sinclair/typebox/compiler';
+
+export function validateOrNull<T extends TSchema>(
+    schema: T,
     data: unknown,
-): z.infer<T> | null => {
-    const result = zodSchema.safeParse(data);
-    if (result.success) {
-        return result.data;
+): Static<T> | null {
+    const validator = TypeCompiler.Compile(schema);
+    if (validator.Check(data)) {
+        return data as Static<T>;
     }
-    return null;
-};
+    else {
+        console.warn('Validation errors:', [...validator.Errors(data)] as ValueError[]);
+        return null;
+    }
+}
