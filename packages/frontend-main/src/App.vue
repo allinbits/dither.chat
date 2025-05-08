@@ -17,6 +17,8 @@ import { Button } from '@/components/ui/button';
           <RouterLink to="/notifications" activeClass="font-bold">Notifications</RouterLink>
           <!-- TODO: Use current user address -->
           <RouterLink to="/profile/:address" activeClass="font-bold">My Profile</RouterLink>
+          <!-- TODO: Remove this after testing -->
+          <RouterLink to="/post/1" activeClass="font-bold">Post #1</RouterLink>
         </nav>
         <Button size="lg">Connect</Button>
       </div>

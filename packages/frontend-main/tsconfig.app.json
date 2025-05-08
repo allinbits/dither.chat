@@ -11,7 +11,8 @@
     "paths": {
       "@/*": [
         "./src/*"
-      ]
+      ],
+      "api-main/schema": ["../api-main/drizzle/schema"]
     }
   },
   "include": [
