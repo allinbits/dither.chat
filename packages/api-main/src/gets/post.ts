@@ -1,4 +1,4 @@
-import { and, eq, sql } from 'drizzle-orm';
+import { and, eq, isNull, sql } from 'drizzle-orm';
 import { t } from 'elysia';
 
 import { getDatabase } from '../../drizzle/db';
@@ -12,13 +12,13 @@ export const PostQuery = t.Object({
 const statementGetPost = getDatabase()
     .select()
     .from(FeedTable)
-    .where(eq(FeedTable.hash, sql.placeholder('hash')))
+    .where(and(isNull(FeedTable.removed_at), eq(FeedTable.hash, sql.placeholder('hash'))))
     .prepare('stmnt_get_post');
 
 const statementGetReply = getDatabase()
     .select()
     .from(FeedTable)
-    .where(and(eq(FeedTable.hash, sql.placeholder('hash')), eq(FeedTable.post_hash, sql.placeholder('post_hash'))))
+    .where(and(isNull(FeedTable.removed_at), eq(FeedTable.hash, sql.placeholder('hash')), eq(FeedTable.post_hash, sql.placeholder('post_hash'))))
     .prepare('stmnt_get_reply');
 
 export async function Post(query: typeof PostQuery.static) {

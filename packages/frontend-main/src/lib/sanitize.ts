@@ -4,16 +4,16 @@ import type { ValueError } from '@sinclair/typebox/compiler';
 
 import { TypeCompiler } from '@sinclair/typebox/compiler';
 
-export function validateOrNull<T extends TSchema>(
+export function checkTypeboxSchema<T extends TSchema>(
     schema: T,
     data: unknown,
 ): Static<T> | null {
-    const validator = TypeCompiler.Compile(schema);
-    if (validator.Check(data)) {
+    const typeChecker = TypeCompiler.Compile(schema);
+    if (typeChecker.Check(data)) {
         return data as Static<T>;
     }
     else {
-        console.warn('Validation errors:', [...validator.Errors(data)] as ValueError[]);
+        console.warn('Validation errors:', [...typeChecker.Errors(data)] as ValueError[]);
         return null;
     }
 }

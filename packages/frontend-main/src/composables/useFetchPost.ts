@@ -3,7 +3,7 @@ import type { Post } from 'api-main/types/feed';
 import { ref } from 'vue';
 import { postSchema } from 'api-main/types/feed';
 
-import { validateOrNull } from '@/lib/sanitize';
+import { checkTypeboxSchema } from '@/lib/sanitize';
 
 const apiRoot = import.meta.env.VITE_API_ROOT || 'http://localhost:3000';
 
@@ -31,9 +31,9 @@ export function useFetchPost() {
                 postData.timestamp = new Date(postData.timestamp);
             }
 
-            const parsed = validateOrNull(postSchema, data.row?.[0]);
-            if (parsed) {
-                post.value = parsed;
+            const checkedData = checkTypeboxSchema(postSchema, data.row?.[0]);
+            if (checkedData) {
+                post.value = checkedData;
             }
             else {
                 error.value = 'Invalid post format';
