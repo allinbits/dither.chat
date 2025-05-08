@@ -25,5 +25,5 @@ export function useFeed() {
         refresh();
     }
 
-    return { refresh, data };
+    return { refresh, data, offset, limit };
 }
