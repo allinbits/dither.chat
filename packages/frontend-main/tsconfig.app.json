@@ -11,7 +11,8 @@
     "paths": {
       "@/*": [
         "./src/*"
-      ]
+      ],
+      "api-main/types/*": ["../api-main/src/types/*"]
     }
   },
   "include": [

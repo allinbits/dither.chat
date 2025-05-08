@@ -116,6 +116,7 @@ export default [
             '**/node_modules',
             '**/*.conf',
             '**/nginx/**',
+            '**/data/postgres_data',
         ],
     },
 ];
