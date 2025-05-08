@@ -1,6 +1,6 @@
 {
     "name": "@atomone/event-consumer",
-    "version": "1.0.2",
+    "version": "1.0.7",
     "description": "A package for consuming events from a RabbitMQ queue.",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",

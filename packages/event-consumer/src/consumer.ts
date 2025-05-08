@@ -8,7 +8,7 @@ export class EventConsumer {
     private handler: (msg: amqplib.Message) => Promise<boolean>;
     constructor(config: EventConsumerConfig, handler: (msg: amqplib.Message) => Promise<boolean>) {
         this.config = config;
-        this.handler = handler;
+        this.handler = handler.bind(this);
     }
 
     async connect() {
