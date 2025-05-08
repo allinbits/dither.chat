@@ -1,4 +1,4 @@
-import { and, eq, isNull, sql, inArray } from 'drizzle-orm';
+import { and, eq, inArray, isNull, sql } from 'drizzle-orm';
 import { t } from 'elysia';
 
 import { getDatabase } from '../../drizzle/db';
@@ -12,19 +12,16 @@ export const ModRemovePostBody = t.Object({
     timestamp: t.String(),
 });
 
-const statementInsertAudit = getDatabase()
+const statementAuditRemovePost = getDatabase()
     .insert(AuditTable)
     .values({
         post_hash: sql.placeholder('post_hash'),
-        user_address: sql.placeholder('user_address'),
         hash: sql.placeholder('hash'),
         created_by: sql.placeholder('created_by'),
         created_at: sql.placeholder('created_at'),
-        restored_by: sql.placeholder('restored_by'),
-        restored_at: sql.placeholder('restored_at'),
         reason: sql.placeholder('reason'),
     })
-    .prepare('stmnt_add_like');
+    .prepare('stmnt_audit_remove_post');
 
 export async function ModRemovePost(body: typeof ModRemovePostBody.static) {
     try {
@@ -54,7 +51,7 @@ export async function ModRemovePost(body: typeof ModRemovePostBody.static) {
 
         await statement.execute();
 
-        await statementInsertAudit.execute({
+        await statementAuditRemovePost.execute({
             post_hash: body.post_hash,
             hash: body.hash,
             created_by: mod.address,
@@ -63,11 +60,23 @@ export async function ModRemovePost(body: typeof ModRemovePostBody.static) {
         });
 
         return { status: 200 };
-    } catch (err) {
+    }
+    catch (err) {
         console.error(err);
-        return { status: 400, error: 'failed to delete post, maybe invalid' };
+        return { status: 400, error: 'failed to delete post, maybe invalid: ' + err };
     }
 }
+
+const statementAuditRestorePost = getDatabase()
+    .insert(AuditTable)
+    .values({
+        post_hash: sql.placeholder('post_hash'),
+        hash: sql.placeholder('hash'),
+        restored_at: sql.placeholder('restored_at'),
+        restored_by: sql.placeholder('restored_by'),
+        reason: sql.placeholder('reason'),
+    })
+    .prepare('stmnt_audit_restore_post');
 
 export async function ModRestorePost(body: typeof ModRemovePostBody.static) {
     try {
@@ -95,7 +104,7 @@ export async function ModRestorePost(body: typeof ModRemovePostBody.static) {
             .where(eq(ModeratorTable.address, post.removed_by ?? ''))
             .limit(1);
         if (!postWasRemovedByMod) {
-            return { status: 404, error: 'cannot restore a post removed by the user' };
+            return { status: 401, error: 'cannot restore a post removed by the user' };
         }
 
         const statement = getDatabase()
@@ -110,7 +119,7 @@ export async function ModRestorePost(body: typeof ModRemovePostBody.static) {
 
         await statement.execute();
 
-        await statementInsertAudit.execute({
+        await statementAuditRestorePost.execute({
             post_hash: body.post_hash,
             hash: body.hash,
             restored_by: mod.address,
@@ -119,9 +128,10 @@ export async function ModRestorePost(body: typeof ModRemovePostBody.static) {
         });
 
         return { status: 200 };
-    } catch (err) {
+    }
+    catch (err) {
         console.error(err);
-        return { status: 400, error: 'failed to delete post, maybe invalid' };
+        return { status: 400, error: 'failed to delete post, maybe invalid' + err };
     }
 }
 
@@ -132,6 +142,17 @@ export const ModBanBody = t.Object({
     reason: t.String(),
     timestamp: t.String(),
 });
+
+const statementAuditBanUser = getDatabase()
+    .insert(AuditTable)
+    .values({
+        user_address: sql.placeholder('user_address'),
+        hash: sql.placeholder('hash'),
+        created_at: sql.placeholder('created_at'),
+        created_by: sql.placeholder('created_by'),
+        reason: sql.placeholder('reason'),
+    })
+    .prepare('stmnt_audit_ban_user');
 
 export async function ModBan(body: typeof ModBanBody.static) {
     try {
@@ -156,7 +177,7 @@ export async function ModBan(body: typeof ModBanBody.static) {
 
         await statement.execute();
 
-        await statementInsertAudit.execute({
+        await statementAuditBanUser.execute({
             user_address: body.user_address,
             hash: body.hash,
             created_by: mod.address,
@@ -165,11 +186,23 @@ export async function ModBan(body: typeof ModBanBody.static) {
         });
 
         return { status: 200 };
-    } catch (err) {
+    }
+    catch (err) {
         console.error(err);
-        return { status: 400, error: 'failed to ban user' };
+        return { status: 400, error: 'failed to ban user' + err };
     }
 }
+
+const statementAuditUnbanUser = getDatabase()
+    .insert(AuditTable)
+    .values({
+        user_address: sql.placeholder('user_address'),
+        hash: sql.placeholder('hash'),
+        restored_at: sql.placeholder('restored_at'),
+        restored_by: sql.placeholder('restored_by'),
+        reason: sql.placeholder('reason'),
+    })
+    .prepare('stmnt_audit_unban_user');
 
 export async function ModUnban(body: typeof ModBanBody.static) {
     try {
@@ -203,7 +236,7 @@ export async function ModUnban(body: typeof ModBanBody.static) {
 
         await statement.execute();
 
-        await statementInsertAudit.execute({
+        await statementAuditUnbanUser.execute({
             user_address: body.user_address,
             hash: body.hash,
             restored_by: mod.address,
@@ -212,8 +245,9 @@ export async function ModUnban(body: typeof ModBanBody.static) {
         });
 
         return { status: 200 };
-    } catch (err) {
+    }
+    catch (err) {
         console.error(err);
-        return { status: 400, error: 'failed to ban user' };
+        return { status: 400, error: 'failed to unban user' + err };
     }
 }

@@ -1,8 +1,8 @@
-import { sql } from 'drizzle-orm';
+import { desc, eq, sql } from 'drizzle-orm';
 import { t } from 'elysia';
 
 import { getDatabase } from '../../drizzle/db';
-import { FeedTable } from '../../drizzle/schema';
+import { AuditTable, FeedTable } from '../../drizzle/schema';
 
 export const PostBody = t.Object({
     hash: t.String(),
@@ -34,10 +34,37 @@ export async function Post(body: typeof PostBody.static) {
             quantity: body.quantity,
         });
 
+        await removePostIfBanned(body);
         return { status: 200 };
     }
     catch (err) {
         console.error(err);
         return { status: 400, error: 'failed to upsert data for post' };
     }
+}
+
+async function removePostIfBanned(body: typeof PostBody.static) {
+    const [lastAuditOnUser] = await getDatabase()
+        .select()
+        .from(AuditTable)
+        .where(eq(AuditTable.user_address, body.from))
+        .orderBy(desc(AuditTable.created_at))
+        .limit(1);
+    // If there are not action over the user of they were restored (unbanned), do nothing
+    if (!lastAuditOnUser || lastAuditOnUser.restored_at) {
+        return;
+    }
+
+    const statement = getDatabase()
+        .update(FeedTable)
+        .set({
+            removed_at: new Date(body.timestamp),
+            removed_by: lastAuditOnUser.created_by,
+        })
+        .where(eq(FeedTable.hash, body.hash))
+        .returning();
+
+    await statement.execute();
+
+    return lastAuditOnUser;
 }
