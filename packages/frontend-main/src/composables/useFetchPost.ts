@@ -11,9 +11,13 @@ export function useFetchPost() {
     const post = ref<Post | null>(null);
     const error = ref('');
 
-    async function loadPost(id: number) {
+    async function loadPost({ hash, postHash }: { hash: string; postHash?: string }) {
         try {
-            const rawResponse = await fetch(`${apiRoot}/v1/post/${id}`);
+            let url = `${apiRoot}/v1/post?hash=${hash}`;
+            if (postHash) {
+                url += `&post_hash=${postHash}`;
+            }
+            const rawResponse = await fetch(url);
             const data = await rawResponse.json();
 
             if (rawResponse.status !== 200) {

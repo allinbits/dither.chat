@@ -9,7 +9,7 @@ const routes = [
     { path: '/', component: HomeView },
     { path: '/notifications', component: NotificationsView },
     { path: '/profile/:address', component: ProfileView },
-    { path: '/post/:id', component: PostView },
+    { path: '/post', component: PostView },
 ];
 
 const router = createRouter({

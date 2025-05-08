@@ -18,7 +18,7 @@ import { Button } from '@/components/ui/button';
           <!-- TODO: Use current user address -->
           <RouterLink to="/profile/:address" activeClass="font-bold">My Profile</RouterLink>
           <!-- TODO: Remove this after testing -->
-          <RouterLink to="/post/1" activeClass="font-bold">Post #1</RouterLink>
+          <RouterLink to="/post?hash=9c0f718289998024ce7c83b24f350e3fc4fa0c3d5c421c5042422c8721eec3e0" activeClass="font-bold">Post #1</RouterLink>
         </nav>
         <Button size="lg">Connect</Button>
       </div>

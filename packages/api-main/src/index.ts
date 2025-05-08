@@ -19,7 +19,7 @@ function startReadOnlyServer() {
     app.get('/health', GetRequests.health);
     app.get('/likes', ({ query }) => GetRequests.Likes(query), { query: GetRequests.LikesQuery });
     app.get('/posts', ({ query }) => GetRequests.Posts(query), { query: GetRequests.PostsQuery });
-    app.get('/post/', ({ params }) => GetRequests.Post(params), { params: GetRequests.PostParams });
+    app.get('/post', ({ query }) => GetRequests.Post(query), { query: GetRequests.PostQuery });
     app.get('/replies', ({ query }) => GetRequests.Replies(query), { query: GetRequests.RepliesQuery });
     app.listen(config.READ_ONLY_PORT ?? 3000);
     console.log(`[API Read Only] Running on ${config.READ_ONLY_PORT ?? 3000}`);

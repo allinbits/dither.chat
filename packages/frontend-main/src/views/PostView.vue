@@ -9,20 +9,25 @@ const loading = ref(false);
 
 const { post, error, loadPost } = useFetchPost();
 
-watch(() => route.params.id, fetchData, { immediate: true });
+watch(
+    () => ({ hash: route.query.hash, postHash: route.query.postHash }),
+    async (newQuery) => {
+        const hash = typeof newQuery.hash === 'string' ? newQuery.hash : undefined;
+        const postHash = typeof newQuery.postHash === 'string' ? newQuery.postHash : undefined;
 
-async function fetchData(id?: string | string[]) {
-    loading.value = true;
-    error.value = '';
-    post.value = null;
-    await loadPost(Number(id));
+        if (!hash) return;
 
-    console.log('===== post.value ', post.value);
-    // console.log('===== Number(id) ', Number(id))
-    // console.log('===== Number(id) ', route)
+        loading.value = true;
+        error.value = '';
+        post.value = null;
 
-    loading.value = false;
-}
+        await loadPost({ hash, postHash });
+
+        loading.value = false;
+    },
+    { immediate: true },
+);
+
 </script>
 
 <template>
