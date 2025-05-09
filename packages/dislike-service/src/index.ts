@@ -3,6 +3,7 @@ import type amqplib from 'amqplib';
 
 import { extractMemoContent } from '@atomone/chronostate';
 import { EventConsumer } from '@atomone/event-consumer';
+import { HandlerResponse } from '@atomone/event-consumer/dist/consumer';
 
 import { useConfig } from './config';
 declare module '@atomone/chronostate' {
@@ -37,16 +38,16 @@ const dislikesHandler = async (msg: amqplib.Message) => {
         });
         if (rawResponse.status !== 200) {
             console.error('Error posting to API:', rawResponse);
-            return false;
+            return HandlerResponse.REJECT;
         }
         else {
             console.log(`dither.Dislike message processed successfully: ${parsedContent.hash}`);
-            return true;
+            return HandlerResponse.SUCCESS;
         }
     }
     catch (error) {
         console.error('Error processing message:', error);
-        return false;
+        return HandlerResponse.FAILURE;
     };
 };
 
