@@ -14,6 +14,6 @@ export async function AuthCreate(body: typeof AuthCreateBody.static) {
     }
     catch (err) {
         console.error(err);
-        return { status: 400, error: 'failed to upsert data for dislike, dislike already exists' };
+        return { status: 400, error: 'failed to create authorization request' };
     }
 }
