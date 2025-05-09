@@ -1,22 +1,21 @@
 <script lang="ts" setup>
-import chainConfig from '@/chain-config.json';
-import { Wallets, useWallet, getWalletHelp } from '@/composables/useWallet';
-import ConnectButton from '@/components/ui/ConnectButton.vue';
-import { Ref, computed, ref } from 'vue';
-import { shorten } from '@/utility';
-import { bus } from '@/bus';
-import UserBalance from '@/components/helper/UserBalance.vue';
+import type { Ref } from 'vue';
+
+import { computed, ref } from 'vue';
 import { bech32 } from 'bech32';
+
+import { getWalletHelp, useWallet, Wallets } from '@/composables/useWallet';
+
+import chainConfig from '@/chain-config.json';
+import UserBalance from '@/components/helper/UserBalance.vue';
 import { Button } from '@/components/ui/button';
+import ConnectButton from '@/components/ui/ConnectButton.vue';
 import {
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogOverlay,
     Dialog,
-    DialogTitle,
+    DialogContent,
     DialogTrigger,
 } from '@/components/ui/dialog';
+import { shorten } from '@/utility';
 
 const isConnecting = ref(false);
 const isError = ref(false);
@@ -27,9 +26,6 @@ const publicAddress = ref('');
 
 const { connect, signOut, address, loggedIn, keplr, leap, cosmostation } = useWallet();
 
-const connectState = computed(
-    () => !isConnecting.value && !loggedIn.value && !isError.value && !isAddressOnlyConnection.value,
-);
 const selectState = computed(
     () => !isConnecting.value && !loggedIn.value && !isError.value && !isAddressOnlyConnection.value,
 );
@@ -71,7 +67,8 @@ const connectWallet = async (walletType: Wallets, address?: string) => {
         slow = setTimeout(() => (isSlowConnecting.value = true), 10000);
         if (walletType == Wallets.addressOnly && address) {
             await connect(walletType, address, controller.value.signal);
-        } else {
+        }
+        else {
             await connect(walletType, undefined, controller.value.signal);
         }
         isConnecting.value = false;
@@ -80,7 +77,8 @@ const connectWallet = async (walletType: Wallets, address?: string) => {
             clearTimeout(slow);
             slow = null;
         }
-    } catch (e) {
+    }
+    catch (_) {
         isConnecting.value = false;
         isSlowConnecting.value = false;
         isError.value = true;
@@ -104,221 +102,238 @@ const isValidAddress = computed(() => {
         const decoded = bech32.decode(publicAddress.value);
         if (decoded.prefix == chainConfig.bech32Config.bech32PrefixAccAddr) {
             return true;
-        } else {
+        }
+        else {
             return false;
         }
-    } catch (_e) {
+    }
+    catch (_e) {
         return false;
     }
 });
 </script>
 
 <template>
-    <Dialog>
+  <div>
+    <!-- Normal signed in account display -->
+    <template v-if="connectedState">
+      <div class="flex align-center items-stretch cursor-pointer">
+        <div class="bg-gradient w-10 h-10 rounded-full mr-3"></div>
+        <div class="flex flex-col justify-around">
+          <div class="text-light text-200">{{ shorten(address) }}</div>
+
+          <div class="text-100 text-grey-100">
+            <UserBalance :address="address" /> {{ chainConfig.stakeCurrency.coinDenom }}
+          </div>
+        </div>
+      </div>
+    </template>
+    <template v-else>
+      <Dialog>
         <!-- Normal signed out button -->
         <DialogTrigger>
-            <Button>
-                {{ $t('components.WalletConnect.button') }}
-            </Button>
+          <Button>
+            {{ $t('components.WalletConnect.button') }}
+          </Button>
         </DialogTrigger>
         <DialogContent>
-            <template v-if="selectState">
-                <div class="flex flex-col gap-6">
-                    <div class="flex flex-col gap-4">
-                        <div class="text-xl font-bold text-center">
-                            {{ $t('components.WalletConnect.cta') }}
-                        </div>
-                        <div class="text-muted-foreground text-lg text-center">
-                            {{ $t('components.WalletConnect.recommendedWallet') }}
-                        </div>
-                        <Button @click="connectWallet(Wallets.addressOnly)">
-                            <Icon icon="link" :size="1.4" class="mr-2" />
-                            Public Address
-                        </Button>
-                        <span class="text-muted-foreground text-lg text-center">
-                            {{ $t('components.WalletConnect.publicAddressDisclaimer') }}
-                        </span>
-                    </div>
-                    <hr class="text-secondary" />
-                    <div class="flex flex-col gap-4">
-                        <span class="text-muted-foreground text-lg text-center">
-                            {{ $t('components.WalletConnect.otherWallet') }}
-                        </span>
-                        <div class="buttons flex flex-col gap-3">
-                            <Button :disabled="!keplr" @click="connectWallet(Wallets.keplr)">
-                                <Icon icon="keplr" size="2.3" class="mr-2" />
-                                Keplr Wallet
-                            </Button>
-                            <Button :disabled="!leap" @click="connectWallet(Wallets.leap)">
-                                <Icon icon="leap" size="2.3" class="mr-2" />Leap Wallet
-                            </Button>
-                            <Button :disabled="!cosmostation" @click="connectWallet(Wallets.cosmostation)">
-                                <Icon icon="cosmostation" size="2.3" class="" />
-                                Cosmostation Wallet
-                            </Button>
-                        </div>
-                    </div>
+          <template v-if="selectState">
+            <div class="flex flex-col gap-6">
+              <div class="flex flex-col gap-4">
+                <div class="text-xl font-bold text-center">
+                  {{ $t('components.WalletConnect.cta') }}
                 </div>
-            </template>
-
-            <template v-else-if="addressState">
-                    <div class="flex flex-col px-8 py-4 pt-12 bg-grey-300 rounded w-80 relative gap-4">
-                        <div class="flex flex-col text-[white] text-500 font-semibold text-center">
-                            {{ $t('components.WalletConnect.ctaAddress') }}
-                        </div>
-                        <div class="flex flex-col text-grey-100 text-200 font-medium text-center leading-5">
-                            {{ $t('components.WalletConnect.enterAddress') }}
-                        </div>
-                        <input
-                            v-model="publicAddress"
-                            class="flex p-4 items-center self-stretch rounded-lg bg-grey-200 outline-none text-100 leading-4 placeholder-grey-100"
-                            :placeholder="$t('components.WalletConnect.addressPlaceholder')"
-                        />
-                        <div class="flex flex-col gap-4">
-                            <ConnectButton
-                                v-if="isValidAddress"
-                                class="justify-center link-gradient"
-                                @click="connectWallet(Wallets.addressOnly, publicAddress)"
-                            >
-                                {{ $t('components.WalletConnect.ctaAddress') }}
-                            </ConnectButton>
-                            <ConnectButton
-                                class="justify-center"
-                                @click="
-                                    isOpen = false;
-                                    isAddressOnlyConnection = false;
-                                "
-                            >
-                                {{ $t('components.WalletConnect.cancel') }}</ConnectButton
-                            >
-                        </div>
-                        <span class="text-grey-100 text-100 text-center leading-4">
-                            {{ $t('components.WalletConnect.publicAddressDisclaimer') }}
-                        </span>
-                    </div>
-            </template>
-
-            <!-- Normal signed in account display -->
-            <template v-else-if="connectedState">
-                <div class="flex align-center items-stretch cursor-pointer" @click="isOpen = true">
-                    <div class="bg-gradient w-10 h-10 rounded-full mr-3"></div>
-                    <div class="flex flex-col justify-around">
-                        <div class="text-light text-200">{{ shorten(address) }}</div>
-
-                        <div class="text-100 text-grey-100">
-                            <UserBalance :address="address" /> {{ chainConfig.stakeCurrency.coinDenom }}
-                        </div>
-                    </div>
+                <div class="text-muted-foreground text-lg text-center">
+                  {{ $t('components.WalletConnect.recommendedWallet') }}
                 </div>
-            </template>
-
-            <!-- Normal signed in account extended -->
-            <template v-else-if="viewState">
-                <div>
-                    <div class="flex flex-col px-8 py-4 pt-12 bg-grey-300 rounded w-80 relative">
-                        <div class="flex align-center items-stretch">
-                            <div class="bg-gradient w-10 h-10 rounded-full mr-3"></div>
-                            <div class="flex flex-col justify-around">
-                                <div class="text-light text-300">{{ shorten(address) }}</div>
-                            </div>
-                        </div>
-                        <div class="text-200 text-grey-100 pt-6 pb-2">{{ $t('components.WalletConnect.balance') }}</div>
-                        <div class="text-300 text-light">
-                            <UserBalance :address="address" /> {{ chainConfig.stakeCurrency.coinDenom }}
-                        </div>
-                        <div class="buttons">
-                            <ConnectButton
-                                class="my-4 justify-center"
-                                @click="
-                                    signOut();
-                                    isOpen = false;
-                                "
-                            >
-                                {{ $t('components.WalletConnect.disconnect') }}</ConnectButton
-                            >
-                        </div>
-                    </div>
+                <Button @click="connectWallet(Wallets.addressOnly)">
+                  <Icon icon="link" :size="1.4" class="mr-2" />
+                  Public Address
+                </Button>
+                <span class="text-muted-foreground text-lg text-center">
+                  {{ $t('components.WalletConnect.publicAddressDisclaimer') }}
+                </span>
+              </div>
+              <hr class="text-secondary" />
+              <div class="flex flex-col gap-4">
+                <span class="text-muted-foreground text-lg text-center">
+                  {{ $t('components.WalletConnect.otherWallet') }}
+                </span>
+                <div class="buttons flex flex-col gap-3">
+                  <Button :disabled="!keplr" @click="connectWallet(Wallets.keplr)">
+                    <Icon icon="keplr" size="2.3" class="mr-2" />
+                    Keplr Wallet
+                  </Button>
+                  <Button :disabled="!leap" @click="connectWallet(Wallets.leap)">
+                    <Icon icon="leap" size="2.3" class="mr-2" />Leap Wallet
+                  </Button>
+                  <Button :disabled="!cosmostation" @click="connectWallet(Wallets.cosmostation)">
+                    <Icon icon="cosmostation" size="2.3" class="" />
+                    Cosmostation Wallet
+                  </Button>
                 </div>
-            </template>
+              </div>
+            </div>
+          </template>
 
-            <!-- Connection in progress -->
-            <template v-else-if="connectingState">
-                    <div
-                        class="flex flex-col gap-4 items-center"
-                    >
-                        <div class="text-xl font-bold text-center">
-                            {{ $t('components.WalletConnect.connecting') }}
-                        </div>
-                        <div class="text-muted-foreground text-lg">{{ $t('components.WalletConnect.wait') }}</div>
-                        <div class="buttons">
-                            <ConnectButton
-                                @click="
-                                    () => {
-                                        cancelConnect();
-                                    }
-                                "
-                            >
-                                {{ $t('ui.actions.cancel') }}</ConnectButton
-                            >
-                        </div>
+          <template v-else-if="addressState">
+            <div class="flex flex-col px-8 py-4 pt-12 bg-grey-300 rounded w-80 relative gap-4">
+              <div class="flex flex-col text-[white] text-500 font-semibold text-center">
+                {{ $t('components.WalletConnect.ctaAddress') }}
+              </div>
+              <div class="flex flex-col text-grey-100 text-200 font-medium text-center leading-5">
+                {{ $t('components.WalletConnect.enterAddress') }}
+              </div>
+              <input
+                v-model="publicAddress"
+                class="flex p-4 items-center self-stretch rounded-lg bg-grey-200 outline-none text-100 leading-4 placeholder-grey-100"
+                :placeholder="$t('components.WalletConnect.addressPlaceholder')"
+              />
+              <div class="flex flex-col gap-4">
+                <ConnectButton
+                  v-if="isValidAddress"
+                  class="justify-center link-gradient"
+                  @click="connectWallet(Wallets.addressOnly, publicAddress)"
+                >
+                  {{ $t('components.WalletConnect.ctaAddress') }}
+                </ConnectButton>
+                <ConnectButton
+                  class="justify-center"
+                  @click="
+                    isAddressOnlyConnection = false;
+                  "
+                >
+                  {{ $t('components.WalletConnect.cancel') }}</ConnectButton
+                >
+              </div>
+              <span class="text-grey-100 text-100 text-center leading-4">
+                {{ $t('components.WalletConnect.publicAddressDisclaimer') }}
+              </span>
+            </div>
+          </template>
 
-                        <div v-if="isSlowConnecting">
-                            <a
-                                :href="getWalletHelp(chosenWallet)"
-                                target="_blank"
-                                class="text-100 flex my-2 justify-center items-center"
-                                >{{ chosenWallet }} {{ $t('components.WalletConnect.trouble') }}
-                                <Icon icon="link" class="ml-2" />
-                            </a>
-                        </div>
-                    </div>
-            </template>
+          <!-- Normal signed in account display -->
+          <template v-else-if="connectedState">
+            <div class="flex align-center items-stretch cursor-pointer">
+              <div class="bg-gradient w-10 h-10 rounded-full mr-3"></div>
+              <div class="flex flex-col justify-around">
+                <div class="text-light text-200">{{ shorten(address) }}</div>
 
-            <!-- Connection failed -->
-            <template v-if="errorState">
-                    <div
-                        class="flex flex-col gap-4 items-center"
-                    >
-                        <div class="flex flex-col text-[white] text-400 font-semibold text-center mt-4">
-                            {{ $t('components.WalletConnect.failed') }}
-                        </div>
-                        <div class="text-200 text-grey-100 my-4 text-center">
-                            {{ $t('components.WalletConnect.failedSub') }}
-                        </div>
-                        <div class="buttons">
-                            <ConnectButton
-                                class="my-4 justify-center"
-                                @click="
-                                    () => {
-                                        connectWallet(chosenWallet);
-                                    }
-                                "
-                            >
-                                {{ $t('components.WalletConnect.retry') }}</ConnectButton
-                            >
-                            <ConnectButton
-                                class="my-4 justify-center"
-                                @click="
-                                    () => {
-                                        cancelConnect();
-                                    }
-                                "
-                            >
-                                {{ $t('ui.actions.done') }}</ConnectButton
-                            >
-                        </div>
+                <div class="text-100 text-grey-100">
+                  <UserBalance :address="address" /> {{ chainConfig.stakeCurrency.coinDenom }}
+                </div>
+              </div>
+            </div>
+          </template>
 
-                        <div>
-                            <a
-                                :href="getWalletHelp(chosenWallet)"
-                                target="_blank"
-                                class="text-100 flex my-2 justify-center items-center"
-                                >{{ chosenWallet }} {{ $t('components.WalletConnect.trouble') }}
-                                <Icon icon="link" class="ml-2" />
-                            </a>
-                        </div>
-                    </div>
-            </template>
+          <!-- Normal signed in account extended -->
+          <template v-else-if="viewState">
+            <div>
+              <div class="flex flex-col px-8 py-4 pt-12 bg-grey-300 rounded w-80 relative">
+                <div class="flex align-center items-stretch">
+                  <div class="bg-gradient w-10 h-10 rounded-full mr-3"></div>
+                  <div class="flex flex-col justify-around">
+                    <div class="text-light text-300">{{ shorten(address) }}</div>
+                  </div>
+                </div>
+                <div class="text-200 text-grey-100 pt-6 pb-2">{{ $t('components.WalletConnect.balance') }}</div>
+                <div class="text-300 text-light">
+                  <UserBalance :address="address" /> {{ chainConfig.stakeCurrency.coinDenom }}
+                </div>
+                <div class="buttons">
+                  <ConnectButton
+                    class="my-4 justify-center"
+                    @click="
+                      signOut();
+                    "
+                  >
+                    {{ $t('components.WalletConnect.disconnect') }}</ConnectButton
+                  >
+                </div>
+              </div>
+            </div>
+          </template>
+
+          <!-- Connection in progress -->
+          <template v-else-if="connectingState">
+            <div
+              class="flex flex-col gap-4 items-center"
+            >
+              <div class="text-xl font-bold text-center">
+                {{ $t('components.WalletConnect.connecting') }}
+              </div>
+              <div class="text-muted-foreground text-lg">{{ $t('components.WalletConnect.wait') }}</div>
+              <div class="buttons">
+                <ConnectButton
+                  @click="
+                    () => {
+                      cancelConnect();
+                    }
+                  "
+                >
+                  {{ $t('ui.actions.cancel') }}</ConnectButton
+                >
+              </div>
+
+              <div v-if="isSlowConnecting">
+                <a
+                  :href="getWalletHelp(chosenWallet)"
+                  target="_blank"
+                  class="text-100 flex my-2 justify-center items-center"
+                >{{ chosenWallet }} {{ $t('components.WalletConnect.trouble') }}
+                  <Icon icon="link" class="ml-2" />
+                </a>
+              </div>
+            </div>
+          </template>
+
+          <!-- Connection failed -->
+          <template v-if="errorState">
+            <div
+              class="flex flex-col gap-4 items-center"
+            >
+              <div class="flex flex-col text-[white] text-400 font-semibold text-center mt-4">
+                {{ $t('components.WalletConnect.failed') }}
+              </div>
+              <div class="text-200 text-grey-100 my-4 text-center">
+                {{ $t('components.WalletConnect.failedSub') }}
+              </div>
+              <div class="buttons">
+                <ConnectButton
+                  class="my-4 justify-center"
+                  @click="
+                    () => {
+                      connectWallet(chosenWallet);
+                    }
+                  "
+                >
+                  {{ $t('components.WalletConnect.retry') }}</ConnectButton
+                >
+                <ConnectButton
+                  class="my-4 justify-center"
+                  @click="
+                    () => {
+                      cancelConnect();
+                    }
+                  "
+                >
+                  {{ $t('ui.actions.done') }}</ConnectButton
+                >
+              </div>
+
+              <div>
+                <a
+                  :href="getWalletHelp(chosenWallet)"
+                  target="_blank"
+                  class="text-100 flex my-2 justify-center items-center"
+                >{{ chosenWallet }} {{ $t('components.WalletConnect.trouble') }}
+                  <Icon icon="link" class="ml-2" />
+                </a>
+              </div>
+            </div>
+          </template>
         </DialogContent>
-    </Dialog>
+      </Dialog>
+    </template>
+  </div>
 </template>

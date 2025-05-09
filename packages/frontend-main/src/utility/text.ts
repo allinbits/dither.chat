@@ -1,10 +1,11 @@
-import BigNumber from "bignumber.js";
+import BigNumber from 'bignumber.js';
 
 export function shorten(text: string) {
     if (text.length <= 20) {
-      return text;
-    } else {
-      return text.slice(0, 8) + "..." + text.slice(-8);
+        return text;
+    }
+    else {
+        return text.slice(0, 8) + '...' + text.slice(-8);
     }
 }
 

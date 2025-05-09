@@ -9,7 +9,7 @@
       >
         <defs>
           <linearGradient :id="id" x2="0" y2="1">
-            <stop offset="0%" :stop-color="gradientFrom ?? '' " /> 
+            <stop offset="0%" :stop-color="gradientFrom ?? '' " />
             <stop offset="100%" :stop-color="gradientTo ?? '' " />
           </linearGradient>
         </defs>
@@ -31,46 +31,45 @@
       </Suspense>
       <template v-if="$slots['default']">
         <span class="ml-1 text-small-reg" :class="[gradient && 'text-gradient']"><slot /></span
-      ></template>
+        ></template>
     </div>
   </KeepAlive>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, defineAsyncComponent } from "vue";
+import { computed, defineAsyncComponent, ref } from 'vue';
 
 interface Props {
-  icon: string;
-  container?: "" | "small";
-  size?: number;
-  gradient?: boolean;
-  gradientFrom?: string;
-  gradientTo?: string;
+    icon: string;
+    container?: '' | 'small';
+    size?: number;
+    gradient?: boolean;
+    gradientFrom?: string;
+    gradientTo?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  container: "",
-  size: 1,
-  gradient: false,
-  gradientFrom: undefined,
-  gradientTo: undefined,
+    container: '',
+    size: 1,
+    gradient: false,
+    gradientFrom: undefined,
+    gradientTo: undefined,
 });
 
-const id = ref("");
-const idUrl = ref("");
+const id = ref('');
+const idUrl = ref('');
 
 if (props.gradient || (props.gradientFrom && props.gradientTo)) {
-  id.value = crypto.randomUUID();
-  idUrl.value = `url(#${id.value})`;
+    id.value = crypto.randomUUID();
+    idUrl.value = `url(#${id.value})`;
 }
 
 const titleCase = (content: string) => content && content[0].toUpperCase() + content.slice(1).toLowerCase();
 
-
 const ico = computed(() => {
-  const ico = props.icon;
-  const container = props.container;
-  return defineAsyncComponent(() => import(`@/components/ui/icons/${titleCase(ico) + titleCase(container)}.vue`));
+    const ico = props.icon;
+    const container = props.container;
+    return defineAsyncComponent(() => import(`@/components/ui/icons/${titleCase(ico) + titleCase(container)}.vue`));
 });
 </script>
 <style scoped>

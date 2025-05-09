@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import ToggleThemeButton from './components/ui/ToggleThemeButton.vue';
 
-import { Button } from '@/components/ui/button';
-import WalletConnect from "@/components/popups/WalletConnect.vue";
+import WalletConnect from '@/components/popups/WalletConnect.vue';
 
 </script>
 
