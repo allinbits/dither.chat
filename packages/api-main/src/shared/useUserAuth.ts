@@ -11,7 +11,7 @@ const secretKey = 'temp-key-need-to-config-this';
 
 let id = 0;
 
-function getSignerAddressFromPublicKey(publicKeyBase64: string, prefix: string = 'cosmos'): string {
+function getSignerAddressFromPublicKey(publicKeyBase64: string, prefix: string = 'atone'): string {
     const publicKeyBytes = fromBase64(publicKeyBase64);
     const secp256k1Pubkey = encodeSecp256k1Pubkey(publicKeyBytes);
     return pubkeyToAddress(secp256k1Pubkey, prefix);
