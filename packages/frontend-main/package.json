@@ -9,6 +9,7 @@
         "preview": "vite preview"
     },
     "dependencies": {
+        "@sinclair/typebox": "^0.34.33",
         "@tailwindcss/vite": "^4.1.4",
         "@vueuse/core": "^13.1.0",
         "class-variance-authority": "^0.7.1",

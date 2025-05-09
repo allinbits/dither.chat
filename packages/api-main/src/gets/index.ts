@@ -6,4 +6,5 @@ export * from './following';
 export * from './health';
 export * from './likes';
 export * from './posts';
+export * from './post';
 export * from './replies';

@@ -10,6 +10,7 @@ export default defineConfig({
     resolve: {
         alias: {
             '@': path.resolve(__dirname, './src'),
+            'api-main/types': path.resolve(__dirname, '../api-main/src/types'),
         },
     },
 });

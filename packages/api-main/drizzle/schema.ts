@@ -93,11 +93,12 @@ export const FollowsTable = pgTable(
 // Audits are append only
 export const AuditTable = pgTable('audits', {
     id: serial('id').primaryKey(),
+    hash: varchar({ length: 64 }).notNull(),
     post_hash: varchar({ length: 64 }), // This is a post removal
-    user_hash: varchar({ length: 64 }), // This is a user removal
+    user_address: varchar({ length: 44 }), // This is a user removal
     created_by: varchar({ length: 44 }),
     created_at: timestamp({ withTimezone: true }),
-    created_reason: text(),
+    reason: text(),
     restored_by: varchar({ length: 44 }), // the post or user that was restored
     restored_at: timestamp({ withTimezone: true }), // the time the post or user was restored
 });

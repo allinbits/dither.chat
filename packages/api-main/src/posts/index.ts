@@ -8,3 +8,4 @@ export * from './post';
 export * from './postRemove';
 export * from './reply';
 export * from './unfollow';
+export * from './mod';
