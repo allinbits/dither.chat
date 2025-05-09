@@ -11,7 +11,7 @@ export function useFeed() {
     const limit = ref(100);
 
     const refresh = async () => {
-        const rawResponse = await fetch(`${apiRoot}/v1/feed?offset=${offset.value}&limit=${limit.value}`);
+        const rawResponse = await fetch(`${apiRoot}/feed?offset=${offset.value}&limit=${limit.value}`);
         const result = await rawResponse.json() as { status: number; rows: Post[] };
         if (!result.rows) {
             return;
