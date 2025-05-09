@@ -68,10 +68,14 @@ export async function start() {
     channel = await conn.createChannel();
     const exchange = eventConfig.exchange;
     const dlxExchange = eventConfig.dlxExchange;
+    const logExchange = eventConfig.logExchange;
     await channel.assertExchange(exchange, 'direct', { durable: eventConfig.durable });
+    await channel.assertExchange(logExchange, 'direct', { durable: eventConfig.durable });
     await channel.assertExchange(dlxExchange, 'fanout', { durable: eventConfig.durable });
     await channel.assertQueue(eventConfig.dlxQueue, { durable: eventConfig.durable, deadLetterExchange: exchange, messageTtl: 1000 * 10 });
     await channel.bindQueue(eventConfig.dlxQueue, dlxExchange, '*');
+    await channel.assertQueue(eventConfig.logQueue, { durable: eventConfig.durable });
+    await channel.bindQueue(eventConfig.logQueue, logExchange, eventConfig.logQueue);
     for (const actionType of actionTypes) {
         await channel.assertQueue(exchange + '.' + actionType, { durable: eventConfig.durable, deadLetterExchange: dlxExchange });
         await channel.bindQueue(exchange + '.' + actionType, exchange, exchange + '.' + actionType);
