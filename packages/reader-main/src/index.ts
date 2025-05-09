@@ -45,7 +45,7 @@ async function handleAction(action: Action) {
         if (action.memo.startsWith(config.MEMO_PREFIX + actionType)) {
             const transfer = getTransferMessage(action.messages as Array<MsgGeneric>);
             const quantity = getTransferQuantities(action.messages as Array<MsgGeneric>);
-            await channel.publish(eventConfig.exchange, actionType, Buffer.from(JSON.stringify({ sender: transfer?.from_address, quantity: quantity, ...action })));
+            await channel.publish(eventConfig.exchange, eventConfig.exchange + '.' + actionType, Buffer.from(JSON.stringify({ sender: transfer?.from_address, quantity: quantity, ...action })));
             break;
         }
         else {
@@ -67,10 +67,14 @@ export async function start() {
     const conn = await amqplib.connect(eventConfig.rabbitMQEndpoint);
     channel = await conn.createChannel();
     const exchange = eventConfig.exchange;
+    const dlxExchange = eventConfig.dlxExchange;
     await channel.assertExchange(exchange, 'direct', { durable: eventConfig.durable });
+    await channel.assertExchange(dlxExchange, 'fanout', { durable: eventConfig.durable });
+    await channel.assertQueue(eventConfig.dlxQueue, { durable: eventConfig.durable, deadLetterExchange: exchange, messageTtl: 1000 * 10 });
+    await channel.bindQueue(eventConfig.dlxQueue, dlxExchange, '*');
     for (const actionType of actionTypes) {
-        await channel.assertQueue(actionType, { durable: eventConfig.durable });
-        await channel.bindQueue(actionType, exchange, actionType);
+        await channel.assertQueue(exchange + '.' + actionType, { durable: eventConfig.durable, deadLetterExchange: dlxExchange });
+        await channel.bindQueue(exchange + '.' + actionType, exchange, exchange + '.' + actionType);
     }
     state = new ChronoState({ ...config });
     state.onLastBlock(handleLastBlock);

@@ -79,6 +79,8 @@ services:
     environment:
       RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
       RABBITMQ_EXCHANGE: "dither"
+      RABBITMQ_DLX_EXCHANGE: "dither-dlx"
+      RABBITMQ_DLX_QUEUE: "dlx-queue"
       API_ROOT: "http://api-main:3001/v1"
     restart: always
     command: ["pnpm", "start"]
@@ -94,6 +96,8 @@ services:
     environment:
       RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
       RABBITMQ_EXCHANGE: "dither"
+      RABBITMQ_DLX_EXCHANGE: "dither-dlx"
+      RABBITMQ_DLX_QUEUE: "dlx-queue"
       API_ROOT: "http://api-main:3001/v1"
     restart: always
     command: ["pnpm", "start"]
@@ -109,6 +113,8 @@ services:
     environment:
       RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
       RABBITMQ_EXCHANGE: "dither"
+      RABBITMQ_DLX_EXCHANGE: "dither-dlx"
+      RABBITMQ_DLX_QUEUE: "dlx-queue"
       API_ROOT: "http://api-main:3001/v1"
     restart: always
     command: ["pnpm", "start"]
@@ -124,6 +130,8 @@ services:
     environment:
       RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
       RABBITMQ_EXCHANGE: "dither"
+      RABBITMQ_DLX_EXCHANGE: "dither-dlx"
+      RABBITMQ_DLX_QUEUE: "dlx-queue"
       API_ROOT: "http://api-main:3001/v1"
     restart: always
     command: ["pnpm", "start"]
@@ -139,6 +147,8 @@ services:
     environment:
       RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
       RABBITMQ_EXCHANGE: "dither"
+      RABBITMQ_DLX_EXCHANGE: "dither-dlx"
+      RABBITMQ_DLX_QUEUE: "dlx-queue"
       API_ROOT: "http://api-main:3001/v1"
     restart: always
     command: ["pnpm", "start"]
@@ -153,6 +163,8 @@ services:
     environment:
       RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
       RABBITMQ_EXCHANGE: "dither"
+      RABBITMQ_DLX_EXCHANGE: "dither-dlx"
+      RABBITMQ_DLX_QUEUE: "dlx-queue"
       API_ROOT: "http://api-main:3001/v1"
     restart: always
     command: ["pnpm", "start"]
@@ -167,6 +179,8 @@ services:
     environment:
       RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
       RABBITMQ_EXCHANGE: "dither"
+      RABBITMQ_DLX_EXCHANGE: "dither-dlx"
+      RABBITMQ_DLX_QUEUE: "dlx-queue"
       API_ROOT: "http://api-main:3001/v1"
     restart: always
     command: ["pnpm", "start"]
@@ -181,6 +195,22 @@ services:
     environment:
       RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
       RABBITMQ_EXCHANGE: "dither"
+      RABBITMQ_DLX_EXCHANGE: "dither-dlx"
+      RABBITMQ_DLX_QUEUE: "dlx-queue"
+      API_ROOT: "http://api-main:3001/v1"
+    restart: always
+    command: ["pnpm", "start"]
+  dead-letter-service:
+    container_name: "dead-letter-service"
+    build: ./packages/dead-letter-service
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
+      RABBITMQ_EXCHANGE: "dither-dlx"
+      RABBITMQ_DLX_EXCHANGE: "dither"
+      RABBITMQ_DLX_QUEUE: "dlx-queue"
       API_ROOT: "http://api-main:3001/v1"
     restart: always
     command: ["pnpm", "start"]

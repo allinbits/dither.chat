@@ -9,7 +9,9 @@ export function useConfig(): EventConsumerConfig {
 
     config = {
         exchange: process.env.RABBITMQ_EXCHANGE || 'dither',
-        queue: 'Like',
+        dlxExchange: process.env.RABBITMQ_DLX_EXCHANGE || 'dither-dlx',
+        dlxQueue: process.env.RABBITMQ_DLX_QUEUE || 'dlxQueue',
+        queue: 'dither.Like',
         durable: true,
         rabbitMQEndpoint: process.env.RABBITMQ_ENDPOINT || 'amqp://localhost',
     };

@@ -94,14 +94,39 @@ importers:
         specifier: ^3.1.2
         version: 3.1.2(@types/node@22.15.3)(jiti@2.4.2)(lightningcss@1.29.2)(tsx@4.19.3)
 
+  packages/dead-letter-service:
+    dependencies:
+      '@types/amqplib':
+        specifier: ^0.10.7
+        version: 0.10.7
+      amqplib:
+        specifier: ^0.10.7
+        version: 0.10.8
+      dead-letter-service:
+        specifier: 'link:'
+        version: 'link:'
+    devDependencies:
+      '@atomone/event-consumer':
+        specifier: ^1.0.6
+        version: 1.0.6
+      '@types/node':
+        specifier: ^22.13.10
+        version: 22.15.3
+      typescript:
+        specifier: ^5.8.2
+        version: 5.8.3
+      vitest:
+        specifier: ^3.0.9
+        version: 3.1.2(@types/node@22.15.3)(jiti@2.4.2)(lightningcss@1.29.2)(tsx@4.19.3)
+
   packages/dislike-service:
     dependencies:
       '@atomone/chronostate':
         specifier: ^2.2.2
         version: 2.2.2
       '@atomone/event-consumer':
-        specifier: ^1.0.2
-        version: 1.0.2
+        specifier: ^1.0.6
+        version: 1.0.6
       '@types/node':
         specifier: ^22.13.10
         version: 22.15.3
@@ -144,8 +169,8 @@ importers:
         specifier: ^2.2.2
         version: 2.2.2
       '@atomone/event-consumer':
-        specifier: ^1.0.2
-        version: 1.0.2
+        specifier: ^1.0.6
+        version: 1.0.6
       '@types/node':
         specifier: ^22.13.10
         version: 22.15.3
@@ -169,8 +194,8 @@ importers:
         specifier: ^2.2.2
         version: 2.2.2
       '@atomone/event-consumer':
-        specifier: ^1.0.2
-        version: 1.0.2
+        specifier: ^1.0.6
+        version: 1.0.6
       '@types/node':
         specifier: ^22.13.10
         version: 22.15.3
@@ -252,8 +277,8 @@ importers:
         specifier: ^2.2.2
         version: 2.2.2
       '@atomone/event-consumer':
-        specifier: ^1.0.2
-        version: 1.0.2
+        specifier: ^1.0.6
+        version: 1.0.6
       '@types/node':
         specifier: ^22.13.10
         version: 22.15.3
@@ -277,8 +302,8 @@ importers:
         specifier: ^2.2.2
         version: 2.2.2
       '@atomone/event-consumer':
-        specifier: ^1.0.2
-        version: 1.0.2
+        specifier: ^1.0.6
+        version: 1.0.6
       '@types/node':
         specifier: ^22.13.10
         version: 22.15.3
@@ -302,8 +327,8 @@ importers:
         specifier: ^2.2.2
         version: 2.2.2
       '@atomone/event-consumer':
-        specifier: ^1.0.2
-        version: 1.0.2
+        specifier: ^1.0.6
+        version: 1.0.6
       '@types/node':
         specifier: ^22.13.10
         version: 22.15.3
@@ -352,8 +377,8 @@ importers:
         specifier: ^2.2.2
         version: 2.2.2
       '@atomone/event-consumer':
-        specifier: ^1.0.2
-        version: 1.0.2
+        specifier: ^1.0.6
+        version: 1.0.6
       '@types/node':
         specifier: ^22.13.10
         version: 22.15.3
@@ -399,8 +424,8 @@ importers:
         specifier: ^2.2.2
         version: 2.2.2
       '@atomone/event-consumer':
-        specifier: ^1.0.2
-        version: 1.0.2
+        specifier: ^1.0.6
+        version: 1.0.6
       '@types/node':
         specifier: ^22.13.10
         version: 22.15.3
@@ -423,8 +448,8 @@ packages:
   '@atomone/chronostate@2.2.2':
     resolution: {integrity: sha512-7/1HlTahEwILdg4j7Vs4rMinDZjjpxadr4BWVO63y2Z+MOWHj33l3H+seP0//T8B3UJJ0W8rT9SWcht4lwx6mA==}
 
-  '@atomone/event-consumer@1.0.2':
-    resolution: {integrity: sha512-50DbXJyvLDjyX5orKkpUxIprDMrgFr2J6UIllc91gXWgIHi8ig2vLlkyY/R2E/A0sDFv2NGMicHSdL5X4pyfqg==}
+  '@atomone/event-consumer@1.0.6':
+    resolution: {integrity: sha512-s6byCYqfWQuRg8n2cBm1WORaDmReIn1GnwgEEqcBsWIaRCfliK8btsG2O/DL+6/5oNQ+QIM1t9rf/sAma303QQ==}
 
   '@babel/helper-string-parser@7.25.9':
     resolution: {integrity: sha512-4A/SCr/2KLd5jrtOMFzaKjVtAei3+2r/NChoBNoZ3EyP/+GlhoaEGoWOZUmFmoITP7zOJyHIMm+DYRd8o3PvHA==}
@@ -2981,7 +3006,7 @@ snapshots:
 
   '@atomone/chronostate@2.2.2': {}
 
-  '@atomone/event-consumer@1.0.2':
+  '@atomone/event-consumer@1.0.6':
     dependencies:
       '@types/amqplib': 0.10.7
       amqplib: 0.10.8

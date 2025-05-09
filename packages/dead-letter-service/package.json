@@ -1,7 +1,7 @@
 {
-    "name": "@atomone/event-consumer",
-    "version": "1.0.8",
-    "description": "A package for consuming events from a RabbitMQ queue.",
+    "name": "dead-letter-service",
+    "version": "1.0.0",
+    "description": "",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "license": "GnoGPL",
@@ -12,17 +12,19 @@
         "dist"
     ],
     "scripts": {
-        "build": "tsc",
-        "test": "vitest"
+        "start": "tsx ./src/index.ts",
+        "build": "tsc"
     },
     "author": "Stuyk",
     "devDependencies": {
+        "@atomone/event-consumer": "^1.0.6",
         "@types/node": "^22.13.10",
         "typescript": "^5.8.2",
         "vitest": "^3.0.9"
     },
     "dependencies": {
         "@types/amqplib": "^0.10.7",
-        "amqplib": "^0.10.7"
+        "amqplib": "^0.10.7",
+        "dead-letter-service": "link:"
     }
 }
