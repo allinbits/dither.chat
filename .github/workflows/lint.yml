@@ -21,4 +21,18 @@ jobs:
         run: pnpm install
 
       - name: Lint
-        run: pnpm run lint
+        run: pnpm run lint:fix
+
+      - name: Reset lockfile
+        # This is needed because esbuild can change lockfile depending on OS, see https://github.com/evanw/esbuild/issues/3813
+        run: git checkout pnpm-lock.yaml
+
+      - name: Check that there is no diff
+        run: |
+          mrdiff=$(git status --porcelain)
+          if [[ $mrdiff ]]; then
+              echo 'ERROR: Diff found!'
+              echo $mrdiff
+              git diff
+              exit 1
+          fi
