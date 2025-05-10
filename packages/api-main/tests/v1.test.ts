@@ -406,16 +406,39 @@ describe('v1', { sequential: true }, () => {
 
 describe('v1 - mod', { sequential: true }, () => {
     const addressUserA = getAtomOneAddress();
-    const addressModerator = getAtomOneAddress();
+    let addressModerator = getAtomOneAddress();
     const genericPostMessage
         = 'hello world, this is a really intereresting post $@!($)@!()@!$21,4214,12,42142,14,12,421,';
     const postHash = getRandomHash();
     const secondPostHash = getRandomHash();
+    let bearerToken: string;
 
     it('EMPTY ALL TABLES', async () => {
         for (const tableName of tables) {
             await getDatabase().execute(sql`TRUNCATE TABLE ${sql.raw(tableName)};`);
         }
+    });
+
+    it('POST mod obtain bearer token', async () => {
+        const walletA = await createWallet();
+        addressModerator = walletA.publicKey;
+        const body: typeof Posts.AuthCreateBody.static = {
+            address: walletA.publicKey,
+        };
+
+        const response = (await post(`auth-create`, body, 'READ')) as { status: 200; id: number; message: string };
+        assert.isOk(response?.status === 200, 'response was not okay');
+
+        const signData = await signADR36Document(walletA.mnemonic, response.message);
+        const verifyBody: typeof Posts.AuthBody.static = {
+            id: response.id,
+            ...signData.signature,
+        };
+
+        const responseVerify = (await post(`auth`, verifyBody, 'READ')) as { status: 200; bearer: string };
+        assert.isOk(responseVerify?.status === 200, 'response was not verified and confirmed okay');
+        assert.isOk(responseVerify.bearer.length >= 1, 'bearer was not passed back');
+        bearerToken = responseVerify.bearer;
     });
 
     it('POST - /post', async () => {
@@ -431,6 +454,18 @@ describe('v1 - mod', { sequential: true }, () => {
         assert.isOk(response?.status === 200, 'response was not okay');
     });
 
+    it('POST - /mod/post-remove without autorization', async () => {
+        const body: typeof Posts.ModRemovePostBody.static = {
+            hash: getRandomHash(),
+            timestamp: '2025-04-16T19:46:42Z',
+            post_hash: postHash,
+            reason: 'spam',
+        };
+
+        const replyResponse = await post(`mod/post-remove`, body);
+        assert.isOk(replyResponse?.status === 401, `expected unauthorized, got ${JSON.stringify(replyResponse)}`);
+    });
+
     it('POST - /mod/post-remove moderator does not exists', async () => {
         const response = await get<{ status: number; rows: { hash: string; author: string; message: string }[] }>(
             `posts?address=${addressUserA}`,
@@ -439,14 +474,13 @@ describe('v1 - mod', { sequential: true }, () => {
         assert.isOk(Array.isArray(response.rows) && response.rows.length >= 1, 'feed result was not an array type');
 
         const body: typeof Posts.ModRemovePostBody.static = {
-            mod_address: addressModerator,
             hash: getRandomHash(),
             timestamp: '2025-04-16T19:46:42Z',
             post_hash: response.rows[0].hash,
             reason: 'spam',
         };
 
-        const replyResponse = await post(`mod/post-remove`, body);
+        const replyResponse = await post(`mod/post-remove`, body, 'WRITE', bearerToken);
         assert.isOk(replyResponse?.status === 404, `expected moderator was not found`);
 
         const postsResponse = await get<{
@@ -481,14 +515,13 @@ describe('v1 - mod', { sequential: true }, () => {
         assert.isOk(Array.isArray(response.rows) && response.rows.length >= 1, 'feed result was not an array type');
 
         const body: typeof Posts.ModRemovePostBody.static = {
-            mod_address: addressModerator,
             hash: getRandomHash(),
             timestamp: '2025-04-16T19:46:42Z',
             post_hash: response.rows[0].hash,
             reason: 'spam',
         };
 
-        const replyResponse = await post(`mod/post-remove`, body);
+        const replyResponse = await post(`mod/post-remove`, body, 'WRITE', bearerToken);
         assert.isOk(replyResponse?.status === 200, `response was not okay, got ${JSON.stringify(replyResponse)}`);
 
         const postsResponse = await get<{
@@ -510,14 +543,13 @@ describe('v1 - mod', { sequential: true }, () => {
 
     it('POST - /mod/post-restore', async () => {
         const body: typeof Posts.ModRemovePostBody.static = {
-            mod_address: addressModerator,
             hash: getRandomHash(),
             timestamp: '2025-04-16T19:46:42Z',
             post_hash: postHash,
             reason: 'spam',
         };
 
-        const replyResponse = await post(`mod/post-restore`, body);
+        const replyResponse = await post(`mod/post-restore`, body, 'WRITE', bearerToken);
         assert.isOk(replyResponse?.status === 200, `response was not okay, got ${JSON.stringify(replyResponse)}`);
 
         const postsResponse = await get<{
@@ -546,12 +578,11 @@ describe('v1 - mod', { sequential: true }, () => {
             post_hash: postHash,
         };
 
-        const userRemoveResponse = await post(`post-remove`, body);
+        const userRemoveResponse = await post(`post-remove`, body, 'WRITE', bearerToken);
         assert.isOk(userRemoveResponse?.status === 200, 'response was not okay');
 
         // MOD tries to restore post
         const bodymod: typeof Posts.ModRemovePostBody.static = {
-            mod_address: addressModerator,
             hash: getRandomHash(),
             timestamp: '2025-04-16T19:46:42Z',
             post_hash: postHash,
@@ -578,14 +609,13 @@ describe('v1 - mod', { sequential: true }, () => {
     it('POST - /mod/ban user banned deletes posts', async () => {
         // moderator bans user
         const body: typeof Posts.ModBanBody.static = {
-            mod_address: addressModerator,
             hash: getRandomHash(),
             timestamp: '2025-04-16T19:46:42Z',
             user_address: addressUserA,
             reason: 'user too political',
         };
 
-        const userBanResponse = await post(`mod/ban`, body);
+        const userBanResponse = await post(`mod/ban`, body, 'WRITE', bearerToken);
         assert.isOk(userBanResponse?.status === 200, `response was not okay ${JSON.stringify(userBanResponse)}`);
 
         // post from user should be all hidden
@@ -617,7 +647,7 @@ describe('v1 - mod', { sequential: true }, () => {
             timestamp: '2025-04-16T19:46:42Z',
         };
 
-        const response = await post(`post`, body);
+        const response = await post(`post`, body, 'WRITE', bearerToken);
         assert.isOk(response?.status === 200, 'response was not okay');
 
         // Even new post should be hidden
@@ -642,14 +672,13 @@ describe('v1 - mod', { sequential: true }, () => {
 
     it('POST - unban restore all posts but user deleted ones', async () => {
         const body: typeof Posts.ModBanBody.static = {
-            mod_address: addressModerator,
             hash: getRandomHash(),
             timestamp: '2025-04-16T19:46:42Z',
             user_address: addressUserA,
             reason: 'user too political',
         };
 
-        const userBanResponse = await post(`mod/unban`, body);
+        const userBanResponse = await post(`mod/unban`, body, 'WRITE', bearerToken);
         assert.isOk(userBanResponse?.status === 200, `response was not okay ${JSON.stringify(userBanResponse)}`);
 
         // Totally user should have 2 post as one was deleted by itself (including the one posted while banned)
@@ -682,7 +711,7 @@ describe('v1 - mod', { sequential: true }, () => {
             timestamp: '2025-04-16T19:46:42Z',
         };
 
-        const response = await post(`post`, body);
+        const response = await post(`post`, body, 'WRITE', bearerToken);
         assert.isOk(response?.status === 200, 'response was not okay');
 
         // Even new post should be hidden
