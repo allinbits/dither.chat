@@ -57,7 +57,7 @@ importers:
         specifier: ^1.2.0
         version: 1.2.0(elysia@1.2.25)
       '@elysiajs/node':
-        specifier: ^1.2.6
+        specifier: ^1.2.5
         version: 1.2.6(elysia@1.2.25)(formidable@3.5.4)(ws@8.18.2)
       '@keplr-wallet/cosmos':
         specifier: ^0.12.230
