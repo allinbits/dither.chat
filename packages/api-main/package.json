@@ -29,7 +29,8 @@
         "elysia-ip": "^1.0.8",
         "jsonwebtoken": "^9.0.2",
         "pg": "^8.14.1",
-        "postgres": "^3.4.5"
+        "postgres": "^3.4.5",
+        "ws": "^8.18.0"
     },
     "devDependencies": {
         "@cosmjs/amino": "^0.33.1",
