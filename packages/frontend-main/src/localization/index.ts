@@ -8,7 +8,7 @@ export const messages = {
             },
             WalletConnect: {
                 button: 'Connect Wallet',
-                cta: 'Connect your wallet',
+                cta: 'Connect Wallet',
                 ctaAddress: 'Connect Address',
                 balance: 'Balance',
                 cancel: 'Cancel',
@@ -22,7 +22,7 @@ export const messages = {
                 publicAddressDisclaimer:
             '* Connecting public address doesn\'t connect to your wallet and is used only for CLI command generation.',
                 recommendedWallet: 'We recommend connecting with address only',
-                otherWallet: 'or connect your Wallet. Make sure you have a wallet browser extension enabled.',
+                otherWallet: 'Make sure you have a wallet browser extension enabled.',
                 enterAddress: 'Enter your wallet address',
                 addressPlaceholder: 'e.g. atone1ad453f23bc2d...',
             },
