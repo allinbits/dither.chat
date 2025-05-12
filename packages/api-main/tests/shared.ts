@@ -1,6 +1,8 @@
 import { createHash, randomBytes } from 'crypto';
 
-import { bech32 } from 'bech32';
+import { Secp256k1HdWallet } from '@cosmjs/amino';
+import { toBech32 } from '@cosmjs/encoding';
+import { makeADR36AminoSignDoc } from '@keplr-wallet/cosmos';
 
 let lastHeight = 1_000_000;
 
@@ -33,7 +35,7 @@ export async function post<T = { status: number }>(endpoint: string, body: objec
         return null;
     }
 
-    const jsonData = await response.json() as { status: number };
+    const jsonData = (await response.json()) as { status: number };
     if (jsonData.status && jsonData.status !== 200) {
         return jsonData;
     }
@@ -41,7 +43,7 @@ export async function post<T = { status: number }>(endpoint: string, body: objec
     return jsonData as T;
 }
 
-export function getSha256Hash(input: string): string {
+export function getSha256Hash(input: string | Uint8Array): string {
     const hash = createHash('sha256');
     hash.update(input);
     return hash.digest('hex');
@@ -51,8 +53,22 @@ export function getAtomOneAddress(): string {
     const randomData = randomBytes(32);
     const hash = createHash('sha256').update(randomData).digest();
     const addressBytes = hash.slice(0, 20);
-    const encodedAddress = bech32.encode('atone', bech32.toWords(addressBytes));
+    const encodedAddress = toBech32('atone', addressBytes);
     return encodedAddress;
+}
+
+export async function createWallet() {
+    const wallet = await Secp256k1HdWallet.generate(24, { prefix: 'atone' });
+    const accounts = await wallet.getAccounts();
+    return { mnemonic: wallet.mnemonic, publicKey: accounts[0].address };
+}
+
+export async function signADR36Document(mnemonic: string, messageToSign: string) {
+    const wallet = await Secp256k1HdWallet.fromMnemonic(mnemonic, { prefix: 'atone' });
+    const accounts = await wallet.getAccounts();
+
+    const document = makeADR36AminoSignDoc(accounts[0].address, messageToSign);
+    return await wallet.signAmino(accounts[0].address, document);
 }
 
 export function getRandomHash() {

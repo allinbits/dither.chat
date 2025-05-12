@@ -17,11 +17,20 @@ jobs:
       - name: Install pnpm with npm
         run: npm install -g pnpm
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: 'pnpm'
+
       - name: Install dependencies with pnpm
         run: pnpm install
 
       - name: Lint
         run: pnpm run lint:fix
+
+      - name: Reset lockfile
+        # This is needed because esbuild can change lockfile depending on OS, see https://github.com/evanw/esbuild/issues/3813
+        run: git checkout pnpm-lock.yaml
 
       - name: Check that there is no diff
         run: |

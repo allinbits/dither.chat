@@ -21,6 +21,10 @@ function startReadOnlyServer() {
     app.get('/posts', ({ query }) => GetRequests.Posts(query), { query: GetRequests.PostsQuery });
     app.get('/post', ({ query }) => GetRequests.Post(query), { query: GetRequests.PostQuery });
     app.get('/replies', ({ query }) => GetRequests.Replies(query), { query: GetRequests.RepliesQuery });
+
+    app.post('/auth', ({ body }) => PostRequests.Auth(body), { body: PostRequests.AuthBody });
+    app.post('/auth-create', ({ body }) => PostRequests.AuthCreate(body), { body: PostRequests.AuthCreateBody });
+
     app.listen(config.READ_ONLY_PORT ?? 3000);
     console.log(`[API Read Only] Running on ${config.READ_ONLY_PORT ?? 3000}`);
 }
@@ -38,6 +42,18 @@ function startWriteOnlyServer() {
     app.post('/dislike', ({ body }) => PostRequests.Dislike(body), { body: PostRequests.DislikeBody });
     app.post('/flag', ({ body }) => PostRequests.Flag(body), { body: PostRequests.FlagBody });
     app.post('/post-remove', ({ body }) => PostRequests.PostRemove(body), { body: PostRequests.PostRemoveBody });
+    app.post('/mod/post-remove', ({ body }) => PostRequests.ModRemovePost(body), {
+        body: PostRequests.ModRemovePostBody,
+    });
+    app.post('/mod/post-restore', ({ body }) => PostRequests.ModRestorePost(body), {
+        body: PostRequests.ModRemovePostBody,
+    });
+    app.post('/mod/ban', ({ body }) => PostRequests.ModBan(body), {
+        body: PostRequests.ModBanBody,
+    });
+    app.post('/mod/unban', ({ body }) => PostRequests.ModUnban(body), {
+        body: PostRequests.ModBanBody,
+    });
 
     app.listen(config.WRITE_ONLY_PORT ?? 3001);
     console.log(`[API Write Only] Running on ${config.WRITE_ONLY_PORT ?? 3001}`);
