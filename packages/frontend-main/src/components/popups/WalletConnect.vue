@@ -6,6 +6,8 @@ import { bech32 } from 'bech32';
 
 import { getWalletHelp, useWallet, Wallets } from '@/composables/useWallet';
 
+import ButtonCustom from '../ui/button/button-custom/ButtonCustom.vue';
+
 import chainConfig from '@/chain-config.json';
 import UserBalance from '@/components/helper/UserBalance.vue';
 import { Button } from '@/components/ui/button';
@@ -132,9 +134,9 @@ const isValidAddress = computed(() => {
       <Dialog>
         <!-- Normal signed out button -->
         <DialogTrigger>
-          <Button>
+          <ButtonCustom class="w-[207px]">
             {{ $t('components.WalletConnect.button') }}
-          </Button>
+          </ButtonCustom>
         </DialogTrigger>
         <DialogContent>
           <template v-if="selectState">
