@@ -7,7 +7,7 @@ import { FeedTable, FlagsTable } from '../../drizzle/schema';
 export const FlagBody = t.Object({
     hash: t.String(),
     from: t.String(),
-    postHash: t.String(),
+    post_hash: t.String(),
     quantity: t.String(),
     timestamp: t.String(),
 });
@@ -35,14 +35,14 @@ const statementAddFlagToPost = getDatabase()
 export async function Flag(body: typeof FlagBody.static) {
     try {
         await statement.execute({
-            post_hash: body.postHash,
+            post_hash: body.post_hash,
             hash: body.hash,
             author: body.from,
             quantity: body.quantity,
             timestamp: new Date(body.timestamp),
         });
 
-        await statementAddFlagToPost.execute({ post_hash: body.postHash, quantity: body.quantity });
+        await statementAddFlagToPost.execute({ post_hash: body.post_hash, quantity: body.quantity });
 
         return { status: 200 };
     }

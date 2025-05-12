@@ -7,7 +7,7 @@ import { DislikesTable, FeedTable } from '../../drizzle/schema';
 export const DislikeBody = t.Object({
     hash: t.String(),
     from: t.String(),
-    postHash: t.String(),
+    post_hash: t.String(),
     quantity: t.String(),
     timestamp: t.String(),
 });
@@ -35,14 +35,14 @@ const statementAddDislikeToPost = getDatabase()
 export async function Dislike(body: typeof DislikeBody.static) {
     try {
         await statement.execute({
-            post_hash: body.postHash,
+            post_hash: body.post_hash,
             hash: body.hash,
             author: body.from,
             quantity: body.quantity,
             timestamp: new Date(body.timestamp),
         });
 
-        await statementAddDislikeToPost.execute({ post_hash: body.postHash, quantity: body.quantity });
+        await statementAddDislikeToPost.execute({ post_hash: body.post_hash, quantity: body.quantity });
 
         return { status: 200 };
     }

@@ -6,7 +6,7 @@ import { FeedTable } from '../../drizzle/schema';
 
 export const ReplyBody = t.Object({
     hash: t.String(),
-    postHash: t.String(),
+    post_hash: t.String(),
     timestamp: t.String(),
     from: t.String(),
     msg: t.String(),
@@ -38,13 +38,13 @@ export async function Reply(body: typeof ReplyBody.static) {
             author: body.from,
             hash: body.hash,
             message: body.msg,
-            post_hash: body.postHash,
+            post_hash: body.post_hash,
             quantity: body.quantity,
             timestamp: new Date(body.timestamp),
         });
 
         await statementAddReplyCount.execute({
-            post_hash: body.postHash,
+            post_hash: body.post_hash,
         });
 
         return { status: 200 };

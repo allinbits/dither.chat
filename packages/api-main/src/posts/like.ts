@@ -7,7 +7,7 @@ import { FeedTable, LikesTable } from '../../drizzle/schema';
 export const LikeBody = t.Object({
     hash: t.String(),
     from: t.String(),
-    postHash: t.String(),
+    post_hash: t.String(),
     quantity: t.String(),
     timestamp: t.String(),
 });
@@ -35,14 +35,14 @@ const statementAddLikeToPost = getDatabase()
 export async function Like(body: typeof LikeBody.static) {
     try {
         await statement.execute({
-            post_hash: body.postHash,
+            post_hash: body.post_hash,
             hash: body.hash,
             author: body.from,
             quantity: body.quantity,
             timestamp: new Date(body.timestamp),
         });
 
-        await statementAddLikeToPost.execute({ post_hash: body.postHash, quantity: body.quantity });
+        await statementAddLikeToPost.execute({ post_hash: body.post_hash, quantity: body.quantity });
 
         return { status: 200 };
     }
