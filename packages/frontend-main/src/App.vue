@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import ButtonCustom from './components/ui/button/button-custom/ButtonCustom.vue';
+import Dialog from './components/ui/dialog/Dialog.vue';
 import ToggleThemeButton from './components/ui/ToggleThemeButton.vue';
 
 import WalletConnect from '@/components/popups/WalletConnect.vue';
