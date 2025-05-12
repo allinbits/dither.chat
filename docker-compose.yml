@@ -79,6 +79,11 @@ services:
     environment:
       RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
       RABBITMQ_EXCHANGE: "dither"
+      RABBITMQ_DLX_EXCHANGE: "dither-dlx"
+      RABBITMQ_DLX_QUEUE: "dlx-queue"
+      RABBITMQ_QUEUE: "dither.Post"
+      RABBITMQ_LOG_EXCHANGE: "dither-log"
+      RABBITMQ_LOG_QUEUE: "log-queue"
       API_ROOT: "http://api-main:3001/v1"
     restart: always
     command: ["pnpm", "start"]
@@ -94,6 +99,11 @@ services:
     environment:
       RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
       RABBITMQ_EXCHANGE: "dither"
+      RABBITMQ_DLX_EXCHANGE: "dither-dlx"
+      RABBITMQ_DLX_QUEUE: "dlx-queue"
+      RABBITMQ_QUEUE: "dither.Reply"
+      RABBITMQ_LOG_EXCHANGE: "dither-log"
+      RABBITMQ_LOG_QUEUE: "log-queue"
       API_ROOT: "http://api-main:3001/v1"
     restart: always
     command: ["pnpm", "start"]
@@ -109,6 +119,11 @@ services:
     environment:
       RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
       RABBITMQ_EXCHANGE: "dither"
+      RABBITMQ_DLX_EXCHANGE: "dither-dlx"
+      RABBITMQ_DLX_QUEUE: "dlx-queue"
+      RABBITMQ_QUEUE: "dither.Like"
+      RABBITMQ_LOG_EXCHANGE: "dither-log"
+      RABBITMQ_LOG_QUEUE: "log-queue"
       API_ROOT: "http://api-main:3001/v1"
     restart: always
     command: ["pnpm", "start"]
@@ -124,6 +139,11 @@ services:
     environment:
       RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
       RABBITMQ_EXCHANGE: "dither"
+      RABBITMQ_DLX_EXCHANGE: "dither-dlx"
+      RABBITMQ_DLX_QUEUE: "dlx-queue"
+      RABBITMQ_QUEUE: "dither.Dislike"
+      RABBITMQ_LOG_EXCHANGE: "dither-log"
+      RABBITMQ_LOG_QUEUE: "log-queue"
       API_ROOT: "http://api-main:3001/v1"
     restart: always
     command: ["pnpm", "start"]
@@ -139,6 +159,11 @@ services:
     environment:
       RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
       RABBITMQ_EXCHANGE: "dither"
+      RABBITMQ_DLX_EXCHANGE: "dither-dlx"
+      RABBITMQ_DLX_QUEUE: "dlx-queue"
+      RABBITMQ_QUEUE: "dither.Follow"
+      RABBITMQ_LOG_EXCHANGE: "dither-log"
+      RABBITMQ_LOG_QUEUE: "log-queue"
       API_ROOT: "http://api-main:3001/v1"
     restart: always
     command: ["pnpm", "start"]
@@ -153,6 +178,11 @@ services:
     environment:
       RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
       RABBITMQ_EXCHANGE: "dither"
+      RABBITMQ_DLX_EXCHANGE: "dither-dlx"
+      RABBITMQ_DLX_QUEUE: "dlx-queue"
+      RABBITMQ_QUEUE: "dither.Unfollow"
+      RABBITMQ_LOG_EXCHANGE: "dither-log"
+      RABBITMQ_LOG_QUEUE: "log-queue"
       API_ROOT: "http://api-main:3001/v1"
     restart: always
     command: ["pnpm", "start"]
@@ -167,6 +197,11 @@ services:
     environment:
       RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
       RABBITMQ_EXCHANGE: "dither"
+      RABBITMQ_DLX_EXCHANGE: "dither-dlx"
+      RABBITMQ_DLX_QUEUE: "dlx-queue"
+      RABBITMQ_QUEUE: "dither.Flag"
+      RABBITMQ_LOG_EXCHANGE: "dither-log"
+      RABBITMQ_LOG_QUEUE: "log-queue"
       API_ROOT: "http://api-main:3001/v1"
     restart: always
     command: ["pnpm", "start"]
@@ -181,6 +216,27 @@ services:
     environment:
       RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
       RABBITMQ_EXCHANGE: "dither"
+      RABBITMQ_DLX_EXCHANGE: "dither-dlx"
+      RABBITMQ_DLX_QUEUE: "dlx-queue"
+      RABBITMQ_QUEUE: "dither.Remove"
+      RABBITMQ_LOG_EXCHANGE: "dither-log"
+      RABBITMQ_LOG_QUEUE: "log-queue"
+      API_ROOT: "http://api-main:3001/v1"
+    restart: always
+    command: ["pnpm", "start"]
+  dead-letter-service:
+    container_name: "dead-letter-service"
+    build: ./packages/dead-letter-service
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
+      RABBITMQ_EXCHANGE: "dither-dlx"
+      RABBITMQ_DLX_EXCHANGE: "dither"
+      RABBITMQ_DLX_QUEUE: "dlx-queue"
+      RABBITMQ_LOG_EXCHANGE: "dither-log"
+      RABBITMQ_LOG_QUEUE: "log-queue"
       API_ROOT: "http://api-main:3001/v1"
     restart: always
     command: ["pnpm", "start"]
