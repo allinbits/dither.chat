@@ -1,10 +1,13 @@
 <script setup lang="ts">
+import MainLayout from '@/layouts/MainLayout.vue';
+
 </script>
 
 <template>
+  <MainLayout>
 
-  <div>
+    <div>
     <!-- TODO -->
-  </div>
-
+    </div>
+  </MainLayout>
 </template>

@@ -4,6 +4,8 @@ import { useRoute } from 'vue-router';
 
 import { useFetchPost } from '@/composables/useFetchPost';
 
+import MainLayout from '@/layouts/MainLayout.vue';
+
 const route = useRoute();
 const loading = ref(false);
 
@@ -31,14 +33,17 @@ watch(
 </script>
 
 <template>
-  <div class="post">
-    <div v-if="loading" class="loading">Loading...</div>
+  <MainLayout>
 
-    <div v-if="error" class="error">{{ error }}</div>
+    <div class="post">
+      <div v-if="loading" class="loading">Loading...</div>
 
-    <div v-if="post" class="content">
-      <span>{{ post.message }}</span>
+      <div v-if="error" class="error">{{ error }}</div>
+
+      <div v-if="post" class="content">
+        <span>{{ post.message }}</span>
       <!-- <p>{{ post.body }}</p> -->
+      </div>
     </div>
-  </div>
+  </MainLayout>
 </template>
