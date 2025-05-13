@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-namespace */
+import type { Posts } from '@atomone/dither-api-types';
 import type amqplib from 'amqplib';
 
 import { extractMemoContent } from '@atomone/chronostate';
@@ -15,17 +16,17 @@ declare module '@atomone/chronostate' {
     }
 }
 const config = useConfig();
-const apiRoot = process.env.API_ROOT || 'http://localhost:3000';
+const apiRoot = process.env.API_ROOT ?? 'http://localhost:3000';
 
 const postsHandler = async (msg: amqplib.Message) => {
     try {
         const content = msg.content.toString();
         const parsedContent = JSON.parse(content);
         const [post_hash] = extractMemoContent(parsedContent.memo, 'dither.Remove');
-        const postBody = {
+        const postBody: Posts.PostRemoveBody = {
             hash: parsedContent.hash,
             from: parsedContent.sender,
-            postHash: post_hash,
+            post_hash: post_hash,
             timestamp: parsedContent.timestamp,
         };
         const rawResponse = await fetch(apiRoot + '/post', {

@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-namespace */
+import type { Posts } from '@atomone/dither-api-types';
 import type amqplib from 'amqplib';
 
 import { extractMemoContent } from '@atomone/chronostate';
@@ -16,14 +17,14 @@ declare module '@atomone/chronostate' {
 }
 
 const config = useConfig();
-const apiRoot = process.env.API_ROOT || 'http://localhost:3000';
+const apiRoot = process.env.API_ROOT ?? 'http://localhost:3000';
 
 const followsHandler = async (msg: amqplib.Message) => {
     try {
         const content = msg.content.toString();
         const parsedContent = JSON.parse(content);
         const [following_address] = extractMemoContent(parsedContent.memo, 'dither.Follow');
-        const postBody = {
+        const postBody: Posts.FollowBody = {
             hash: parsedContent.hash,
             from: parsedContent.sender,
             address: following_address,
