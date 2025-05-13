@@ -4,7 +4,9 @@ import { useMediaQuery } from '@vueuse/core';
 import LeftPanel from './panels/LeftPanel.vue';
 import RightPanel from './panels/RightPanel.vue';
 import MainLayoutMobile from './MainLayoutMobile.vue';
-const isMobile = useMediaQuery('(max-width: 767px)'); // md
+
+import { breakpoints } from '@/lib/breakpoints';
+const isMobile = useMediaQuery(`(max-width: ${breakpoints.md - 1}px)`);
 
 </script>
 
