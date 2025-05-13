@@ -158,6 +158,7 @@ const useWalletInstance = () => {
                 break;
         }
     };
+
     const sendTx = async (msgs: EncodeObject[]) => {
         if (signer.value) {
             try {
@@ -170,7 +171,8 @@ const useWalletInstance = () => {
                 });
                 return result;
             }
-            catch (_) {
+            catch (err) {
+                console.error(err);
                 throw new Error('Could not sign messages');
             }
         }
@@ -178,6 +180,27 @@ const useWalletInstance = () => {
             throw new Error('No Signer available');
         }
     };
+
+    const signMessage = async (text: string) => {
+        if (!signer.value) {
+            throw new Error('Could not sign messages');
+        }
+
+        if (walletState.used.value === Wallets.keplr) {
+            return window.keplr?.signArbitrary(chainInfo.rpc, walletState.address.value, text);
+        }
+
+        if (walletState.used.value === Wallets.cosmostation) {
+            return window.cosmostation.providers.keplr.signArbitrary(chainInfo.rpc, walletState.address.value, text);
+        }
+
+        if (walletState.used.value === Wallets.leap) {
+            return window.leap?.signArbitrary(chainInfo.rpc, walletState.address.value, text);
+        }
+
+        throw new Error(`No valid wallet connected to sign messages.`);
+    };
+
     const refreshAddress = () => {
         if (walletState.used.value) {
             if (walletState.used.value == Wallets.addressOnly) {
@@ -192,7 +215,7 @@ const useWalletInstance = () => {
     window.addEventListener('keplr_keystorechange', refreshAddress);
     window.addEventListener('leap_keystorechange', refreshAddress);
 
-    return { ...walletState, signOut, connect, sendTx };
+    return { ...walletState, signOut, connect, sendTx, signMessage };
 };
 
 let walletInstance: ReturnType<typeof useWalletInstance>;

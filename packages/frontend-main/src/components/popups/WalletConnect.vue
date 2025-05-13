@@ -81,7 +81,8 @@ const connectWallet = async (walletType: Wallets, address?: string) => {
             slow = null;
         }
     }
-    catch (_) {
+    catch (err) {
+        console.error(err);
         isConnecting.value = false;
         isSlowConnecting.value = false;
         isError.value = true;
@@ -110,7 +111,8 @@ const isValidAddress = computed(() => {
             return false;
         }
     }
-    catch (_e) {
+    catch (err) {
+        console.error(err);
         return false;
     }
 });
@@ -145,37 +147,25 @@ const isValidAddress = computed(() => {
         <DialogContent>
           <template v-if="selectState">
             <div class="flex flex-col gap-6">
-              <div class="flex flex-col gap-4">
-                <div class="text-xl font-bold text-center">
-                  {{ $t('components.WalletConnect.cta') }}
-                </div>
-                <div class="text-muted-foreground text-lg text-center">
-                  {{ $t('components.WalletConnect.recommendedWallet') }}
-                </div>
-                <Button @click="connectWallet(Wallets.addressOnly)">
-                  <Icon icon="link" :size="1.4" class="mr-2" />
-                  Public Address
-                </Button>
-                <span class="text-muted-foreground text-lg text-center">
-                  {{ $t('components.WalletConnect.publicAddressDisclaimer') }}
-                </span>
+              <div class="text-xl font-bold text-center">
+                {{ $t('components.WalletConnect.cta') }}
               </div>
-              <hr class="text-secondary" />
               <div class="flex flex-col gap-4">
-                <span class="text-muted-foreground text-lg text-center">
+                <span class="text-muted-foreground text-center">
                   {{ $t('components.WalletConnect.otherWallet') }}
                 </span>
                 <div class="buttons flex flex-col gap-3">
                   <Button :disabled="!keplr" @click="connectWallet(Wallets.keplr)">
-                    <Icon icon="keplr" size="2.3" class="mr-2" />
-                    Keplr Wallet
+                    <Icon icon="keplr" size="1.25" />
+                    <span>Keplr Wallet</span>
                   </Button>
                   <Button :disabled="!leap" @click="connectWallet(Wallets.leap)">
-                    <Icon icon="leap" size="2.3" class="mr-2" />Leap Wallet
+                    <Icon icon="leap" size="1.25" />
+                    <span>Leap Wallet</span>
                   </Button>
                   <Button :disabled="!cosmostation" @click="connectWallet(Wallets.cosmostation)">
-                    <Icon icon="cosmostation" size="2.3" class="" />
-                    Cosmostation Wallet
+                    <Icon icon="cosmostation" size="1.25" />
+                    <span>Cosmostation Wallet</span>
                   </Button>
                 </div>
               </div>
