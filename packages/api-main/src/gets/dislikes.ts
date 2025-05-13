@@ -1,16 +1,9 @@
+import { type Gets } from '@atomone/dither-api-types';
 import { eq, sql } from 'drizzle-orm';
-import { t } from 'elysia';
 
 import { getDatabase } from '../../drizzle/db';
 import { DislikesTable } from '../../drizzle/schema';
 import { getJsonbArrayCount } from '../utility';
-
-export const DislikesQuery = t.Object({
-    hash: t.String(),
-    limit: t.Optional(t.Number()),
-    offset: t.Optional(t.Number()),
-    count: t.Optional(t.Boolean()),
-});
 
 const statement = getDatabase()
     .select()
@@ -20,7 +13,7 @@ const statement = getDatabase()
     .offset(sql.placeholder('offset'))
     .prepare('stmnt_get_dislikes');
 
-export async function Dislikes(query: typeof DislikesQuery.static) {
+export async function Dislikes(query: typeof Gets.DislikesQuery.static) {
     if (!query.hash) {
         return {
             status: 400,

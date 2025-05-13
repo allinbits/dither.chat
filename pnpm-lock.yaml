@@ -47,6 +47,9 @@ importers:
       '@atomone/chronostate':
         specifier: ^2.2.1
         version: 2.2.2
+      '@atomone/dither-api-types':
+        specifier: link:..\lib-api-types
+        version: link:../lib-api-types
       '@cosmjs/crypto':
         specifier: ^0.33.1
         version: 0.33.1
@@ -111,128 +114,6 @@ importers:
       vitest:
         specifier: ^3.1.2
         version: 3.1.3(@types/node@22.15.17)(jiti@2.4.2)(lightningcss@1.29.2)(tsx@4.19.4)
-
-  packages/dead-letter-service:
-    dependencies:
-      '@types/amqplib':
-        specifier: ^0.10.7
-        version: 0.10.7
-      amqplib:
-        specifier: ^0.10.7
-        version: 0.10.8
-      dead-letter-service:
-        specifier: 'link:'
-        version: 'link:'
-    devDependencies:
-      '@atomone/event-consumer':
-        specifier: ^1.0.12
-        version: 1.0.12
-      '@types/node':
-        specifier: ^22.13.10
-        version: 22.15.17
-      typescript:
-        specifier: ^5.8.2
-        version: 5.8.3
-      vitest:
-        specifier: ^3.0.9
-        version: 3.1.3(@types/node@22.15.17)(jiti@2.4.2)(lightningcss@1.29.2)(tsx@4.19.4)
-
-  packages/dislike-service:
-    dependencies:
-      '@atomone/chronostate':
-        specifier: ^2.2.2
-        version: 2.2.2
-      '@atomone/event-consumer':
-        specifier: ^1.0.12
-        version: 1.0.12
-      '@types/node':
-        specifier: ^22.13.10
-        version: 22.15.17
-      amqplib:
-        specifier: ^0.10.7
-        version: 0.10.8
-      tsx:
-        specifier: ^4.19.3
-        version: 4.19.4
-    devDependencies:
-      '@types/amqplib':
-        specifier: ^0.10.7
-        version: 0.10.7
-      typescript:
-        specifier: ^5.8.2
-        version: 5.8.3
-
-  packages/event-consumer:
-    dependencies:
-      '@atomone/event-consumer':
-        specifier: 'link:'
-        version: 'link:'
-      '@types/amqplib':
-        specifier: ^0.10.7
-        version: 0.10.7
-      amqplib:
-        specifier: ^0.10.7
-        version: 0.10.8
-    devDependencies:
-      '@types/node':
-        specifier: ^22.13.10
-        version: 22.15.17
-      typescript:
-        specifier: ^5.8.2
-        version: 5.8.3
-      vitest:
-        specifier: ^3.0.9
-        version: 3.1.3(@types/node@22.15.17)(jiti@2.4.2)(lightningcss@1.29.2)(tsx@4.19.4)
-
-  packages/flag-service:
-    dependencies:
-      '@atomone/chronostate':
-        specifier: ^2.2.2
-        version: 2.2.2
-      '@atomone/event-consumer':
-        specifier: ^1.0.12
-        version: 1.0.12
-      '@types/node':
-        specifier: ^22.13.10
-        version: 22.15.17
-      amqplib:
-        specifier: ^0.10.7
-        version: 0.10.8
-      tsx:
-        specifier: ^4.19.3
-        version: 4.19.4
-    devDependencies:
-      '@types/amqplib':
-        specifier: ^0.10.7
-        version: 0.10.7
-      typescript:
-        specifier: ^5.8.2
-        version: 5.8.3
-
-  packages/follow-service:
-    dependencies:
-      '@atomone/chronostate':
-        specifier: ^2.2.2
-        version: 2.2.2
-      '@atomone/event-consumer':
-        specifier: ^1.0.12
-        version: 1.0.12
-      '@types/node':
-        specifier: ^22.13.10
-        version: 22.15.17
-      amqplib:
-        specifier: ^0.10.7
-        version: 0.10.8
-      tsx:
-        specifier: ^4.19.3
-        version: 4.19.4
-    devDependencies:
-      '@types/amqplib':
-        specifier: ^0.10.7
-        version: 0.10.7
-      typescript:
-        specifier: ^5.8.2
-        version: 5.8.3
 
   packages/frontend-main:
     dependencies:
@@ -325,80 +206,37 @@ importers:
         specifier: ^2.2.10
         version: 2.2.10(typescript@5.7.3)
 
-  packages/like-service:
+  packages/lib-api-types:
     dependencies:
-      '@atomone/chronostate':
-        specifier: ^2.2.2
-        version: 2.2.2
-      '@atomone/event-consumer':
-        specifier: ^1.0.12
-        version: 1.0.12
-      '@types/node':
-        specifier: ^22.13.10
-        version: 22.15.17
-      amqplib:
-        specifier: ^0.10.7
-        version: 0.10.8
-      tsx:
-        specifier: ^4.19.3
-        version: 4.19.4
+      elysia:
+        specifier: ~1.2.25
+        version: 1.2.25(@sinclair/typebox@0.34.33)(openapi-types@12.1.3)(typescript@5.8.3)
     devDependencies:
-      '@types/amqplib':
-        specifier: ^0.10.7
-        version: 0.10.7
       typescript:
-        specifier: ^5.8.2
+        specifier: ^5.8.3
         version: 5.8.3
 
-  packages/post-remove-service:
+  packages/lib-event-consumer:
     dependencies:
-      '@atomone/chronostate':
-        specifier: ^2.2.2
-        version: 2.2.2
       '@atomone/event-consumer':
-        specifier: ^1.0.12
-        version: 1.0.12
-      '@types/node':
-        specifier: ^22.13.10
-        version: 22.15.17
-      amqplib:
-        specifier: ^0.10.7
-        version: 0.10.8
-      tsx:
-        specifier: ^4.19.3
-        version: 4.19.4
-    devDependencies:
+        specifier: 'link:'
+        version: 'link:'
       '@types/amqplib':
         specifier: ^0.10.7
         version: 0.10.7
-      typescript:
-        specifier: ^5.8.2
-        version: 5.8.3
-
-  packages/post-service:
-    dependencies:
-      '@atomone/chronostate':
-        specifier: ^2.2.2
-        version: 2.2.2
-      '@atomone/event-consumer':
-        specifier: ^1.0.12
-        version: 1.0.12
-      '@types/node':
-        specifier: ^22.13.10
-        version: 22.15.17
       amqplib:
         specifier: ^0.10.7
         version: 0.10.8
-      tsx:
-        specifier: ^4.19.3
-        version: 4.19.4
     devDependencies:
-      '@types/amqplib':
-        specifier: ^0.10.7
-        version: 0.10.7
+      '@types/node':
+        specifier: ^22.13.10
+        version: 22.15.17
       typescript:
         specifier: ^5.8.2
         version: 5.8.3
+      vitest:
+        specifier: ^3.0.9
+        version: 3.1.3(@types/node@22.15.17)(jiti@2.4.2)(lightningcss@1.29.2)(tsx@4.19.4)
 
   packages/reader-main:
     dependencies:
@@ -425,11 +263,238 @@ importers:
         specifier: ^5.8.2
         version: 5.8.3
 
-  packages/reply-service:
+  packages/service-dead-letter:
+    dependencies:
+      '@types/amqplib':
+        specifier: ^0.10.7
+        version: 0.10.7
+      amqplib:
+        specifier: ^0.10.7
+        version: 0.10.8
+      dead-letter-service:
+        specifier: 'link:'
+        version: 'link:'
+    devDependencies:
+      '@atomone/event-consumer':
+        specifier: ^1.0.12
+        version: 1.0.12
+      '@types/node':
+        specifier: ^22.13.10
+        version: 22.15.17
+      typescript:
+        specifier: ^5.8.2
+        version: 5.8.3
+      vitest:
+        specifier: ^3.0.9
+        version: 3.1.3(@types/node@22.15.17)(jiti@2.4.2)(lightningcss@1.29.2)(tsx@4.19.4)
+
+  packages/service-dislike:
     dependencies:
       '@atomone/chronostate':
         specifier: ^2.2.2
         version: 2.2.2
+      '@atomone/dither-api-types':
+        specifier: link:..\lib-api-types
+        version: link:../lib-api-types
+      '@atomone/event-consumer':
+        specifier: ^1.0.12
+        version: 1.0.12
+      '@types/node':
+        specifier: ^22.13.10
+        version: 22.15.17
+      amqplib:
+        specifier: ^0.10.7
+        version: 0.10.8
+      tsx:
+        specifier: ^4.19.3
+        version: 4.19.4
+    devDependencies:
+      '@types/amqplib':
+        specifier: ^0.10.7
+        version: 0.10.7
+      typescript:
+        specifier: ^5.8.2
+        version: 5.8.3
+
+  packages/service-flag:
+    dependencies:
+      '@atomone/chronostate':
+        specifier: ^2.2.2
+        version: 2.2.2
+      '@atomone/dither-api-types':
+        specifier: link:..\lib-api-types
+        version: link:../lib-api-types
+      '@atomone/event-consumer':
+        specifier: ^1.0.12
+        version: 1.0.12
+      '@types/node':
+        specifier: ^22.13.10
+        version: 22.15.17
+      amqplib:
+        specifier: ^0.10.7
+        version: 0.10.8
+      tsx:
+        specifier: ^4.19.3
+        version: 4.19.4
+    devDependencies:
+      '@types/amqplib':
+        specifier: ^0.10.7
+        version: 0.10.7
+      typescript:
+        specifier: ^5.8.2
+        version: 5.8.3
+
+  packages/service-follow:
+    dependencies:
+      '@atomone/chronostate':
+        specifier: ^2.2.2
+        version: 2.2.2
+      '@atomone/dither-api-feed':
+        specifier: link:..\api-main
+        version: link:../api-main
+      '@atomone/dither-api-types':
+        specifier: link:..\lib-api-types
+        version: link:../lib-api-types
+      '@atomone/event-consumer':
+        specifier: ^1.0.12
+        version: 1.0.12
+      '@types/node':
+        specifier: ^22.13.10
+        version: 22.15.17
+      amqplib:
+        specifier: ^0.10.7
+        version: 0.10.8
+      tsx:
+        specifier: ^4.19.3
+        version: 4.19.4
+    devDependencies:
+      '@types/amqplib':
+        specifier: ^0.10.7
+        version: 0.10.7
+      typescript:
+        specifier: ^5.8.2
+        version: 5.8.3
+
+  packages/service-like:
+    dependencies:
+      '@atomone/chronostate':
+        specifier: ^2.2.2
+        version: 2.2.2
+      '@atomone/dither-api-types':
+        specifier: link:..\lib-api-types
+        version: link:../lib-api-types
+      '@atomone/event-consumer':
+        specifier: ^1.0.12
+        version: 1.0.12
+      '@types/node':
+        specifier: ^22.13.10
+        version: 22.15.17
+      amqplib:
+        specifier: ^0.10.7
+        version: 0.10.8
+      tsx:
+        specifier: ^4.19.3
+        version: 4.19.4
+    devDependencies:
+      '@types/amqplib':
+        specifier: ^0.10.7
+        version: 0.10.7
+      typescript:
+        specifier: ^5.8.2
+        version: 5.8.3
+
+  packages/service-post:
+    dependencies:
+      '@atomone/chronostate':
+        specifier: ^2.2.2
+        version: 2.2.2
+      '@atomone/dither-api-types':
+        specifier: link:..\lib-api-types
+        version: link:../lib-api-types
+      '@atomone/event-consumer':
+        specifier: ^1.0.12
+        version: 1.0.12
+      '@types/node':
+        specifier: ^22.13.10
+        version: 22.15.17
+      amqplib:
+        specifier: ^0.10.7
+        version: 0.10.8
+      tsx:
+        specifier: ^4.19.3
+        version: 4.19.4
+    devDependencies:
+      '@types/amqplib':
+        specifier: ^0.10.7
+        version: 0.10.7
+      typescript:
+        specifier: ^5.8.2
+        version: 5.8.3
+
+  packages/service-post-remove:
+    dependencies:
+      '@atomone/chronostate':
+        specifier: ^2.2.2
+        version: 2.2.2
+      '@atomone/dither-api-types':
+        specifier: link:..\lib-api-types
+        version: link:../lib-api-types
+      '@atomone/event-consumer':
+        specifier: ^1.0.12
+        version: 1.0.12
+      '@types/node':
+        specifier: ^22.13.10
+        version: 22.15.17
+      amqplib:
+        specifier: ^0.10.7
+        version: 0.10.8
+      tsx:
+        specifier: ^4.19.3
+        version: 4.19.4
+    devDependencies:
+      '@types/amqplib':
+        specifier: ^0.10.7
+        version: 0.10.7
+      typescript:
+        specifier: ^5.8.2
+        version: 5.8.3
+
+  packages/service-reply:
+    dependencies:
+      '@atomone/chronostate':
+        specifier: ^2.2.2
+        version: 2.2.2
+      '@atomone/dither-api-types':
+        specifier: link:..\lib-api-types
+        version: link:../lib-api-types
+      '@atomone/event-consumer':
+        specifier: ^1.0.12
+        version: 1.0.12
+      '@types/node':
+        specifier: ^22.13.10
+        version: 22.15.17
+      amqplib:
+        specifier: ^0.10.7
+        version: 0.10.8
+      tsx:
+        specifier: ^4.19.3
+        version: 4.19.4
+    devDependencies:
+      '@types/amqplib':
+        specifier: ^0.10.7
+        version: 0.10.7
+      typescript:
+        specifier: ^5.8.2
+        version: 5.8.3
+
+  packages/service-unfollow:
+    dependencies:
+      '@atomone/chronostate':
+        specifier: ^2.2.2
+        version: 2.2.2
+      '@atomone/dither-api-types':
+        specifier: link:..\lib-api-types
+        version: link:../lib-api-types
       '@atomone/event-consumer':
         specifier: ^1.0.12
         version: 1.0.12
@@ -470,31 +535,6 @@ importers:
         version: 4.19.4
       typescript:
         specifier: ^5.2.2
-        version: 5.8.3
-
-  packages/unfollow-service:
-    dependencies:
-      '@atomone/chronostate':
-        specifier: ^2.2.2
-        version: 2.2.2
-      '@atomone/event-consumer':
-        specifier: ^1.0.12
-        version: 1.0.12
-      '@types/node':
-        specifier: ^22.13.10
-        version: 22.15.17
-      amqplib:
-        specifier: ^0.10.7
-        version: 0.10.8
-      tsx:
-        specifier: ^4.19.3
-        version: 4.19.4
-    devDependencies:
-      '@types/amqplib':
-        specifier: ^0.10.7
-        version: 0.10.7
-      typescript:
-        specifier: ^5.8.2
         version: 5.8.3
 
 packages:

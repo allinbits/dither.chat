@@ -1,16 +1,9 @@
+import { type Gets } from '@atomone/dither-api-types';
 import { eq, sql } from 'drizzle-orm';
-import { t } from 'elysia';
 
 import { getDatabase } from '../../drizzle/db';
 import { FlagsTable } from '../../drizzle/schema';
 import { getJsonbArrayCount } from '../utility';
-
-export const FlagsQuery = t.Object({
-    hash: t.String(),
-    limit: t.Optional(t.Number()),
-    offset: t.Optional(t.Number()),
-    count: t.Optional(t.Boolean()),
-});
 
 const statement = getDatabase()
     .select()
@@ -20,7 +13,7 @@ const statement = getDatabase()
     .offset(sql.placeholder('offset'))
     .prepare('stmnt_get_flags');
 
-export async function Flags(query: typeof FlagsQuery.static) {
+export async function Flags(query: typeof Gets.FlagsQuery.static) {
     if (!query.hash) {
         return {
             status: 400,

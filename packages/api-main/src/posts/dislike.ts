@@ -1,16 +1,8 @@
+import { type Posts } from '@atomone/dither-api-types';
 import { eq, sql } from 'drizzle-orm';
-import { t } from 'elysia';
 
 import { getDatabase } from '../../drizzle/db';
 import { DislikesTable, FeedTable } from '../../drizzle/schema';
-
-export const DislikeBody = t.Object({
-    hash: t.String(),
-    from: t.String(),
-    postHash: t.String(),
-    quantity: t.String(),
-    timestamp: t.String(),
-});
 
 const statement = getDatabase()
     .insert(DislikesTable)
@@ -32,17 +24,17 @@ const statementAddDislikeToPost = getDatabase()
     .where(eq(FeedTable.hash, sql.placeholder('post_hash')))
     .prepare('stmnt_add_dislike_count_to_post');
 
-export async function Dislike(body: typeof DislikeBody.static) {
+export async function Dislike(body: typeof Posts.DislikeBody.static) {
     try {
         await statement.execute({
-            post_hash: body.postHash,
+            post_hash: body.post_hash,
             hash: body.hash,
             author: body.from,
             quantity: body.quantity,
             timestamp: new Date(body.timestamp),
         });
 
-        await statementAddDislikeToPost.execute({ post_hash: body.postHash, quantity: body.quantity });
+        await statementAddDislikeToPost.execute({ post_hash: body.post_hash, quantity: body.quantity });
 
         return { status: 200 };
     }

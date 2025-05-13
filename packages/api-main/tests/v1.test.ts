@@ -58,7 +58,7 @@ describe('v1', { sequential: true }, () => {
         const body: typeof Posts.ReplyBody.static = {
             from: addressUserA,
             hash: getRandomHash(),
-            postHash: response.rows[0].hash,
+            post_hash: response.rows[0].hash,
             msg: genericPostMessage,
             quantity: '1',
             timestamp: '2025-04-16T19:46:42Z',
@@ -108,7 +108,7 @@ describe('v1', { sequential: true }, () => {
             const body: typeof Posts.LikeBody.static = {
                 from: addressUserA,
                 hash: getRandomHash(),
-                postHash: response.rows[1].hash,
+                post_hash: response.rows[1].hash,
                 quantity: '1',
                 timestamp: '2025-04-16T19:46:42Z',
             };
@@ -151,7 +151,7 @@ describe('v1', { sequential: true }, () => {
             const body: typeof Posts.DislikeBody.static = {
                 from: addressUserA,
                 hash: getRandomHash(),
-                postHash: response.rows[1].hash,
+                post_hash: response.rows[1].hash,
                 quantity: '1',
                 timestamp: '2025-04-16T19:46:42Z',
             };
@@ -197,7 +197,7 @@ describe('v1', { sequential: true }, () => {
             const body: typeof Posts.FlagBody.static = {
                 from: addressUserA,
                 hash: getRandomHash(),
-                postHash: response.rows[1].hash,
+                post_hash: response.rows[1].hash,
                 quantity: '1',
                 timestamp: '2025-04-16T19:46:42Z',
             };
@@ -249,7 +249,7 @@ describe('v1', { sequential: true }, () => {
             timestamp: '2025-04-16T19:46:42Z',
         };
 
-        const response = await post(`follow`, body);
+        const response = await post(`follow`, body, 'WRITE');
         assert.isOk(response?.status === 400, 'additional follow was allowed somehow');
     });
 

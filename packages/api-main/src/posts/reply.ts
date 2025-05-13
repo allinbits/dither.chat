@@ -1,17 +1,8 @@
+import { type Posts } from '@atomone/dither-api-types';
 import { eq, sql } from 'drizzle-orm';
-import { t } from 'elysia';
 
 import { getDatabase } from '../../drizzle/db';
 import { FeedTable } from '../../drizzle/schema';
-
-export const ReplyBody = t.Object({
-    hash: t.String(),
-    postHash: t.String(),
-    timestamp: t.String(),
-    from: t.String(),
-    msg: t.String(),
-    quantity: t.String(),
-});
 
 const statement = getDatabase()
     .insert(FeedTable)
@@ -32,19 +23,19 @@ const statementAddReplyCount = getDatabase()
     .where(eq(FeedTable.hash, sql.placeholder('post_hash')))
     .prepare('stmnt_add_reply_count');
 
-export async function Reply(body: typeof ReplyBody.static) {
+export async function Reply(body: typeof Posts.ReplyBody.static) {
     try {
         await statement.execute({
             author: body.from,
             hash: body.hash,
             message: body.msg,
-            post_hash: body.postHash,
+            post_hash: body.post_hash,
             quantity: body.quantity,
             timestamp: new Date(body.timestamp),
         });
 
         await statementAddReplyCount.execute({
-            post_hash: body.postHash,
+            post_hash: body.post_hash,
         });
 
         return { status: 200 };

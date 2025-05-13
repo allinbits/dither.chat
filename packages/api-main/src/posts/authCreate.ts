@@ -1,14 +1,10 @@
-import { t } from 'elysia';
+import { type Posts } from '@atomone/dither-api-types';
 
 import { useUserAuth } from '../shared/useUserAuth';
 
-export const AuthCreateBody = t.Object({
-    address: t.String(),
-});
-
 const { add } = useUserAuth();
 
-export async function AuthCreate(body: typeof AuthCreateBody.static) {
+export async function AuthCreate(body: typeof Posts.AuthCreateBody.static) {
     try {
         return { status: 200, ...add(body.address) };
     }

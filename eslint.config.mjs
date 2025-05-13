@@ -117,6 +117,7 @@ export default [
             '**/*.conf',
             '**/nginx/**',
             '**/data/postgres_data',
+            '**/dist/**',
         ],
     },
 ];

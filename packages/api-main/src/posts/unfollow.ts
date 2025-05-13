@@ -1,15 +1,8 @@
+import { type Posts } from '@atomone/dither-api-types';
 import { and, eq, sql } from 'drizzle-orm';
-import { t } from 'elysia';
 
 import { getDatabase } from '../../drizzle/db';
 import { FollowsTable } from '../../drizzle/schema';
-
-export const UnfollowBody = t.Object({
-    hash: t.String(),
-    from: t.String(),
-    address: t.String(),
-    timestamp: t.String(),
-});
 
 const statementRemoveFollowing = getDatabase()
     .update(FollowsTable)
@@ -22,7 +15,7 @@ const statementRemoveFollowing = getDatabase()
     )
     .prepare('stmnt_remove_follower');
 
-export async function Unfollow(body: typeof UnfollowBody.static) {
+export async function Unfollow(body: typeof Posts.UnfollowBody.static) {
     try {
         await statementRemoveFollowing.execute({ follower: body.from, following: body.address, removed_at: new Date(body.timestamp) });
 

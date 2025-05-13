@@ -1,15 +1,8 @@
+import { type Posts } from '@atomone/dither-api-types';
 import { sql } from 'drizzle-orm';
-import { t } from 'elysia';
 
 import { getDatabase } from '../../drizzle/db';
 import { FollowsTable } from '../../drizzle/schema';
-
-export const FollowBody = t.Object({
-    hash: t.String(),
-    from: t.String(),
-    address: t.String(),
-    timestamp: t.String(),
-});
 
 const statementAddFollower = getDatabase()
     .insert(FollowsTable)
@@ -21,7 +14,7 @@ const statementAddFollower = getDatabase()
     })
     .prepare('stmnt_add_follower');
 
-export async function Follow(body: typeof FollowBody.static) {
+export async function Follow(body: typeof Posts.FollowBody.static) {
     try {
         await statementAddFollower.execute({
             follower: body.from,

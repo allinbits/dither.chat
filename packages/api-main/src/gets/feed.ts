@@ -1,14 +1,8 @@
+import { type Gets } from '@atomone/dither-api-types';
 import { and, count, isNull, sql } from 'drizzle-orm';
-import { t } from 'elysia';
 
 import { getDatabase } from '../../drizzle/db';
 import { FeedTable } from '../../drizzle/schema';
-
-export const FeedQuery = t.Object({
-    limit: t.Optional(t.Number()),
-    offset: t.Optional(t.Number()),
-    count: t.Optional(t.Boolean()),
-});
 
 const statement = getDatabase()
     .select()
@@ -18,7 +12,7 @@ const statement = getDatabase()
     .where(and(isNull(FeedTable.removed_at), isNull(FeedTable.post_hash)))
     .prepare('stmnt_get_feed');
 
-export async function Feed(query: typeof FeedQuery.static) {
+export async function Feed(query: typeof Gets.FeedQuery.static) {
     if (query.count) {
         try {
             return await getDatabase().select({ count: count() }).from(FeedTable);
