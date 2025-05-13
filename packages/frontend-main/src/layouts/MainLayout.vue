@@ -15,7 +15,10 @@ const isMobile = useMediaQuery(`(max-width: ${breakpoints.md - 1}px)`);
     <slot />
   </MainLayoutMobile>
 
-  <div v-else class="flex flex-row justify-between">
+  <div
+    v-else
+    class="flex flex-row justify-between"
+  >
     <div class="w-full h-[100vh] flex-1 xl:flex-auto overflow-y-auto sticky top-0">
       <div class="w-full max-w-[280px] h-full py-6 pl-6 pr-4 ml-auto">
         <LeftPanel />
@@ -28,9 +31,8 @@ const isMobile = useMediaQuery(`(max-width: ${breakpoints.md - 1}px)`);
 
     <div class="w-full h-[100vh] flex-1 lg:flex-4 xl:flex-auto overflow-y-auto sticky top-0">
       <div class="w-full max-w-[358px] h-full p-6 hidden lg:block">
-        <RightPanel  />
+        <RightPanel />
       </div>
     </div>
-
   </div>
 </template>

@@ -34,13 +34,25 @@ watch(
 
 <template>
   <MainLayout>
-
     <div class="post">
-      <div v-if="loading" class="loading">Loading...</div>
+      <div
+        v-if="loading"
+        class="loading"
+      >
+        Loading...
+      </div>
 
-      <div v-if="error" class="error">{{ error }}</div>
+      <div
+        v-if="error"
+        class="error"
+      >
+        {{ error }}
+      </div>
 
-      <div v-if="post" class="content">
+      <div
+        v-if="post"
+        class="content"
+      >
         <span>{{ post.message }}</span>
       <!-- <p>{{ post.body }}</p> -->
       </div>

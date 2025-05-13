@@ -5,7 +5,6 @@ import MainLayout from '@/layouts/MainLayout.vue';
 
 <template>
   <MainLayout>
-
     <div>
     <!-- TODO -->
     </div>
