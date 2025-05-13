@@ -17,7 +17,7 @@
     },
     "dependencies": {
         "@atomone/chronostate": "^2.2.1",
-        "@atomone/dither-api-types": "link:..\\api-types",
+        "@atomone/dither-api-types": "link:..\\lib-api-types",
         "@cosmjs/crypto": "^0.33.1",
         "@cosmjs/encoding": "^0.33.1",
         "@elysiajs/cors": "~1.2.0",

@@ -1,5 +1,5 @@
 {
-    "name": "dislike-service",
+    "name": "post-service",
     "version": "1.0.0",
     "description": "",
     "author": "stuyk",
@@ -11,7 +11,7 @@
     },
     "dependencies": {
         "@atomone/chronostate": "^2.2.2",
-        "@atomone/dither-api-types": "link:..\\api-types",
+        "@atomone/dither-api-types": "link:..\\lib-api-types",
         "@atomone/event-consumer": "^1.0.12",
         "@types/node": "^22.13.10",
         "amqplib": "^0.10.7",
