@@ -5,6 +5,8 @@ import { computed, ref } from 'vue';
 import { bech32 } from 'bech32';
 import { Wallet } from 'lucide-vue-next';
 
+import { shorten } from '@/utils';
+
 import { getWalletHelp, useWallet, Wallets } from '@/composables/useWallet';
 
 import ButtonCustom from '../ui/button/button-custom/ButtonCustom.vue';
@@ -23,7 +25,6 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from '@/components/ui/popover';
-import { shorten } from '@/utility';
 
 const isConnecting = ref(false);
 const isError = ref(false);

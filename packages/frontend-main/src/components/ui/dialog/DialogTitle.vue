@@ -1,18 +1,17 @@
 <script setup lang="ts">
-import { computed, type HTMLAttributes } from 'vue';
-import { DialogTitle, type DialogTitleProps, useForwardProps } from 'reka-ui';
+import { cn } from '@/utility'
+import { DialogTitle, type DialogTitleProps, useForwardProps } from 'reka-ui'
+import { computed, type HTMLAttributes } from 'vue'
 
-import { cn } from '@/lib/utils';
-
-const props = defineProps<DialogTitleProps & { class?: HTMLAttributes['class'] }>();
+const props = defineProps<DialogTitleProps & { class?: HTMLAttributes['class'] }>()
 
 const delegatedProps = computed(() => {
-    const { class: _, ...delegated } = props;
+  const { class: _, ...delegated } = props
 
-    return delegated;
-});
+  return delegated
+})
 
-const forwardedProps = useForwardProps(delegatedProps);
+const forwardedProps = useForwardProps(delegatedProps)
 </script>
 
 <template>

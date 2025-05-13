@@ -1,16 +1,15 @@
 <script setup lang="ts">
-import { computed, type HTMLAttributes } from 'vue';
-import { DialogOverlay, type DialogOverlayProps } from 'reka-ui';
+import { cn } from '@/utility'
+import { DialogOverlay, type DialogOverlayProps } from 'reka-ui'
+import { computed, type HTMLAttributes } from 'vue'
 
-import { cn } from '@/lib/utils';
-
-const props = defineProps<DialogOverlayProps & { class?: HTMLAttributes['class'] }>();
+const props = defineProps<DialogOverlayProps & { class?: HTMLAttributes['class'] }>()
 
 const delegatedProps = computed(() => {
-    const { class: _, ...delegated } = props;
+  const { class: _, ...delegated } = props
 
-    return delegated;
-});
+  return delegated
+})
 </script>
 
 <template>

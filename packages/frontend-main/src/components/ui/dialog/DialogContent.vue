@@ -1,29 +1,27 @@
 <script setup lang="ts">
-import { computed, type HTMLAttributes } from 'vue';
-import { X } from 'lucide-vue-next';
+import { cn } from '@/utility'
+import { X } from 'lucide-vue-next'
 import {
-    DialogClose,
-    DialogContent,
-    type DialogContentEmits,
-    type DialogContentProps,
-    DialogPortal,
-    useForwardPropsEmits,
-} from 'reka-ui';
+  DialogClose,
+  DialogContent,
+  type DialogContentEmits,
+  type DialogContentProps,
+  DialogPortal,
+  useForwardPropsEmits,
+} from 'reka-ui'
+import { computed, type HTMLAttributes } from 'vue'
+import DialogOverlay from './DialogOverlay.vue'
 
-import DialogOverlay from './DialogOverlay.vue';
-
-import { cn } from '@/lib/utils';
-
-const props = defineProps<DialogContentProps & { class?: HTMLAttributes['class'] }>();
-const emits = defineEmits<DialogContentEmits>();
+const props = defineProps<DialogContentProps & { class?: HTMLAttributes['class'] }>()
+const emits = defineEmits<DialogContentEmits>()
 
 const delegatedProps = computed(() => {
-    const { class: _, ...delegated } = props;
+  const { class: _, ...delegated } = props
 
-    return delegated;
-});
+  return delegated
+})
 
-const forwarded = useForwardPropsEmits(delegatedProps, emits);
+const forwarded = useForwardPropsEmits(delegatedProps, emits)
 </script>
 
 <template>
