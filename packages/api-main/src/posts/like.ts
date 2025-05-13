@@ -1,16 +1,8 @@
+import { type Posts } from '@atomone/dither-api-types';
 import { eq, sql } from 'drizzle-orm';
-import { t } from 'elysia';
 
 import { getDatabase } from '../../drizzle/db';
 import { FeedTable, LikesTable } from '../../drizzle/schema';
-
-export const LikeBody = t.Object({
-    hash: t.String(),
-    from: t.String(),
-    post_hash: t.String(),
-    quantity: t.String(),
-    timestamp: t.String(),
-});
 
 const statement = getDatabase()
     .insert(LikesTable)
@@ -32,7 +24,7 @@ const statementAddLikeToPost = getDatabase()
     .where(eq(FeedTable.hash, sql.placeholder('post_hash')))
     .prepare('stmnt_add_like_count_to_post');
 
-export async function Like(body: typeof LikeBody.static) {
+export async function Like(body: typeof Posts.LikeBody.static) {
     try {
         await statement.execute({
             post_hash: body.post_hash,

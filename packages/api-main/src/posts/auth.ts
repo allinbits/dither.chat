@@ -1,16 +1,10 @@
-import { t } from 'elysia';
+import { type Posts } from '@atomone/dither-api-types';
 
 import { useUserAuth } from '../shared/useUserAuth';
 
-export const AuthBody = t.Object({
-    id: t.Number(),
-    pub_key: t.Object({ type: t.String(), value: t.String() }),
-    signature: t.String(),
-});
-
 const { verify } = useUserAuth();
 
-export async function Auth(body: typeof AuthBody.static) {
+export async function Auth(body: typeof Posts.AuthBody.static) {
     try {
         return verify(body.pub_key.value, body.signature, body.id);
     }

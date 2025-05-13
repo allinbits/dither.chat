@@ -1,16 +1,8 @@
+import { type Posts } from '@atomone/dither-api-types';
 import { eq, sql } from 'drizzle-orm';
-import { t } from 'elysia';
 
 import { getDatabase } from '../../drizzle/db';
 import { FeedTable, FlagsTable } from '../../drizzle/schema';
-
-export const FlagBody = t.Object({
-    hash: t.String(),
-    from: t.String(),
-    post_hash: t.String(),
-    quantity: t.String(),
-    timestamp: t.String(),
-});
 
 const statement = getDatabase()
     .insert(FlagsTable)
@@ -32,7 +24,7 @@ const statementAddFlagToPost = getDatabase()
     .where(eq(FeedTable.hash, sql.placeholder('post_hash')))
     .prepare('stmnt_add_flag_count_to_post');
 
-export async function Flag(body: typeof FlagBody.static) {
+export async function Flag(body: typeof Posts.FlagBody.static) {
     try {
         await statement.execute({
             post_hash: body.post_hash,

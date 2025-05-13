@@ -1,16 +1,8 @@
+import { type Posts } from '@atomone/dither-api-types';
 import { desc, eq, sql } from 'drizzle-orm';
-import { t } from 'elysia';
 
 import { getDatabase } from '../../drizzle/db';
 import { AuditTable, FeedTable } from '../../drizzle/schema';
-
-export const PostBody = t.Object({
-    hash: t.String(),
-    timestamp: t.String(),
-    from: t.String(),
-    msg: t.String(),
-    quantity: t.String(),
-});
 
 const statement = getDatabase()
     .insert(FeedTable)
@@ -24,7 +16,7 @@ const statement = getDatabase()
     .onConflictDoNothing()
     .prepare('stmnt_post');
 
-export async function Post(body: typeof PostBody.static) {
+export async function Post(body: typeof Posts.PostBody.static) {
     try {
         await statement.execute({
             hash: body.hash,
@@ -43,7 +35,7 @@ export async function Post(body: typeof PostBody.static) {
     }
 }
 
-async function removePostIfBanned(body: typeof PostBody.static) {
+async function removePostIfBanned(body: typeof Posts.PostBody.static) {
     const [lastAuditOnUser] = await getDatabase()
         .select()
         .from(AuditTable)

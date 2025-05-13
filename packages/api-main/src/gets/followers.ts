@@ -1,14 +1,8 @@
+import { type Gets } from '@atomone/dither-api-types';
 import { and, eq, isNull, sql } from 'drizzle-orm';
-import { t } from 'elysia';
 
 import { getDatabase } from '../../drizzle/db';
 import { FollowsTable } from '../../drizzle/schema';
-
-export const FollowersQuery = t.Object({
-    limit: t.Optional(t.Number()),
-    offset: t.Optional(t.Number()),
-    address: t.String(),
-});
 
 const statementGetFollowers = getDatabase()
     .select({ address: FollowsTable.follower, hash: FollowsTable.hash })
@@ -18,7 +12,7 @@ const statementGetFollowers = getDatabase()
     .offset(sql.placeholder('offset'))
     .prepare('stmnt_get_followers');
 
-export async function Followers(query: typeof FollowersQuery.static) {
+export async function Followers(query: typeof Gets.FollowersQuery.static) {
     let limit = typeof query.limit !== 'undefined' ? Number(query.limit) : 100;
     const offset = typeof query.offset !== 'undefined' ? Number(query.offset) : 0;
 

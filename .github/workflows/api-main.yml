@@ -28,6 +28,11 @@ jobs:
       - name: Set up Docker
         uses: docker/setup-docker-action@v4
 
+      - name: Build API Types
+        run: |
+          cd ./packages/api-types
+          pnpm build
+
       - name: Run Docker Compose Up
         run: |
           cd ./packages/api-main

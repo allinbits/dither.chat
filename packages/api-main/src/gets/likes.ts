@@ -1,16 +1,9 @@
+import { type Gets } from '@atomone/dither-api-types';
 import { eq, sql } from 'drizzle-orm';
-import { t } from 'elysia';
 
 import { getDatabase } from '../../drizzle/db';
 import { LikesTable } from '../../drizzle/schema';
 import { getJsonbArrayCount } from '../utility';
-
-export const LikesQuery = t.Object({
-    hash: t.String(),
-    limit: t.Optional(t.Number()),
-    offset: t.Optional(t.Number()),
-    count: t.Optional(t.Boolean()),
-});
 
 const statement = getDatabase()
     .select()
@@ -20,7 +13,7 @@ const statement = getDatabase()
     .offset(sql.placeholder('offset'))
     .prepare('stmnt_get_likes');
 
-export async function Likes(query: typeof LikesQuery.static) {
+export async function Likes(query: typeof Gets.LikesQuery.static) {
     if (!query.hash) {
         return {
             status: 400,

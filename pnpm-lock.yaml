@@ -47,6 +47,9 @@ importers:
       '@atomone/chronostate':
         specifier: ^2.2.1
         version: 2.2.2
+      '@atomone/dither-api-types':
+        specifier: link:..\api-types
+        version: link:../api-types
       '@cosmjs/crypto':
         specifier: ^0.33.1
         version: 0.33.1
@@ -111,6 +114,16 @@ importers:
       vitest:
         specifier: ^3.1.2
         version: 3.1.3(@types/node@22.15.17)(jiti@2.4.2)(lightningcss@1.29.2)(tsx@4.19.4)
+
+  packages/api-types:
+    dependencies:
+      elysia:
+        specifier: ~1.2.25
+        version: 1.2.25(@sinclair/typebox@0.34.33)(openapi-types@12.1.3)(typescript@5.8.3)
+    devDependencies:
+      typescript:
+        specifier: ^5.8.3
+        version: 5.8.3
 
   packages/dead-letter-service:
     dependencies:
@@ -214,6 +227,9 @@ importers:
       '@atomone/chronostate':
         specifier: ^2.2.2
         version: 2.2.2
+      '@atomone/dither-api-feed':
+        specifier: link:..\api-main
+        version: link:../api-main
       '@atomone/event-consumer':
         specifier: ^1.0.12
         version: 1.0.12

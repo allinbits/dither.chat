@@ -1,16 +1,8 @@
+import { type Posts } from '@atomone/dither-api-types';
 import { and, eq, inArray, isNull, sql } from 'drizzle-orm';
-import { t } from 'elysia';
 
 import { getDatabase } from '../../drizzle/db';
 import { AuditTable, FeedTable, ModeratorTable } from '../../drizzle/schema';
-
-export const ModRemovePostBody = t.Object({
-    hash: t.String(),
-    mod_address: t.String(),
-    post_hash: t.String(),
-    reason: t.String(),
-    timestamp: t.String(),
-});
 
 const statementAuditRemovePost = getDatabase()
     .insert(AuditTable)
@@ -23,7 +15,7 @@ const statementAuditRemovePost = getDatabase()
     })
     .prepare('stmnt_audit_remove_post');
 
-export async function ModRemovePost(body: typeof ModRemovePostBody.static) {
+export async function ModRemovePost(body: typeof Posts.ModRemovePostBody.static) {
     try {
         const [post] = await getDatabase().select().from(FeedTable).where(eq(FeedTable.hash, body.post_hash)).limit(1);
         if (!post) {
@@ -78,7 +70,7 @@ const statementAuditRestorePost = getDatabase()
     })
     .prepare('stmnt_audit_restore_post');
 
-export async function ModRestorePost(body: typeof ModRemovePostBody.static) {
+export async function ModRestorePost(body: typeof Posts.ModRemovePostBody.static) {
     try {
         const [post] = await getDatabase().select().from(FeedTable).where(eq(FeedTable.hash, body.post_hash)).limit(1);
         if (!post) {
@@ -135,14 +127,6 @@ export async function ModRestorePost(body: typeof ModRemovePostBody.static) {
     }
 }
 
-export const ModBanBody = t.Object({
-    hash: t.String(),
-    mod_address: t.String(),
-    user_address: t.String(),
-    reason: t.String(),
-    timestamp: t.String(),
-});
-
 const statementAuditBanUser = getDatabase()
     .insert(AuditTable)
     .values({
@@ -154,7 +138,7 @@ const statementAuditBanUser = getDatabase()
     })
     .prepare('stmnt_audit_ban_user');
 
-export async function ModBan(body: typeof ModBanBody.static) {
+export async function ModBan(body: typeof Posts.ModBanBody.static) {
     try {
         const [mod] = await getDatabase()
             .select()
@@ -204,7 +188,7 @@ const statementAuditUnbanUser = getDatabase()
     })
     .prepare('stmnt_audit_unban_user');
 
-export async function ModUnban(body: typeof ModBanBody.static) {
+export async function ModUnban(body: typeof Posts.ModBanBody.static) {
     try {
         const [mod] = await getDatabase()
             .select()

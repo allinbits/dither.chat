@@ -1,17 +1,10 @@
+import { type Posts } from '@atomone/dither-api-types';
 import { and, eq } from 'drizzle-orm';
-import { t } from 'elysia';
 
 import { getDatabase } from '../../drizzle/db';
 import { FeedTable } from '../../drizzle/schema';
 
-export const PostRemoveBody = t.Object({
-    hash: t.String(),
-    post_hash: t.String(),
-    from: t.String(),
-    timestamp: t.String(),
-});
-
-export async function PostRemove(body: typeof PostRemoveBody.static) {
+export async function PostRemove(body: typeof Posts.PostRemoveBody.static) {
     try {
         const selectResults = await getDatabase()
             .select()

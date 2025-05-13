@@ -14,6 +14,7 @@ declare module '@atomone/chronostate' {
         }
     }
 }
+
 const config = useConfig();
 const apiRoot = process.env.API_ROOT || 'http://localhost:3000';
 

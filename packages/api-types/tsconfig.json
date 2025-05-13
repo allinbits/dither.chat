@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "target": "ESNext",
+        "module": "ESNext",
+        "moduleResolution": "Bundler",
+        "lib": ["ESNext", "DOM"],
+        "outDir": "./dist",
+        "strict": true,
+        "allowJs": true,
+        "checkJs": false,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "rootDir": ".",
+        "declaration": true
+    },
+    "include": ["src", "drizzle.config.ts", "db", "drizzle/schema.ts", "drizzle/db.ts"],
+    "exclude": ["node_modules", "dist"]
+}

@@ -1,14 +1,8 @@
+import { type Gets } from '@atomone/dither-api-types';
 import { and, eq, isNull, sql } from 'drizzle-orm';
-import { t } from 'elysia';
 
 import { getDatabase } from '../../drizzle/db';
 import { FeedTable } from '../../drizzle/schema';
-
-export const PostsQuery = t.Object({
-    limit: t.Optional(t.Number()),
-    offset: t.Optional(t.Number()),
-    address: t.String(),
-});
 
 const statement = getDatabase()
     .select()
@@ -18,7 +12,7 @@ const statement = getDatabase()
     .offset(sql.placeholder('offset'))
     .prepare('stmnt_get_posts');
 
-export async function Posts(query: typeof PostsQuery.static) {
+export async function Posts(query: typeof Gets.PostsQuery.static) {
     let limit = typeof query.limit !== 'undefined' ? Number(query.limit) : 100;
     const offset = typeof query.offset !== 'undefined' ? Number(query.offset) : 0;
 
