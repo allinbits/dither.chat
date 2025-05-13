@@ -18,6 +18,11 @@ import {
     DialogContent,
     DialogTrigger,
 } from '@/components/ui/dialog';
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from '@/components/ui/popover';
 import { shorten } from '@/utility';
 
 const isConnecting = ref(false);
@@ -122,16 +127,28 @@ const isValidAddress = computed(() => {
   <div>
     <!-- Normal signed in account display -->
     <template v-if="connectedState">
-      <div class="flex align-center items-stretch cursor-pointer">
-        <div class="bg-gradient w-10 h-10 rounded-full mr-3"></div>
-        <div class="flex flex-col justify-around">
-          <div class="text-light text-200">{{ shorten(address) }}</div>
-
-          <div class="text-100 text-grey-100">
-            <UserBalance :address="address" /> {{ chainConfig.stakeCurrency.coinDenom }}
+      <Popover>
+        <PopoverTrigger>
+          <div class="flex flex-row items-center justify-center cursor-pointer">
+            <div class="bg-secondary w-10 h-10 rounded-full mr-3"></div>
+            <div class="flex flex-col justify-around">
+              <div class="text-light text-200">{{ shorten(address) }}</div>
+            </div>
           </div>
-        </div>
-      </div>
+        </PopoverTrigger>
+        <PopoverContent>
+          <div class="flex flex-col gap-4">
+            <ButtonCustom
+              class="my-4 justify-center"
+              @click="
+                signOut();
+              "
+            >
+              {{ $t('components.WalletConnect.disconnect') }}
+            </ButtonCustom>
+          </div>
+        </PopoverContent>
+      </Popover>
     </template>
     <template v-else>
       <Dialog>
