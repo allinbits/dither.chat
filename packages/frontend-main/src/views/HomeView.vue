@@ -4,10 +4,8 @@ import MainLayout from '@/layouts/MainLayout.vue';
 
 </script>
 
-<template class="h-screen">
+<template>
   <MainLayout>
-    <div class="min-w-[600px] min-h-full top-0 h-screen">
-      <Feed />
-    </div>
+    <Feed />
   </MainLayout>
 </template>

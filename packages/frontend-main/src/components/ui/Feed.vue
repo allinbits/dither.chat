@@ -6,10 +6,10 @@ const { data } = useFeed();
 
 </script>
 
-<template>
-  <div class="flex flex-col gap-4">
+<template >
+  <div class="flex flex-col w-full gap-4 border-x border-x-neutral-200 ">
 
-    <div v-for="(post, index) in data" :key="index" class="flex flex-col border-b py-4">
+    <div v-for="(post, index) in data" :key="index" class="flex flex-col border-b py-4 px-4">
       <span>
         {{ post.message }}
       </span>

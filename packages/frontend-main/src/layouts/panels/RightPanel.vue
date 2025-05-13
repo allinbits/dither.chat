@@ -1,12 +1,14 @@
 <script setup lang="ts">
 
+import ToggleThemeButton from '@/components/ui/ToggleThemeButton.vue';
+
 </script>
 
 <template>
-  <!-- TODO: Make right menu -->
-  <!-- This should probably stick -->
-  <aside class="flex flex-col max-w-[358px] h-full p-5 overflow-y-auto fixed left-[calc(50%+(var(--main-max-width)/2))] border-l border-neutral-200">
+  <!-- TODO -->
+  <aside
+    class="flex flex-col h-full w-full gap-4">
     <ToggleThemeButton/>
-    <input placeholder="search" class="bg-neutral-200 p-2 w-full" />
+    <input placeholder="search" class="bg-neutral-200 p-2 h-[44px]" />
   </aside>
 </template>

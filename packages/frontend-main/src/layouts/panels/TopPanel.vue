@@ -3,6 +3,5 @@
 </script>
 
 <template>
-
   <div/>
 </template>

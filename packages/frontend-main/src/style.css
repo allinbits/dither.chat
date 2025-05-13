@@ -41,12 +41,12 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
-  --text-2xl: 2rem;
-  --text-xl: 1.6875rem;
-  --text-lg: 1.5rem;
-  --text-base: 1.0625rem;
-  --text-sm: 0.9375rem;
-  --text-xs: 0.8125rem;
+  --text-2xl: 2rem; /* 32px */
+  --text-xl: 1.6875rem; /* 27px */
+  --text-lg: 1.5rem; /* 24px */
+  --text-base: 1.0625rem; /* 17px */
+  --text-sm: 0.9375rem; /* 15px */
+  --text-xs: 0.8125rem; /* 13px */
 }
 
 :root {
@@ -83,7 +83,7 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-  --main-max-width: 724px;
+  --main-min-width-desktop: 640px;
 }
 
 .dark {
@@ -131,6 +131,7 @@
   body {
     @apply bg-background text-foreground;
     font-family: 'Inter', sans-serif;
+    line-height: normal;
   }
   button:not([disabled]),
   [role="button"]:not([disabled]) {

@@ -3,6 +3,7 @@ import type { Ref } from 'vue';
 
 import { computed, ref } from 'vue';
 import { bech32 } from 'bech32';
+import { Wallet } from 'lucide-vue-next';
 
 import { getWalletHelp, useWallet, Wallets } from '@/composables/useWallet';
 
@@ -134,9 +135,12 @@ const isValidAddress = computed(() => {
       <Dialog>
         <!-- Normal signed out button -->
         <DialogTrigger>
-          <ButtonCustom class="w-[207px]">
+          <ButtonCustom class="w-[207px] xl:inline hidden">
             {{ $t('components.WalletConnect.button') }}
           </ButtonCustom>
+          <div class="flex items-center justify-center flex-row xl:hidden h-[52px]">
+            <Wallet class="size-7"/>
+          </div>
         </DialogTrigger>
         <DialogContent>
           <template v-if="selectState">
