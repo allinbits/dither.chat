@@ -3,10 +3,12 @@ import type { EncodeObject, OfflineDirectSigner, OfflineSigner } from '@cosmjs/p
 import type { OfflineAminoSigner } from '@keplr-wallet/types';
 
 import { computed, type Ref, ref } from 'vue';
-import { SigningStargateClient } from '@cosmjs/stargate';
+import { coins, SigningStargateClient } from '@cosmjs/stargate';
 import { getOfflineSigner } from '@cosmostation/cosmos-client';
 
 import chainInfo from '@/chain-config.json';
+
+const destinationWallet = import.meta.env.VITE_COMMUNITY_WALLET ?? 'atone1uq6zjslvsa29cy6uu75y8txnl52mw06j6fzlep';
 
 export enum Wallets {
     keplr = 'Keplr',
@@ -160,24 +162,62 @@ const useWalletInstance = () => {
     };
 
     const sendTx = async (msgs: EncodeObject[]) => {
-        if (signer.value) {
-            try {
-                const client = await SigningStargateClient.connectWithSigner(chainInfo.rpc, signer.value);
-                const simulate = await client.simulate(walletState.address.value, msgs, undefined);
-                const gasLimit = simulate && simulate > 0 ? '' + Math.ceil(simulate * 1.3) : '500000';
-                const result = await client.signAndBroadcast(walletState.address.value, msgs, {
-                    amount: [{ amount: '10000', denom: chainInfo.feeCurrencies[0].coinMinimalDenom }],
-                    gas: gasLimit,
-                });
-                return result;
-            }
-            catch (err) {
-                console.error(err);
-                throw new Error('Could not sign messages');
-            }
+        if (!signer.value) {
+            throw new Error('Could not sign messages');
         }
-        else {
-            throw new Error('No Signer available');
+
+        try {
+            const client = await SigningStargateClient.connectWithSigner(chainInfo.rpc, signer.value);
+            const simulate = await client.simulate(walletState.address.value, msgs, undefined);
+            const gasLimit = simulate && simulate > 0 ? '' + Math.ceil(simulate * 1.3) : '500000';
+            const result = await client.signAndBroadcast(walletState.address.value, msgs, {
+                amount: [{ amount: '10000', denom: chainInfo.feeCurrencies[0].coinMinimalDenom }],
+                gas: gasLimit,
+            });
+            return result;
+        }
+        catch (err) {
+            console.error(err);
+            throw new Error('Could not sign messages');
+        }
+    };
+
+    const sendBankTx = async (formattedMemo: string) => {
+        if (!signer.value) {
+            throw new Error('Could not sign messages');
+        }
+
+        try {
+            const client = await SigningStargateClient.connectWithSigner(chainInfo.rpc, signer.value);
+            const simulate = await client.simulate(
+                walletState.address.value,
+                [
+                    {
+                        typeUrl: '/cosmos.bank.v1beta1.MsgSend',
+                        value: {
+                            fromAddress: walletState.address.value,
+                            toAddress: destinationWallet,
+                            amount: coins(1, chainInfo.feeCurrencies[0].coinMinimalDenom),
+                        },
+                    },
+                ],
+                formattedMemo,
+            );
+
+            const gasLimit = simulate && simulate > 0 ? '' + Math.ceil(simulate * 2.0) : '500000';
+            const result = await client.sendTokens(
+                walletState.address.value, // From
+                destinationWallet, // To
+                [{ amount: '1', denom: chainInfo.feeCurrencies[0].coinMinimalDenom }], // Amount
+                { amount: [{ amount: '10000', denom: chainInfo.feeCurrencies[0].coinMinimalDenom }], gas: gasLimit }, // Gas
+                formattedMemo,
+            );
+
+            return result;
+        }
+        catch (err) {
+            console.error(err);
+            return err;
         }
     };
 
@@ -211,11 +251,61 @@ const useWalletInstance = () => {
             }
         }
     };
+
+    const ditherPost = async (msg: string) => {
+        const formattedMemo = `dither.Post("${msg}")`;
+        return await sendBankTx(formattedMemo);
+    };
+
+    const ditherReply = async (postHash: string, msg: string) => {
+        const formattedMemo = `dither.Reply("${postHash}", "${msg}")`;
+        return await sendBankTx(formattedMemo);
+    };
+
+    const ditherPostRemove = async (postHash: string) => {
+        const formattedMemo = `dither.PostRemove("${postHash}")`;
+        return await sendBankTx(formattedMemo);
+    };
+
+    const ditherFollow = async (address: string) => {
+        const formattedMemo = `dither.Follow("${address}")`;
+        return await sendBankTx(formattedMemo);
+    };
+
+    const ditherUnfollow = async (address: string) => {
+        const formattedMemo = `dither.Unfollow("${address}")`;
+        return await sendBankTx(formattedMemo);
+    };
+
+    const ditherLike = async (postHash: string) => {
+        const formattedMemo = `dither.Like("${postHash}")`;
+        return await sendBankTx(formattedMemo);
+    };
+
+    const ditherDislike = async (postHash: string) => {
+        const formattedMemo = `dither.Dislike("${postHash}")`;
+        return await sendBankTx(formattedMemo);
+    };
+
+    const ditherFlag = async (postHash: string) => {
+        const formattedMemo = `dither.Flag("${postHash}")`;
+        return await sendBankTx(formattedMemo);
+    };
+
     window.addEventListener('cosmostation_keystorechange', refreshAddress);
     window.addEventListener('keplr_keystorechange', refreshAddress);
     window.addEventListener('leap_keystorechange', refreshAddress);
 
-    return { ...walletState, signOut, connect, sendTx, signMessage };
+    return { ...walletState, signOut, connect, sendTx, signMessage, dither: {
+        post: ditherPost,
+        reply: ditherReply,
+        dislike: ditherDislike,
+        like: ditherLike,
+        flag: ditherFlag,
+        postRemove: ditherPostRemove,
+        follow: ditherFollow,
+        unfollow: ditherUnfollow,
+    } };
 };
 
 let walletInstance: ReturnType<typeof useWalletInstance>;
