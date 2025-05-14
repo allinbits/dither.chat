@@ -52,19 +52,27 @@ export const LikeBody = t.Object({
     timestamp: t.String(),
 });
 
-export type ModRemovePostBody = { hash: string; mod_address: string; post_hash: string; reason: string; timestamp: string };
+export type ModRemovePostBody = {
+    hash: string;
+    post_hash: string;
+    reason: string;
+    timestamp: string;
+};
 export const ModRemovePostBody = t.Object({
     hash: t.String(),
-    mod_address: t.String(),
     post_hash: t.String(),
     reason: t.String(),
     timestamp: t.String(),
 });
 
-export type ModBanBody = { hash: string; mod_address: string; user_address: string; reason: string; timestamp: string };
+export type ModBanBody = {
+    hash: string;
+    user_address: string;
+    reason: string;
+    timestamp: string;
+};
 export const ModBanBody = t.Object({
     hash: t.String(),
-    mod_address: t.String(),
     user_address: t.String(),
     reason: t.String(),
     timestamp: t.String(),

@@ -7,7 +7,7 @@ import jwt from 'jsonwebtoken';
 
 const expirationTime = 60_000 * 5;
 const requests: { [publicKey: string]: string } = {};
-const secretKey = 'temp-key-need-to-config-this';
+export const secretKey = 'temp-key-need-to-config-this';
 
 let id = 0;
 
