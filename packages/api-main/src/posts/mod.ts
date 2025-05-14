@@ -15,20 +15,20 @@ const statementAuditRemovePost = getDatabase()
     })
     .prepare('stmnt_audit_remove_post');
 
-export async function ModRemovePost(body: typeof Posts.ModRemovePostBody.static) {
+export async function ModRemovePost(body: typeof Posts.ModRemovePostBody.static, store) {
     try {
-        const [post] = await getDatabase().select().from(FeedTable).where(eq(FeedTable.hash, body.post_hash)).limit(1);
-        if (!post) {
-            return { status: 404, error: 'post not found' };
-        }
-
         const [mod] = await getDatabase()
             .select()
             .from(ModeratorTable)
-            .where(eq(ModeratorTable.address, body.mod_address))
+            .where(eq(ModeratorTable.address, store.userAddress))
             .limit(1);
         if (!mod) {
             return { status: 404, error: 'moderator not found' };
+        }
+
+        const [post] = await getDatabase().select().from(FeedTable).where(eq(FeedTable.hash, body.post_hash)).limit(1);
+        if (!post) {
+            return { status: 404, error: 'post not found' };
         }
 
         const statement = getDatabase()
@@ -70,8 +70,17 @@ const statementAuditRestorePost = getDatabase()
     })
     .prepare('stmnt_audit_restore_post');
 
-export async function ModRestorePost(body: typeof Posts.ModRemovePostBody.static) {
+export async function ModRestorePost(body: typeof Posts.ModRemovePostBody.static, store) {
     try {
+        const [mod] = await getDatabase()
+            .select()
+            .from(ModeratorTable)
+            .where(eq(ModeratorTable.address, store.userAddress))
+            .limit(1);
+        if (!mod) {
+            return { status: 404, error: 'moderator not found' };
+        }
+
         const [post] = await getDatabase().select().from(FeedTable).where(eq(FeedTable.hash, body.post_hash)).limit(1);
         if (!post) {
             return { status: 404, error: 'post not found' };
@@ -79,15 +88,6 @@ export async function ModRestorePost(body: typeof Posts.ModRemovePostBody.static
 
         if (!post.removed_at) {
             return { status: 404, error: 'post not removed' };
-        }
-
-        const [mod] = await getDatabase()
-            .select()
-            .from(ModeratorTable)
-            .where(eq(ModeratorTable.address, body.mod_address))
-            .limit(1);
-        if (!mod) {
-            return { status: 404, error: 'moderator not found' };
         }
 
         const [postWasRemovedByMod] = await getDatabase()
@@ -138,12 +138,12 @@ const statementAuditBanUser = getDatabase()
     })
     .prepare('stmnt_audit_ban_user');
 
-export async function ModBan(body: typeof Posts.ModBanBody.static) {
+export async function ModBan(body: typeof Posts.ModBanBody.static, store) {
     try {
         const [mod] = await getDatabase()
             .select()
             .from(ModeratorTable)
-            .where(eq(ModeratorTable.address, body.mod_address))
+            .where(eq(ModeratorTable.address, store.userAddress))
             .limit(1);
         if (!mod) {
             return { status: 404, error: 'moderator not found' };
@@ -188,12 +188,12 @@ const statementAuditUnbanUser = getDatabase()
     })
     .prepare('stmnt_audit_unban_user');
 
-export async function ModUnban(body: typeof Posts.ModBanBody.static) {
+export async function ModUnban(body: typeof Posts.ModBanBody.static, store) {
     try {
         const [mod] = await getDatabase()
             .select()
             .from(ModeratorTable)
-            .where(eq(ModeratorTable.address, body.mod_address))
+            .where(eq(ModeratorTable.address, store.userAddress))
             .limit(1);
         if (!mod) {
             return { status: 404, error: 'moderator not found' };

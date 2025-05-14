@@ -5,6 +5,7 @@ import { Elysia } from 'elysia';
 
 import * as GetRequests from './gets/index';
 import * as PostRequests from './posts/index';
+import { verifyJWT } from './shared/jwt';
 import { useConfig } from './config';
 
 const config = useConfig();
@@ -56,6 +57,23 @@ function startWriteOnlyServer() {
         body: Posts.ModBanBody,
     });
 
+    // Protected route group
+    app.group('/mod', group =>
+        group
+            .onBeforeHandle(verifyJWT)
+            .post('/post-remove', ({ body, store }) => PostRequests.ModRemovePost(body, store), {
+                body: Posts.ModRemovePostBody,
+            })
+            .post('/post-restore', ({ body, store }) => PostRequests.ModRestorePost(body, store), {
+                body: Posts.ModRemovePostBody,
+            })
+            .post('/ban', ({ body, store }) => PostRequests.ModBan(body, store), {
+                body: Posts.ModBanBody,
+            })
+            .post('/unban', ({ body, store }) => PostRequests.ModUnban(body, store), {
+                body: Posts.ModBanBody,
+            }),
+    );
     app.listen(config.WRITE_ONLY_PORT ?? 3001);
     console.log(`[API Write Only] Running on ${config.WRITE_ONLY_PORT ?? 3001}`);
 }

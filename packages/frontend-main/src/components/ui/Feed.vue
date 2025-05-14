@@ -3,6 +3,8 @@
 import { useFeed } from '@/composables/useFeed';
 
 import UserAvatarUsername from './UserAvatarUsername.vue';
+import PostActions from '../PostActions.vue';
+import PrettyTimestamp from '../PrettyTimestamp.vue';
 
 const { data } = useFeed();
 
@@ -15,6 +17,11 @@ const { data } = useFeed();
       <span class="pl-13 leading-6 text-sm">
         {{ post.message }}
       </span>
+      <span>
+        by {{ post.author }}
+      </span>
+      <PrettyTimestamp :timestamp="post.timestamp"/>
+      <PostActions :post="post" :onClickLike="() => {}" :onClickDislike="() => {}" :onClickComment="() => {}"/>
     </div>
   </div>
 </template>

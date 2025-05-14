@@ -78,6 +78,18 @@
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
   --main-min-width-desktop: 640px;
+  --text-2xl: 2rem; /* 32px */
+  --text-xl: 1.6875rem; /* 27px */
+  --text-lg: 1.5rem; /* 24px */
+  --text-base: 1.0625rem; /* 17px */
+  --text-sm: 0.9375rem; /* 15px */
+  --text-xs: 0.8125rem; /* 13px */
+  --text-2xl--line-height: normal;
+  --text-xl--line-height: normal;
+  --text-lg--line-height: normal;
+  --text-base--line-height: normal;
+  --text-sm--line-height: normal;
+  --text-xs--line-height: normal;
 }
 
 .dark {
