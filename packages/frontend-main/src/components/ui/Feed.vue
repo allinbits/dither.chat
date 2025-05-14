@@ -2,9 +2,10 @@
 
 import { useFeed } from '@/composables/useFeed';
 
-import UserAvatarUsername from './UserAvatarUsername.vue';
 import PostActions from '../PostActions.vue';
 import PrettyTimestamp from '../PrettyTimestamp.vue';
+
+import UserAvatarUsername from './UserAvatarUsername.vue';
 
 const { data } = useFeed();
 
