@@ -2,6 +2,7 @@
 
 import { useFeed } from '@/composables/useFeed';
 
+import PostActions from '../PostActions.vue';
 import PrettyTimestamp from '../PrettyTimestamp.vue';
 
 const { data } = useFeed();
@@ -19,6 +20,7 @@ const { data } = useFeed();
       <span>
         by {{ post.author }}
       </span>
+      <PostActions :post="post" :onClickLike="() => {}" :onClickDislike="() => {}" :onClickComment="() => {}"/>
     </div>
   </div>
 </template>
