@@ -84,6 +84,12 @@
   --text-base: 1.0625rem; /* 17px */
   --text-sm: 0.9375rem; /* 15px */
   --text-xs: 0.8125rem; /* 13px */
+  --text-2xl--line-height: normal;
+  --text-xl--line-height: normal;
+  --text-lg--line-height: normal;
+  --text-base--line-height: normal;
+  --text-sm--line-height: normal;
+  --text-xs--line-height: normal;
 }
 
 .dark {
