@@ -2,6 +2,8 @@
 
 import { useFeed } from '@/composables/useFeed';
 
+import PostActions from '../PostActions.vue';
+
 const { data } = useFeed();
 
 </script>
@@ -16,6 +18,7 @@ const { data } = useFeed();
       <span>
         by {{ post.author }}
       </span>
+      <PostActions :post="post" :onClickLike="() => {}" :onClickDislike="() => {}" :onClickComment="() => {}"/>
     </div>
   </div>
 </template>
