@@ -22,7 +22,7 @@ const isMobile = useMediaQuery(`(max-width: ${breakpoints.md - 1}px)`);
       </div>
     </div>
 
-    <main class="flex flex-row sm:w-[var(--main-min-width-desktop)] min-w-[var(--main-min-width-desktop)]">
+    <main class="flex flex-row sm:w-[var(--main-min-width-desktop)] min-w-[var(--main-min-width-desktop)] md:border-x border-x-neutral-200 px-4">
       <slot />
     </main>
 

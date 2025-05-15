@@ -4,20 +4,25 @@ import type { Post } from 'api-main/types/feed';
 
 import PostActions from '../feed/PostActions.vue';
 import PrettyTimestamp from '../feed/PrettyTimestamp.vue';
-import UserAvatarUsername from '../users/UserAvatarUsername.vue';
+import UserAvatar from '../users/UserAvatar.vue';
+import Username from '../users/Username.vue';
+
+import PostMessage from './PostMessage.vue';
 
 defineProps<{ post: Post }>();
 
 </script>
 
-<template >
-  <UserAvatarUsername :userAddress="post.author" />
-  <span class="pl-13 leading-6 text-sm">
-    {{ post.message }}
-  </span>
-  <span>
-    by {{ post.author }}
-  </span>
-  <PrettyTimestamp :timestamp="post.timestamp"/>
-  <PostActions :post="post" :onClickLike="() => {}" :onClickDislike="() => {}" :onClickComment="() => {}"/>
+<template>
+  <div class="flex flex-row gap-3">
+    <UserAvatar :userAddress="post.author" />
+    <div class="flex flex-col w-full gap-3">
+      <div class="flex flex-row gap-3 pt-2.5">
+        <Username :userAddress="post.author" />
+        <PrettyTimestamp :timestamp="new Date(post.timestamp)" />
+      </div>
+      <PostMessage :post="post"/>
+      <PostActions :post="post" :onClickLike="() => { }" :onClickDislike="() => { }" :onClickComment="() => { }" />
+    </div>
+  </div>
 </template>

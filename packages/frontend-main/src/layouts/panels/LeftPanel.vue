@@ -37,7 +37,7 @@ import WalletConnect from '@/components/popups/WalletConnect.vue';
             <span class="hidden xl:inline text-lg font-medium">My Profile</span>
           </RouterLink>
 
-          <RouterLink to="/post?hash=9c0f718289998024ce7c83b24f350e3fc4fa0c3d5c421c5042422c8721eec3e0"
+          <RouterLink to="/post?hash=90f6211dc7eb7a6e7797e0500e75df2e1912b4809edc718ef98ee33af9de5a35"
                       class="flex flex-row items-center gap-3">
             <div class="flex items-center justify-center h-[52px]">
               <FlaskConical class="size-7" />

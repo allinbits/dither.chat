@@ -9,9 +9,7 @@ const { data } = useFeed();
 </script>
 
 <template >
-  <div class="flex flex-col w-full gap-4 md:border-x border-x-neutral-200">
-    <div v-for="(post, index) in data" :key="index" class="flex flex-col border-b py-4 px-4">
-      <PostItem :post="post"/>
-    </div>
+  <div class="flex flex-col w-full gap-4">
+    <PostItem v-for="(post, index) in data" :key="index" :post="post" class="py-4"/>
   </div>
 </template>
