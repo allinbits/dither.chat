@@ -1,14 +1,11 @@
 <script setup lang="ts">
-import type { Ref } from 'vue';
-
-import { computed } from 'vue';
+import { computed, type Ref } from 'vue';
 import { useQuery } from '@tanstack/vue-query';
-
-import { formatAmount } from '@/utils';
 
 import { useWallet } from '@/composables/useWallet';
 
 import chainConfig from '@/chain-config.json';
+import { formatAmount } from '@/utility/text';
 
 const Wallet = useWallet();
 

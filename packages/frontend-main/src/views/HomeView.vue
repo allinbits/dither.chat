@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Feed from '@/components/ui/Feed.vue';
+import Feed from '@/components/feed/Feed.vue';
 import MainLayout from '@/layouts/MainLayout.vue';
 
 </script>

@@ -2,7 +2,7 @@
 import { computed, type HTMLAttributes } from 'vue';
 import { AvatarFallback, type AvatarFallbackProps } from 'reka-ui';
 
-import { cn } from '@/lib/utils';
+import { cn } from '@/utility';
 
 const props = defineProps<AvatarFallbackProps & { class?: HTMLAttributes['class'] }>();
 
