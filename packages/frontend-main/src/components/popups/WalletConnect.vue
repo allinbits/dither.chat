@@ -4,10 +4,13 @@ import type { Ref } from 'vue';
 import { computed, ref } from 'vue';
 import { bech32 } from 'bech32';
 import { Wallet } from 'lucide-vue-next';
+import { VisuallyHidden } from 'reka-ui';
 
 import { getWalletHelp, useWallet, Wallets } from '@/composables/useWallet';
 
 import ButtonCustom from '../ui/button/button-custom/ButtonCustom.vue';
+import DialogDescription from '../ui/dialog/DialogDescription.vue';
+import DialogTitle from '../ui/dialog/DialogTitle.vue';
 
 import chainConfig from '@/chain-config.json';
 import UserBalance from '@/components/helper/UserBalance.vue';
@@ -162,6 +165,10 @@ const isValidAddress = computed(() => {
           </div>
         </DialogTrigger>
         <DialogContent>
+          <VisuallyHidden>
+            <DialogTitle></DialogTitle>
+            <DialogDescription></DialogDescription>
+          </VisuallyHidden>
           <template v-if="selectState">
             <div class="flex flex-col gap-6">
               <div class="text-xl font-bold text-center">
@@ -173,15 +180,15 @@ const isValidAddress = computed(() => {
                 </span>
                 <div class="buttons flex flex-col gap-3">
                   <Button :disabled="!keplr" @click="connectWallet(Wallets.keplr)">
-                    <Icon icon="keplr" size="1.25" />
+                    <Icon icon="keplr" :size="1.25" />
                     <span>Keplr Wallet</span>
                   </Button>
                   <Button :disabled="!leap" @click="connectWallet(Wallets.leap)">
-                    <Icon icon="leap" size="1.25" />
+                    <Icon icon="leap" :size="1.25" />
                     <span>Leap Wallet</span>
                   </Button>
                   <Button :disabled="!cosmostation" @click="connectWallet(Wallets.cosmostation)">
-                    <Icon icon="cosmostation" size="1.25" />
+                    <Icon icon="cosmostation" :size="1.25" />
                     <span>Cosmostation Wallet</span>
                   </Button>
                 </div>
@@ -284,7 +291,7 @@ const isValidAddress = computed(() => {
                     }
                   "
                 >
-                  {{ $t('ui.actions.cancel') }}</ConnectButton
+                  {{ $t('components.WalletConnect.cancel') }}</ConnectButton
                 >
               </div>
 

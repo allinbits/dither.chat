@@ -1,6 +1,10 @@
 <script lang="ts" setup>
 
+import type { Post } from 'api-main/types/feed';
+
 import { useFeed } from '@/composables/useFeed';
+import { type PopoverState, usePopovers } from '@/composables/usePopovers';
+import { useWallet } from '@/composables/useWallet';
 
 import PostActions from '../PostActions.vue';
 import PrettyTimestamp from '../PrettyTimestamp.vue';
@@ -8,7 +12,17 @@ import PrettyTimestamp from '../PrettyTimestamp.vue';
 import UserAvatarUsername from './UserAvatarUsername.vue';
 
 const { data } = useFeed();
+const wallet = useWallet();
 
+const popovers = usePopovers();
+
+function handleAction(type: keyof PopoverState, post: Post) {
+    if (!wallet.loggedIn.value) {
+        return;
+    }
+
+    popovers.show(type, post);
+}
 </script>
 
 <template >
@@ -21,8 +35,8 @@ const { data } = useFeed();
       <span>
         by {{ post.author }}
       </span>
-      <PrettyTimestamp :timestamp="post.timestamp"/>
-      <PostActions :post="post" :onClickLike="() => {}" :onClickDislike="() => {}" :onClickComment="() => {}"/>
+      <PrettyTimestamp :timestamp="new Date(post.timestamp)"/>
+      <PostActions :post="post" :onClickLike="handleAction" :onClickDislike="handleAction" :onClickComment="handleAction"/>
     </div>
   </div>
 </template>

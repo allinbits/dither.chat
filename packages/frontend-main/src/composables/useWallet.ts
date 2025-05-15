@@ -3,7 +3,7 @@ import type { EncodeObject, OfflineDirectSigner, OfflineSigner } from '@cosmjs/p
 import type { OfflineAminoSigner } from '@keplr-wallet/types';
 
 import { computed, type Ref, ref } from 'vue';
-import { coins, SigningStargateClient } from '@cosmjs/stargate';
+import { coins, type DeliverTxResponse, SigningStargateClient } from '@cosmjs/stargate';
 import { getOfflineSigner } from '@cosmostation/cosmos-client';
 
 import chainInfo from '@/chain-config.json';
@@ -35,12 +35,14 @@ const useWalletInstance = () => {
         loggedIn: ref(false),
         address: ref(''),
         used: ref<Wallets | null>(null),
+        isBroadcasting: ref(false),
     };
 
     const signOut = () => {
         walletState.address.value = '';
         walletState.used.value = null;
         walletState.loggedIn.value = false;
+        walletState.isBroadcasting.value = false;
     };
     const signer: Ref<OfflineSigner | null> = ref(null);
 
@@ -182,9 +184,14 @@ const useWalletInstance = () => {
         }
     };
 
-    const sendBankTx = async (formattedMemo: string) => {
+    const sendBankTx = async (formattedMemo: string, amount: string) => {
+        const response: { broadcast: boolean; tx?: DeliverTxResponse; msg?: string } = { broadcast: false };
+        walletState.isBroadcasting.value = true;
+
         if (!signer.value) {
-            throw new Error('Could not sign messages');
+            walletState.isBroadcasting.value = false;
+            response.msg = 'No valid signer available.';
+            return response;
         }
 
         try {
@@ -208,16 +215,22 @@ const useWalletInstance = () => {
             const result = await client.sendTokens(
                 walletState.address.value, // From
                 destinationWallet, // To
-                [{ amount: '1', denom: chainInfo.feeCurrencies[0].coinMinimalDenom }], // Amount
+                [{ amount: amount, denom: chainInfo.feeCurrencies[0].coinMinimalDenom }], // Amount
                 { amount: [{ amount: '10000', denom: chainInfo.feeCurrencies[0].coinMinimalDenom }], gas: gasLimit }, // Gas
                 formattedMemo,
             );
 
-            return result;
+            response.msg = result.code === 0 ? 'successfully broadcast' : 'failed to broadcast transaction';
+            response.broadcast = result.code === 0;
+            response.tx = result;
+            return response;
         }
         catch (err) {
-            console.error(err);
-            return err;
+            response.msg = String(err);
+            return response;
+        }
+        finally {
+            walletState.isBroadcasting.value = false;
         }
     };
 
@@ -252,44 +265,44 @@ const useWalletInstance = () => {
         }
     };
 
-    const ditherPost = async (msg: string) => {
+    const ditherPost = async (msg: string, amount = '1') => {
         const formattedMemo = `dither.Post("${msg}")`;
-        return await sendBankTx(formattedMemo);
+        return await sendBankTx(formattedMemo, amount);
     };
 
-    const ditherReply = async (postHash: string, msg: string) => {
+    const ditherReply = async (postHash: string, msg: string, amount = '1') => {
         const formattedMemo = `dither.Reply("${postHash}", "${msg}")`;
-        return await sendBankTx(formattedMemo);
+        return await sendBankTx(formattedMemo, amount);
     };
 
-    const ditherPostRemove = async (postHash: string) => {
+    const ditherPostRemove = async (postHash: string, amount = '1') => {
         const formattedMemo = `dither.PostRemove("${postHash}")`;
-        return await sendBankTx(formattedMemo);
+        return await sendBankTx(formattedMemo, amount);
     };
 
-    const ditherFollow = async (address: string) => {
+    const ditherFollow = async (address: string, amount = '1') => {
         const formattedMemo = `dither.Follow("${address}")`;
-        return await sendBankTx(formattedMemo);
+        return await sendBankTx(formattedMemo, amount);
     };
 
-    const ditherUnfollow = async (address: string) => {
+    const ditherUnfollow = async (address: string, amount = '1') => {
         const formattedMemo = `dither.Unfollow("${address}")`;
-        return await sendBankTx(formattedMemo);
+        return await sendBankTx(formattedMemo, amount);
     };
 
-    const ditherLike = async (postHash: string) => {
+    const ditherLike = async (postHash: string, amount = '1') => {
         const formattedMemo = `dither.Like("${postHash}")`;
-        return await sendBankTx(formattedMemo);
+        return await sendBankTx(formattedMemo, amount);
     };
 
-    const ditherDislike = async (postHash: string) => {
+    const ditherDislike = async (postHash: string, amount = '1') => {
         const formattedMemo = `dither.Dislike("${postHash}")`;
-        return await sendBankTx(formattedMemo);
+        return await sendBankTx(formattedMemo, amount);
     };
 
-    const ditherFlag = async (postHash: string) => {
+    const ditherFlag = async (postHash: string, amount = '1') => {
         const formattedMemo = `dither.Flag("${postHash}")`;
-        return await sendBankTx(formattedMemo);
+        return await sendBankTx(formattedMemo, amount);
     };
 
     window.addEventListener('cosmostation_keystorechange', refreshAddress);
