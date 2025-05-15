@@ -49,7 +49,7 @@ function handleClose() {
     popovers.state.like = null;
     txError.value = undefined;
     txSuccess.value = undefined;
-    photonValue.value = 0;
+    photonValue.value = 1;
 }
 
 function handleInputValidity(value: boolean) {
