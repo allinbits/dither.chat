@@ -20,11 +20,11 @@ export async function Post(query: typeof Gets.PostQuery.static) {
     try {
         if (query.post_hash) {
             const results = await statementGetReply.execute({ hash: query.hash, post_hash: query.post_hash });
-            return results.length <= 0 ? { status: 404, row: [] } : { status: 200, row: results };
+            return results.length <= 0 ? { status: 404, rows: [] } : { status: 200, rows: results };
         }
 
         const results = await statementGetPost.execute({ hash: query.hash });
-        return results.length <= 0 ? { status: 404, row: [] } : { status: 200, row: results };
+        return results.length <= 0 ? { status: 404, rows: [] } : { status: 200, rows: results };
     }
     catch (error) {
         console.error(error);
