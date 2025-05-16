@@ -1,6 +1,5 @@
 <script setup lang="ts">
-
-import ToggleThemeButton from '@/components/ui/ToggleThemeButton.vue';
+import ToggleThemeButton from '@/components/ToggleThemeButton.vue';
 
 </script>
 

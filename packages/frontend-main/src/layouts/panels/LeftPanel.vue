@@ -2,7 +2,7 @@
 
 import { Bell, FlaskConical, House, User } from 'lucide-vue-next';
 
-import WalletConnect from '@/components/popups/WalletConnect.vue';
+import WalletConnect from '@/components/wallet/WalletConnect.vue';
 
 </script>
 
