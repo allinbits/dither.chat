@@ -1,4 +1,4 @@
-name: lint
+name: 'Frontend Build Check'
 
 on:
   pull_request:
