@@ -4,9 +4,12 @@ import type { Ref } from 'vue';
 import { computed, ref } from 'vue';
 import { bech32 } from 'bech32';
 import { Wallet } from 'lucide-vue-next';
+import { VisuallyHidden } from 'reka-ui';
 
 import { getWalletHelp, useWallet, Wallets } from '@/composables/useWallet';
 
+import DialogDescription from '../ui/dialog/DialogDescription.vue';
+import DialogTitle from '../ui/dialog/DialogTitle.vue';
 import Icon from '../ui/icon/Icon.vue';
 import UserBalance from '../users/UserBalance.vue';
 
@@ -163,6 +166,10 @@ const isValidAddress = computed(() => {
           </div>
         </DialogTrigger>
         <DialogContent>
+          <VisuallyHidden>
+            <DialogTitle></DialogTitle>
+            <DialogDescription></DialogDescription>
+          </VisuallyHidden>
           <template v-if="selectState">
             <div class="flex flex-col gap-6">
               <div class="text-xl font-bold text-center">
@@ -285,7 +292,7 @@ const isValidAddress = computed(() => {
                     }
                   "
                 >
-                  {{ $t('ui.actions.cancel') }}</ConnectButton
+                  {{ $t('components.WalletConnect.cancel') }}</ConnectButton
                 >
               </div>
 

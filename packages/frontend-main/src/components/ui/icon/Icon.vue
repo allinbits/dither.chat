@@ -87,7 +87,7 @@ const titleCase = (content: string) => content && content[0].toUpperCase() + con
 const ico = computed(() => {
     const ico = props.icon;
     const container = props.container;
-    return defineAsyncComponent(() => import(`@/components/ui/icons/${titleCase(ico) + titleCase(container)}.vue`));
+    return defineAsyncComponent(() => import(`@/components/ui/icon/svg/${titleCase(ico) + titleCase(container)}.vue`));
 });
 </script>
 <style scoped>

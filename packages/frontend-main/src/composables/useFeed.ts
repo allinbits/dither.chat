@@ -18,7 +18,6 @@ export function useFeed() {
         }
 
         data.value = result.rows;
-        console.log(data.value);
     };
 
     if (data.value.length <= 0) {
