@@ -49,7 +49,7 @@ export async function post<T = { status: number }>(
 
     const jsonData = (await response.json()) as { status: number };
     if (jsonData.status && jsonData.status !== 200) {
-        return jsonData;
+        return jsonData as T;
     }
 
     return jsonData as T;

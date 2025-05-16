@@ -15,7 +15,7 @@ const statementAuditRemovePost = getDatabase()
     })
     .prepare('stmnt_audit_remove_post');
 
-export async function ModRemovePost(body: typeof Posts.ModRemovePostBody.static, store) {
+export async function ModRemovePost(body: typeof Posts.ModRemovePostBody.static, store: { userAddress: string }) {
     try {
         const [mod] = await getDatabase()
             .select()
@@ -35,8 +35,8 @@ export async function ModRemovePost(body: typeof Posts.ModRemovePostBody.static,
             .update(FeedTable)
             .set({
                 removed_at: new Date(body.timestamp),
-                removed_hash: body.hash,
-                removed_by: mod.address,
+                removed_hash: body.hash.toLowerCase(),
+                removed_by: mod.address.toLowerCase(),
             })
             .where(eq(FeedTable.hash, body.post_hash))
             .returning();
@@ -44,9 +44,9 @@ export async function ModRemovePost(body: typeof Posts.ModRemovePostBody.static,
         await statement.execute();
 
         await statementAuditRemovePost.execute({
-            post_hash: body.post_hash,
-            hash: body.hash,
-            created_by: mod.address,
+            post_hash: body.post_hash.toLowerCase(),
+            hash: body.hash.toLowerCase(),
+            created_by: mod.address.toLowerCase(),
             created_at: new Date(body.timestamp),
             reason: body.reason,
         });
@@ -70,7 +70,7 @@ const statementAuditRestorePost = getDatabase()
     })
     .prepare('stmnt_audit_restore_post');
 
-export async function ModRestorePost(body: typeof Posts.ModRemovePostBody.static, store) {
+export async function ModRestorePost(body: typeof Posts.ModRemovePostBody.static, store: { userAddress: string }) {
     try {
         const [mod] = await getDatabase()
             .select()
@@ -112,9 +112,9 @@ export async function ModRestorePost(body: typeof Posts.ModRemovePostBody.static
         await statement.execute();
 
         await statementAuditRestorePost.execute({
-            post_hash: body.post_hash,
-            hash: body.hash,
-            restored_by: mod.address,
+            post_hash: body.post_hash.toLowerCase(),
+            hash: body.hash.toLowerCase(),
+            restored_by: mod.address.toLowerCase(),
             restored_at: new Date(body.timestamp),
             reason: body.reason,
         });
@@ -138,7 +138,7 @@ const statementAuditBanUser = getDatabase()
     })
     .prepare('stmnt_audit_ban_user');
 
-export async function ModBan(body: typeof Posts.ModBanBody.static, store) {
+export async function ModBan(body: typeof Posts.ModBanBody.static, store: { userAddress: string }) {
     try {
         const [mod] = await getDatabase()
             .select()
@@ -153,8 +153,8 @@ export async function ModBan(body: typeof Posts.ModBanBody.static, store) {
             .update(FeedTable)
             .set({
                 removed_at: new Date(body.timestamp),
-                removed_hash: body.hash,
-                removed_by: mod.address,
+                removed_hash: body.hash.toLowerCase(),
+                removed_by: mod.address.toLowerCase(),
             })
             .where(and(eq(FeedTable.author, body.user_address), isNull(FeedTable.removed_at)))
             .returning();
@@ -162,9 +162,9 @@ export async function ModBan(body: typeof Posts.ModBanBody.static, store) {
         await statement.execute();
 
         await statementAuditBanUser.execute({
-            user_address: body.user_address,
-            hash: body.hash,
-            created_by: mod.address,
+            user_address: body.user_address.toLowerCase(),
+            hash: body.hash.toLowerCase(),
+            created_by: mod.address.toLowerCase(),
             created_at: new Date(body.timestamp),
             reason: body.reason,
         });
@@ -188,7 +188,7 @@ const statementAuditUnbanUser = getDatabase()
     })
     .prepare('stmnt_audit_unban_user');
 
-export async function ModUnban(body: typeof Posts.ModBanBody.static, store) {
+export async function ModUnban(body: typeof Posts.ModBanBody.static, store: { userAddress: string }) {
     try {
         const [mod] = await getDatabase()
             .select()
@@ -221,9 +221,9 @@ export async function ModUnban(body: typeof Posts.ModBanBody.static, store) {
         await statement.execute();
 
         await statementAuditUnbanUser.execute({
-            user_address: body.user_address,
-            hash: body.hash,
-            restored_by: mod.address,
+            user_address: body.user_address.toLowerCase(),
+            hash: body.hash.toLowerCase(),
+            restored_by: mod.address.toLowerCase(),
             restored_at: new Date(body.timestamp),
             reason: body.reason,
         });

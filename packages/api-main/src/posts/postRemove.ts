@@ -20,8 +20,8 @@ export async function PostRemove(body: typeof Posts.PostRemoveBody.static) {
             .update(FeedTable)
             .set({
                 removed_at: new Date(body.timestamp),
-                removed_hash: body.hash,
-                removed_by: body.from,
+                removed_hash: body.hash.toLowerCase(),
+                removed_by: body.from.toLowerCase(),
             })
             .where(eq(FeedTable.hash, body.post_hash))
             .returning();
