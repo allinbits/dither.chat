@@ -26,10 +26,10 @@ const statementAddReplyCount = getDatabase()
 export async function Reply(body: typeof Posts.ReplyBody.static) {
     try {
         await statement.execute({
-            author: body.from,
-            hash: body.hash,
+            author: body.from.toLowerCase(),
+            hash: body.hash.toLowerCase(),
             message: body.msg,
-            post_hash: body.post_hash,
+            post_hash: body.post_hash.toLowerCase(),
             quantity: body.quantity,
             timestamp: new Date(body.timestamp),
         });
