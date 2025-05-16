@@ -4,10 +4,10 @@ import { createApp } from 'vue';
 import { createI18n } from 'vue-i18n';
 import { VueQueryPlugin } from '@tanstack/vue-query';
 
+import Icon from './components/ui/icon/Icon.vue';
 import App from './App.vue';
 import router from './router.ts';
 
-import IconVue from '@/components/ui/Icon.vue';
 import { messages } from '@/localization';
 
 const app = createApp(App);
@@ -20,5 +20,5 @@ const i18n = createI18n({
 app.use(i18n);
 app.use(router);
 app.use(VueQueryPlugin);
-app.component('Icon', IconVue);
+app.component('Icon', Icon);
 app.mount('#app');

@@ -8,7 +8,13 @@ const mode = useColorMode();
 </script>
 
 <template>
-  <Button @click="mode = mode === 'dark' ? 'light' : 'dark'" class="size-10">
-    <component :is="mode === 'dark' ? Moon : Sun" class="size-5" />
+  <Button
+    class="size-10"
+    @click="mode = mode === 'dark' ? 'light' : 'dark'"
+  >
+    <component
+      :is="mode === 'dark' ? Moon : Sun"
+      class="size-5"
+    />
   </Button>
 </template>
