@@ -4,7 +4,7 @@ import { computed, onMounted, watch } from 'vue';
 import { useBalanceFetcher } from '@/composables/useBalanceFetcher';
 import { useWallet } from '@/composables/useWallet';
 
-import { formatAmount } from '@/utility';
+import { formatAmount } from '@/utility/text';
 
 const model = defineModel<number>();
 const emits = defineEmits<{ onValidityChange: [isValid: boolean] }>();
