@@ -1,6 +1,11 @@
 <script setup lang="ts">
 
+import { useSearchPosts } from '@/composables/useSearchPosts';
+
+import { SearchInput } from '@/components/ui/search';
 import ToggleThemeButton from '@/components/ui/ToggleThemeButton.vue';
+
+const { searchPosts, data } = useSearchPosts();
 
 </script>
 
@@ -9,6 +14,6 @@ import ToggleThemeButton from '@/components/ui/ToggleThemeButton.vue';
   <aside
     class="flex flex-col h-full w-full gap-4">
     <ToggleThemeButton/>
-    <input placeholder="search" class="bg-neutral-200 p-2 h-[44px]" />
+    <SearchInput :results="data" placeholder="Type to search..." />
   </aside>
 </template>
