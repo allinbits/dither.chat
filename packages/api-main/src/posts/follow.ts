@@ -19,7 +19,7 @@ export async function Follow(body: typeof Posts.FollowBody.static) {
         await statementAddFollower.execute({
             follower: body.from.toLowerCase(),
             following: body.address.toLowerCase(),
-            hash: body.hash,
+            hash: body.hash.toLowerCase(),
             timestamp: new Date(body.timestamp),
         });
 
