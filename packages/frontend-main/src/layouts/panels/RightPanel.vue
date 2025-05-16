@@ -6,7 +6,7 @@ import { SearchInput } from '@/components/ui/search';
 import ToggleThemeButton from '@/components/ui/ToggleThemeButton.vue';
 
 const { searchPosts, data } = useSearchPosts();
-
+console.log(data.value);
 </script>
 
 <template>
@@ -14,6 +14,6 @@ const { searchPosts, data } = useSearchPosts();
   <aside
     class="flex flex-col h-full w-full gap-4">
     <ToggleThemeButton/>
-    <SearchInput :results="data" placeholder="Type to search..." />
+    <SearchInput @keyword-change="searchPosts" :results="data" placeholder="Type to search..." />
   </aside>
 </template>

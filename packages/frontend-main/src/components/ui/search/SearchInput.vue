@@ -3,6 +3,10 @@ import { ref, watch } from 'vue';
 import { refDebounced } from '@vueuse/core';
 import { CircleX } from 'lucide-vue-next';
 
+const emits = defineEmits<{
+    (e: 'keyword-change', keyword: string): void;
+}>();
+
 const props = withDefaults(
     defineProps<{ placeholder?: string }>(),
     { placeholder: 'Type to search...' },
@@ -15,7 +19,7 @@ const results = ref<string[]>([]);
 
 watch(debouncedSearchKeyword, (value: string) => {
     if (value) {
-        results.value.push(value);
+        emits('keyword-change', value);
     }
 });
 
