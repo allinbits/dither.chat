@@ -8,7 +8,6 @@ import { VisuallyHidden } from 'reka-ui';
 
 import { getWalletHelp, useWallet, Wallets } from '@/composables/useWallet';
 
-import ButtonCustom from '../ui/button/button-custom/ButtonCustom.vue';
 import DialogDescription from '../ui/dialog/DialogDescription.vue';
 import DialogTitle from '../ui/dialog/DialogTitle.vue';
 import Icon from '../ui/icon/Icon.vue';
