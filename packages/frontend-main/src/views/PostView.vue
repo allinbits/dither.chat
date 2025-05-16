@@ -43,16 +43,15 @@ watch(
 
     <div v-if="error" class="error">{{ error }}</div>
 
-    <div v-if="post" class="flex flex-col pt-4">
-      <div class="flex flex-row gap-3 mb-2">
+    <div v-if="post" class="flex flex-col p-4 w-full">
+      <div class="flex flex-row gap-3 mb-2 px-4">
         <UserAvatarUsername :userAddress="post.author" />
         <PrettyTimestamp :timestamp="new Date(post.timestamp)" />
       </div>
-      <PostMessage :post="post"/>
-      <div class="h-[1px] w-full my-3 bg-neutral-200"/>
-      <PostActions :post="post" :onClickLike="() => { }" :onClickDislike="() => { }" :onClickComment="() => { }" />
-      <div class="h-[1px] w-full my-3 bg-neutral-200"/>
-
+      <PostMessage :post="post" />
+      <div class="py-2 mt-4 border-y">
+        <PostActions :post="post" :onClickLike="() => { }" :onClickDislike="() => { }" :onClickComment="() => { }" class="px-2"/>
+      </div>
     </div>
   </MainLayout>
 </template>

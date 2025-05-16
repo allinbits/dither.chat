@@ -10,6 +10,6 @@ const { data } = useFeed();
 
 <template >
   <div class="flex flex-col w-full gap-4">
-    <PostItem v-for="(post, index) in data" :key="index" :post="post" class="py-4"/>
+    <PostItem v-for="(post, index) in data" :key="index" :post="post" class="p-4"/>
   </div>
 </template>
