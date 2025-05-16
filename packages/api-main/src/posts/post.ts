@@ -19,9 +19,9 @@ const statement = getDatabase()
 export async function Post(body: typeof Posts.PostBody.static) {
     try {
         await statement.execute({
-            hash: body.hash,
+            hash: body.hash.toLowerCase(),
             timestamp: new Date(body.timestamp),
-            author: body.from,
+            author: body.from.toLowerCase(),
             message: body.msg,
             quantity: body.quantity,
         });

@@ -8,15 +8,15 @@ import { useWallet } from '@/composables/useWallet';
 import DialogDescription from '../ui/dialog/DialogDescription.vue';
 
 import
-ButtonCustom
-    from '@/components/ui/button/button-custom/ButtonCustom.vue';
+{ Button }
+    from '@/components/ui/button';
 import {
     Dialog,
     DialogContent,
     DialogTitle,
 } from '@/components/ui/dialog';
 import InputPhoton from '@/components/ui/input/InputPhoton.vue';
-import { shorten } from '@/utility';
+import { shorten } from '@/utility/text';
 
 const popovers = usePopovers();
 const wallet = useWallet();
@@ -76,9 +76,9 @@ watch(wallet.loggedIn, async () => {
         <div class="flex flex-col w-full gap-4" v-if="!isBroadcasting && !txSuccess">
           <InputPhoton v-model="photonValue" @on-validity-change="handleInputValidity" />
           <span v-if="txError" class="text-red-500 text-left text-xs">{{ txError }}</span>
-          <ButtonCustom class="w-full xl:inline hidden" :disabled="!isBalanceInputValid" @click="isBalanceInputValid ? handleSubmit() : () => {}">
+          <Button class="w-full xl:inline hidden" :disabled="!isBalanceInputValid" @click="isBalanceInputValid ? handleSubmit() : () => {}">
             {{ $t('components.Button.submit') }}
-          </ButtonCustom>
+          </Button>
         </div>
         <!-- Broadcast Status -->
         <div class="flex flex-col w-full gap-4" v-if="isBroadcasting && !txSuccess">
@@ -88,9 +88,9 @@ watch(wallet.loggedIn, async () => {
         <div class="flex flex-col w-full gap-4 overflow-hidden" v-if="!isBroadcasting && txSuccess">
           <span>{{ $t('components.Wallet.broadcastSuccess') }}</span>
           <span class="flex lowercase overflow-x-scroll py-2">{{ txSuccess }}</span>
-          <ButtonCustom class="w-full xl:inline hidden" @click="handleClose">
+          <Button class="w-full xl:inline hidden" @click="handleClose">
             {{ $t('components.Button.close') }}
-          </ButtonCustom>
+          </Button>
         </div>
       </DialogContent>
     </Dialog>

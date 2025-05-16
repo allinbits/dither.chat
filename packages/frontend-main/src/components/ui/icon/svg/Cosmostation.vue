@@ -1,6 +1,15 @@
 <template>
-  <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
-    <g id="그룹_3786" data-name="그룹 3786" transform="translate(-2794 167)">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="1024"
+    height="1024"
+    viewBox="0 0 1024 1024"
+  >
+    <g
+      id="그룹_3786"
+      data-name="그룹 3786"
+      transform="translate(-2794 167)"
+    >
       <rect
         id="사각형_2029"
         data-name="사각형 2029"
@@ -9,7 +18,11 @@
         transform="translate(2794 -167)"
         fill="none"
       />
-      <g id="그룹_3785" data-name="그룹 3785" transform="translate(2872.491 -51.134)">
+      <g
+        id="그룹_3785"
+        data-name="그룹 3785"
+        transform="translate(2872.491 -51.134)"
+      >
         <path
           id="패스_1868"
           data-name="패스 1868"

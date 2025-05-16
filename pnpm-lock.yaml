@@ -48,8 +48,8 @@ importers:
         specifier: ^2.2.1
         version: 2.2.2
       '@atomone/dither-api-types':
-        specifier: link:..\lib-api-types
-        version: link:../lib-api-types
+        specifier: ^1.0.1
+        version: 1.0.1(@sinclair/typebox@0.34.33)(openapi-types@12.1.3)(typescript@5.8.3)
       '@cosmjs/crypto':
         specifier: ^0.33.1
         version: 0.33.1
@@ -297,8 +297,8 @@ importers:
         specifier: ^2.2.2
         version: 2.2.2
       '@atomone/dither-api-types':
-        specifier: link:..\lib-api-types
-        version: link:../lib-api-types
+        specifier: ^1.0.1
+        version: 1.0.1(@sinclair/typebox@0.34.33)(openapi-types@12.1.3)(typescript@5.8.3)
       '@atomone/event-consumer':
         specifier: ^1.0.12
         version: 1.0.12
@@ -325,8 +325,8 @@ importers:
         specifier: ^2.2.2
         version: 2.2.2
       '@atomone/dither-api-types':
-        specifier: link:..\lib-api-types
-        version: link:../lib-api-types
+        specifier: ^1.0.1
+        version: 1.0.1(@sinclair/typebox@0.34.33)(openapi-types@12.1.3)(typescript@5.8.3)
       '@atomone/event-consumer':
         specifier: ^1.0.12
         version: 1.0.12
@@ -356,8 +356,8 @@ importers:
         specifier: link:..\api-main
         version: link:../api-main
       '@atomone/dither-api-types':
-        specifier: link:..\lib-api-types
-        version: link:../lib-api-types
+        specifier: ^1.0.1
+        version: 1.0.1(@sinclair/typebox@0.34.33)(openapi-types@12.1.3)(typescript@5.8.3)
       '@atomone/event-consumer':
         specifier: ^1.0.12
         version: 1.0.12
@@ -384,8 +384,8 @@ importers:
         specifier: ^2.2.2
         version: 2.2.2
       '@atomone/dither-api-types':
-        specifier: link:..\lib-api-types
-        version: link:../lib-api-types
+        specifier: ^1.0.1
+        version: 1.0.1(@sinclair/typebox@0.34.33)(openapi-types@12.1.3)(typescript@5.8.3)
       '@atomone/event-consumer':
         specifier: ^1.0.12
         version: 1.0.12
@@ -412,8 +412,8 @@ importers:
         specifier: ^2.2.2
         version: 2.2.2
       '@atomone/dither-api-types':
-        specifier: link:..\lib-api-types
-        version: link:../lib-api-types
+        specifier: ^1.0.1
+        version: 1.0.1(@sinclair/typebox@0.34.33)(openapi-types@12.1.3)(typescript@5.8.3)
       '@atomone/event-consumer':
         specifier: ^1.0.12
         version: 1.0.12
@@ -440,8 +440,8 @@ importers:
         specifier: ^2.2.2
         version: 2.2.2
       '@atomone/dither-api-types':
-        specifier: link:..\lib-api-types
-        version: link:../lib-api-types
+        specifier: ^1.0.1
+        version: 1.0.1(@sinclair/typebox@0.34.33)(openapi-types@12.1.3)(typescript@5.8.3)
       '@atomone/event-consumer':
         specifier: ^1.0.12
         version: 1.0.12
@@ -468,8 +468,8 @@ importers:
         specifier: ^2.2.2
         version: 2.2.2
       '@atomone/dither-api-types':
-        specifier: link:..\lib-api-types
-        version: link:../lib-api-types
+        specifier: ^1.0.1
+        version: 1.0.1(@sinclair/typebox@0.34.33)(openapi-types@12.1.3)(typescript@5.8.3)
       '@atomone/event-consumer':
         specifier: ^1.0.12
         version: 1.0.12
@@ -496,8 +496,8 @@ importers:
         specifier: ^2.2.2
         version: 2.2.2
       '@atomone/dither-api-types':
-        specifier: link:..\lib-api-types
-        version: link:../lib-api-types
+        specifier: ^1.0.1
+        version: 1.0.1(@sinclair/typebox@0.34.33)(openapi-types@12.1.3)(typescript@5.8.3)
       '@atomone/event-consumer':
         specifier: ^1.0.12
         version: 1.0.12
@@ -548,6 +548,9 @@ packages:
 
   '@atomone/chronostate@2.2.2':
     resolution: {integrity: sha512-7/1HlTahEwILdg4j7Vs4rMinDZjjpxadr4BWVO63y2Z+MOWHj33l3H+seP0//T8B3UJJ0W8rT9SWcht4lwx6mA==}
+
+  '@atomone/dither-api-types@1.0.1':
+    resolution: {integrity: sha512-uS/+M1H3AIJXyW8sp3CIJ4SvQRL4rny22E/FuiXK0DinepHyONTn7L11coyyvoybQYYXPJrEQDEbVR5PHHx2Aw==}
 
   '@atomone/event-consumer@1.0.12':
     resolution: {integrity: sha512-s1ZZhGPzcQEH6wR5nkMYkKJnh7JlCWTfUTug/PGJy219ol9WRZ6Bga3cOaw2kfbRNUuaIuWiTCXC9VfIDe7XRw==}
@@ -3920,6 +3923,14 @@ snapshots:
       '@jridgewell/trace-mapping': 0.3.25
 
   '@atomone/chronostate@2.2.2': {}
+
+  '@atomone/dither-api-types@1.0.1(@sinclair/typebox@0.34.33)(openapi-types@12.1.3)(typescript@5.8.3)':
+    dependencies:
+      elysia: 1.2.25(@sinclair/typebox@0.34.33)(openapi-types@12.1.3)(typescript@5.8.3)
+    transitivePeerDependencies:
+      - '@sinclair/typebox'
+      - openapi-types
+      - typescript
 
   '@atomone/event-consumer@1.0.12':
     dependencies:

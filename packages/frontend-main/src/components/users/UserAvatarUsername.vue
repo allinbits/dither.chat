@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import UserAvatar, { type UserAvatarProps } from './UserAvatar.vue';
 
-import { cn } from '@/lib/utils';
-import { shorten } from '@/utility';
+import { cn } from '@/utility';
+import { shorten } from '@/utility/text';
 
 defineProps<UserAvatarProps>();
 

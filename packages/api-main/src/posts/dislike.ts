@@ -27,9 +27,9 @@ const statementAddDislikeToPost = getDatabase()
 export async function Dislike(body: typeof Posts.DislikeBody.static) {
     try {
         await statement.execute({
-            post_hash: body.post_hash,
-            hash: body.hash,
-            author: body.from,
+            post_hash: body.post_hash.toLowerCase(),
+            hash: body.hash.toLowerCase(),
+            author: body.from.toLowerCase(),
             quantity: body.quantity,
             timestamp: new Date(body.timestamp),
         });
