@@ -3,6 +3,7 @@
 import { Bell, FlaskConical, House, User } from 'lucide-vue-next';
 
 import LikePostPopup from '@/components/popups/LikePost.vue';
+import DislikePostPopup from '@/components/popups/DislikePost.vue';
 import WalletConnect from '@/components/wallet/WalletConnect.vue';
 
 </script>
@@ -64,6 +65,7 @@ import WalletConnect from '@/components/wallet/WalletConnect.vue';
 
       <WalletConnect />
       <LikePostPopup />
+      <DislikePostPopup />
     </div>
 
     <div>Stuff here?</div>
