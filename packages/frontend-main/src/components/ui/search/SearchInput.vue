@@ -1,32 +1,19 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-import { refDebounced } from '@vueuse/core';
-import { CircleX } from 'lucide-vue-next';
+import { CircleX, Loader2 } from 'lucide-vue-next';
 
-const emits = defineEmits<{
-    (e: 'keyword-change', keyword: string): void;
-}>();
+import { useSearchPosts } from '@/composables/useSearchPosts';
 
 const props = withDefaults(
     defineProps<{ placeholder?: string }>(),
     { placeholder: 'Type to search...' },
 );
 
-const searchKeyword = ref<string>('');
-const debouncedSearchKeyword = refDebounced(searchKeyword, 200);
-
-const results = ref<string[]>([]);
-
-watch(debouncedSearchKeyword, (value: string) => {
-    if (value) {
-        emits('keyword-change', value);
-    }
-});
-
 const clearSearch = () => {
-    searchKeyword.value = '';
+    query.value = '';
     results.value = [];
 };
+
+const { query, results, isLoading, error } = useSearchPosts();
 
 </script>
 
@@ -34,24 +21,41 @@ const clearSearch = () => {
   <div>
     <div class="flex items-center gap-2 relative">
       <input
-        v-model="searchKeyword"
+        v-model="query"
         :placeholder="props.placeholder"
         class="bg-neutral-200 p-2 h-[44px] flex-1 pr-10"
       />
 
       <CircleX
-        v-if="searchKeyword"
+        v-if="query"
         @click="clearSearch"
         class="size-6 absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer"
       />
     </div>
 
-    <div v-if="results.length > 0"
-         class="results-list border-neutral-200 border-1 max-h-[60vh] p-2 rounded-b-md overflow-y-auto overflow-x-hidden"
+    <div v-if="isLoading" class="flex items-center justify-center mt-2 mb-2">
+      <Loader2 class="size-4 animate-spin" />
+    </div>
+
+    <div v-else-if="error" class="flex items-center justify-center mt-2 mb-2">
+      <p class="text-red-500">
+        {{ error.message }}
+      </p>
+    </div>
+
+    <div v-else-if="query && results.length === 0" class="flex items-center justify-center mt-2 mb-2">
+      <p class="text-neutral-500">
+        No results found
+      </p>
+    </div>
+
+    <div v-else
+         class="results-list border-neutral-200 border-1 max-h-[60vh] pl-2 pr-2 rounded-b-md overflow-y-auto overflow-x-hidden"
     >
-      <div v-for="(result, index) in results" :key="index" class="pb-2">
-        {{ result }}
+      <div v-for="(result, index) in results" :key="index" class="pb-2 pt-2 border-b border-neutral-200">
+        {{ result.message }}
       </div>
     </div>
+
   </div>
 </template>
