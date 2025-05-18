@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-
-import { shorten } from '@/utility';
+import { shorten } from '@/utility/text';
 
 defineProps<{ userAddress?: string }>();
 

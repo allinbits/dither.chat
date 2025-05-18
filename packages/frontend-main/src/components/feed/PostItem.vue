@@ -14,7 +14,7 @@ defineProps<{ post: Post }>();
 </script>
 
 <template>
-  <div class="flex flex-row gap-3">
+  <div class="flex flex-row gap-3 border-b">
     <UserAvatar :userAddress="post.author" />
     <div class="flex flex-col w-full gap-3">
       <div class="flex flex-row gap-3 pt-2.5">

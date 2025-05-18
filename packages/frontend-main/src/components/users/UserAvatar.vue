@@ -1,18 +1,11 @@
 <script lang="ts" setup>
 import { useColorMode } from '@vueuse/core';
 
-<<<<<<< HEAD
 import Avatar from '../ui/avatar/Avatar.vue';
 import AvatarFallback from '../ui/avatar/AvatarFallback.vue';
 import AvatarImage from '../ui/avatar/AvatarImage.vue';
 
-import { cn } from '@/lib/utils';
-=======
-import Avatar from '@/components//ui/avatar/Avatar.vue';
-import AvatarFallback from '@/components/ui/avatar/AvatarFallback.vue';
-import AvatarImage from '@/components/ui/avatar/AvatarImage.vue';
 import { cn } from '@/utility';
->>>>>>> main
 
 export interface UserAvatarProps {
     userAddress?: string;
