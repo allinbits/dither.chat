@@ -1,7 +1,7 @@
 {
-    "rpc": "https://atomone-rpc.allinbits.com/",
-    "rest": "https://atomone-api.allinbits.com/",
-    "chainId": "atomone-1",
+    "rpc": "https://atomone-devnet-1-rpc.allinbits.services/",
+    "rest": "https://atomone-devnet-1-api.allinbits.services/",
+    "chainId": "atomone-devnet-1",
     "chainName": "AtomOne",
     "bip44": {
       "coinType": 118
@@ -19,6 +19,11 @@
         "coinDenom": "ATONE",
         "coinMinimalDenom": "uatone",
         "coinDecimals": 6
+      },
+      {
+        "coinDenom": "PHOTON",
+        "coinMinimalDenom": "uphoton",
+        "coinDecimals": 6
       }
     ],
     "stakeCurrency": {
@@ -27,6 +32,11 @@
       "coinDecimals": 6
     },
     "feeCurrencies": [
+      {
+        "coinDenom": "PHOTON",
+        "coinMinimalDenom": "uphoton",
+        "coinDecimals": 6
+      },
       {
         "coinDenom": "ATONE",
         "coinMinimalDenom": "uatone",

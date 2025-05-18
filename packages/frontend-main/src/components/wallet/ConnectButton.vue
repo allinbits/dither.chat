@@ -11,7 +11,7 @@ defineProps<{ disabled?: boolean }>();
     :alt="disabled ? 'Not Installed' : 'Connect'"
     :title="disabled ? 'Not Installed' : 'Connect'"
   >
-    <slot name="icon"> </slot>
-    <slot></slot>
+    <slot name="icon" />
+    <slot />
   </Button>
 </template>

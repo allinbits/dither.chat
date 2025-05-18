@@ -4,15 +4,19 @@ import type { Ref } from 'vue';
 import { computed, ref } from 'vue';
 import { bech32 } from 'bech32';
 import { Wallet } from 'lucide-vue-next';
+import { VisuallyHidden } from 'reka-ui';
 
 import { getWalletHelp, useWallet, Wallets } from '@/composables/useWallet';
 
-import ButtonCustom from '../ui/button/button-custom/ButtonCustom.vue';
+import DialogDescription from '../ui/dialog/DialogDescription.vue';
+import DialogTitle from '../ui/dialog/DialogTitle.vue';
+import Icon from '../ui/icon/Icon.vue';
+import UserBalance from '../users/UserBalance.vue';
+
+import ConnectButton from './ConnectButton.vue';
 
 import chainConfig from '@/chain-config.json';
-import UserBalance from '@/components/helper/UserBalance.vue';
 import { Button } from '@/components/ui/button';
-import ConnectButton from '@/components/ui/ConnectButton.vue';
 import {
     Dialog,
     DialogContent,
@@ -23,7 +27,7 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from '@/components/ui/popover';
-import { shorten } from '@/utility';
+import { shorten } from '@/utility/text';
 
 const isConnecting = ref(false);
 const isError = ref(false);
@@ -138,14 +142,14 @@ const isValidAddress = computed(() => {
         </PopoverTrigger>
         <PopoverContent>
           <div class="flex flex-col gap-4">
-            <ButtonCustom
+            <Button
               class="my-4 justify-center"
               @click="
                 signOut();
               "
             >
               {{ $t('components.WalletConnect.disconnect') }}
-            </ButtonCustom>
+            </Button>
           </div>
         </PopoverContent>
       </Popover>
@@ -154,14 +158,18 @@ const isValidAddress = computed(() => {
       <Dialog>
         <!-- Normal signed out button -->
         <DialogTrigger>
-          <ButtonCustom class="w-[207px] xl:inline hidden">
+          <Button class="w-[207px] xl:inline hidden">
             {{ $t('components.WalletConnect.button') }}
-          </ButtonCustom>
+          </Button>
           <div class="flex items-center justify-center flex-row xl:hidden h-[52px]">
             <Wallet class="size-7"/>
           </div>
         </DialogTrigger>
         <DialogContent>
+          <VisuallyHidden>
+            <DialogTitle></DialogTitle>
+            <DialogDescription></DialogDescription>
+          </VisuallyHidden>
           <template v-if="selectState">
             <div class="flex flex-col gap-6">
               <div class="text-xl font-bold text-center">
@@ -173,15 +181,15 @@ const isValidAddress = computed(() => {
                 </span>
                 <div class="buttons flex flex-col gap-3">
                   <Button :disabled="!keplr" @click="connectWallet(Wallets.keplr)">
-                    <Icon icon="keplr" size="1.25" />
+                    <Icon icon="keplr" :size="1.25" />
                     <span>Keplr Wallet</span>
                   </Button>
                   <Button :disabled="!leap" @click="connectWallet(Wallets.leap)">
-                    <Icon icon="leap" size="1.25" />
+                    <Icon icon="leap" :size="1.25" />
                     <span>Leap Wallet</span>
                   </Button>
                   <Button :disabled="!cosmostation" @click="connectWallet(Wallets.cosmostation)">
-                    <Icon icon="cosmostation" size="1.25" />
+                    <Icon icon="cosmostation" :size="1.25" />
                     <span>Cosmostation Wallet</span>
                   </Button>
                 </div>
@@ -284,7 +292,7 @@ const isValidAddress = computed(() => {
                     }
                   "
                 >
-                  {{ $t('ui.actions.cancel') }}</ConnectButton
+                  {{ $t('components.WalletConnect.cancel') }}</ConnectButton
                 >
               </div>
 

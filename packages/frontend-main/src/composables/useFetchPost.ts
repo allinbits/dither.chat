@@ -3,7 +3,7 @@ import type { Post } from 'api-main/types/feed';
 import { ref } from 'vue';
 import { postSchema } from 'api-main/types/feed';
 
-import { checkTypeboxSchema } from '@/lib/sanitize';
+import { checkTypeboxSchema } from '@/utility/sanitize';
 
 const apiRoot = import.meta.env.VITE_API_ROOT ?? 'http://localhost:3000';
 

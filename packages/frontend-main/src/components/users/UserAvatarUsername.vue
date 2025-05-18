@@ -2,7 +2,12 @@
 import UserAvatar, { type UserAvatarProps } from './UserAvatar.vue';
 import Username from './Username.vue';
 
+<<<<<<< HEAD
 import { cn } from '@/lib/utils';
+=======
+import { cn } from '@/utility';
+import { shorten } from '@/utility/text';
+>>>>>>> main
 
 defineProps<UserAvatarProps>();
 

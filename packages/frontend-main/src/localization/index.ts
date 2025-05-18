@@ -26,6 +26,17 @@ export const messages = {
                 enterAddress: 'Enter your wallet address',
                 addressPlaceholder: 'e.g. atone1ad453f23bc2d...',
             },
+            Wallet: {
+                popupSign: 'Check your wallet extension to sign the transaction, after submitting the transaction please wait a moment.',
+                broadcastSuccess: 'Successfully Broadcasted',
+            },
+            Button: {
+                submit: 'Submit',
+                close: 'Close',
+            },
+            PopupTitles: {
+                likePost: 'Like Post',
+            },
         },
     },
 };

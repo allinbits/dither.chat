@@ -2,7 +2,7 @@
 import { computed, type HTMLAttributes } from 'vue';
 import { DialogDescription, type DialogDescriptionProps, useForwardProps } from 'reka-ui';
 
-import { cn } from '@/lib/utils';
+import { cn } from '@/utility';
 
 const props = defineProps<DialogDescriptionProps & { class?: HTMLAttributes['class'] }>();
 
