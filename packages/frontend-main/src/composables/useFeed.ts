@@ -1,28 +1,31 @@
 import type { Post } from 'api-main/types/feed';
 
-import { ref } from 'vue';
+import { computed } from 'vue';
+import { useInfiniteQuery } from '@tanstack/vue-query';
 
 const apiRoot = import.meta.env.VITE_API_ROOT ?? 'http://localhost:3000';
-
-const data = ref<Post[]>([]);
+const LIMIT = 15;
 
 export function useFeed() {
-    const offset = ref(0);
-    const limit = ref(100);
+    const query = useInfiniteQuery({
+        queryKey: ['feed'],
+        queryFn: async ({ pageParam = 0 }) => {
+            const res = await fetch(`${apiRoot}/feed?offset=${pageParam}&limit=${LIMIT}`);
+            const json = await res.json() as { status: number; rows: Post[] };
+            return json.rows ?? [];
+        },
+        initialPageParam: 0,
+        getNextPageParam: (lastPage, allPages) => {
+            if (lastPage.length < LIMIT) return undefined;
+            return allPages.length * LIMIT;
+        },
+    });
 
-    const refresh = async () => {
-        const rawResponse = await fetch(`${apiRoot}/feed?offset=${offset.value}&limit=${limit.value}`);
-        const result = await rawResponse.json() as { status: number; rows: Post[] };
-        if (!result.rows) {
-            return;
-        }
-
-        data.value = result.rows;
+    return {
+        data: computed(() => query.data.value?.pages.flat() ?? []),
+        fetchNextPage: query.fetchNextPage,
+        hasNextPage: query.hasNextPage,
+        isFetchingNextPage: query.isFetchingNextPage,
+        isLoading: query.isLoading,
     };
-
-    if (data.value.length <= 0) {
-        refresh();
-    }
-
-    return { refresh, data, offset, limit };
 }

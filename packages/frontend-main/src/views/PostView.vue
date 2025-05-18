@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
+import { Loader } from 'lucide-vue-next';
 
-import { useFetchPost } from '@/composables/useFetchPost';
+import { usePost } from '@/composables/usePost';
 
 import PostActions from '@/components/feed/PostActions.vue';
 import PostMessage from '@/components/feed/PostMessage.vue';
@@ -11,37 +11,20 @@ import UserAvatarUsername from '@/components/users/UserAvatarUsername.vue';
 import MainLayout from '@/layouts/MainLayout.vue';
 
 const route = useRoute();
-const loading = ref(false);
-
-const { data: post, error, loadPost } = useFetchPost();
-
-watch(
-    () => ({ hash: route.query.hash, postHash: route.query.postHash }),
-    async (newQuery) => {
-        const hash = typeof newQuery.hash === 'string' ? newQuery.hash : undefined;
-        const postHash = typeof newQuery.postHash === 'string' ? newQuery.postHash : undefined;
-
-        if (!hash) return;
-
-        loading.value = true;
-        error.value = '';
-        post.value = null;
-
-        await loadPost({ hash, postHash });
-
-        loading.value = false;
-    },
-    { immediate: true },
-);
+const hash = typeof route.query.hash === 'string' ? route.query.hash : '';
+const postHash = typeof route.query.postHash === 'string' ? route.query.postHash : undefined;
+const { data: post, isLoading, isError, error } = usePost({
+    hash, postHash,
+});
 
 </script>
 
 <template>
   <MainLayout>
-
-    <div v-if="loading" class="loading">Loading...</div>
-
-    <div v-if="error" class="error">{{ error }}</div>
+    <div v-if="isLoading || isError" class="w-full mt-10 flex justify-center">
+      <Loader v-if="isLoading" class="animate-spin" />
+      <span v-else-if="isError && error" class="text-center">{{ error.message }}</span>
+    </div>
 
     <div v-if="post" class="flex flex-col p-4 w-full">
       <div class="flex flex-row gap-3 mb-2 px-4">
@@ -50,7 +33,8 @@ watch(
       </div>
       <PostMessage :post="post" />
       <div class="py-2 mt-4 border-y">
-        <PostActions :post="post" :onClickLike="() => { }" :onClickDislike="() => { }" :onClickComment="() => { }" class="px-2"/>
+        <PostActions :post="post" :onClickLike="() => { }" :onClickDislike="() => { }" :onClickComment="() => { }"
+                     class="px-2" />
       </div>
     </div>
   </MainLayout>
