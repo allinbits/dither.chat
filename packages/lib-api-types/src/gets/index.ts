@@ -64,3 +64,16 @@ export const RepliesQuery = t.Object({
     offset: t.Optional(t.String()),
     hash: t.String(),
 });
+
+export type NotificationsQuery = { limit?: string; offset?: string };
+export const NotificationsQuery = t.Object({
+    limit: t.Optional(t.String()),
+    offset: t.Optional(t.String()),
+    hash: t.String(),
+});
+
+export type ReadNotificationQuery = { address: string; hash: string };
+export const ReadNotificationQuery = t.Object({
+    address: t.String(),
+    hash: t.String(),
+});
