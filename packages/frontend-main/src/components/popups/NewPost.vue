@@ -24,15 +24,16 @@ const photonValue = ref(1);
 const txError = ref<string>();
 const txSuccess = ref<string>();
 const isBalanceInputValid = ref(false);
+const message = ref('');
 
-let message = '';
+const MAX_CHARS = 512 - 'dither.Post("")'.length;
 
 async function handleSubmit() {
     if (!popovers.state.post) {
         return;
     }
 
-    const result = await wallet.dither.post(message, BigInt(photonValue.value).toString());
+    const result = await wallet.dither.post(message.value, BigInt(photonValue.value).toString());
     if (!result.broadcast) {
         txError.value = result.msg;
         return;
@@ -56,6 +57,16 @@ function handleInputValidity(value: boolean) {
     isBalanceInputValid.value = value;
 }
 
+const canSubmit = computed(() => {
+    return isBalanceInputValid.value && message.value.length > 0;
+});
+
+function capChars(event: { target: HTMLTextAreaElement }) {
+    if (event.target.value.length > MAX_CHARS) {
+        event.target.value = event.target.value.substring(0, MAX_CHARS);
+    }
+}
+
 watch(wallet.loggedIn, async () => {
     if (!wallet.loggedIn.value) {
         return;
@@ -71,13 +82,13 @@ watch(wallet.loggedIn, async () => {
       <DialogContent>
         <DialogTitle>{{ $t('components.PopupTitles.newPost') }}</DialogTitle>
 
-        <Textarea placeholder="What's up?" v-model="message" />
+        <Textarea placeholder="What's up?" v-model="message" @input="capChars" />
 
         <!-- Transaction Form -->
         <div class="flex flex-col w-full gap-4" v-if="!isBroadcasting && !txSuccess">
           <InputPhoton v-model="photonValue" @on-validity-change="handleInputValidity" />
           <span v-if="txError" class="text-red-500 text-left text-xs">{{ txError }}</span>
-          <Button class="w-full xl:inline hidden" :disabled="!isBalanceInputValid" @click="isBalanceInputValid ? handleSubmit() : () => {}">
+          <Button class="w-full xl:inline hidden" :disabled="!canSubmit" @click="isBalanceInputValid ? handleSubmit() : () => {}">
             {{ $t('components.Button.submit') }}
           </Button>
         </div>
