@@ -9,3 +9,4 @@ export * from './posts';
 export * from './post';
 export * from './replies';
 export * from './search';
+export * from './notifications';

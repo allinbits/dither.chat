@@ -1,5 +1,5 @@
 import { sql } from 'drizzle-orm';
-import { bigint, index, integer, pgTable, primaryKey, serial, text, timestamp, varchar } from 'drizzle-orm/pg-core';
+import { bigint, boolean, index, integer, pgEnum, pgTable, primaryKey, serial, text, timestamp, varchar } from 'drizzle-orm/pg-core';
 
 const MEMO_LENGTH = 512;
 
@@ -110,4 +110,21 @@ export const ModeratorTable = pgTable('moderators', {
     deleted_at: timestamp({ withTimezone: true }),
 });
 
-export const tables = ['feed', 'likes', 'dislikes', 'flags', 'follows', 'audits', 'moderators'];
+export const notificationTypeEnum = pgEnum('notification_type', ['like', 'dislike', 'flag', 'follow', 'reply']);
+
+export const NotificationTable = pgTable(
+    'notifications',
+    {
+        hash: varchar({ length: 64 }).notNull(),
+        owner: varchar({ length: 44 }).notNull(),
+        type: notificationTypeEnum().notNull(),
+        timestamp: timestamp({ withTimezone: true }),
+        was_read: boolean().default(false),
+    },
+    t => [
+        primaryKey({ columns: [t.hash, t.owner] }),
+        index('notification_owner_idx').on(t.owner),
+    ],
+);
+
+export const tables = ['feed', 'likes', 'dislikes', 'flags', 'follows', 'audits', 'moderators', 'notifications'];
