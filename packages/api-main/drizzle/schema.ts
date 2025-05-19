@@ -5,8 +5,7 @@ const MEMO_LENGTH = 512;
 export const FeedTable = pgTable(
     'feed',
     {
-        id: serial('id').primaryKey(),
-        hash: varchar({ length: 64 }).notNull(), // Main hash from the transaction
+        hash: varchar({ length: 64 }).primaryKey(), // Main hash from the transaction
         post_hash: varchar({ length: 64 }), // Optional, this makes a post a reply, provided through memo
         author: varchar({ length: 44 }).notNull(), // Address of user, usually in the transfer message
         timestamp: timestamp({ withTimezone: true }).notNull(), // Timestamp parsed with new Date()

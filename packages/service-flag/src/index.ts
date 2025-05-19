@@ -38,14 +38,25 @@ const flagsHandler = async (msg: amqplib.Message) => {
             },
             body: JSON.stringify(postBody),
         });
-        if (rawResponse.status !== 200) {
-            console.error('Error posting to API:', rawResponse);
-            return HandlerResponse.REJECT;
-        }
-        else {
+
+        const response = await rawResponse.json() as { status: number, error?: string };
+        if (response.status === 200) {
             console.log(`dither.Flag message processed successfully: ${parsedContent.hash}`);
-            return HandlerResponse.SUCCESS;
+            return HandlerResponse.SUCCESS
         }
+
+        if (response.status === 401) {
+            console.log(`dither.Flag message skipped, invalid post hash provided: ${parsedContent.hash}`);
+            return HandlerResponse.SUCCESS
+        }
+
+        if (response.status === 404) {
+            console.log(`dither.Flag message skipped, invalid post provided: ${parsedContent.hash}`);
+            return HandlerResponse.SUCCESS
+        }
+
+        console.warn(`dither.Flag message failed to post: ${parsedContent.hash} (${parsedContent.error})`)
+        return HandlerResponse.REJECT;
     }
     catch (error) {
         console.error('Error processing message:', error);

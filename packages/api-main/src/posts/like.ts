@@ -3,6 +3,9 @@ import { eq, sql } from 'drizzle-orm';
 
 import { getDatabase } from '../../drizzle/db';
 import { FeedTable, LikesTable } from '../../drizzle/schema';
+import { useSharedQueries } from '../shared/useSharedQueries';
+
+const sharedQueries = useSharedQueries();
 
 const statement = getDatabase()
     .insert(LikesTable)
@@ -25,7 +28,16 @@ const statementAddLikeToPost = getDatabase()
     .prepare('stmnt_add_like_count_to_post');
 
 export async function Like(body: typeof Posts.LikeBody.static) {
+    if (body.post_hash.length !== 64) {
+        return { status: 400, error: 'Provided post_hash is not valid for like' };
+    }
+
     try {
+        const result = await sharedQueries.doesPostExist(body.post_hash);
+        if (!result) {
+            return { status: 404, error: 'provided post_hash does not exist' };
+        }
+
         await statement.execute({
             post_hash: body.post_hash.toLowerCase(),
             hash: body.hash.toLowerCase(),
