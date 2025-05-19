@@ -1,0 +1,46 @@
+name: Publish NPM Package
+
+on:
+  workflow_dispatch:
+    inputs:
+      package:
+        description: "Package name to publish"
+        required: true
+        type: choice
+        options:
+          - lib-api-types
+          - lib-event-consumer
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: "https://registry.npmjs.org/"
+          scope: "@atomone"
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Install dependencies
+        run: |
+          cd ./packages/${{ github.event.inputs.package }}
+          pnpm install
+
+      - name: Build package
+        run: |
+          cd ./packages/${{ github.event.inputs.package }}
+          pnpm run build
+
+      - name: Publish to NPM
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          cd ./packages/${{ github.event.inputs.package }}
+          pnpm publish --access public --no-git-checks
