@@ -39,6 +39,7 @@ export const messages = {
             PopupTitles: {
                 likePost: 'Like Post',
                 dislikePost: 'Dislike Post',
+                newPost: 'New Post',
             },
         },
         feedbacks: {

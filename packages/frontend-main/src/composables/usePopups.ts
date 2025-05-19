@@ -7,6 +7,7 @@ export type PopupState = {
     dislike: Post | null;
     flag: Post | null;
     reply: Post | null;
+    newPost: object | null;
 };
 
 const state = reactive<PopupState>({
@@ -14,15 +15,16 @@ const state = reactive<PopupState>({
     dislike: null,
     flag: null,
     reply: null,
+    newPost: null,
 });
 
 export function usePopups() {
-    const show = (key: keyof PopupState, post: Post) => {
+    const show = <T extends keyof PopupState>(key: T, val: Exclude<PopupState[T], null>) => {
         for (const key of Object.keys(state)) {
             state[key as keyof PopupState] = null;
         }
 
-        state[key] = post;
+        state[key] = val;
     };
 
     return {
