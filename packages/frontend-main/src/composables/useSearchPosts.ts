@@ -5,7 +5,7 @@ import { refDebounced } from '@vueuse/core';
 
 const apiRoot = import.meta.env.VITE_API_ROOT || 'http://localhost:3000';
 
-export function useSearchPosts(minQueryLength: number = 3, debounceMs: number = 200) {
+export function useSearchPosts(minQueryLength: number = 3, debounceMs: number = 300) {
     const query = ref<string>('');
     const debouncedQuery = refDebounced<string>(query, debounceMs);
     const results = ref<Post[]>([]);
@@ -39,6 +39,10 @@ export function useSearchPosts(minQueryLength: number = 3, debounceMs: number = 
             results.value = res.rows.filter((post: Post) => post.message.toLowerCase().includes(query.toLowerCase()));
         }
         catch (e) {
+            if (e instanceof Error && e.name === 'AbortError') {
+                return;
+            }
+
             error.value = e as Error;
         }
         finally {

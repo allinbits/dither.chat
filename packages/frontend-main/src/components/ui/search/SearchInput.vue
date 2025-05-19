@@ -3,8 +3,14 @@ import { CircleX, Loader2 } from 'lucide-vue-next';
 
 import { useSearchPosts } from '@/composables/useSearchPosts';
 
+import UserAvatarUsername from '../UserAvatarUsername.vue';
+
+interface SearchInputProps {
+    placeholder?: string;
+}
+
 const props = withDefaults(
-    defineProps<{ placeholder?: string }>(),
+    defineProps<SearchInputProps>(),
     { placeholder: 'Type to search...' },
 );
 
@@ -13,7 +19,7 @@ const clearSearch = () => {
     results.value = [];
 };
 
-const { query, results, isLoading, error } = useSearchPosts();
+const { query, results, isLoading, error } = useSearchPosts(3, 300);
 
 </script>
 
@@ -52,8 +58,9 @@ const { query, results, isLoading, error } = useSearchPosts();
     <div v-else
          class="results-list border-neutral-200 border-1 max-h-[60vh] pl-2 pr-2 rounded-b-md overflow-y-auto overflow-x-hidden"
     >
-      <div v-for="(result, index) in results" :key="index" class="pb-2 pt-2 border-b border-neutral-200">
-        {{ result.message }}
+      <div v-for="(post, index) in results" :key="index" class="pb-2 pt-2 border-b border-neutral-200 last:border-b-0 truncate">
+        {{ post.message }}
+        <UserAvatarUsername :userAddress="post.author" size="sm" />
       </div>
     </div>
 
