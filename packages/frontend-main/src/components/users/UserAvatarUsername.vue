@@ -11,6 +11,6 @@ defineProps<UserAvatarProps>();
 <template>
   <div :class="cn('flex flex-row items-center', size === 'lg' ? 'gap-4' : 'gap-3')">
     <UserAvatar :userAddress="userAddress" :size="size"/>
-    <Username :userAddress="userAddress" :class="size === 'lg' ? 'text-lg' : 'text-sm'" />
+    <Username :userAddress="userAddress" :class="size === 'lg' && 'text-lg'" />
   </div>
 </template>
