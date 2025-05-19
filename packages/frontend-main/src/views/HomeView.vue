@@ -17,6 +17,6 @@ const { state, setActiveTab } = useTabs();
       <Tab label="Following" :isActive="state.activeTab === 2" :onClick="() => setActiveTab(2)"/>
     </TabsContainer>
 
-    <Feed :class="cn(state.activeTab !== 1 && 'hidden')"/>
+    <Feed :class="cn(state.activeTab !== 1 && 'hidden', 'border-t')"/>
   </MainLayout>
 </template>

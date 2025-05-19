@@ -1,43 +1,28 @@
 <script lang="ts" setup>
 
-import type { Post } from 'api-main/types/feed';
+import { Loader } from 'lucide-vue-next';
 
 import { useFeed } from '@/composables/useFeed';
-import { type PopoverState, usePopovers } from '@/composables/usePopovers';
-import { useWallet } from '@/composables/useWallet';
 
-import PostActions from './PostActions.vue';
-import PrettyTimestamp from './PrettyTimestamp.vue';
+import Button from '../ui/button/Button.vue';
 
-import UserAvatarUsername from '@/components/users/UserAvatarUsername.vue';
+import PostItem from './PostItem.vue';
 
-const { data } = useFeed();
-const wallet = useWallet();
+const { data: posts, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useFeed();
 
-const popovers = usePopovers();
-
-function handleAction(type: keyof PopoverState, post: Post) {
-    if (!wallet.loggedIn.value) {
-        return;
-    }
-
-    popovers.show(type, post);
-}
 </script>
 
 <template >
-  <div class="flex flex-col w-full gap-4">
+  <div class="flex flex-col w-full">
+    <Loader v-if="isLoading" class="animate-spin w-full mt-10"/>
 
-    <div v-for="(post, index) in data" :key="index" class="flex flex-col border-t py-4 px-4">
-      <UserAvatarUsername :userAddress="post.author" />
-      <span class="pl-13 leading-6 text-sm">
-        {{ post.message }}
-      </span>
-      <span>
-        by {{ post.author }}
-      </span>
-      <PrettyTimestamp :timestamp="new Date(post.timestamp)"/>
-      <PostActions :post="post" :onClickLike="handleAction" :onClickDislike="handleAction" :onClickComment="handleAction"/>
+    <PostItem v-for="(post, index) in posts" :key="index" :post="post" class="p-4"/>
+
+    <div v-if="isFetchingNextPage || hasNextPage" class="flex items-center justify-center my-4 px-4 h-[40px]">
+      <Loader v-if="isFetchingNextPage" class="animate-spin "/>
+      <Button v-if="hasNextPage && !isFetchingNextPage" @click="fetchNextPage" size="sm" class="w-full text-sm" variant="ghost">
+        {{ $t('components.Button.showMore') }}
+      </Button>
     </div>
   </div>
 </template>

@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
 import HomeView from './views/HomeView.vue';
+import NotFoundView from './views/NotFoundView.vue';
 import NotificationsView from './views/NotificationsView.vue';
 import PostView from './views/PostView.vue';
 import ProfileView from './views/ProfileView.vue';
@@ -10,6 +11,12 @@ const routes = [
     { path: '/notifications', component: NotificationsView },
     { path: '/profile/:address', component: ProfileView },
     { path: '/post', component: PostView },
+    // Catch-all route for 404
+    {
+        path: '/:pathMatch(.*)*',
+        name: 'NotFound',
+        component: NotFoundView,
+    },
 ];
 
 const router = createRouter({

@@ -1,9 +1,10 @@
 <script lang="ts" setup>
 import { useColorMode } from '@vueuse/core';
 
-import Avatar from '@/components//ui/avatar/Avatar.vue';
-import AvatarFallback from '@/components/ui/avatar/AvatarFallback.vue';
-import AvatarImage from '@/components/ui/avatar/AvatarImage.vue';
+import Avatar from '../ui/avatar/Avatar.vue';
+import AvatarFallback from '../ui/avatar/AvatarFallback.vue';
+import AvatarImage from '../ui/avatar/AvatarImage.vue';
+
 import { cn } from '@/utility';
 
 export interface UserAvatarProps {

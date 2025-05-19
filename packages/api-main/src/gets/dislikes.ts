@@ -1,5 +1,5 @@
 import { type Gets } from '@atomone/dither-api-types';
-import { eq, sql } from 'drizzle-orm';
+import { desc, eq, sql } from 'drizzle-orm';
 
 import { getDatabase } from '../../drizzle/db';
 import { DislikesTable } from '../../drizzle/schema';
@@ -11,6 +11,7 @@ const statement = getDatabase()
     .where(eq(DislikesTable.post_hash, sql.placeholder('post_hash')))
     .limit(sql.placeholder('limit'))
     .offset(sql.placeholder('offset'))
+    .orderBy(desc(DislikesTable.timestamp))
     .prepare('stmnt_get_dislikes');
 
 export async function Dislikes(query: typeof Gets.DislikesQuery.static) {

@@ -1,8 +1,9 @@
 <script setup lang="ts">
 
-import { Bell, FlaskConical, House, User } from 'lucide-vue-next';
+import { Bell, House, User } from 'lucide-vue-next';
 
-import LikePostPopup from '@/components/popups/LikePost.vue';
+import DislikePostDialog from '@/components/popups/DislikePostDialog.vue';
+import LikePostDialog from '@/components/popups/LikePostDialog.vue';
 import WalletConnect from '@/components/wallet/WalletConnect.vue';
 
 </script>
@@ -49,21 +50,12 @@ import WalletConnect from '@/components/wallet/WalletConnect.vue';
             </div>
             <span class="hidden xl:inline text-lg font-medium">My Profile</span>
           </RouterLink>
-
-          <RouterLink
-            to="/post?hash=9c0f718289998024ce7c83b24f350e3fc4fa0c3d5c421c5042422c8721eec3e0"
-            class="flex flex-row items-center gap-3"
-          >
-            <div class="flex items-center justify-center h-[52px]">
-              <FlaskConical class="size-7" />
-            </div>
-            <span class="hidden xl:inline text-lg font-medium">Post #1</span>
-          </RouterLink>
         </div>
       </nav>
 
       <WalletConnect />
-      <LikePostPopup />
+      <LikePostDialog />
+      <DislikePostDialog />
     </div>
 
     <div>Stuff here?</div>
