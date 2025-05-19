@@ -23,6 +23,7 @@ function startReadOnlyServer() {
     app.get('/posts', ({ query }) => GetRequests.Posts(query), { query: Gets.PostsQuery });
     app.get('/post', ({ query }) => GetRequests.Post(query), { query: Gets.PostQuery });
     app.get('/replies', ({ query }) => GetRequests.Replies(query), { query: Gets.RepliesQuery });
+    app.get('/search', ({ query }) => GetRequests.Search(query), { query: Gets.SearchQuery });
 
     app.post('/auth', ({ body }) => PostRequests.Auth(body), { body: Posts.AuthBody });
     app.post('/auth-create', ({ body }) => PostRequests.AuthCreate(body), { body: Posts.AuthCreateBody });
