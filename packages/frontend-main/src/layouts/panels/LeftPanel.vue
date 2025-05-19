@@ -2,7 +2,7 @@
 
 import { Bell, House, User } from 'lucide-vue-next';
 
-import { usePopovers } from '@/composables/usePopups';
+import { usePopups } from '@/composables/usePopups';
 import { useWallet } from '@/composables/useWallet';
 
 import DislikePostDialog from '@/components/popups/DislikePostDialog.vue';
@@ -11,7 +11,7 @@ import NewPostDialog from '@/components/popups/NewPostDialog.vue';
 import WalletConnect from '@/components/wallet/WalletConnect.vue';
 
 const wallet = useWallet();
-const popovers = usePopovers();
+const popovers = usePopups();
 
 </script>
 

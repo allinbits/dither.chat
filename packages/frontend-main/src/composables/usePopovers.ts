@@ -2,7 +2,7 @@ import type { Post } from 'api-main/types/feed';
 
 import { reactive } from 'vue';
 
-export type PopupState = {
+export type PopoverState = {
     like: Post | null;
     dislike: Post | null;
     flag: Post | null;
@@ -10,7 +10,7 @@ export type PopupState = {
     post: object | null;
 };
 
-const state = reactive<PopupState>({
+const state = reactive<PopoverState>({
     like: null,
     dislike: null,
     flag: null,
@@ -19,9 +19,9 @@ const state = reactive<PopupState>({
 });
 
 export function usePopups() {
-    const show = <T extends keyof PopupState>(key: T, val: Exclude<PopupState[T], null>) => {
+    const show = <T extends keyof PopoverState>(key: T, val: Exclude<PopoverState[T], null>) => {
         for (const key of Object.keys(state)) {
-            state[key as keyof PopupState] = null;
+            state[key as keyof PopoverState] = null;
         }
 
         state[key] = val;
