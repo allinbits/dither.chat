@@ -45,16 +45,16 @@ function startWriteOnlyServer() {
     app.post('/dislike', ({ body }) => PostRequests.Dislike(body), { body: Posts.DislikeBody });
     app.post('/flag', ({ body }) => PostRequests.Flag(body), { body: Posts.FlagBody });
     app.post('/post-remove', ({ body }) => PostRequests.PostRemove(body), { body: Posts.PostRemoveBody });
-    app.post('/mod/post-remove', ({ body }) => PostRequests.ModRemovePost(body), {
+    app.post('/mod/post-remove', ({ body, store }) => PostRequests.ModRemovePost(body, store as { userAddress: string }), {
         body: Posts.ModRemovePostBody,
     });
-    app.post('/mod/post-restore', ({ body }) => PostRequests.ModRestorePost(body), {
+    app.post('/mod/post-restore', ({ body, store }) => PostRequests.ModRestorePost(body, store as { userAddress: string }), {
         body: Posts.ModRemovePostBody,
     });
-    app.post('/mod/ban', ({ body }) => PostRequests.ModBan(body), {
+    app.post('/mod/ban', ({ body, store }) => PostRequests.ModBan(body, store as { userAddress: string }), {
         body: Posts.ModBanBody,
     });
-    app.post('/mod/unban', ({ body }) => PostRequests.ModUnban(body), {
+    app.post('/mod/unban', ({ body, store }) => PostRequests.ModUnban(body, store as { userAddress: string }), {
         body: Posts.ModBanBody,
     });
 
@@ -62,16 +62,16 @@ function startWriteOnlyServer() {
     app.group('/mod', group =>
         group
             .onBeforeHandle(verifyJWT)
-            .post('/post-remove', ({ body, store }) => PostRequests.ModRemovePost(body, store), {
+            .post('/post-remove', ({ body, store }) => PostRequests.ModRemovePost(body, store as { userAddress: string }), {
                 body: Posts.ModRemovePostBody,
             })
-            .post('/post-restore', ({ body, store }) => PostRequests.ModRestorePost(body, store), {
+            .post('/post-restore', ({ body, store }) => PostRequests.ModRestorePost(body, store as { userAddress: string }), {
                 body: Posts.ModRemovePostBody,
             })
-            .post('/ban', ({ body, store }) => PostRequests.ModBan(body, store), {
+            .post('/ban', ({ body, store }) => PostRequests.ModBan(body, store as { userAddress: string }), {
                 body: Posts.ModBanBody,
             })
-            .post('/unban', ({ body, store }) => PostRequests.ModUnban(body, store), {
+            .post('/unban', ({ body, store }) => PostRequests.ModUnban(body, store as { userAddress: string }), {
                 body: Posts.ModBanBody,
             }),
     );
