@@ -13,16 +13,6 @@ import WalletConnect from '@/components/wallet/WalletConnect.vue';
 const wallet = useWallet();
 const popovers = usePopovers();
 
-function handleNewPost() {
-    console.log('new post', wallet.loggedIn.value);
-
-    if (!wallet.loggedIn.value) {
-        return;
-    }
-
-    popovers.show('post', {});
-}
-
 </script>
 
 <template>
@@ -80,7 +70,7 @@ function handleNewPost() {
         </div>
       </nav>
 
-      <Button size="lg" class="w-full" :onclick="handleNewPost" >New post</Button>
+      <Button class="w-[207px] xl:inline hidden" @click="popovers.show('post', {})" v-if="wallet.loggedIn.value">New post</Button>
       <WalletConnect />
       <LikePostPopup />
       <NewPostPopup />
