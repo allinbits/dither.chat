@@ -44,23 +44,23 @@ const dislikesHandler = async (msg: amqplib.Message) => {
             return HandlerResponse.REJECT;
         }
 
-        const response = await rawResponse.json() as { status: number, error?: string };
+        const response = await rawResponse.json() as { status: number; error?: string };
         if (response.status === 200) {
             console.log(`dither.Dislike message processed successfully: ${parsedContent.hash}`);
-            return HandlerResponse.SUCCESS
+            return HandlerResponse.SUCCESS;
         }
 
         if (response.status === 401) {
             console.log(`dither.Dislike message skipped, invalid post hash provided: ${parsedContent.hash}`);
-            return HandlerResponse.SUCCESS
+            return HandlerResponse.SUCCESS;
         }
 
         if (response.status === 404) {
             console.log(`dither.Dislike message skipped, invalid post provided: ${parsedContent.hash}`);
-            return HandlerResponse.SUCCESS
+            return HandlerResponse.SUCCESS;
         }
 
-        console.warn(`dither.Dislike message failed to post: ${parsedContent.hash} (${parsedContent.error})`)
+        console.warn(`dither.Dislike message failed to post: ${parsedContent.hash} (${parsedContent.error})`);
         return HandlerResponse.REJECT;
     }
     catch (error) {
