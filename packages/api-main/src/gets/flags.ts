@@ -1,5 +1,5 @@
 import { type Gets } from '@atomone/dither-api-types';
-import { eq, sql } from 'drizzle-orm';
+import { eq, sql, desc } from 'drizzle-orm';
 
 import { getDatabase } from '../../drizzle/db';
 import { FlagsTable } from '../../drizzle/schema';
@@ -11,6 +11,7 @@ const statement = getDatabase()
     .where(eq(FlagsTable.post_hash, sql.placeholder('post_hash')))
     .limit(sql.placeholder('limit'))
     .offset(sql.placeholder('offset'))
+    .orderBy(desc(FlagsTable.timestamp))
     .prepare('stmnt_get_flags');
 
 export async function Flags(query: typeof Gets.FlagsQuery.static) {
