@@ -2,8 +2,26 @@
 
 import { Bell, FlaskConical, House, User } from 'lucide-vue-next';
 
+import { usePopovers } from '@/composables/usePopovers';
+import { useWallet } from '@/composables/useWallet';
+
 import LikePostPopup from '@/components/popups/LikePost.vue';
+import NewPostPopup from '@/components/popups/NewPost.vue';
+import Button from '@/components/ui/button/Button.vue';
 import WalletConnect from '@/components/wallet/WalletConnect.vue';
+
+const wallet = useWallet();
+const popovers = usePopovers();
+
+function handleNewPost() {
+    console.log('new post', wallet.loggedIn.value);
+
+    if (!wallet.loggedIn.value) {
+        return;
+    }
+
+    popovers.show('post', {});
+}
 
 </script>
 
@@ -62,8 +80,10 @@ import WalletConnect from '@/components/wallet/WalletConnect.vue';
         </div>
       </nav>
 
+      <Button size="lg" class="w-full" :onclick="handleNewPost" >New post</Button>
       <WalletConnect />
       <LikePostPopup />
+      <NewPostPopup />
     </div>
 
     <div>Stuff here?</div>

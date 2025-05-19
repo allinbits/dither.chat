@@ -36,6 +36,7 @@ export const messages = {
             },
             PopupTitles: {
                 likePost: 'Like Post',
+                newPost: 'New Post',
             },
         },
     },
