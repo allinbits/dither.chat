@@ -8,6 +8,7 @@ import { useWallet } from '@/composables/useWallet';
 import DislikePostDialog from '@/components/popups/DislikePostDialog.vue';
 import LikePostDialog from '@/components/popups/LikePostDialog.vue';
 import NewPostDialog from '@/components/popups/NewPostDialog.vue';
+import { Button } from '@/components/ui/button';
 import WalletConnect from '@/components/wallet/WalletConnect.vue';
 
 const wallet = useWallet();
