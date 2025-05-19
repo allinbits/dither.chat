@@ -33,11 +33,17 @@ export const messages = {
             Button: {
                 submit: 'Submit',
                 close: 'Close',
+                showMore: 'Show more',
+                copyLink: 'Copy link',
             },
             PopupTitles: {
                 likePost: 'Like Post',
+                dislikePost: 'Dislike Post',
                 newPost: 'New Post',
             },
+        },
+        feedbacks: {
+            copied: 'Copied to clipboard',
         },
     },
 };
