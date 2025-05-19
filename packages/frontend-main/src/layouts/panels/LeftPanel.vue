@@ -70,8 +70,9 @@ const popovers = usePopovers();
         </div>
       </nav>
 
-      <Button class="w-[207px] xl:inline hidden" @click="popovers.show('post', {})" v-if="wallet.loggedIn.value">New post</Button>
       <WalletConnect />
+      <Button class="w-[207px] xl:inline hidden" @click="popovers.show('post', {})" v-if="wallet.loggedIn.value">New post</Button>
+
       <LikePostPopup />
       <NewPostPopup />
     </div>
