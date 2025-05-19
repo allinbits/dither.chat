@@ -29,7 +29,7 @@ const message = ref('');
 const MAX_CHARS = 512 - 'dither.Post("")'.length;
 
 async function handleSubmit() {
-    if (!popovers.state.post) {
+    if (!popovers.state.newPost) {
         return;
     }
 
@@ -47,7 +47,7 @@ const isBroadcasting = computed(() => {
 });
 
 function handleClose() {
-    popovers.state.post = null;
+    popovers.state.newPost = null;
     txError.value = undefined;
     txSuccess.value = undefined;
     photonValue.value = 1;
@@ -78,7 +78,7 @@ watch(wallet.loggedIn, async () => {
 
 <template>
   <div>
-    <Dialog :open="popovers.state.post !== null" @update:open="handleClose" v-if="popovers.state.post !== null">
+    <Dialog :open="popovers.state.newPost !== null" @update:open="handleClose" v-if="popovers.state.newPost !== null">
       <DialogContent>
         <DialogTitle>{{ $t('components.PopupTitles.newPost') }}</DialogTitle>
 
