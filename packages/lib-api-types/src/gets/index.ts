@@ -77,3 +77,8 @@ export const ReadNotificationQuery = t.Object({
     address: t.String(),
     hash: t.String(),
 });
+
+export type SearchQuery = { text: string };
+export const SearchQuery = t.Object({
+    text: t.String(),
+});
