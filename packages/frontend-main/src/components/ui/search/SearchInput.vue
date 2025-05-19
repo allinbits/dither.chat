@@ -3,7 +3,7 @@ import { CircleX, Loader2 } from 'lucide-vue-next';
 
 import { useSearchPosts } from '@/composables/useSearchPosts';
 
-import UserAvatarUsername from '../UserAvatarUsername.vue';
+import UserAvatarUsername from '@/components/users/UserAvatarUsername.vue';
 
 interface SearchInputProps {
     placeholder?: string;

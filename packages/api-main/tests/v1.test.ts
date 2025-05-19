@@ -1,6 +1,6 @@
 import '../src/index';
 
-import type * as Posts from '../src/posts/index';
+import type { Posts } from '@atomone/dither-api-types';
 
 import { sql } from 'drizzle-orm';
 import { assert, describe, it } from 'vitest';

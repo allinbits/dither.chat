@@ -1,7 +1,8 @@
 <script setup lang="ts">
 
+import ToggleThemeButton from '@/components/ToggleThemeButton.vue';
 import { SearchInput } from '@/components/ui/search';
-import ToggleThemeButton from '@/components/ui/ToggleThemeButton.vue';
+
 </script>
 
 <template>

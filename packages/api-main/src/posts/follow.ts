@@ -17,9 +17,9 @@ const statementAddFollower = getDatabase()
 export async function Follow(body: typeof Posts.FollowBody.static) {
     try {
         await statementAddFollower.execute({
-            follower: body.from,
-            following: body.address,
-            hash: body.hash,
+            follower: body.from.toLowerCase(),
+            following: body.address.toLowerCase(),
+            hash: body.hash.toLowerCase(),
             timestamp: new Date(body.timestamp),
         });
 

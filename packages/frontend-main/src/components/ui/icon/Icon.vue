@@ -8,9 +8,19 @@
         style="width: 0; height: 0; position: absolute"
       >
         <defs>
-          <linearGradient :id="id" x2="0" y2="1">
-            <stop offset="0%" :stop-color="gradientFrom ?? '' " />
-            <stop offset="100%" :stop-color="gradientTo ?? '' " />
+          <linearGradient
+            :id="id"
+            x2="0"
+            y2="1"
+          >
+            <stop
+              offset="0%"
+              :stop-color="gradientFrom ?? '' "
+            />
+            <stop
+              offset="100%"
+              :stop-color="gradientTo ?? '' "
+            />
           </linearGradient>
         </defs>
       </svg>
@@ -27,11 +37,19 @@
         />
 
         <!-- loading state -->
-        <template #fallback> <span class="inline-flex" :style="`width:${size}em;`"></span></template>
+        <template #fallback>
+          <span
+            class="inline-flex"
+            :style="`width:${size}em;`"
+          />
+        </template>
       </Suspense>
       <template v-if="$slots['default']">
-        <span class="ml-1 text-small-reg" :class="[gradient && 'text-gradient']"><slot /></span
-        ></template>
+        <span
+          class="ml-1 text-small-reg"
+          :class="[gradient && 'text-gradient']"
+        ><slot /></span>
+      </template>
     </div>
   </KeepAlive>
 </template>
@@ -69,7 +87,7 @@ const titleCase = (content: string) => content && content[0].toUpperCase() + con
 const ico = computed(() => {
     const ico = props.icon;
     const container = props.container;
-    return defineAsyncComponent(() => import(`@/components/ui/icons/${titleCase(ico) + titleCase(container)}.vue`));
+    return defineAsyncComponent(() => import(`@/components/ui/icon/svg/${titleCase(ico) + titleCase(container)}.vue`));
 });
 </script>
 <style scoped>

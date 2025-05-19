@@ -8,7 +8,7 @@ import {
     useForwardPropsEmits,
 } from 'reka-ui';
 
-import { cn } from '@/lib/utils';
+import { cn } from '@/utility';
 
 defineOptions({
     inheritAttrs: false,
