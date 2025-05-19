@@ -50,7 +50,7 @@ const popovers = usePopups();
           </RouterLink>
 
           <RouterLink
-            to="/profile/:address"
+            :to="`/profile/${wallet.address.value}`"
             class="flex flex-row items-center gap-3"
           >
             <div class="flex items-center justify-center h-[52px]">
@@ -62,13 +62,12 @@ const popovers = usePopups();
       </nav>
 
       <Button class="w-[207px] xl:inline hidden" @click="popovers.show('newPost', {})" v-if="wallet.loggedIn.value">New post</Button>
-      <WalletConnect />
 
       <LikePostDialog />
       <DislikePostDialog />
       <NewPostDialog />
     </div>
 
-    <div>Stuff here?</div>
+    <WalletConnect />
   </header>
 </template>
