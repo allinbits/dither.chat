@@ -744,11 +744,11 @@ describe('v1 - mod', { sequential: true }, () => {
         const response = await post(`post`, body);
         assert.isOk(response?.status === 200, 'response was not okay');
 
-        const results1 = await get<{ status: number, rows: { message: string }[] }>('search?text="very unique message"');
+        const results1 = await get<{ status: number; rows: { message: string }[] }>('search?text="very unique message"');
         assert.isOk(results1?.status === 200);
         assert.isOk(results1.rows.length === 1);
 
-        const results2 = await get<{ status: number, rows: { message: string }[] }>('search?text="supercalifragilisticexpialidocious"');
+        const results2 = await get<{ status: number; rows: { message: string }[] }>('search?text="supercalifragilisticexpialidocious"');
         assert.isOk(results2?.status === 404);
     });
 });
