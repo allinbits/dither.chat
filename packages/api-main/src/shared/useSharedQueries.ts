@@ -7,8 +7,13 @@ const doesPostExistStatement = getDatabase().select().from(FeedTable).where(eq(F
 
 export function useSharedQueries() {
     const doesPostExist = async (post_hash: string) => {
-        const results = await doesPostExistStatement.execute({ post_hash });
-        return results.length >= 1;
+        try {
+            const results = await doesPostExistStatement.execute({ post_hash });
+            return results.length >= 1 ? { status: 200 } : { status: 404 };
+        } catch(err) {
+            console.error(err);
+            return { status: 500 }
+        }
     };
 
     return {

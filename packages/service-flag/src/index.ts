@@ -45,6 +45,11 @@ const flagsHandler = async (msg: amqplib.Message) => {
             return HandlerResponse.SUCCESS;
         }
 
+        if (response.status === 500) {
+            console.log(`dither.Dislike could not reach database: ${parsedContent.hash}`);
+            return HandlerResponse.REJECT;
+        }
+
         if (response.status === 401) {
             console.log(`dither.Flag message skipped, invalid post hash provided: ${parsedContent.hash}`);
             return HandlerResponse.SUCCESS;

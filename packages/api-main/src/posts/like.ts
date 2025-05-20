@@ -34,8 +34,8 @@ export async function Like(body: typeof Posts.LikeBody.static) {
 
     try {
         const result = await sharedQueries.doesPostExist(body.post_hash);
-        if (!result) {
-            return { status: 404, error: 'provided post_hash does not exist' };
+        if (result.status !== 200) {
+            return { status: result.status, error: 'provided post_hash does not exist' };
         }
 
         await statement.execute({

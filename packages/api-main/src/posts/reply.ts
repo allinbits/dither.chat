@@ -32,9 +32,9 @@ export async function Reply(body: typeof Posts.ReplyBody.static) {
     }
 
     try {
-        const doesExit = await sharedQueries.doesPostExist(body.post_hash);
-        if (!doesExit) {
-            return { status: 404, error: 'Provided post_hash was not found' };
+        const result = await sharedQueries.doesPostExist(body.post_hash);
+        if (result.status !== 200) {
+            return { status: result.status, error: 'provided post_hash does not exist' };
         }
 
         await statement.execute({
