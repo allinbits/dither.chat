@@ -7,6 +7,7 @@ import { coins, type DeliverTxResponse, SigningStargateClient } from '@cosmjs/st
 import { getOfflineSigner } from '@cosmostation/cosmos-client';
 
 import chainInfo from '@/chain-config.json';
+import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
 
 const destinationWallet = import.meta.env.VITE_COMMUNITY_WALLET ?? 'atone1uq6zjslvsa29cy6uu75y8txnl52mw06j6fzlep';
 
@@ -28,6 +29,8 @@ export const getWalletHelp = (wallet: Wallets) => {
     }
 };
 const useWalletInstance = () => {
+    const walletDialogStore = useWalletDialogStore();
+
     const walletState = {
         keplr: computed(() => !!window.keplr),
         leap: computed(() => !!window.leap),
@@ -161,6 +164,8 @@ const useWalletInstance = () => {
                 }
                 break;
         }
+
+        walletDialogStore.hideDialog();
     };
 
     const sendTx = async (msgs: EncodeObject[]) => {
@@ -309,16 +314,23 @@ const useWalletInstance = () => {
     window.addEventListener('keplr_keystorechange', refreshAddress);
     window.addEventListener('leap_keystorechange', refreshAddress);
 
-    return { ...walletState, signOut, connect, sendTx, signMessage, dither: {
-        post: ditherPost,
-        reply: ditherReply,
-        dislike: ditherDislike,
-        like: ditherLike,
-        flag: ditherFlag,
-        postRemove: ditherPostRemove,
-        follow: ditherFollow,
-        unfollow: ditherUnfollow,
-    } };
+    return {
+        ...walletState,
+        signOut,
+        connect,
+        sendTx,
+        signMessage,
+        dither: {
+            post: ditherPost,
+            reply: ditherReply,
+            dislike: ditherDislike,
+            like: ditherLike,
+            flag: ditherFlag,
+            postRemove: ditherPostRemove,
+            follow: ditherFollow,
+            unfollow: ditherUnfollow,
+        },
+    };
 };
 
 let walletInstance: ReturnType<typeof useWalletInstance>;
