@@ -2,6 +2,7 @@
 import type { Ref } from 'vue';
 
 import { computed, ref } from 'vue';
+import { useMediaQuery } from '@vueuse/core';
 import { bech32 } from 'bech32';
 import { Wallet } from 'lucide-vue-next';
 import { VisuallyHidden } from 'reka-ui';
@@ -11,6 +12,7 @@ import { getWalletHelp, useWallet, Wallets } from '@/composables/useWallet';
 import DialogDescription from '../ui/dialog/DialogDescription.vue';
 import DialogTitle from '../ui/dialog/DialogTitle.vue';
 import Icon from '../ui/icon/Icon.vue';
+import UserAvatar from '../users/UserAvatar.vue';
 import UserAvatarUsername from '../users/UserAvatarUsername.vue';
 import UserBalance from '../users/UserBalance.vue';
 
@@ -29,7 +31,9 @@ import {
     PopoverTrigger,
 } from '@/components/ui/popover';
 import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
+import { breakpoints } from '@/utility/breakpoints';
 import { shorten } from '@/utility/text';
+const isXl = useMediaQuery(`(max-width: ${breakpoints.xl - 1}px)`);
 
 const isConnecting = ref(false);
 const isError = ref(false);
@@ -143,7 +147,8 @@ const isValidAddress = computed(() => {
     <template v-if="connectedState">
       <Popover>
         <PopoverTrigger>
-          <UserAvatarUsername :userAddress="address"/>
+          <UserAvatar v-if="isXl" :userAddress="address"/>
+          <UserAvatarUsername v-else :userAddress="address"/>
         </PopoverTrigger>
         <PopoverContent>
           <div class="flex flex-col gap-4">
