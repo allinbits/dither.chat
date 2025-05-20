@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 
 import { secretKey } from './useUserAuth';
 
-export const verifyJWT = async ({ request, store }: { request: any, store: { userAddress: string }}) => {
+export const verifyJWT = async ({ request, store }: { request: Request; store: { userAddress: string } }) => {
     const authHeader = request.headers.get('authorization');
 
     if (!authHeader?.startsWith('Bearer ')) {
@@ -11,7 +11,7 @@ export const verifyJWT = async ({ request, store }: { request: any, store: { use
 
     try {
         const token = authHeader.split(' ')[1];
-        const tokenData = jwt.verify(token, secretKey) as { data: string, iat: number, exp: number };
+        const tokenData = jwt.verify(token, secretKey) as { data: string; iat: number; exp: number };
         if (!tokenData) {
             return { status: 401, error: 'Unauthorized: Invalid token' };
         }
@@ -21,7 +21,8 @@ export const verifyJWT = async ({ request, store }: { request: any, store: { use
         // and take the 4th element
         const userAddress = tokenData.data.split(',')[3];
         store.userAddress = userAddress;
-    } catch(err) {
+    }
+    catch (err) {
         console.error(err);
         return { status: 401, error: 'Unauthorized: Invalid token' };
     }

@@ -10,9 +10,10 @@ export function useSharedQueries() {
         try {
             const results = await doesPostExistStatement.execute({ post_hash });
             return results.length >= 1 ? { status: 200 } : { status: 404 };
-        } catch(err) {
+        }
+        catch (err) {
             console.error(err);
-            return { status: 500 }
+            return { status: 500 };
         }
     };
 
