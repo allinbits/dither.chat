@@ -749,7 +749,8 @@ describe('v1 - mod', { sequential: true }, () => {
         assert.isOk(results1.rows.length === 1);
 
         const results2 = await get<{ status: number; rows: { message: string }[] }>('search?text="supercalifragilisticexpialidocious"');
-        assert.isOk(results2?.status === 404);
+        assert.isOk(results2?.status === 200);
+        assert.isOk(results2.rows.length <= 0);
     });
 });
 
