@@ -20,11 +20,14 @@ const popups = usePopups();
 const walletDialogStore = useWalletDialogStore();
 
 function handleAction(type: keyof PopupState, post: Post) {
-    if (!wallet.loggedIn.value) {
-        walletDialogStore.showDialog();
+    if (wallet.loggedIn.value) {
+        popups.show(type, post);
         return;
     }
-    popups.show(type, post);
+
+    walletDialogStore.showDialog(() => {
+        popups.show(type, post);
+    });
 }
 
 </script>

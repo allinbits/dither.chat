@@ -92,6 +92,12 @@ const connectWallet = async (walletType: Wallets, address?: string) => {
             clearTimeout(slow);
             slow = null;
         }
+
+        // Call the callback if it exists then clear it
+        if (walletDialogStore.connectedCallback) {
+            walletDialogStore.connectedCallback();
+            walletDialogStore.connectedCallback = null;
+        }
     }
     catch (err) {
         console.error(err);
