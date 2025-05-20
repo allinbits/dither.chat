@@ -27,14 +27,15 @@ const { data: post, isLoading, isError, error } = usePost({
     </div>
 
     <div v-if="post" class="flex flex-col p-4 w-full">
-      <div class="flex flex-row gap-3 mb-2">
-        <UserAvatarUsername :userAddress="post.author"/>
-        <PrettyTimestamp :timestamp="new Date(post.timestamp)" />
-      </div>
+      <RouterLink :to="`/profile?address=${post.author}`">
+        <div class="flex flex-row gap-3 mb-2">
+          <UserAvatarUsername :userAddress="post.author" />
+          <PrettyTimestamp :timestamp="new Date(post.timestamp)" />
+        </div>
+      </RouterLink>
       <PostMessage :post="post" />
       <div class="py-2 mt-4 border-y">
-        <PostActions :post="post"
-                     class="px-2" />
+        <PostActions :post="post" class="px-2" />
       </div>
     </div>
   </MainLayout>

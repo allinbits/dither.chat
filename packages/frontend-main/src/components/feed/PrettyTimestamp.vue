@@ -7,7 +7,7 @@ const isToNow = ref(true);
 
 </script>
 <template>
-  <button @click="isToNow = !isToNow">
+  <button @click.stop="isToNow = !isToNow">
     <span class="text-[#B9B9B9] text-sm">{{ isToNow ? formatDistanceToNowStrict(timestamp) : format(timestamp, "Pp") }}</span>
   </button>
 </template>
