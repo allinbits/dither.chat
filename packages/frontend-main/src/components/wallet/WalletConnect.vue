@@ -28,6 +28,7 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from '@/components/ui/popover';
+import { useWalletStore } from '@/stores/useWalletStore';
 import { shorten } from '@/utility/text';
 
 const isConnecting = ref(false);
@@ -38,6 +39,7 @@ const isAddressOnlyConnection = ref(false);
 const publicAddress = ref('');
 
 const { connect, signOut, address, loggedIn, keplr, leap, cosmostation } = useWallet();
+const walletStore = useWalletStore();
 
 const selectState = computed(
     () => !isConnecting.value && !loggedIn.value && !isError.value && !isAddressOnlyConnection.value,
@@ -151,10 +153,10 @@ const isValidAddress = computed(() => {
       </Popover>
     </template>
     <template v-else>
-      <Dialog>
+      <Dialog v-model:open="walletStore.isOpen">
         <!-- Normal signed out button -->
-        <DialogTrigger>
-          <Button class="w-[207px] xl:inline hidden">
+        <DialogTrigger asChild>
+          <Button @click="walletStore.showDialog" class="w-[207px] xl:inline hidden">
             {{ $t('components.WalletConnect.button') }}
           </Button>
           <div class="flex items-center justify-center flex-row xl:hidden h-[52px]">
