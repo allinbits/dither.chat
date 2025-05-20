@@ -1,64 +1,43 @@
 import type { Post } from 'api-main/types/feed';
 
-import { onBeforeUnmount, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 import { refDebounced } from '@vueuse/core';
+import { useQuery } from '@tanstack/vue-query';
 
 const apiRoot = import.meta.env.VITE_API_ROOT || 'http://localhost:3000';
 
-export function useSearchPosts(minQueryLength: number = 3, debounceMs: number = 300) {
+export function useSearchPosts(minQueryLength: number = 3, debounceMs: number = 10) {
     const query = ref<string>('');
     const debouncedQuery = refDebounced<string>(query, debounceMs);
-    const results = ref<Post[]>([]);
-    const isLoading = ref<boolean>(false);
-    const error = ref<Error | null>(null);
-    let controller: AbortController | null = null;
 
-    const searchPosts = async (query: string) => {
-        if (controller) {
-            controller.abort('cancel current search');
+    const searchPosts = async ({ signal }: { queryKey: string[]; signal: AbortSignal }) => {
+        // FIXME: We should use search endpoint instead
+        const rawResponse = await fetch(`${apiRoot}/feed?offset=0&limit=100`, { signal });
+        const res = (await rawResponse.json()) as { status: number; rows: Post[] };
+
+        if (res.status !== 200) {
+            throw Error('failed to search');
         }
 
-        if (query.trim().length < minQueryLength) {
-            results.value = [];
-            return;
-        }
-
-        controller = new AbortController();
-        isLoading.value = true;
-        error.value = null;
-
-        try {
-            // FIXME: We should use search endpoint instead
-            const rawResponse = await fetch(`${apiRoot}/feed?offset=0&limit=100`, { signal: controller.signal });
-            const res = (await rawResponse.json()) as { status: number; rows: Post[] };
-
-            if (res.status !== 200) {
-                throw Error('failed to search');
-            }
-
-            results.value = res.rows.filter((post: Post) => post.message.toLowerCase().includes(query.toLowerCase()));
-        }
-        catch (e) {
-            if (e instanceof Error && e.name === 'AbortError') {
-                return;
-            }
-
-            error.value = e as Error;
-        }
-        finally {
-            isLoading.value = false;
-        }
+        return res.rows.filter((post: Post) => post.message.toLowerCase().includes(debouncedQuery.value.toLowerCase()));
     };
 
-    watch(debouncedQuery, (debouncedQueryValue: string) => {
-        searchPosts(debouncedQueryValue);
+    const {
+        isLoading,
+        data: posts,
+        error,
+        refetch,
+    } = useQuery({
+        queryKey: ['searchPosts', debouncedQuery],
+        queryFn: searchPosts,
+        enabled: false,
     });
 
-    onBeforeUnmount(() => {
-        if (controller) {
-            controller.abort('component unmounted');
+    watch(debouncedQuery, (newVal: string) => {
+        if (newVal.trim().length >= minQueryLength) {
+            refetch();
         }
     });
 
-    return { searchPosts, results, isLoading, error, query };
+    return { searchPosts, posts, isLoading, error, query };
 }

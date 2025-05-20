@@ -16,10 +16,10 @@ const props = withDefaults(
 
 const clearSearch = () => {
     query.value = '';
-    results.value = [];
+    posts.value = [];
 };
 
-const { query, results, isLoading, error } = useSearchPosts(3, 300);
+const { query, posts, isLoading, error } = useSearchPosts(3, 300);
 
 </script>
 
@@ -49,7 +49,7 @@ const { query, results, isLoading, error } = useSearchPosts(3, 300);
       </p>
     </div>
 
-    <div v-else-if="query && results.length === 0" class="flex items-center justify-center mt-2 mb-2">
+    <div v-else-if="query && posts?.length === 0" class="flex items-center justify-center mt-2 mb-2">
       <p class="text-neutral-500">
         No results found
       </p>
@@ -58,7 +58,7 @@ const { query, results, isLoading, error } = useSearchPosts(3, 300);
     <div v-else
          class="results-list border-neutral-200 border-1 max-h-[60vh] pl-2 pr-2 rounded-b-md overflow-y-auto overflow-x-hidden"
     >
-      <div v-for="(post, index) in results" :key="index" class="pb-2 pt-2 border-b border-neutral-200 last:border-b-0 truncate">
+      <div v-for="(post, index) in posts" :key="index" class="pb-2 pt-2 border-b border-neutral-200 last:border-b-0 truncate">
         {{ post.message }}
         <UserAvatarUsername :userAddress="post.author" size="sm" />
       </div>
