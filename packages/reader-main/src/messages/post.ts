@@ -34,7 +34,6 @@ export async function Post(action: ActionWithData): Promise<ResponseStatus> {
             body: JSON.stringify(postBody),
         });
 
-        
         if (rawResponse.status !== 200) {
             console.error('Error posting to API:', rawResponse);
             return 'RETRY';

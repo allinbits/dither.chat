@@ -19,7 +19,7 @@ export function useQueue() {
 
     const size = () => {
         return queue.length;
-    }
+    };
 
     const addRetryCount = () => {
         retryCount += 1;
@@ -57,6 +57,6 @@ export function useQueue() {
         peek,
         remove,
         retryCount,
-        size
+        size,
     };
 }

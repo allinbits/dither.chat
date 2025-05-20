@@ -1,3 +1,4 @@
+import { sql } from 'drizzle-orm';
 import { bigint, index, integer, pgTable, primaryKey, serial, text, timestamp, varchar } from 'drizzle-orm/pg-core';
 
 const MEMO_LENGTH = 512;
@@ -22,7 +23,11 @@ export const FeedTable = pgTable(
         removed_at: timestamp({ withTimezone: true }), // When this post was removed
         removed_by: varchar({ length: 44 }), // Who removed this post
     },
-    t => [index('feed_hash_index').on(t.hash), index('post_hash_index').on(t.post_hash)],
+    t => [
+        index('feed_hash_index').on(t.hash),
+        index('post_hash_index').on(t.post_hash),
+        index('message_search_index').using('gin', sql`to_tsvector('english', ${t.message})`),
+    ],
 );
 
 export const DislikesTable = pgTable(

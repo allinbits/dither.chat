@@ -731,6 +731,27 @@ describe('v1 - mod', { sequential: true }, () => {
         const data = postsResponse?.rows.find(x => x.hash === newPostHash);
         assert.isOk(data, 'New post was hidden');
     });
+
+    it('Search - /search', async () => {
+        const body: typeof Posts.PostBody.static = {
+            from: addressUserA,
+            hash: getRandomHash(),
+            msg: 'this is a very unique message with a very unique result',
+            quantity: '1',
+            timestamp: '2025-04-16T19:46:42Z',
+        };
+
+        const response = await post(`post`, body);
+        assert.isOk(response?.status === 200, 'response was not okay');
+
+        const results1 = await get<{ status: number; rows: { message: string }[] }>('search?text="very unique message"');
+        assert.isOk(results1?.status === 200);
+        assert.isOk(results1.rows.length === 1);
+
+        const results2 = await get<{ status: number; rows: { message: string }[] }>('search?text="supercalifragilisticexpialidocious"');
+        assert.isOk(results2?.status === 200);
+        assert.isOk(results2.rows.length <= 0);
+    });
 });
 
 describe('v1/auth', async () => {

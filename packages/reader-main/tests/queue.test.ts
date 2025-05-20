@@ -1,7 +1,7 @@
-import { assert, describe, expect, it } from 'vitest';
+import { assert, describe, it } from 'vitest';
 
-import { useQueue } from '../src/queue/index';
 import { generateFakeData, getAtomOneAddress } from '../../api-main/tests/shared';
+import { useQueue } from '../src/queue/index';
 
 const queue = useQueue();
 
@@ -32,11 +32,11 @@ describe('queue tests', () => {
 
     it('should increase retry count', () => {
         queue.addRetryCount();
-        assert.isOk(queue.getRetryCount() === 1, 'retry count did not increment')
+        assert.isOk(queue.getRetryCount() === 1, 'retry count did not increment');
     });
 
     it('should reset retry count', () => {
         queue.remove();
-        assert.isOk(queue.getRetryCount() === 0, 'retry count did not reset')
+        assert.isOk(queue.getRetryCount() === 0, 'retry count did not reset');
     });
 });
