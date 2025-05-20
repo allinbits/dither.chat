@@ -8,7 +8,7 @@ import { useWallet } from '@/composables/useWallet';
 
 import SharePostPopover from '../popups/SharePostPopover.vue';
 
-import { useWalletStore } from '@/stores/useWalletStore';
+import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
 
 defineProps<{ post: Post }>();
 
@@ -17,11 +17,11 @@ const buttonLabelClass = 'text-[#A2A2A9] text-xs font-medium';
 
 const wallet = useWallet();
 const popups = usePopups();
-const walletStore = useWalletStore();
+const walletDialogStore = useWalletDialogStore();
 
 function handleAction(type: keyof PopupState, post: Post) {
     if (!wallet.loggedIn.value) {
-        walletStore.showDialog();
+        walletDialogStore.showDialog();
         return;
     }
     popups.show(type, post);
