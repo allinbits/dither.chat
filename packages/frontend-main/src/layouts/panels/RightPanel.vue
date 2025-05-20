@@ -10,6 +10,6 @@ import { SearchInput } from '@/components/ui/search';
   <aside
     class="flex flex-col h-full w-full gap-4">
     <ToggleThemeButton/>
-    <SearchInput placeholder="Type to search..." />
+    <SearchInput />
   </aside>
 </template>

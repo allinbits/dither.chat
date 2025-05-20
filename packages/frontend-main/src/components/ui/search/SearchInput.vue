@@ -19,7 +19,7 @@ const clearSearch = () => {
     posts.value = [];
 };
 
-const { query, posts, isLoading, error } = useSearchPosts(3, 300);
+const { query, posts, isLoading, error } = useSearchPosts();
 
 </script>
 
@@ -51,7 +51,7 @@ const { query, posts, isLoading, error } = useSearchPosts(3, 300);
 
     <div v-else-if="query && posts?.length === 0" class="flex items-center justify-center mt-2 mb-2">
       <p class="text-neutral-500">
-        No results found
+        {{ $t('components.SearchInput.noResults') }}
       </p>
     </div>
 

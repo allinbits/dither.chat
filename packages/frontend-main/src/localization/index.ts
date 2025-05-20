@@ -37,6 +37,11 @@ export const messages = {
             PopupTitles: {
                 likePost: 'Like Post',
             },
+            SearchInput: {
+                placeholder: 'Type to search',
+                noResults: 'No results found',
+                failedToSearch: 'Failed to search',
+            },
         },
     },
 };

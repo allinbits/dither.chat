@@ -1,12 +1,14 @@
 import type { Post } from 'api-main/types/feed';
 
 import { ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { refDebounced } from '@vueuse/core';
 import { useQuery } from '@tanstack/vue-query';
 
 const apiRoot = import.meta.env.VITE_API_ROOT || 'http://localhost:3000';
 
-export function useSearchPosts(minQueryLength: number = 3, debounceMs: number = 10) {
+export function useSearchPosts(minQueryLength: number = 3, debounceMs: number = 300) {
+    const { t } = useI18n();
     const query = ref<string>('');
     const debouncedQuery = refDebounced<string>(query, debounceMs);
 
@@ -16,7 +18,7 @@ export function useSearchPosts(minQueryLength: number = 3, debounceMs: number = 
         const res = (await rawResponse.json()) as { status: number; rows: Post[] };
 
         if (res.status !== 200) {
-            throw Error('failed to search');
+            throw Error(t('components.SearchInput.failedToSearch'));
         }
 
         return res.rows.filter((post: Post) => post.message.toLowerCase().includes(debouncedQuery.value.toLowerCase()));
