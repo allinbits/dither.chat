@@ -14,7 +14,7 @@ defineProps<{ post: Post }>();
 </script>
 
 <template>
-  <RouterLink :to="`/post?hash=${post.hash}`" custom v-slot="{ navigate }" class="flex flex-row gap-3 border-b">
+  <RouterLink :to="`/post?hash=${post.hash}`" custom v-slot="{ navigate }">
     <div class="flex flex-row gap-3 border-b">
       <UserAvatar :userAddress="post.author" />
       <div class="flex flex-col w-full gap-3" @click="navigate">
