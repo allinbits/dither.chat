@@ -121,7 +121,7 @@ export async function start() {
     state.onLastBlock(handleLastBlock);
     state.onAction(handleAction);
     state.start();
-    setInterval(handleQueue, 5);
+    setInterval(handleQueue, process.env.QUEUE_CHECK_MS ? parseInt(process.env.QUEUE_CHECK_MS) : 1);
 }
 
 start();
