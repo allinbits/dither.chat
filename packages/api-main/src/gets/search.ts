@@ -11,7 +11,7 @@ export async function Search(query: typeof Gets.SearchQuery.static) {
             .from(FeedTable)
             .where(sql`to_tsvector('english', ${FeedTable.message}) @@ websearch_to_tsquery('english', ${query.text})`).limit(100).offset(0).orderBy(desc(FeedTable.timestamp)).execute();
 
-        return results.length <= 0 ? { status: 404, rows: [] } : { status: 200, rows: results };
+        return { status: 200, rows: [...results] };
     }
     catch (error) {
         console.error(error);
