@@ -5,6 +5,10 @@ import { useBalanceFetcher } from '@/composables/useBalanceFetcher';
 import { usePopups } from '@/composables/usePopups';
 import { useWallet } from '@/composables/useWallet';
 
+import UserAvatar from '@/components//users/UserAvatar.vue';
+import Username from '@/components//users/Username.vue';
+import PostMessage from '@/components/feed/PostMessage.vue';
+import PrettyTimestamp from '@/components/feed/PrettyTimestamp.vue';
 import
 { Button }
     from '@/components/ui/button';
@@ -16,7 +20,7 @@ import {
 import InputPhoton from '@/components/ui/input/InputPhoton.vue';
 import { Textarea } from '@/components/ui/textarea';
 
-const popovers = usePopups();
+const popups = usePopups();
 const wallet = useWallet();
 const balanceFetcher = useBalanceFetcher();
 
@@ -26,14 +30,15 @@ const txSuccess = ref<string>();
 const isBalanceInputValid = ref(false);
 const message = ref('');
 
-const MAX_CHARS = 512 - 'dither.Post("")'.length;
+const POST_HASH_LEN = 64;
+const MAX_CHARS = 512 - ('dither.Reply("", "")'.length + POST_HASH_LEN);
 
 async function handleSubmit() {
-    if (!popovers.state.newPost) {
+    if (!popups.state.reply) {
         return;
     }
 
-    const result = await wallet.dither.post(message.value, BigInt(photonValue.value).toString());
+    const result = await wallet.dither.reply(popups.state.reply.hash, message.value, BigInt(photonValue.value).toString());
     if (!result.broadcast) {
         txError.value = result.msg;
         return;
@@ -50,7 +55,7 @@ const isBroadcasting = computed(() => {
 });
 
 function handleClose() {
-    popovers.state.newPost = null;
+    popups.state.reply = null;
     txError.value = undefined;
     txSuccess.value = undefined;
     photonValue.value = 1;
@@ -81,11 +86,22 @@ watch(wallet.loggedIn, async () => {
 
 <template>
   <div>
-    <Dialog :open="popovers.state.newPost !== null" @update:open="handleClose" v-if="popovers.state.newPost !== null">
+    <Dialog :open="popups.state.reply !== null" @update:open="handleClose" v-if="popups.state.reply !== null">
       <DialogContent>
-        <DialogTitle>{{ $t('components.PopupTitles.newPost') }}</DialogTitle>
+        <DialogTitle>{{ $t('components.PopupTitles.reply') }}</DialogTitle>
 
-        <Textarea placeholder="What's up?" v-model="message" @input="capChars" v-if="!isBroadcasting && !txSuccess" />
+        <div v-if="!isBroadcasting && !txSuccess" class="flex flex-row gap-3 border-b pb-3">
+          <UserAvatar :userAddress="popups.state.reply.author" />
+          <div class="flex flex-col w-full gap-3">
+            <div class="flex flex-row gap-3 pt-2.5">
+              <Username :userAddress="popups.state.reply.author" />
+              <PrettyTimestamp :timestamp="new Date(popups.state.reply.timestamp)" />
+            </div>
+            <PostMessage :post="popups.state.reply" />
+          </div>
+        </div>
+
+        <Textarea placeholder="Write your reply" v-model="message" @input="capChars" v-if="!isBroadcasting && !txSuccess" />
 
         <!-- Transaction Form -->
         <div class="flex flex-col w-full gap-4" v-if="!isBroadcasting && !txSuccess">

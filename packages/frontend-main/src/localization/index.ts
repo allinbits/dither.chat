@@ -40,6 +40,7 @@ export const messages = {
                 likePost: 'Like Post',
                 dislikePost: 'Dislike Post',
                 newPost: 'New Post',
+                reply: 'Reply to Post',
             },
             Tabs: {
                 feed: 'Global Feed',
