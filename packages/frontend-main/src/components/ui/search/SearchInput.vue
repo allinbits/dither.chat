@@ -29,12 +29,12 @@ const navigateToPost = (hash: string) => {
 </script>
 
 <template>
-  <div>
-    <div class="search-input flex items-center gap-2 relative">
+  <div class="w-full max-w-[310px] min-w-[140px]">
+    <div class="search-input flex items-center gap-2 relative ">
       <input
         v-model="query"
         :placeholder="props.placeholder"
-        class="bg-neutral-200 p-2 h-[44px] flex-1 pr-10"
+        class="bg-neutral-200 p-2 h-[40px] flex-1 pr-10 w-full"
       />
 
       <CircleX
@@ -61,7 +61,7 @@ const navigateToPost = (hash: string) => {
     </div>
 
     <div v-else
-         class="search-results border-neutral-200 border-1 max-h-[60vh] pl-2 pr-2 rounded-b-md overflow-y-auto overflow-x-hidden"
+         class="search-results border-neutral-200 bg-background border-1 max-h-[60vh] pl-2 pr-2 rounded-b-md overflow-y-auto overflow-x-hidden"
     >
       <div
         v-for="(post, index) in posts"
