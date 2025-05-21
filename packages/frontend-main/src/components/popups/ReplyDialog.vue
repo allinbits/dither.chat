@@ -45,6 +45,7 @@ async function handleSubmit() {
     }
 
     txSuccess.value = result.tx?.transactionHash;
+    message.value = '';
 }
 
 const isBroadcasting = computed(() => {
