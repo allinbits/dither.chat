@@ -7,16 +7,10 @@ import { useWallet } from '@/composables/useWallet';
 
 import UserAvatar from '@/components//users/UserAvatar.vue';
 import Username from '@/components//users/Username.vue';
-import PostMessage from '@/components/feed/PostMessage.vue';
-import PrettyTimestamp from '@/components/feed/PrettyTimestamp.vue';
-import
-{ Button }
-    from '@/components/ui/button';
-import {
-    Dialog,
-    DialogContent,
-    DialogTitle,
-} from '@/components/ui/dialog';
+import PostMessage from '@/components/posts/PostMessage.vue';
+import PrettyTimestamp from '@/components/posts/PrettyTimestamp.vue';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import InputPhoton from '@/components/ui/input/InputPhoton.vue';
 import { Textarea } from '@/components/ui/textarea';
 
@@ -38,7 +32,11 @@ async function handleSubmit() {
         return;
     }
 
-    const result = await wallet.dither.reply(popups.state.reply.hash, message.value, BigInt(photonValue.value).toString());
+    const result = await wallet.dither.reply(
+        popups.state.reply.hash,
+        message.value,
+        BigInt(photonValue.value).toString(),
+    );
     if (!result.broadcast) {
         txError.value = result.msg;
         return;
@@ -101,19 +99,28 @@ watch(wallet.loggedIn, async () => {
           </div>
         </div>
 
-        <Textarea placeholder="Write your reply" v-model="message" @input="capChars" v-if="!isBroadcasting && !txSuccess" />
+        <Textarea
+          placeholder="Write your reply"
+          v-model="message"
+          @input="capChars"
+          v-if="!isBroadcasting && !txSuccess"
+        />
 
         <!-- Transaction Form -->
         <div class="flex flex-col w-full gap-4" v-if="!isBroadcasting && !txSuccess">
           <InputPhoton v-model="photonValue" @on-validity-change="handleInputValidity" />
           <span v-if="txError" class="text-red-500 text-left text-xs">{{ txError }}</span>
-          <Button class="w-full xl:inline hidden" :disabled="!canSubmit" @click="isBalanceInputValid ? handleSubmit() : () => {}">
+          <Button
+            class="w-full xl:inline hidden"
+            :disabled="!canSubmit"
+            @click="isBalanceInputValid ? handleSubmit() : () => {}"
+          >
             {{ $t('components.Button.submit') }}
           </Button>
         </div>
         <!-- Broadcast Status -->
         <div class="flex flex-col w-full gap-4" v-if="isBroadcasting && !txSuccess">
-          {{  $t('components.Wallet.popupSign') }}
+          {{ $t('components.Wallet.popupSign') }}
         </div>
         <!-- Success Status -->
         <div class="flex flex-col w-full gap-4 overflow-hidden" v-if="!isBroadcasting && txSuccess">
