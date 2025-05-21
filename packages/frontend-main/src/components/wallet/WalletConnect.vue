@@ -6,7 +6,6 @@ import { Wallet } from 'lucide-vue-next';
 
 import { useWallet } from '@/composables/useWallet';
 
-
 import UserAvatar from '../users/UserAvatar.vue';
 import UserAvatarUsername from '../users/UserAvatarUsername.vue';
 
@@ -55,14 +54,12 @@ const connectedState = computed(() => !isConnecting.value && loggedIn.value && !
     </template>
 
     <template v-else>
-      <DialogTrigger asChild>
-        <Button @click="walletDialogStore.showDialog" class="w-[207px] xl:inline hidden">
-          {{ $t('components.WalletConnect.button') }}
-        </Button>
-        <div class="flex items-center justify-center flex-row xl:hidden h-[52px]">
-          <Wallet class="size-7" />
-        </div>
-      </DialogTrigger>
+      <Button @click="walletDialogStore.showDialog" class="w-[207px] xl:inline hidden">
+        {{ $t('components.WalletConnect.button') }}
+      </Button>
+      <button @click="walletDialogStore.showDialog"  class="flex items-center justify-center flex-row xl:hidden h-[52px]">
+        <Wallet class="size-7" />
+      </button>
     </template>
   </div>
 </template>

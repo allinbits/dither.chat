@@ -28,30 +28,24 @@ const popups = usePopups();
           <span class="hidden xl:inline text-lg font-semibold">Home</span>
         </RouterLink>
 
-          <RouterLink
-            to="/notifications"
-            class="flex flex-row items-center gap-3"
-          >
-            <div class="flex items-center justify-center h-[52px]">
-              <Bell class="size-7" />
-            </div>
-            <span class="hidden xl:inline text-lg font-semibold">Notifications</span>
-          </RouterLink>
+        <RouterLink to="/notifications" class="flex flex-row items-center gap-3">
+          <div class="flex items-center justify-center h-[52px]">
+            <Bell class="size-7" />
+          </div>
+          <span class="hidden xl:inline text-lg font-semibold">Notifications</span>
+        </RouterLink>
 
-          <RouterLink
-            :to="`/profile/${wallet.address.value}`"
-            class="flex flex-row items-center gap-3"
-          >
-            <div class="flex items-center justify-center h-[52px]">
-              <User class="size-7" />
-            </div>
-            <span class="hidden xl:inline text-lg font-semibold">My Profile</span>
-          </RouterLink>
-        </div>
+        <RouterLink :to="`/profile/${wallet.address.value}`" class="flex flex-row items-center gap-3">
+          <div class="flex items-center justify-center h-[52px]">
+            <User class="size-7" />
+          </div>
+          <span class="hidden xl:inline text-lg font-semibold">My Profile</span>
+        </RouterLink>
       </nav>
 
-      <Button class="w-[207px] xl:inline hidden" @click="popups.show('newPost', {})" v-if="wallet.loggedIn.value">{{
-        $t('components.Button.newPost') }}</Button>
+      <Button class="w-[207px] xl:inline hidden" @click="popups.show('newPost', {})" v-if="wallet.loggedIn.value">
+        {{ $t('components.Button.newPost') }}
+      </Button>
       <button class="h-[52px] xl:hidden inline" @click="popups.show('newPost', {})" v-if="wallet.loggedIn.value">
         <Feather class="size-7" />
       </button>
