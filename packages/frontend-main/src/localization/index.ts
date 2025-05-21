@@ -41,6 +41,10 @@ export const messages = {
                 dislikePost: 'Dislike Post',
                 newPost: 'New Post',
             },
+            Tabs: {
+                feed: 'Global Feed',
+                following: 'Following',
+            },
         },
         feedbacks: {
             copied: 'Copied to clipboard',
