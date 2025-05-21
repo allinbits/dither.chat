@@ -40,6 +40,7 @@ export const messages = {
                 likePost: 'Like Post',
                 dislikePost: 'Dislike Post',
                 newPost: 'New Post',
+                reply: 'Reply to Post',
             },
             Tabs: {
                 feed: 'Global Feed',
@@ -53,9 +54,19 @@ export const messages = {
                 profile: 'Profile',
                 myProfile: 'My Profile',
             },
+            SearchInput: {
+                placeholder: 'Type to search',
+                noResults: 'No results found',
+                failedToSearch: 'Failed to search',
+            },
         },
         feedbacks: {
             copied: 'Copied to clipboard',
+            SearchInput: {
+                placeholder: 'Type to search',
+                noResults: 'No results found',
+                failedToSearch: 'Failed to search',
+            },
         },
     },
 };

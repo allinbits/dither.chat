@@ -50,7 +50,9 @@ function verifyValidity(value: number | undefined) {
     emits('onValidityChange', true);
 }
 
-watch(model, value => verifyValidity(value));
+watch([model, photonBalance], () => {
+    verifyValidity(model.value);
+});
 onMounted(() => {
     verifyValidity(model.value);
 });

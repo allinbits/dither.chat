@@ -27,6 +27,14 @@ function startReadOnlyServer() {
 
     app.post('/auth', ({ body }) => PostRequests.Auth(body), { body: Posts.AuthBody });
     app.post('/auth-create', ({ body }) => PostRequests.AuthCreate(body), { body: Posts.AuthCreateBody });
+    // Protected route group
+    app.group('', group =>
+        group
+            .onBeforeHandle(verifyJWT)
+            .get('/notifications', ({ query, store }) => GetRequests.Notifications(query, store), {
+                query: Gets.NotificationsQuery,
+            }),
+    );
 
     app.listen(config.READ_ONLY_PORT ?? 3000);
     console.log(`[API Read Only] Running on ${config.READ_ONLY_PORT ?? 3000}`);
@@ -45,34 +53,25 @@ function startWriteOnlyServer() {
     app.post('/dislike', ({ body }) => PostRequests.Dislike(body), { body: Posts.DislikeBody });
     app.post('/flag', ({ body }) => PostRequests.Flag(body), { body: Posts.FlagBody });
     app.post('/post-remove', ({ body }) => PostRequests.PostRemove(body), { body: Posts.PostRemoveBody });
-    app.post('/mod/post-remove', ({ body, store }) => PostRequests.ModRemovePost(body, store as { userAddress: string }), {
-        body: Posts.ModRemovePostBody,
-    });
-    app.post('/mod/post-restore', ({ body, store }) => PostRequests.ModRestorePost(body, store as { userAddress: string }), {
-        body: Posts.ModRemovePostBody,
-    });
-    app.post('/mod/ban', ({ body, store }) => PostRequests.ModBan(body, store as { userAddress: string }), {
-        body: Posts.ModBanBody,
-    });
-    app.post('/mod/unban', ({ body, store }) => PostRequests.ModUnban(body, store as { userAddress: string }), {
-        body: Posts.ModBanBody,
-    });
 
     // Protected route group
-    app.group('/mod', group =>
+    app.group('', group =>
         group
             .onBeforeHandle(verifyJWT)
-            .post('/post-remove', ({ body, store }) => PostRequests.ModRemovePost(body, store as { userAddress: string }), {
+            .post('/mod/post-remove', ({ body, store }) => PostRequests.ModRemovePost(body, store), {
                 body: Posts.ModRemovePostBody,
             })
-            .post('/post-restore', ({ body, store }) => PostRequests.ModRestorePost(body, store as { userAddress: string }), {
+            .post('/mod/post-restore', ({ body, store }) => PostRequests.ModRestorePost(body, store), {
                 body: Posts.ModRemovePostBody,
             })
-            .post('/ban', ({ body, store }) => PostRequests.ModBan(body, store as { userAddress: string }), {
+            .post('/mod/ban', ({ body, store }) => PostRequests.ModBan(body, store), {
                 body: Posts.ModBanBody,
             })
-            .post('/unban', ({ body, store }) => PostRequests.ModUnban(body, store as { userAddress: string }), {
+            .post('/mod/unban', ({ body, store }) => PostRequests.ModUnban(body, store), {
                 body: Posts.ModBanBody,
+            })
+            .get('/notification-read', ({ query, store }) => GetRequests.ReadNotification(query, store), {
+                query: Gets.ReadNotificationQuery,
             }),
     );
     app.listen(config.WRITE_ONLY_PORT ?? 3001);

@@ -3,6 +3,10 @@ import { eq, sql } from 'drizzle-orm';
 
 import { getDatabase } from '../../drizzle/db';
 import { FeedTable } from '../../drizzle/schema';
+import { useSharedQueries } from '../shared/useSharedQueries';
+
+const sharedQueries = useSharedQueries();
+import { notify } from '../shared/notify';
 
 const statement = getDatabase()
     .insert(FeedTable)
@@ -24,7 +28,16 @@ const statementAddReplyCount = getDatabase()
     .prepare('stmnt_add_reply_count');
 
 export async function Reply(body: typeof Posts.ReplyBody.static) {
+    if (body.post_hash.length !== 64) {
+        return { status: 400, error: 'Provided post_hash is not valid for reply' };
+    }
+
     try {
+        const result = await sharedQueries.doesPostExist(body.post_hash);
+        if (result.status !== 200) {
+            return { status: result.status, error: 'provided post_hash does not exist' };
+        }
+
         await statement.execute({
             author: body.from.toLowerCase(),
             hash: body.hash.toLowerCase(),
@@ -36,6 +49,13 @@ export async function Reply(body: typeof Posts.ReplyBody.static) {
 
         await statementAddReplyCount.execute({
             post_hash: body.post_hash,
+        });
+
+        await notify({
+            post_hash: body.post_hash,
+            hash: body.hash,
+            type: 'reply',
+            timestamp: new Date(body.timestamp),
         });
 
         return { status: 200 };

@@ -3,6 +3,7 @@ import { sql } from 'drizzle-orm';
 
 import { getDatabase } from '../../drizzle/db';
 import { FollowsTable } from '../../drizzle/schema';
+import { notify } from '../shared/notify';
 
 const statementAddFollower = getDatabase()
     .insert(FollowsTable)
@@ -12,14 +13,26 @@ const statementAddFollower = getDatabase()
         hash: sql.placeholder('hash'),
         timestamp: sql.placeholder('timestamp'),
     })
+    .onConflictDoNothing()
     .prepare('stmnt_add_follower');
 
 export async function Follow(body: typeof Posts.FollowBody.static) {
     try {
-        await statementAddFollower.execute({
+        const result = await statementAddFollower.execute({
             follower: body.from.toLowerCase(),
             following: body.address.toLowerCase(),
             hash: body.hash.toLowerCase(),
+            timestamp: new Date(body.timestamp),
+        });
+
+        if (typeof result.rowCount !== 'number' || result.rowCount <= 0) {
+            return { status: 401, error: 'failed to add follow, follow already exists' };
+        }
+
+        await notify({
+            owner: body.address,
+            hash: body.hash,
+            type: 'follow',
             timestamp: new Date(body.timestamp),
         });
 
@@ -27,6 +40,6 @@ export async function Follow(body: typeof Posts.FollowBody.static) {
     }
     catch (err) {
         console.error(err);
-        return { status: 400, error: 'failed to add follow, follow likely already exists' };
+        return { status: 400, error: 'failed to communicate with database' };
     }
 }

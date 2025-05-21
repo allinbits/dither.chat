@@ -18,6 +18,10 @@ const statement = getDatabase()
 
 export async function Post(body: typeof Posts.PostBody.static) {
     try {
+        if (body.msg.length >= 512) {
+            return { status: 401, error: 'message is too long' };
+        }
+
         await statement.execute({
             hash: body.hash.toLowerCase(),
             timestamp: new Date(body.timestamp),

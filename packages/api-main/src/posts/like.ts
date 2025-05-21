@@ -3,6 +3,10 @@ import { eq, sql } from 'drizzle-orm';
 
 import { getDatabase } from '../../drizzle/db';
 import { FeedTable, LikesTable } from '../../drizzle/schema';
+import { useSharedQueries } from '../shared/useSharedQueries';
+
+const sharedQueries = useSharedQueries();
+import { notify } from '../shared/notify';
 
 const statement = getDatabase()
     .insert(LikesTable)
@@ -13,6 +17,7 @@ const statement = getDatabase()
         quantity: sql.placeholder('quantity'),
         timestamp: sql.placeholder('timestamp'),
     })
+    .onConflictDoNothing()
     .prepare('stmnt_add_like');
 
 const statementAddLikeToPost = getDatabase()
@@ -25,8 +30,17 @@ const statementAddLikeToPost = getDatabase()
     .prepare('stmnt_add_like_count_to_post');
 
 export async function Like(body: typeof Posts.LikeBody.static) {
+    if (body.post_hash.length !== 64) {
+        return { status: 400, error: 'Provided post_hash is not valid for like' };
+    }
+
     try {
-        await statement.execute({
+        const result = await sharedQueries.doesPostExist(body.post_hash);
+        if (result.status !== 200) {
+            return { status: result.status, error: 'provided post_hash does not exist' };
+        }
+
+        const resultChanges = await statement.execute({
             post_hash: body.post_hash.toLowerCase(),
             hash: body.hash.toLowerCase(),
             author: body.from.toLowerCase(),
@@ -34,8 +48,16 @@ export async function Like(body: typeof Posts.LikeBody.static) {
             timestamp: new Date(body.timestamp),
         });
 
-        await statementAddLikeToPost.execute({ post_hash: body.post_hash, quantity: body.quantity });
+        if (typeof resultChanges.rowCount === 'number' && resultChanges.rowCount >= 1) {
+            await statementAddLikeToPost.execute({ post_hash: body.post_hash, quantity: body.quantity });
+        }
 
+        await notify({
+            post_hash: body.post_hash,
+            hash: body.hash,
+            type: 'like',
+            timestamp: new Date(body.timestamp),
+        });
         return { status: 200 };
     }
     catch (err) {

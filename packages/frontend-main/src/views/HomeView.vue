@@ -10,7 +10,6 @@ const FEED_TAB = 'feed';
 const FOLLOWING_TAB = 'following';
 const { state, setActiveTab } = useTabs({ defaultActiveTab: FEED_TAB });
 
-// const { data: posts, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useFeed();
 const query = useFeed();
 
 </script>

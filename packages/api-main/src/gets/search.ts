@@ -6,10 +6,21 @@ import { FeedTable } from '../../drizzle/schema';
 
 export async function Search(query: typeof Gets.SearchQuery.static) {
     try {
+        const processedQuery = query.text
+            .trim()
+            .split(/\s+/)
+            .filter((w: string) => w.length > 0)
+            .map((w: string) => `${w}:*`)
+            .join(' & ');
+
+        if (!processedQuery) {
+            return [];
+        }
+
         const results = await getDatabase()
             .select()
             .from(FeedTable)
-            .where(sql`to_tsvector('english', ${FeedTable.message}) @@ websearch_to_tsquery('english', ${query.text})`).limit(100).offset(0).orderBy(desc(FeedTable.timestamp)).execute();
+            .where(sql`to_tsvector('english', ${FeedTable.message}) @@ to_tsquery('english', ${processedQuery})`).limit(100).offset(0).orderBy(desc(FeedTable.timestamp)).execute();
 
         return { status: 200, rows: [...results] };
     }

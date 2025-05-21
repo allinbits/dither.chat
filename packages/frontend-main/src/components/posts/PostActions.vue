@@ -8,6 +8,8 @@ import { useWallet } from '@/composables/useWallet';
 
 import SharePostPopover from '../popups/SharePostPopover.vue';
 
+import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
+
 defineProps<{ post: Post }>();
 
 const buttonClass = 'flex flex-row items-center gap-1';
@@ -15,12 +17,17 @@ const buttonLabelClass = 'text-[#A2A2A9] text-xs font-medium';
 
 const wallet = useWallet();
 const popups = usePopups();
+const walletDialogStore = useWalletDialogStore();
 
 function handleAction(type: keyof PopupState, post: Post) {
-    if (!wallet.loggedIn.value) {
+    if (wallet.loggedIn.value) {
+        popups.show(type, post);
         return;
     }
-    popups.show(type, post);
+
+    walletDialogStore.showDialog(null, () => {
+        popups.show(type, post);
+    });
 }
 
 </script>

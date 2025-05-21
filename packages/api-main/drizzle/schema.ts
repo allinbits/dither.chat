@@ -1,13 +1,12 @@
 import { sql } from 'drizzle-orm';
-import { bigint, index, integer, pgTable, primaryKey, serial, text, timestamp, varchar } from 'drizzle-orm/pg-core';
+import { bigint, boolean, index, integer, pgEnum, pgTable, primaryKey, serial, text, timestamp, varchar } from 'drizzle-orm/pg-core';
 
 const MEMO_LENGTH = 512;
 
 export const FeedTable = pgTable(
     'feed',
     {
-        id: serial('id').primaryKey(),
-        hash: varchar({ length: 64 }).notNull(), // Main hash from the transaction
+        hash: varchar({ length: 64 }).primaryKey(), // Main hash from the transaction
         post_hash: varchar({ length: 64 }), // Optional, this makes a post a reply, provided through memo
         author: varchar({ length: 44 }).notNull(), // Address of user, usually in the transfer message
         timestamp: timestamp({ withTimezone: true }).notNull(), // Timestamp parsed with new Date()
@@ -34,14 +33,13 @@ export const FeedTable = pgTable(
 export const DislikesTable = pgTable(
     'dislikes',
     {
+        hash: varchar({ length: 64 }).primaryKey(),
         post_hash: varchar({ length: 64 }).notNull(),
         author: varchar({ length: 44 }).notNull(),
-        hash: varchar({ length: 64 }).notNull(),
         quantity: bigint({ mode: 'number' }).default(0),
         timestamp: timestamp({ withTimezone: true }).notNull(),
     },
     t => [
-        primaryKey({ columns: [t.post_hash, t.hash] }),
         index('dislike_post_hash_idx').on(t.post_hash),
         index('dislike_author_idx').on(t.author),
     ],
@@ -50,14 +48,13 @@ export const DislikesTable = pgTable(
 export const LikesTable = pgTable(
     'likes',
     {
+        hash: varchar({ length: 64 }).primaryKey(),
         post_hash: varchar({ length: 64 }).notNull(),
         author: varchar({ length: 44 }).notNull(),
-        hash: varchar({ length: 64 }).notNull(),
         quantity: bigint({ mode: 'number' }).default(0),
         timestamp: timestamp({ withTimezone: true }).notNull(),
     },
     t => [
-        primaryKey({ columns: [t.post_hash, t.hash] }),
         index('like_post_hash_idx').on(t.post_hash),
         index('like_author_idx').on(t.author),
     ],
@@ -66,14 +63,13 @@ export const LikesTable = pgTable(
 export const FlagsTable = pgTable(
     'flags',
     {
+        hash: varchar({ length: 64 }).primaryKey(),
         post_hash: varchar({ length: 64 }).notNull(),
         author: varchar({ length: 44 }).notNull(),
-        hash: varchar({ length: 64 }).notNull(),
         quantity: bigint({ mode: 'number' }).default(0),
         timestamp: timestamp({ withTimezone: true }).notNull(),
     },
     t => [
-        primaryKey({ columns: [t.post_hash, t.hash] }),
         index('flags_post_hash_idx').on(t.post_hash),
         index('flag_author_idx').on(t.author),
     ],
@@ -114,4 +110,21 @@ export const ModeratorTable = pgTable('moderators', {
     deleted_at: timestamp({ withTimezone: true }),
 });
 
-export const tables = ['feed', 'likes', 'dislikes', 'flags', 'follows', 'audits', 'moderators'];
+export const notificationTypeEnum = pgEnum('notification_type', ['like', 'dislike', 'flag', 'follow', 'reply']);
+
+export const NotificationTable = pgTable(
+    'notifications',
+    {
+        hash: varchar({ length: 64 }).notNull(),
+        owner: varchar({ length: 44 }).notNull(),
+        type: notificationTypeEnum().notNull(),
+        timestamp: timestamp({ withTimezone: true }),
+        was_read: boolean().default(false),
+    },
+    t => [
+        primaryKey({ columns: [t.hash, t.owner] }),
+        index('notification_owner_idx').on(t.owner),
+    ],
+);
+
+export const tables = ['feed', 'likes', 'dislikes', 'flags', 'follows', 'audits', 'moderators', 'notifications'];

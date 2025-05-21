@@ -2,11 +2,14 @@
 import type { EncodeObject, OfflineDirectSigner, OfflineSigner } from '@cosmjs/proto-signing';
 import type { OfflineAminoSigner } from '@keplr-wallet/types';
 
-import { computed, type Ref, ref } from 'vue';
+import { type Ref, ref } from 'vue';
 import { coins, type DeliverTxResponse, SigningStargateClient } from '@cosmjs/stargate';
 import { getOfflineSigner } from '@cosmostation/cosmos-client';
+import { storeToRefs } from 'pinia';
 
 import chainInfo from '@/chain-config.json';
+import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
+import { useWalletStateStore } from '@/stores/useWalletStateStore';
 
 const destinationWallet = import.meta.env.VITE_COMMUNITY_WALLET ?? 'atone1uq6zjslvsa29cy6uu75y8txnl52mw06j6fzlep';
 
@@ -28,15 +31,8 @@ export const getWalletHelp = (wallet: Wallets) => {
     }
 };
 const useWalletInstance = () => {
-    const walletState = {
-        keplr: computed(() => !!window.keplr),
-        leap: computed(() => !!window.leap),
-        cosmostation: computed(() => !!window.cosmostation),
-        loggedIn: ref(false),
-        address: ref(''),
-        used: ref<Wallets | null>(null),
-        isBroadcasting: ref(false),
-    };
+    const walletDialogStore = useWalletDialogStore();
+    const walletState = storeToRefs(useWalletStateStore());
 
     const signOut = () => {
         walletState.address.value = '';
@@ -161,6 +157,8 @@ const useWalletInstance = () => {
                 }
                 break;
         }
+
+        walletDialogStore.hideDialog();
     };
 
     const sendTx = async (msgs: EncodeObject[]) => {
@@ -309,16 +307,24 @@ const useWalletInstance = () => {
     window.addEventListener('keplr_keystorechange', refreshAddress);
     window.addEventListener('leap_keystorechange', refreshAddress);
 
-    return { ...walletState, signOut, connect, sendTx, signMessage, dither: {
-        post: ditherPost,
-        reply: ditherReply,
-        dislike: ditherDislike,
-        like: ditherLike,
-        flag: ditherFlag,
-        postRemove: ditherPostRemove,
-        follow: ditherFollow,
-        unfollow: ditherUnfollow,
-    } };
+    return {
+        ...walletState,
+        signOut,
+        connect,
+        sendTx,
+        refreshAddress,
+        signMessage,
+        dither: {
+            post: ditherPost,
+            reply: ditherReply,
+            dislike: ditherDislike,
+            like: ditherLike,
+            flag: ditherFlag,
+            postRemove: ditherPostRemove,
+            follow: ditherFollow,
+            unfollow: ditherUnfollow,
+        },
+    };
 };
 
 let walletInstance: ReturnType<typeof useWalletInstance>;
