@@ -27,7 +27,7 @@ const { data: post, isLoading, isError, error } = usePost({
     </div>
 
     <div v-if="post" class="flex flex-col p-4 w-full">
-      <RouterLink :to="`/profile?address=${post.author}`">
+      <RouterLink :to="`/profile/${post.author}`">
         <div class="flex flex-row gap-3 mb-2">
           <UserAvatarUsername :userAddress="post.author" />
           <PrettyTimestamp :timestamp="new Date(post.timestamp)" />

@@ -11,7 +11,7 @@ interface Params {
 
 export function usePosts(params: Params) {
     const query = useInfiniteQuery({
-        queryKey: ['posts'],
+        queryKey: ['posts', params.userAddress],
         queryFn: async ({ pageParam = 0 }) => {
             const res = await fetch(`${apiRoot}/posts?address=${params.userAddress}&offset=${pageParam}&limit=${LIMIT}`);
             const json = await res.json() as { status: number; rows: Post[] };

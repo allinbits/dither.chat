@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import { computed, watch } from 'vue';
 import { useRoute } from 'vue-router';
+import { useQueryClient } from '@tanstack/vue-query';
 
 import { usePosts } from '@/composables/usePosts';
 import { useTabs } from '@/composables/useTabs';
@@ -14,17 +16,26 @@ const wallet = useWallet();
 
 const POSTS_TAB = 'post';
 const REPLIES_TAB = 'replies';
-const route = useRoute();
-const address = typeof route.params.address === 'string' ? route.params.address : '';
-const isMyProfile = address === wallet.address.value && !!wallet.loggedIn.value;
-const query = usePosts({ userAddress: address });
 const { state, setActiveTab } = useTabs({ defaultActiveTab: POSTS_TAB });
 
+const route = useRoute();
+const address = computed(() =>
+    typeof route.params.address === 'string' ? route.params.address : '',
+);
+const isMyProfile = computed(() =>
+    address.value === wallet.address.value && !!wallet.loggedIn.value,
+);
+
+const queryClient = useQueryClient();
+const query = usePosts({ userAddress: address.value });
+watch(address, async () => {
+    await queryClient.invalidateQueries({ queryKey: ['posts', address.value] });
+});
 </script>
 
 <template>
   <MainLayout>
-    <div class="py-6 px-4 flex flex-col">
+    <div class="mt-6 px-4 flex flex-col">
 
       <h1 class="hidden xl:inline text-lg font-semibold mb-6 ml-3">
         {{ $t(`components.Titles.${isMyProfile ? 'myProfile' : 'profile'}`) }}
