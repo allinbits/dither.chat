@@ -50,7 +50,7 @@ const popovers = usePopups();
           </RouterLink>
 
           <RouterLink
-            :to="`/profile?address=${wallet.address.value}`"
+            :to="`/profile/${wallet.address.value}`"
             class="flex flex-row items-center gap-3"
           >
             <div class="flex items-center justify-center h-[52px]">

@@ -8,8 +8,12 @@ const state = reactive<TabsState>({
     activeTab: '',
 });
 
-export function useTabs({ defaultActiveTab }: { defaultActiveTab: string }) {
-    state.activeTab = defaultActiveTab;
+interface Params {
+    defaultActiveTab: string;
+}
+
+export function useTabs(params: Params) {
+    state.activeTab = params.defaultActiveTab;
     const setActiveTab = (activeTab: string) => {
         state.activeTab = activeTab;
     };

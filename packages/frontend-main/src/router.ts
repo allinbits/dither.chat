@@ -9,8 +9,8 @@ import ProfileView from './views/ProfileView.vue';
 const routes = [
     { path: '/', component: HomeView },
     { path: '/notifications', component: NotificationsView },
-    { path: '/profile', component: ProfileView },
-    { path: '/post', component: PostView },
+    { path: '/profile/:address', component: ProfileView },
+    { path: '/post/:hash/:postHash', component: PostView },
     // Catch-all route for 404
     {
         path: '/:pathMatch(.*)*',

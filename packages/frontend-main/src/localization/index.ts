@@ -44,6 +44,14 @@ export const messages = {
             Tabs: {
                 feed: 'Global Feed',
                 following: 'Following',
+                posts: 'Posts',
+                myPosts: 'My Posts',
+                replies: 'Replies',
+                myReplies: 'My Replies',
+            },
+            Titles: {
+                profile: 'Profile',
+                myProfile: 'My Profile',
             },
         },
         feedbacks: {

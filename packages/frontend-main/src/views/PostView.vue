@@ -4,15 +4,15 @@ import { Loader } from 'lucide-vue-next';
 
 import { usePost } from '@/composables/usePost';
 
-import PostActions from '@/components/feed/PostActions.vue';
-import PostMessage from '@/components/feed/PostMessage.vue';
-import PrettyTimestamp from '@/components/feed/PrettyTimestamp.vue';
+import PostActions from '@/components/posts/PostActions.vue';
+import PostMessage from '@/components/posts/PostMessage.vue';
+import PrettyTimestamp from '@/components/posts/PrettyTimestamp.vue';
 import UserAvatarUsername from '@/components/users/UserAvatarUsername.vue';
 import MainLayout from '@/layouts/MainLayout.vue';
 
 const route = useRoute();
-const hash = typeof route.query.hash === 'string' ? route.query.hash : '';
-const postHash = typeof route.query.postHash === 'string' ? route.query.postHash : undefined;
+const hash = typeof route.params.hash === 'string' ? route.params.hash : '';
+const postHash = typeof route.params.postHash === 'string' ? route.params.postHash : undefined;
 const { data: post, isLoading, isError, error } = usePost({
     hash, postHash,
 });
