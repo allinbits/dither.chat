@@ -2,6 +2,7 @@
 
 import type { Post } from 'api-main/types/feed';
 
+import PostMoreActionsPopover from '../popups/PostMoreActionsPopover.vue';
 import PostActions from '../posts/PostActions.vue';
 import PrettyTimestamp from '../posts/PrettyTimestamp.vue';
 import UserAvatar from '../users/UserAvatar.vue';
@@ -19,13 +20,18 @@ defineProps<{ post: Post }>();
       <RouterLink :to="`/profile/${post.author}`" class="size-[40px]">
         <UserAvatar :userAddress="post.author" />
       </RouterLink>
+
       <div class="flex flex-col w-full gap-3" @click="navigate">
-        <div class="flex flex-row gap-3 pt-2.5">
-          <RouterLink :to="`/profile/${post.author}`">
-            <Username :userAddress="post.author" />
-          </RouterLink>
-          <PrettyTimestamp :timestamp="new Date(post.timestamp)" />
+        <div class="flex flex-row justify-between items-center">
+          <div class="flex flex-row gap-3 pt-2.5">
+            <RouterLink :to="`/profile/${post.author}`">
+              <Username :userAddress="post.author" />
+            </RouterLink>
+            <PrettyTimestamp :timestamp="new Date(post.timestamp)" />
+          </div>
+          <PostMoreActionsPopover :post="post" />
         </div>
+
         <PostMessage :post="post" />
         <PostActions :post="post" />
       </div>

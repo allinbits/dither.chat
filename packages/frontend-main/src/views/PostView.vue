@@ -4,6 +4,7 @@ import { Loader } from 'lucide-vue-next';
 
 import { usePost } from '@/composables/usePost';
 
+import PostMoreActionsPopover from '@/components/popups/PostMoreActionsPopover.vue';
 import PostActions from '@/components/posts/PostActions.vue';
 import PostMessage from '@/components/posts/PostMessage.vue';
 import PrettyTimestamp from '@/components/posts/PrettyTimestamp.vue';
@@ -11,8 +12,8 @@ import UserAvatarUsername from '@/components/users/UserAvatarUsername.vue';
 import MainLayout from '@/layouts/MainLayout.vue';
 
 const route = useRoute();
-const hash = typeof route.query.hash === 'string' ? route.query.hash : '';
-const postHash = typeof route.query.postHash === 'string' ? route.query.postHash : undefined;
+const hash = typeof route.params.hash === 'string' ? route.params.hash : '';
+const postHash = typeof route.params.postHash === 'string' ? route.params.postHash : undefined;
 const { data: post, isLoading, isError, error } = usePost({
     hash, postHash,
 });
@@ -27,14 +28,18 @@ const { data: post, isLoading, isError, error } = usePost({
     </div>
 
     <div v-if="post" class="flex flex-col p-4 w-full">
-      <div class="flex flex-row gap-3 mb-2">
-        <UserAvatarUsername :userAddress="post.author"/>
-        <PrettyTimestamp :timestamp="new Date(post.timestamp)" />
+      <div class="flex flex-row justify-between items-center">
+        <div class="flex flex-row gap-3 mb-2">
+          <UserAvatarUsername :userAddress="post.author" />
+          <PrettyTimestamp :timestamp="new Date(post.timestamp)" />
+        </div>
+
+        <PostMoreActionsPopover :post="post"/>
       </div>
+
       <PostMessage :post="post" />
       <div class="py-2 mt-4 border-y">
-        <PostActions :post="post"
-                     class="px-2" />
+        <PostActions :post="post" class="px-2" />
       </div>
     </div>
   </MainLayout>

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { nextTick, onMounted } from 'vue';
 
+import FollowDialog from './components/popups/FollowDialog.vue';
+import UnfollowDialog from './components/popups/UnfollowDialog.vue';
 import WalletConnectDialog from './components/wallet/WalletConnectDialog.vue';
 import { useBalanceFetcher } from './composables/useBalanceFetcher';
 import { useWallet } from './composables/useWallet';
@@ -24,4 +26,6 @@ onMounted(() => {
 <template>
   <RouterView />
   <WalletConnectDialog/>
+  <FollowDialog/>
+  <UnfollowDialog/>
 </template>

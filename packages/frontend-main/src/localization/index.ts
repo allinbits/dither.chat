@@ -35,6 +35,7 @@ export const messages = {
                 close: 'Close',
                 showMore: 'Show more',
                 copyLink: 'Copy link',
+                follow: 'Follow',
             },
             PopupTitles: {
                 likePost: 'Like Post',
@@ -50,6 +51,9 @@ export const messages = {
                 placeholder: 'Type to search',
                 noResults: 'No results found',
                 failedToSearch: 'Failed to search',
+            },
+            FollowingList: {
+                empty: 'You are not following anyone yet',
             },
         },
         feedbacks: {
