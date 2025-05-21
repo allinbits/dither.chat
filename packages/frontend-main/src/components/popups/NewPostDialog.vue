@@ -2,10 +2,8 @@
 import { computed, ref, watch } from 'vue';
 
 import { useBalanceFetcher } from '@/composables/useBalanceFetcher';
-import { usePopovers } from '@/composables/usePopovers';
+import { usePopups } from '@/composables/usePopups';
 import { useWallet } from '@/composables/useWallet';
-
-import DialogDescription from '../ui/dialog/DialogDescription.vue';
 
 import
 { Button }
@@ -16,9 +14,9 @@ import {
     DialogTitle,
 } from '@/components/ui/dialog';
 import InputPhoton from '@/components/ui/input/InputPhoton.vue';
-import { shorten } from '@/utility/text';
+import { Textarea } from '@/components/ui/textarea';
 
-const popovers = usePopovers();
+const popovers = usePopups();
 const wallet = useWallet();
 const balanceFetcher = useBalanceFetcher();
 
@@ -26,13 +24,16 @@ const photonValue = ref(1);
 const txError = ref<string>();
 const txSuccess = ref<string>();
 const isBalanceInputValid = ref(false);
+const message = ref('');
+
+const MAX_CHARS = 512 - 'dither.Post("")'.length;
 
 async function handleSubmit() {
-    if (!popovers.state.like) {
+    if (!popovers.state.newPost) {
         return;
     }
 
-    const result = await wallet.dither.like(popovers.state.like.hash, BigInt(photonValue.value).toString());
+    const result = await wallet.dither.post(message.value, BigInt(photonValue.value).toString());
     if (!result.broadcast) {
         txError.value = result.msg;
         return;
@@ -46,7 +47,7 @@ const isBroadcasting = computed(() => {
 });
 
 function handleClose() {
-    popovers.state.like = null;
+    popovers.state.newPost = null;
     txError.value = undefined;
     txSuccess.value = undefined;
     photonValue.value = 1;
@@ -54,6 +55,16 @@ function handleClose() {
 
 function handleInputValidity(value: boolean) {
     isBalanceInputValid.value = value;
+}
+
+const canSubmit = computed(() => {
+    return isBalanceInputValid.value && message.value.length > 0;
+});
+
+function capChars(event: { target: HTMLTextAreaElement }) {
+    if (event.target.value.length > MAX_CHARS) {
+        event.target.value = event.target.value.substring(0, MAX_CHARS);
+    }
 }
 
 watch(wallet.loggedIn, async () => {
@@ -67,16 +78,17 @@ watch(wallet.loggedIn, async () => {
 
 <template>
   <div>
-    <Dialog :open="popovers.state.like != null" @update:open="handleClose" v-if="popovers.state.like">
+    <Dialog :open="popovers.state.newPost !== null" @update:open="handleClose" v-if="popovers.state.newPost !== null">
       <DialogContent>
-        <DialogTitle>{{ $t('components.PopupTitles.likePost') }}</DialogTitle>
-        <DialogDescription>{{ shorten(popovers.state.like.hash) }}</DialogDescription>
+        <DialogTitle>{{ $t('components.PopupTitles.newPost') }}</DialogTitle>
+
+        <Textarea placeholder="What's up?" v-model="message" @input="capChars" v-if="!isBroadcasting && !txSuccess" />
 
         <!-- Transaction Form -->
         <div class="flex flex-col w-full gap-4" v-if="!isBroadcasting && !txSuccess">
           <InputPhoton v-model="photonValue" @on-validity-change="handleInputValidity" />
           <span v-if="txError" class="text-red-500 text-left text-xs">{{ txError }}</span>
-          <Button class="w-full xl:inline hidden" :disabled="!isBalanceInputValid" @click="isBalanceInputValid ? handleSubmit() : () => {}">
+          <Button class="w-full xl:inline hidden" :disabled="!canSubmit" @click="isBalanceInputValid ? handleSubmit() : () => {}">
             {{ $t('components.Button.submit') }}
           </Button>
         </div>

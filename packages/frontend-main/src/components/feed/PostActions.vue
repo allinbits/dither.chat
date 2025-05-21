@@ -1,37 +1,44 @@
 <script setup lang="ts">
 import type { Post } from 'api-main/types/feed';
-import type { PopoverState } from '@/composables/usePopovers';
 
-import { MessageCircle, ThumbsDown, ThumbsUp, Upload } from 'lucide-vue-next';
+import { MessageCircle, ThumbsDown, ThumbsUp } from 'lucide-vue-next';
 
+import { type PopupState, usePopups } from '@/composables/usePopups';
 import { useWallet } from '@/composables/useWallet';
 
-type HandleAction = (type: keyof PopoverState, hash: Post) => void;
+import SharePostPopover from '../popups/SharePostPopover.vue';
 
-defineProps<{ post: Post; onClickLike: HandleAction; onClickDislike: HandleAction; onClickComment: HandleAction }>();
+defineProps<{ post: Post }>();
+
+const buttonClass = 'flex flex-row items-center gap-1';
+const buttonLabelClass = 'text-[#A2A2A9] text-xs font-medium';
 
 const wallet = useWallet();
+const popups = usePopups();
 
-function getHoverClasses() {
-    return wallet.loggedIn.value ? ['cursor-pointer'] : ['cursor-default'];
+function handleAction(type: keyof PopupState, post: Post) {
+    if (!wallet.loggedIn.value) {
+        return;
+    }
+    popups.show(type, post);
 }
+
 </script>
+
 <template>
   <div class="flex flex-row items-center justify-between">
-    <button class="flex flex-row items-center gap-1" @click="onClickComment('reply', post)">
-      <MessageCircle class="size-5" color="#A2A2A9"/>
-      <span class="text-[#A2A2A9] text-xs font-medium">{{ post.replies }}</span>
+    <button :class="buttonClass" @click.stop="handleAction('reply', post)">
+      <MessageCircle class="size-5" color="#A2A2A9" />
+      <span :class="buttonLabelClass">{{ post.replies }}</span>
     </button>
-    <button class="flex flex-row items-center gap-1" :class="getHoverClasses()"  @click="onClickLike('like', post)">
-      <ThumbsUp class="size-5" color="#A2A2A9"/>
-      <span class="text-[#A2A2A9] text-xs font-medium">{{ post.likes }}</span>
+    <button :class="buttonClass" @click.stop="handleAction('like', post)">
+      <ThumbsUp class="size-5" color="#A2A2A9" />
+      <span :class="buttonLabelClass">{{ post.likes }}</span>
     </button>
-    <button class="flex flex-row items-center gap-1" :class="getHoverClasses()" @click="onClickDislike('dislike', post)">
-      <ThumbsDown class="size-5 scale-x-[-1]" color="#A2A2A9"/>
-      <span class="text-[#A2A2A9] text-xs font-medium">{{ post.dislikes }}</span>
+    <button :class="buttonClass" @click.stop="handleAction('dislike', post)">
+      <ThumbsDown class="size-5 scale-x-[-1]" color="#A2A2A9" />
+      <span :class="buttonLabelClass">{{ post.dislikes }}</span>
     </button>
-    <button>
-      <Upload class="size-5" color="#A2A2A9"/>
-    </button>
+    <SharePostPopover :post="post"/>
   </div>
 </template>

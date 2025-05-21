@@ -58,9 +58,27 @@ export const PostsQuery = t.Object({
     address: t.String(),
 });
 
-export type RepliesQuery = { limit?: string; offset?: string; hash: string };
+export type RepliesQuery = { limit?: number; offset?: number; hash: string };
 export const RepliesQuery = t.Object({
-    limit: t.Optional(t.String()),
-    offset: t.Optional(t.String()),
+    limit: t.Optional(t.Number()),
+    offset: t.Optional(t.Number()),
     hash: t.String(),
+});
+
+export type NotificationsQuery = { limit?: number; offset?: number; address: string };
+export const NotificationsQuery = t.Object({
+    limit: t.Optional(t.Number()),
+    offset: t.Optional(t.Number()),
+    address: t.String(),
+});
+
+export type ReadNotificationQuery = { address: string; hash: string };
+export const ReadNotificationQuery = t.Object({
+    address: t.String(),
+    hash: t.String(),
+});
+
+export type SearchQuery = { text: string };
+export const SearchQuery = t.Object({
+    text: t.String(),
 });

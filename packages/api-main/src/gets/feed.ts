@@ -1,5 +1,5 @@
 import { type Gets } from '@atomone/dither-api-types';
-import { and, count, isNull, sql } from 'drizzle-orm';
+import { and, count, desc, isNull, sql } from 'drizzle-orm';
 
 import { getDatabase } from '../../drizzle/db';
 import { FeedTable } from '../../drizzle/schema';
@@ -10,6 +10,7 @@ const statement = getDatabase()
     .limit(sql.placeholder('limit'))
     .offset(sql.placeholder('offset'))
     .where(and(isNull(FeedTable.removed_at), isNull(FeedTable.post_hash)))
+    .orderBy(desc(FeedTable.timestamp))
     .prepare('stmnt_get_feed');
 
 export async function Feed(query: typeof Gets.FeedQuery.static) {

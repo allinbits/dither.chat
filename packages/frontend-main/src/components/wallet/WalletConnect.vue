@@ -11,6 +11,7 @@ import { getWalletHelp, useWallet, Wallets } from '@/composables/useWallet';
 import DialogDescription from '../ui/dialog/DialogDescription.vue';
 import DialogTitle from '../ui/dialog/DialogTitle.vue';
 import Icon from '../ui/icon/Icon.vue';
+import UserAvatarUsername from '../users/UserAvatarUsername.vue';
 import UserBalance from '../users/UserBalance.vue';
 
 import ConnectButton from './ConnectButton.vue';
@@ -133,12 +134,7 @@ const isValidAddress = computed(() => {
     <template v-if="connectedState">
       <Popover>
         <PopoverTrigger>
-          <div class="flex flex-row items-center justify-center cursor-pointer">
-            <div class="bg-secondary w-10 h-10 rounded-full mr-3"></div>
-            <div class="flex flex-col justify-around">
-              <div class="text-light text-200">{{ shorten(address) }}</div>
-            </div>
-          </div>
+          <UserAvatarUsername :userAddress="address"/>
         </PopoverTrigger>
         <PopoverContent>
           <div class="flex flex-col gap-4">

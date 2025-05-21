@@ -8,3 +8,4 @@ export * from './likes';
 export * from './posts';
 export * from './post';
 export * from './replies';
+export * from './search';

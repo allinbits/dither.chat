@@ -1,9 +1,18 @@
 <script setup lang="ts">
 
-import { Bell, FlaskConical, House, User } from 'lucide-vue-next';
+import { Bell, House, User } from 'lucide-vue-next';
 
-import LikePostPopup from '@/components/popups/LikePost.vue';
+import { usePopups } from '@/composables/usePopups';
+import { useWallet } from '@/composables/useWallet';
+
+import DislikePostDialog from '@/components/popups/DislikePostDialog.vue';
+import LikePostDialog from '@/components/popups/LikePostDialog.vue';
+import NewPostDialog from '@/components/popups/NewPostDialog.vue';
+import { Button } from '@/components/ui/button';
 import WalletConnect from '@/components/wallet/WalletConnect.vue';
+
+const wallet = useWallet();
+const popovers = usePopups();
 
 </script>
 
@@ -41,7 +50,7 @@ import WalletConnect from '@/components/wallet/WalletConnect.vue';
           </RouterLink>
 
           <RouterLink
-            to="/profile/:address"
+            :to="`/profile/${wallet.address.value}`"
             class="flex flex-row items-center gap-3"
           >
             <div class="flex items-center justify-center h-[52px]">
@@ -49,23 +58,16 @@ import WalletConnect from '@/components/wallet/WalletConnect.vue';
             </div>
             <span class="hidden xl:inline text-lg font-medium">My Profile</span>
           </RouterLink>
-
-          <RouterLink
-            to="/post?hash=9c0f718289998024ce7c83b24f350e3fc4fa0c3d5c421c5042422c8721eec3e0"
-            class="flex flex-row items-center gap-3"
-          >
-            <div class="flex items-center justify-center h-[52px]">
-              <FlaskConical class="size-7" />
-            </div>
-            <span class="hidden xl:inline text-lg font-medium">Post #1</span>
-          </RouterLink>
         </div>
       </nav>
 
-      <WalletConnect />
-      <LikePostPopup />
+      <Button class="w-[207px] xl:inline hidden" @click="popovers.show('newPost', {})" v-if="wallet.loggedIn.value">New post</Button>
+
+      <LikePostDialog />
+      <DislikePostDialog />
+      <NewPostDialog />
     </div>
 
-    <div>Stuff here?</div>
+    <WalletConnect />
   </header>
 </template>
