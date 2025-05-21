@@ -4,9 +4,9 @@ import { Loader } from 'lucide-vue-next';
 
 import { usePost } from '@/composables/usePost';
 
-import PostActions from '@/components/feed/PostActions.vue';
-import PostMessage from '@/components/feed/PostMessage.vue';
-import PrettyTimestamp from '@/components/feed/PrettyTimestamp.vue';
+import PostActions from '@/components/posts/PostActions.vue';
+import PostMessage from '@/components/posts/PostMessage.vue';
+import PrettyTimestamp from '@/components/posts/PrettyTimestamp.vue';
 import UserAvatarUsername from '@/components/users/UserAvatarUsername.vue';
 import MainLayout from '@/layouts/MainLayout.vue';
 

@@ -1,6 +1,5 @@
 import type { Post } from 'api-main/types/feed';
 
-import { computed } from 'vue';
 import { useInfiniteQuery } from '@tanstack/vue-query';
 
 const apiRoot = import.meta.env.VITE_API_ROOT ?? 'http://localhost:3000';
@@ -21,11 +20,5 @@ export function useFeed() {
         },
     });
 
-    return {
-        data: computed(() => query.data.value?.pages.flat() ?? []),
-        fetchNextPage: query.fetchNextPage,
-        hasNextPage: query.hasNextPage,
-        isFetchingNextPage: query.isFetchingNextPage,
-        isLoading: query.isLoading,
-    };
+    return query;
 }

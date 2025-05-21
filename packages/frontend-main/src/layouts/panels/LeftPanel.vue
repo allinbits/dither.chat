@@ -37,7 +37,7 @@ const popovers = usePopups();
             <div class="flex items-center justify-center h-[52px]">
               <House class="size-7" />
             </div>
-            <span class="hidden xl:inline text-lg font-medium">Home</span>
+            <span class="hidden xl:inline text-lg font-semibold">Home</span>
           </RouterLink>
 
           <RouterLink
@@ -47,7 +47,7 @@ const popovers = usePopups();
             <div class="flex items-center justify-center h-[52px]">
               <Bell class="size-7" />
             </div>
-            <span class="hidden xl:inline text-lg font-medium">Notifications</span>
+            <span class="hidden xl:inline text-lg font-semibold">Notifications</span>
           </RouterLink>
 
           <RouterLink
@@ -57,7 +57,7 @@ const popovers = usePopups();
             <div class="flex items-center justify-center h-[52px]">
               <User class="size-7" />
             </div>
-            <span class="hidden xl:inline text-lg font-medium">My Profile</span>
+            <span class="hidden xl:inline text-lg font-semibold">My Profile</span>
           </RouterLink>
         </div>
       </nav>

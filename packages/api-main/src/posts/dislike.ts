@@ -6,6 +6,7 @@ import { DislikesTable, FeedTable } from '../../drizzle/schema';
 import { useSharedQueries } from '../shared/useSharedQueries';
 
 const sharedQueries = useSharedQueries();
+import { notify } from '../shared/notify';
 
 const statement = getDatabase()
     .insert(DislikesTable)
@@ -16,6 +17,7 @@ const statement = getDatabase()
         quantity: sql.placeholder('quantity'),
         timestamp: sql.placeholder('timestamp'),
     })
+    .onConflictDoNothing()
     .prepare('stmnt_add_dislike');
 
 const statementAddDislikeToPost = getDatabase()
@@ -38,7 +40,7 @@ export async function Dislike(body: typeof Posts.DislikeBody.static) {
             return { status: result.status, error: 'provided post_hash does not exist' };
         }
 
-        await statement.execute({
+        const resultChanges = await statement.execute({
             post_hash: body.post_hash.toLowerCase(),
             hash: body.hash.toLowerCase(),
             author: body.from.toLowerCase(),
@@ -46,7 +48,15 @@ export async function Dislike(body: typeof Posts.DislikeBody.static) {
             timestamp: new Date(body.timestamp),
         });
 
-        await statementAddDislikeToPost.execute({ post_hash: body.post_hash, quantity: body.quantity });
+        if (typeof resultChanges.rowCount === 'number' && resultChanges.rowCount >= 1) {
+            await statementAddDislikeToPost.execute({ post_hash: body.post_hash, quantity: body.quantity });
+        }
+        await notify({
+            post_hash: body.post_hash,
+            hash: body.hash,
+            type: 'dislike',
+            timestamp: new Date(body.timestamp),
+        });
 
         return { status: 200 };
     }
