@@ -83,54 +83,54 @@ watch(wallet.loggedIn, async () => {
 </script>
 
 <template>
-    <div>
-        <Dialog :open="popups.state.reply !== null" @update:open="handleClose" v-if="popups.state.reply !== null">
-            <DialogContent>
-                <DialogTitle>{{ $t('components.PopupTitles.reply') }}</DialogTitle>
+  <div>
+    <Dialog :open="popups.state.reply !== null" @update:open="handleClose" v-if="popups.state.reply !== null">
+      <DialogContent>
+        <DialogTitle>{{ $t('components.PopupTitles.reply') }}</DialogTitle>
 
-                <div v-if="!isBroadcasting && !txSuccess" class="flex flex-row gap-3 border-b pb-3">
-                    <UserAvatar :userAddress="popups.state.reply.author" />
-                    <div class="flex flex-col w-full gap-3">
-                        <div class="flex flex-row gap-3 pt-2.5">
-                            <Username :userAddress="popups.state.reply.author" />
-                            <PrettyTimestamp :timestamp="new Date(popups.state.reply.timestamp)" />
-                        </div>
-                        <PostMessage :post="popups.state.reply" />
-                    </div>
-                </div>
+        <div v-if="!isBroadcasting && !txSuccess" class="flex flex-row gap-3 border-b pb-3">
+          <UserAvatar :userAddress="popups.state.reply.author" />
+          <div class="flex flex-col w-full gap-3">
+            <div class="flex flex-row gap-3 pt-2.5">
+              <Username :userAddress="popups.state.reply.author" />
+              <PrettyTimestamp :timestamp="new Date(popups.state.reply.timestamp)" />
+            </div>
+            <PostMessage :post="popups.state.reply" />
+          </div>
+        </div>
 
-                <Textarea
-                    placeholder="Write your reply"
-                    v-model="message"
-                    @input="capChars"
-                    v-if="!isBroadcasting && !txSuccess"
-                />
+        <Textarea
+          placeholder="Write your reply"
+          v-model="message"
+          @input="capChars"
+          v-if="!isBroadcasting && !txSuccess"
+        />
 
-                <!-- Transaction Form -->
-                <div class="flex flex-col w-full gap-4" v-if="!isBroadcasting && !txSuccess">
-                    <InputPhoton v-model="photonValue" @on-validity-change="handleInputValidity" />
-                    <span v-if="txError" class="text-red-500 text-left text-xs">{{ txError }}</span>
-                    <Button
-                        class="w-full xl:inline hidden"
-                        :disabled="!canSubmit"
-                        @click="isBalanceInputValid ? handleSubmit() : () => {}"
-                    >
-                        {{ $t('components.Button.submit') }}
-                    </Button>
-                </div>
-                <!-- Broadcast Status -->
-                <div class="flex flex-col w-full gap-4" v-if="isBroadcasting && !txSuccess">
-                    {{ $t('components.Wallet.popupSign') }}
-                </div>
-                <!-- Success Status -->
-                <div class="flex flex-col w-full gap-4 overflow-hidden" v-if="!isBroadcasting && txSuccess">
-                    <span>{{ $t('components.Wallet.broadcastSuccess') }}</span>
-                    <span class="flex lowercase overflow-x-scroll py-2">{{ txSuccess }}</span>
-                    <Button class="w-full xl:inline hidden" @click="handleClose">
-                        {{ $t('components.Button.close') }}
-                    </Button>
-                </div>
-            </DialogContent>
-        </Dialog>
-    </div>
+        <!-- Transaction Form -->
+        <div class="flex flex-col w-full gap-4" v-if="!isBroadcasting && !txSuccess">
+          <InputPhoton v-model="photonValue" @on-validity-change="handleInputValidity" />
+          <span v-if="txError" class="text-red-500 text-left text-xs">{{ txError }}</span>
+          <Button
+            class="w-full xl:inline hidden"
+            :disabled="!canSubmit"
+            @click="isBalanceInputValid ? handleSubmit() : () => {}"
+          >
+            {{ $t('components.Button.submit') }}
+          </Button>
+        </div>
+        <!-- Broadcast Status -->
+        <div class="flex flex-col w-full gap-4" v-if="isBroadcasting && !txSuccess">
+          {{ $t('components.Wallet.popupSign') }}
+        </div>
+        <!-- Success Status -->
+        <div class="flex flex-col w-full gap-4 overflow-hidden" v-if="!isBroadcasting && txSuccess">
+          <span>{{ $t('components.Wallet.broadcastSuccess') }}</span>
+          <span class="flex lowercase overflow-x-scroll py-2">{{ txSuccess }}</span>
+          <Button class="w-full xl:inline hidden" @click="handleClose">
+            {{ $t('components.Button.close') }}
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  </div>
 </template>
