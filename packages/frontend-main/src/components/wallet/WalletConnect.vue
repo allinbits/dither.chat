@@ -28,6 +28,7 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from '@/components/ui/popover';
+import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
 import { shorten } from '@/utility/text';
 
 const isConnecting = ref(false);
@@ -38,6 +39,7 @@ const isAddressOnlyConnection = ref(false);
 const publicAddress = ref('');
 
 const { connect, signOut, address, loggedIn, keplr, leap, cosmostation } = useWallet();
+const walletDialogStore = useWalletDialogStore();
 
 const selectState = computed(
     () => !isConnecting.value && !loggedIn.value && !isError.value && !isAddressOnlyConnection.value,
@@ -90,6 +92,12 @@ const connectWallet = async (walletType: Wallets, address?: string) => {
             clearTimeout(slow);
             slow = null;
         }
+
+        // Call the callback if it exists then clear it
+        if (walletDialogStore.onWalletConnected) {
+            walletDialogStore.onWalletConnected();
+            walletDialogStore.onWalletConnected = null;
+        }
     }
     catch (err) {
         console.error(err);
@@ -126,6 +134,7 @@ const isValidAddress = computed(() => {
         return false;
     }
 });
+
 </script>
 
 <template>
@@ -151,10 +160,10 @@ const isValidAddress = computed(() => {
       </Popover>
     </template>
     <template v-else>
-      <Dialog>
+      <Dialog v-model:open="walletDialogStore.isOpen">
         <!-- Normal signed out button -->
-        <DialogTrigger>
-          <Button class="w-[207px] xl:inline hidden">
+        <DialogTrigger asChild>
+          <Button @click="walletDialogStore.showDialog" class="w-[207px] xl:inline hidden">
             {{ $t('components.WalletConnect.button') }}
           </Button>
           <div class="flex items-center justify-center flex-row xl:hidden h-[52px]">

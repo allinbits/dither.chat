@@ -8,6 +8,7 @@ import { getOfflineSigner } from '@cosmostation/cosmos-client';
 import { storeToRefs } from 'pinia';
 
 import chainInfo from '@/chain-config.json';
+import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
 import { useWalletStateStore } from '@/stores/useWalletStateStore';
 
 const destinationWallet = import.meta.env.VITE_COMMUNITY_WALLET ?? 'atone1uq6zjslvsa29cy6uu75y8txnl52mw06j6fzlep';
@@ -30,6 +31,7 @@ export const getWalletHelp = (wallet: Wallets) => {
     }
 };
 const useWalletInstance = () => {
+    const walletDialogStore = useWalletDialogStore();
     const walletState = storeToRefs(useWalletStateStore());
 
     const signOut = () => {
@@ -155,6 +157,8 @@ const useWalletInstance = () => {
                 }
                 break;
         }
+
+        walletDialogStore.hideDialog();
     };
 
     const sendTx = async (msgs: EncodeObject[]) => {
