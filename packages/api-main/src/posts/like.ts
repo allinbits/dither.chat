@@ -16,6 +16,7 @@ const statement = getDatabase()
         quantity: sql.placeholder('quantity'),
         timestamp: sql.placeholder('timestamp'),
     })
+    .onConflictDoNothing()
     .prepare('stmnt_add_like');
 
 const statementAddLikeToPost = getDatabase()
@@ -38,7 +39,7 @@ export async function Like(body: typeof Posts.LikeBody.static) {
             return { status: result.status, error: 'provided post_hash does not exist' };
         }
 
-        await statement.execute({
+        const resultChanges = await statement.execute({
             post_hash: body.post_hash.toLowerCase(),
             hash: body.hash.toLowerCase(),
             author: body.from.toLowerCase(),
@@ -46,7 +47,9 @@ export async function Like(body: typeof Posts.LikeBody.static) {
             timestamp: new Date(body.timestamp),
         });
 
-        await statementAddLikeToPost.execute({ post_hash: body.post_hash, quantity: body.quantity });
+        if (resultChanges.rows.length >= 1) {
+            await statementAddLikeToPost.execute({ post_hash: body.post_hash, quantity: body.quantity });
+        }
 
         return { status: 200 };
     }

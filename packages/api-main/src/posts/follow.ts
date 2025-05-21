@@ -12,6 +12,7 @@ const statementAddFollower = getDatabase()
         hash: sql.placeholder('hash'),
         timestamp: sql.placeholder('timestamp'),
     })
+    .onConflictDoNothing()
     .prepare('stmnt_add_follower');
 
 export async function Follow(body: typeof Posts.FollowBody.static) {
