@@ -12,16 +12,16 @@ export function useSearchPosts(minQueryLength: number = 3, debounceMs: number = 
     const query = ref<string>('');
     const debouncedQuery = refDebounced<string>(query, debounceMs);
 
-    const searchPosts = async ({ signal }: { queryKey: string[]; signal: AbortSignal }) => {
+    const searchPosts = async ({ queryKey, signal }: { queryKey: string[]; signal: AbortSignal }) => {
         // FIXME: We should use search endpoint instead
-        const rawResponse = await fetch(`${apiRoot}/feed?offset=0&limit=100`, { signal });
+        const rawResponse = await fetch(`${apiRoot}/search?text=${queryKey[1]}`, { signal });
         const res = (await rawResponse.json()) as { status: number; rows: Post[] };
 
         if (res.status !== 200) {
             throw Error(t('components.SearchInput.failedToSearch'));
         }
 
-        return res.rows.filter((post: Post) => post.message.toLowerCase().includes(debouncedQuery.value.toLowerCase()));
+        return res.rows;
     };
 
     const {
@@ -33,6 +33,7 @@ export function useSearchPosts(minQueryLength: number = 3, debounceMs: number = 
         queryKey: ['searchPosts', debouncedQuery],
         queryFn: searchPosts,
         enabled: false,
+        retry: false,
     });
 
     watch(debouncedQuery, (newVal: string) => {

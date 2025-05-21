@@ -45,6 +45,11 @@ export const messages = {
                 feed: 'Global Feed',
                 following: 'Following',
             },
+            SearchInput: {
+                placeholder: 'Type to search',
+                noResults: 'No results found',
+                failedToSearch: 'Failed to search',
+            },
         },
         feedbacks: {
             copied: 'Copied to clipboard',
