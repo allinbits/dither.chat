@@ -3,16 +3,16 @@ import { defineStore } from 'pinia';
 
 export const useWalletDialogStore = defineStore('walletDialogStore', () => {
     const isOpen = ref(false);
-    const connectedCallback = ref<CallableFunction | null>(null);
+    const onWalletConnected = ref<CallableFunction | null>(null);
 
-    const showDialog = (callback: CallableFunction | null) => {
+    const showDialog = (_: Event | null = null, callback: CallableFunction | null = null) => {
         isOpen.value = true;
-        connectedCallback.value = callback;
+        onWalletConnected.value = callback;
     };
 
     const hideDialog = () => {
         isOpen.value = false;
     };
 
-    return { isOpen, showDialog, hideDialog, connectedCallback };
+    return { isOpen, showDialog, hideDialog, onWalletConnected };
 });

@@ -25,7 +25,7 @@ function handleAction(type: keyof PopupState, post: Post) {
         return;
     }
 
-    walletDialogStore.showDialog(() => {
+    walletDialogStore.showDialog(null, () => {
         popups.show(type, post);
     });
 }

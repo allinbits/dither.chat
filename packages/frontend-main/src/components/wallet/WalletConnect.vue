@@ -94,9 +94,9 @@ const connectWallet = async (walletType: Wallets, address?: string) => {
         }
 
         // Call the callback if it exists then clear it
-        if (walletDialogStore.connectedCallback) {
-            walletDialogStore.connectedCallback();
-            walletDialogStore.connectedCallback = null;
+        if (walletDialogStore.onWalletConnected) {
+            walletDialogStore.onWalletConnected();
+            walletDialogStore.onWalletConnected = null;
         }
     }
     catch (err) {
