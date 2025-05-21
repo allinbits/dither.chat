@@ -8,6 +8,7 @@ import { useWallet } from '@/composables/useWallet';
 import DislikePostDialog from '@/components/popups/DislikePostDialog.vue';
 import LikePostDialog from '@/components/popups/LikePostDialog.vue';
 import NewPostDialog from '@/components/popups/NewPostDialog.vue';
+import ReplyDialog from '@/components/popups/ReplyDialog.vue';
 import { Button } from '@/components/ui/button';
 import WalletConnect from '@/components/wallet/WalletConnect.vue';
 
@@ -66,6 +67,7 @@ const popovers = usePopups();
       <LikePostDialog />
       <DislikePostDialog />
       <NewPostDialog />
+      <ReplyDialog/>
     </div>
 
     <WalletConnect />
