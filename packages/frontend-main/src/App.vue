@@ -12,6 +12,7 @@ onMounted(() => {
     // Wait for next tick to ensure state is loaded from storage
     nextTick(() => {
         if (wallet.address.value) {
+            wallet.refreshAddress();
             balanceFetcher.updateAddress(wallet.address.value);
         }
     });

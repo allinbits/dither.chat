@@ -308,6 +308,7 @@ const useWalletInstance = () => {
         signOut,
         connect,
         sendTx,
+        refreshAddress,
         signMessage,
         dither: {
             post: ditherPost,
