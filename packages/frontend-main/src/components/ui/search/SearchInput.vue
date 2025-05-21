@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useRouter } from 'vue-router';
 import { CircleX, Loader2 } from 'lucide-vue-next';
 
 import { useSearchPosts } from '@/composables/useSearchPosts';
@@ -20,12 +21,16 @@ const clearSearch = () => {
 };
 
 const { query, posts, isLoading, error } = useSearchPosts();
+const router = useRouter();
 
+const navigateToPost = (hash: string) => {
+    router.push(`/post?hash=${hash}`);
+};
 </script>
 
 <template>
   <div>
-    <div class="flex items-center gap-2 relative">
+    <div class="search-input flex items-center gap-2 relative">
       <input
         v-model="query"
         :placeholder="props.placeholder"
@@ -56,9 +61,14 @@ const { query, posts, isLoading, error } = useSearchPosts();
     </div>
 
     <div v-else
-         class="results-list border-neutral-200 border-1 max-h-[60vh] pl-2 pr-2 rounded-b-md overflow-y-auto overflow-x-hidden"
+         class="search-results border-neutral-200 border-1 max-h-[60vh] pl-2 pr-2 rounded-b-md overflow-y-auto overflow-x-hidden"
     >
-      <div v-for="(post, index) in posts" :key="index" class="pb-2 pt-2 border-b border-neutral-200 last:border-b-0 truncate">
+      <div
+        v-for="(post, index) in posts"
+        :key="index"
+        class="pb-2 pt-2 border-b border-neutral-200 last:border-b-0 truncate cursor-pointer"
+        @click="navigateToPost(post.hash)"
+      >
         {{ post.message }}
         <UserAvatarUsername :userAddress="post.author" size="sm" />
       </div>
