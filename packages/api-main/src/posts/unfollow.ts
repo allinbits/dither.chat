@@ -23,6 +23,6 @@ export async function Unfollow(body: typeof Posts.UnfollowBody.static) {
     }
     catch (err) {
         console.error(err);
-        return { status: 400, error: 'failed to unfollow user, user may not exist' };
+        return { status: 200, error: 'failed to unfollow user, user may not exist' };
     }
 }
