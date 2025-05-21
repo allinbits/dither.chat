@@ -17,17 +17,21 @@ const statementAddFollower = getDatabase()
 
 export async function Follow(body: typeof Posts.FollowBody.static) {
     try {
-        await statementAddFollower.execute({
+        const result = await statementAddFollower.execute({
             follower: body.from.toLowerCase(),
             following: body.address.toLowerCase(),
             hash: body.hash.toLowerCase(),
             timestamp: new Date(body.timestamp),
         });
 
+        if (typeof result.rowCount !== 'number' || result.rowCount <= 0) {
+            return { status: 401, error: 'failed to add follow, follow already exists' };
+        }
+
         return { status: 200 };
     }
     catch (err) {
         console.error(err);
-        return { status: 400, error: 'failed to add follow, follow likely already exists' };
+        return { status: 400, error: 'failed to communicate with database' };
     }
 }

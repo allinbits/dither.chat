@@ -47,7 +47,7 @@ export async function Flag(body: typeof Posts.FlagBody.static) {
             timestamp: new Date(body.timestamp),
         });
 
-        if (resultChanges.rows.length >= 1) {
+        if (typeof resultChanges.rowCount === 'number' && resultChanges.rowCount >= 1) {
             await statementAddFlagToPost.execute({ post_hash: body.post_hash, quantity: body.quantity });
         }
 
