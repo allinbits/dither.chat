@@ -10,7 +10,7 @@ const routes = [
     { path: '/', component: HomeView },
     { path: '/notifications', component: NotificationsView },
     { path: '/profile/:address', component: ProfileView },
-    { path: '/post', component: PostView },
+    { path: '/post/:hash/:postHash?', component: PostView },
     // Catch-all route for 404
     {
         path: '/:pathMatch(.*)*',
