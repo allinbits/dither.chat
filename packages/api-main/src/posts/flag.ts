@@ -6,6 +6,7 @@ import { FeedTable, FlagsTable } from '../../drizzle/schema';
 import { useSharedQueries } from '../shared/useSharedQueries';
 
 const sharedQueries = useSharedQueries();
+import { notify } from '../shared/notify';
 
 const statement = getDatabase()
     .insert(FlagsTable)
@@ -50,6 +51,13 @@ export async function Flag(body: typeof Posts.FlagBody.static) {
         if (typeof resultChanges.rowCount === 'number' && resultChanges.rowCount >= 1) {
             await statementAddFlagToPost.execute({ post_hash: body.post_hash, quantity: body.quantity });
         }
+
+        await notify({
+            post_hash: body.post_hash,
+            hash: body.hash,
+            type: 'flag',
+            timestamp: new Date(body.timestamp),
+        });
 
         return { status: 200 };
     }

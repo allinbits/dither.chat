@@ -1,13 +1,25 @@
 import { createHash, randomBytes } from 'crypto';
 
+import type { Posts } from '@atomone/dither-api-types';
+
 import { Secp256k1HdWallet } from '@cosmjs/amino';
 import { toBech32 } from '@cosmjs/encoding';
 import { makeADR36AminoSignDoc } from '@keplr-wallet/cosmos';
 
 let lastHeight = 1_000_000;
 
-export async function get<T>(endpoint: string, port: 'WRITE' | 'READ' = 'READ') {
-    const response = await fetch(`http://localhost:${port === 'WRITE' ? 3001 : 3000}/v1/${endpoint}`).catch((err) => {
+export async function get<T>(endpoint: string, port: 'WRITE' | 'READ' = 'READ', token?: string) {
+    const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+    };
+    if (token) {
+        headers['authorization'] = `Bearer ${token}`;
+    }
+
+    const response = await fetch(`http://localhost:${port === 'WRITE' ? 3001 : 3000}/v1/${endpoint}`, {
+        method: 'GET',
+        headers,
+    }).catch((err) => {
         console.error(err);
         return null;
     });
@@ -108,4 +120,28 @@ export function generateFakeData(memo: string, from_address: string, to_address:
 
 export function sleep(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+export async function userLogin(wallet: { mnemonic: string; publicKey: string }) {
+    const body: typeof Posts.AuthCreateBody.static = {
+        address: wallet.publicKey,
+    };
+
+    const response = (await post(`auth-create`, body, 'READ')) as { status: 200; id: number; message: string };
+    if (response?.status !== 200) {
+        return '';
+    }
+
+    const signData = await signADR36Document(wallet.mnemonic, response.message);
+    const verifyBody: typeof Posts.AuthBody.static = {
+        id: response.id,
+        ...signData.signature,
+    };
+
+    const responseVerify = (await post(`auth`, verifyBody, 'READ')) as { status: 200; bearer: string };
+    if (response?.status !== 200) {
+        return '';
+    }
+
+    return responseVerify.bearer;
 }

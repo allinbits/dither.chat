@@ -6,6 +6,7 @@ import { FeedTable, LikesTable } from '../../drizzle/schema';
 import { useSharedQueries } from '../shared/useSharedQueries';
 
 const sharedQueries = useSharedQueries();
+import { notify } from '../shared/notify';
 
 const statement = getDatabase()
     .insert(LikesTable)
@@ -51,6 +52,12 @@ export async function Like(body: typeof Posts.LikeBody.static) {
             await statementAddLikeToPost.execute({ post_hash: body.post_hash, quantity: body.quantity });
         }
 
+        await notify({
+            post_hash: body.post_hash,
+            hash: body.hash,
+            type: 'like',
+            timestamp: new Date(body.timestamp),
+        });
         return { status: 200 };
     }
     catch (err) {

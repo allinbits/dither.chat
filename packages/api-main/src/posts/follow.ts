@@ -3,6 +3,7 @@ import { sql } from 'drizzle-orm';
 
 import { getDatabase } from '../../drizzle/db';
 import { FollowsTable } from '../../drizzle/schema';
+import { notify } from '../shared/notify';
 
 const statementAddFollower = getDatabase()
     .insert(FollowsTable)
@@ -27,6 +28,13 @@ export async function Follow(body: typeof Posts.FollowBody.static) {
         if (typeof result.rowCount !== 'number' || result.rowCount <= 0) {
             return { status: 401, error: 'failed to add follow, follow already exists' };
         }
+
+        await notify({
+            owner: body.address,
+            hash: body.hash,
+            type: 'follow',
+            timestamp: new Date(body.timestamp),
+        });
 
         return { status: 200 };
     }
