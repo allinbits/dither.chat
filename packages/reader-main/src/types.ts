@@ -11,13 +11,3 @@ export type MsgGeneric = {
     '@type': string;
     [key: string]: unknown;
 };
-
-export type EventConfig = {
-    exchange: string;
-    dlxExchange: string;
-    logExchange: string;
-    logQueue: string;
-    dlxQueue: string;
-    durable: boolean;
-    rabbitMQEndpoint: string;
-};

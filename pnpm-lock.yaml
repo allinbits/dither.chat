@@ -49,7 +49,7 @@ importers:
         version: 2.2.2
       '@atomone/dither-api-types':
         specifier: ^1.2.0
-        version: 1.2.0(@sinclair/typebox@0.34.33)(openapi-types@12.1.3)(typescript@5.8.3)
+        version: 1.2.1(@sinclair/typebox@0.34.33)(openapi-types@12.1.3)(typescript@5.8.3)
       '@cosmjs/crypto':
         specifier: ^0.33.1
         version: 0.33.1
@@ -225,304 +225,30 @@ importers:
         specifier: ^5.8.3
         version: 5.8.3
 
-  packages/lib-event-consumer:
-    dependencies:
-      '@atomone/event-consumer':
-        specifier: 'link:'
-        version: 'link:'
-      '@types/amqplib':
-        specifier: ^0.10.7
-        version: 0.10.7
-      amqplib:
-        specifier: ^0.10.7
-        version: 0.10.8
-    devDependencies:
-      '@types/node':
-        specifier: ^22.13.10
-        version: 22.15.17
-      typescript:
-        specifier: ^5.8.2
-        version: 5.8.3
-      vitest:
-        specifier: ^3.0.9
-        version: 3.1.3(@types/node@22.15.17)(jiti@2.4.2)(lightningcss@1.29.2)(tsx@4.19.4)
-
   packages/reader-main:
     dependencies:
       '@atomone/chronostate':
         specifier: ^2.2.2
         version: 2.2.2
-      '@types/node':
-        specifier: ^22.13.10
-        version: 22.15.17
-      amqplib:
-        specifier: ^0.10.7
-        version: 0.10.8
+      '@atomone/dither-api-types':
+        specifier: ^1.2.1
+        version: 1.2.1(@sinclair/typebox@0.34.33)(openapi-types@12.1.3)(typescript@5.8.3)
       tsx:
         specifier: ^4.19.3
         version: 4.19.4
     devDependencies:
-      '@types/amqplib':
-        specifier: ^0.10.7
-        version: 0.10.7
+      '@types/node':
+        specifier: ^22.13.10
+        version: 22.15.17
       '@types/pg':
         specifier: ^8.11.12
         version: 8.15.1
       typescript:
         specifier: ^5.8.2
         version: 5.8.3
-
-  packages/service-dead-letter:
-    dependencies:
-      '@types/amqplib':
-        specifier: ^0.10.7
-        version: 0.10.7
-      amqplib:
-        specifier: ^0.10.7
-        version: 0.10.8
-      dead-letter-service:
-        specifier: 'link:'
-        version: 'link:'
-    devDependencies:
-      '@atomone/event-consumer':
-        specifier: ^1.0.12
-        version: 1.0.12
-      '@types/node':
-        specifier: ^22.13.10
-        version: 22.15.17
-      typescript:
-        specifier: ^5.8.2
-        version: 5.8.3
       vitest:
-        specifier: ^3.0.9
+        specifier: ^3.1.3
         version: 3.1.3(@types/node@22.15.17)(jiti@2.4.2)(lightningcss@1.29.2)(tsx@4.19.4)
-
-  packages/service-dislike:
-    dependencies:
-      '@atomone/chronostate':
-        specifier: ^2.2.2
-        version: 2.2.2
-      '@atomone/dither-api-types':
-        specifier: ^1.0.1
-        version: 1.0.1(@sinclair/typebox@0.34.33)(openapi-types@12.1.3)(typescript@5.8.3)
-      '@atomone/event-consumer':
-        specifier: ^1.0.12
-        version: 1.0.12
-      '@types/node':
-        specifier: ^22.13.10
-        version: 22.15.17
-      amqplib:
-        specifier: ^0.10.7
-        version: 0.10.8
-      tsx:
-        specifier: ^4.19.3
-        version: 4.19.4
-    devDependencies:
-      '@types/amqplib':
-        specifier: ^0.10.7
-        version: 0.10.7
-      typescript:
-        specifier: ^5.8.2
-        version: 5.8.3
-
-  packages/service-flag:
-    dependencies:
-      '@atomone/chronostate':
-        specifier: ^2.2.2
-        version: 2.2.2
-      '@atomone/dither-api-types':
-        specifier: ^1.0.1
-        version: 1.0.1(@sinclair/typebox@0.34.33)(openapi-types@12.1.3)(typescript@5.8.3)
-      '@atomone/event-consumer':
-        specifier: ^1.0.12
-        version: 1.0.12
-      '@types/node':
-        specifier: ^22.13.10
-        version: 22.15.17
-      amqplib:
-        specifier: ^0.10.7
-        version: 0.10.8
-      tsx:
-        specifier: ^4.19.3
-        version: 4.19.4
-    devDependencies:
-      '@types/amqplib':
-        specifier: ^0.10.7
-        version: 0.10.7
-      typescript:
-        specifier: ^5.8.2
-        version: 5.8.3
-
-  packages/service-follow:
-    dependencies:
-      '@atomone/chronostate':
-        specifier: ^2.2.2
-        version: 2.2.2
-      '@atomone/dither-api-feed':
-        specifier: link:..\api-main
-        version: link:../api-main
-      '@atomone/dither-api-types':
-        specifier: ^1.0.1
-        version: 1.0.1(@sinclair/typebox@0.34.33)(openapi-types@12.1.3)(typescript@5.8.3)
-      '@atomone/event-consumer':
-        specifier: ^1.0.12
-        version: 1.0.12
-      '@types/node':
-        specifier: ^22.13.10
-        version: 22.15.17
-      amqplib:
-        specifier: ^0.10.7
-        version: 0.10.8
-      tsx:
-        specifier: ^4.19.3
-        version: 4.19.4
-    devDependencies:
-      '@types/amqplib':
-        specifier: ^0.10.7
-        version: 0.10.7
-      typescript:
-        specifier: ^5.8.2
-        version: 5.8.3
-
-  packages/service-like:
-    dependencies:
-      '@atomone/chronostate':
-        specifier: ^2.2.2
-        version: 2.2.2
-      '@atomone/dither-api-types':
-        specifier: ^1.0.1
-        version: 1.0.1(@sinclair/typebox@0.34.33)(openapi-types@12.1.3)(typescript@5.8.3)
-      '@atomone/event-consumer':
-        specifier: ^1.0.12
-        version: 1.0.12
-      '@types/node':
-        specifier: ^22.13.10
-        version: 22.15.17
-      amqplib:
-        specifier: ^0.10.7
-        version: 0.10.8
-      tsx:
-        specifier: ^4.19.3
-        version: 4.19.4
-    devDependencies:
-      '@types/amqplib':
-        specifier: ^0.10.7
-        version: 0.10.7
-      typescript:
-        specifier: ^5.8.2
-        version: 5.8.3
-
-  packages/service-post:
-    dependencies:
-      '@atomone/chronostate':
-        specifier: ^2.2.2
-        version: 2.2.2
-      '@atomone/dither-api-types':
-        specifier: ^1.0.1
-        version: 1.0.1(@sinclair/typebox@0.34.33)(openapi-types@12.1.3)(typescript@5.8.3)
-      '@atomone/event-consumer':
-        specifier: ^1.0.12
-        version: 1.0.12
-      '@types/node':
-        specifier: ^22.13.10
-        version: 22.15.17
-      amqplib:
-        specifier: ^0.10.7
-        version: 0.10.8
-      tsx:
-        specifier: ^4.19.3
-        version: 4.19.4
-    devDependencies:
-      '@types/amqplib':
-        specifier: ^0.10.7
-        version: 0.10.7
-      typescript:
-        specifier: ^5.8.2
-        version: 5.8.3
-
-  packages/service-post-remove:
-    dependencies:
-      '@atomone/chronostate':
-        specifier: ^2.2.2
-        version: 2.2.2
-      '@atomone/dither-api-types':
-        specifier: ^1.0.1
-        version: 1.0.1(@sinclair/typebox@0.34.33)(openapi-types@12.1.3)(typescript@5.8.3)
-      '@atomone/event-consumer':
-        specifier: ^1.0.12
-        version: 1.0.12
-      '@types/node':
-        specifier: ^22.13.10
-        version: 22.15.17
-      amqplib:
-        specifier: ^0.10.7
-        version: 0.10.8
-      tsx:
-        specifier: ^4.19.3
-        version: 4.19.4
-    devDependencies:
-      '@types/amqplib':
-        specifier: ^0.10.7
-        version: 0.10.7
-      typescript:
-        specifier: ^5.8.2
-        version: 5.8.3
-
-  packages/service-reply:
-    dependencies:
-      '@atomone/chronostate':
-        specifier: ^2.2.2
-        version: 2.2.2
-      '@atomone/dither-api-types':
-        specifier: ^1.0.1
-        version: 1.0.1(@sinclair/typebox@0.34.33)(openapi-types@12.1.3)(typescript@5.8.3)
-      '@atomone/event-consumer':
-        specifier: ^1.0.12
-        version: 1.0.12
-      '@types/node':
-        specifier: ^22.13.10
-        version: 22.15.17
-      amqplib:
-        specifier: ^0.10.7
-        version: 0.10.8
-      tsx:
-        specifier: ^4.19.3
-        version: 4.19.4
-    devDependencies:
-      '@types/amqplib':
-        specifier: ^0.10.7
-        version: 0.10.7
-      typescript:
-        specifier: ^5.8.2
-        version: 5.8.3
-
-  packages/service-unfollow:
-    dependencies:
-      '@atomone/chronostate':
-        specifier: ^2.2.2
-        version: 2.2.2
-      '@atomone/dither-api-types':
-        specifier: ^1.0.1
-        version: 1.0.1(@sinclair/typebox@0.34.33)(openapi-types@12.1.3)(typescript@5.8.3)
-      '@atomone/event-consumer':
-        specifier: ^1.0.12
-        version: 1.0.12
-      '@types/node':
-        specifier: ^22.13.10
-        version: 22.15.17
-      amqplib:
-        specifier: ^0.10.7
-        version: 0.10.8
-      tsx:
-        specifier: ^4.19.3
-        version: 4.19.4
-    devDependencies:
-      '@types/amqplib':
-        specifier: ^0.10.7
-        version: 0.10.7
-      typescript:
-        specifier: ^5.8.2
-        version: 5.8.3
 
   packages/tool-network-spammer:
     dependencies:
@@ -555,14 +281,8 @@ packages:
   '@atomone/chronostate@2.2.2':
     resolution: {integrity: sha512-7/1HlTahEwILdg4j7Vs4rMinDZjjpxadr4BWVO63y2Z+MOWHj33l3H+seP0//T8B3UJJ0W8rT9SWcht4lwx6mA==}
 
-  '@atomone/dither-api-types@1.0.1':
-    resolution: {integrity: sha512-uS/+M1H3AIJXyW8sp3CIJ4SvQRL4rny22E/FuiXK0DinepHyONTn7L11coyyvoybQYYXPJrEQDEbVR5PHHx2Aw==}
-
-  '@atomone/dither-api-types@1.2.0':
-    resolution: {integrity: sha512-Et+RRIJma+iXSgfyElsGpN+qsl4x6v2fKU24P+tZZ/G7Z8d1M4xAWs1v6e4/QhoG37r9WCVhGYbElBiyV1jTvQ==}
-
-  '@atomone/event-consumer@1.0.12':
-    resolution: {integrity: sha512-s1ZZhGPzcQEH6wR5nkMYkKJnh7JlCWTfUTug/PGJy219ol9WRZ6Bga3cOaw2kfbRNUuaIuWiTCXC9VfIDe7XRw==}
+  '@atomone/dither-api-types@1.2.1':
+    resolution: {integrity: sha512-7Pp9K685SvVQIVJiRd/mN0Ew0UtZpPLaftVsJTCjhu56iWe+dndHEJ3kUMA8nive0aqlOBqg1pj7kwWXD4Rt0A==}
 
   '@babel/helper-string-parser@7.27.1':
     resolution: {integrity: sha512-qMlSxKbpRlAridDExk92nSobyDdpPijUq2DW6oDnUqd0iOGxmQjyqhMIihI9+zv4LPyZdRje2cavWPbCbWm3eA==}
@@ -1475,9 +1195,6 @@ packages:
     peerDependencies:
       vue: ^2.7.0 || ^3.0.0
 
-  '@types/amqplib@0.10.7':
-    resolution: {integrity: sha512-IVj3avf9AQd2nXCx0PGk/OYq7VmHiyNxWFSb5HhU9ATh+i+gHWvVcljFTcTWQ/dyHJCTrzCixde+r/asL2ErDA==}
-
   '@types/estree@1.0.7':
     resolution: {integrity: sha512-w28IoSUCJpidD/TGviZwwMJckNESJZXFu7NBZ5YJ4mEUnNraUn9Pm8HSZm/jDF1pDWYKspWE7oVphigUPRakIQ==}
 
@@ -1756,10 +1473,6 @@ packages:
   alien-signals@1.0.13:
     resolution: {integrity: sha512-OGj9yyTnJEttvzhTUWuscOvtqxq5vrhF7vL9oS0xJ2mK0ItPYP1/y+vCFebfxoEyAz0++1AIwJ5CMr+Fk3nDmg==}
 
-  amqplib@0.10.8:
-    resolution: {integrity: sha512-Tfn1O9sFgAP8DqeMEpt2IacsVTENBpblB3SqLdn0jK2AeX8iyCvbptBc8lyATT9bQ31MsjVwUSQ1g8f4jHOUfw==}
-    engines: {node: '>=10'}
-
   ansi-regex@5.0.1:
     resolution: {integrity: sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ==}
     engines: {node: '>=8'}
@@ -1916,9 +1629,6 @@ packages:
 
   buffer-from@1.1.2:
     resolution: {integrity: sha512-E+XQCRwSbaaiChtv6k6Dwgc+bx+Bs6vuKJHHl5kox/BaKbhiXzqQOwK4cO22yElGp2OCmjwVhT3HmxgyPGnJfQ==}
-
-  buffer-more-ints@1.0.0:
-    resolution: {integrity: sha512-EMetuGFz5SLsT0QTnXzINh4Ksr+oo4i+UGTXEshiGCQWnsgSs7ZhJ8fzlwQ+OzEMs0MpDAMr1hxnblp5a4vcHg==}
 
   buffer-xor@1.0.3:
     resolution: {integrity: sha512-571s0T7nZWK6vB67HI5dyUF7wXiNcfaPPPTl6zYCNApANjIvYJTg7hlud/+cJpdAhS7dVzqMLmfhfHR3rAcOjQ==}
@@ -4120,27 +3830,13 @@ snapshots:
 
   '@atomone/chronostate@2.2.2': {}
 
-  '@atomone/dither-api-types@1.0.1(@sinclair/typebox@0.34.33)(openapi-types@12.1.3)(typescript@5.8.3)':
+  '@atomone/dither-api-types@1.2.1(@sinclair/typebox@0.34.33)(openapi-types@12.1.3)(typescript@5.8.3)':
     dependencies:
       elysia: 1.2.25(@sinclair/typebox@0.34.33)(openapi-types@12.1.3)(typescript@5.8.3)
     transitivePeerDependencies:
       - '@sinclair/typebox'
       - openapi-types
       - typescript
-
-  '@atomone/dither-api-types@1.2.0(@sinclair/typebox@0.34.33)(openapi-types@12.1.3)(typescript@5.8.3)':
-    dependencies:
-      elysia: 1.2.25(@sinclair/typebox@0.34.33)(openapi-types@12.1.3)(typescript@5.8.3)
-    transitivePeerDependencies:
-      - '@sinclair/typebox'
-      - openapi-types
-      - typescript
-
-  '@atomone/event-consumer@1.0.12':
-    dependencies:
-      '@atomone/event-consumer': 'link:'
-      '@types/amqplib': 0.10.7
-      amqplib: 0.10.8
 
   '@babel/helper-string-parser@7.27.1': {}
 
@@ -5066,10 +4762,6 @@ snapshots:
       '@tanstack/virtual-core': 3.13.8
       vue: 3.5.13(typescript@5.7.3)
 
-  '@types/amqplib@0.10.7':
-    dependencies:
-      '@types/node': 22.15.17
-
   '@types/estree@1.0.7': {}
 
   '@types/json-schema@7.0.15': {}
@@ -5484,11 +5176,6 @@ snapshots:
 
   alien-signals@1.0.13: {}
 
-  amqplib@0.10.8:
-    dependencies:
-      buffer-more-ints: 1.0.0
-      url-parse: 1.5.10
-
   ansi-regex@5.0.1: {}
 
   ansi-styles@4.3.0:
@@ -5692,8 +5379,6 @@ snapshots:
   buffer-equal-constant-time@1.0.1: {}
 
   buffer-from@1.1.2: {}
-
-  buffer-more-ints@1.0.0: {}
 
   buffer-xor@1.0.3: {}
 

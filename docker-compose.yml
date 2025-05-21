@@ -21,29 +21,6 @@ services:
       start_period: 5s
 
   # ================================
-  # RabbitMQ Service (event system)
-  # ================================
-  rabbitmq:
-    image: rabbitmq:latest
-    build: ./packages/rabbit-mq
-    container_name: rabbitmq
-    restart: always
-    healthcheck:
-      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
-      interval: 5s
-      timeout: 5s
-      retries: 3
-    ports:
-      - 5672:5672
-      - 15672:15672
-    environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
-    volumes:
-      - rabbitmq-lib:/var/lib/rabbitmq/
-      - rabbitmq-log:/var/log/rabbitmq
-
-  # ================================
   # REST Services
   # ================================
   api-main:
@@ -66,186 +43,7 @@ services:
       start_period: 10s
 
   # ================================
-  # Event Consuming Services
-  # ================================
-  service-post:
-    container_name: "service-post"
-    build: ./packages/service-post
-    depends_on:
-      api-main:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
-    environment:
-      RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
-      RABBITMQ_EXCHANGE: "dither"
-      RABBITMQ_DLX_EXCHANGE: "dither-dlx"
-      RABBITMQ_DLX_QUEUE: "dlx-queue"
-      RABBITMQ_QUEUE: "dither.Post"
-      RABBITMQ_LOG_EXCHANGE: "dither-log"
-      RABBITMQ_LOG_QUEUE: "log-queue"
-      API_ROOT: "http://api-main:3001/v1"
-    restart: always
-    command: ["pnpm", "start"]
-    
-  service-reply:
-    container_name: "service-reply"
-    build: ./packages/service-reply
-    depends_on:
-      api-main:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
-    environment:
-      RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
-      RABBITMQ_EXCHANGE: "dither"
-      RABBITMQ_DLX_EXCHANGE: "dither-dlx"
-      RABBITMQ_DLX_QUEUE: "dlx-queue"
-      RABBITMQ_QUEUE: "dither.Reply"
-      RABBITMQ_LOG_EXCHANGE: "dither-log"
-      RABBITMQ_LOG_QUEUE: "log-queue"
-      API_ROOT: "http://api-main:3001/v1"
-    restart: always
-    command: ["pnpm", "start"]
-
-  service-like:
-    container_name: "service-like"
-    build: ./packages/service-like
-    depends_on:
-      api-main:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
-    environment:
-      RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
-      RABBITMQ_EXCHANGE: "dither"
-      RABBITMQ_DLX_EXCHANGE: "dither-dlx"
-      RABBITMQ_DLX_QUEUE: "dlx-queue"
-      RABBITMQ_QUEUE: "dither.Like"
-      RABBITMQ_LOG_EXCHANGE: "dither-log"
-      RABBITMQ_LOG_QUEUE: "log-queue"
-      API_ROOT: "http://api-main:3001/v1"
-    restart: always
-    command: ["pnpm", "start"]
-
-  service-dislike:
-    container_name: "service-dislike"
-    build: ./packages/service-dislike
-    depends_on:
-      api-main:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
-    environment:
-      RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
-      RABBITMQ_EXCHANGE: "dither"
-      RABBITMQ_DLX_EXCHANGE: "dither-dlx"
-      RABBITMQ_DLX_QUEUE: "dlx-queue"
-      RABBITMQ_QUEUE: "dither.Dislike"
-      RABBITMQ_LOG_EXCHANGE: "dither-log"
-      RABBITMQ_LOG_QUEUE: "log-queue"
-      API_ROOT: "http://api-main:3001/v1"
-    restart: always
-    command: ["pnpm", "start"]
-
-  service-follow:
-    container_name: "service-follow"
-    build: ./packages/service-follow
-    depends_on:
-      api-main:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
-    environment:
-      RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
-      RABBITMQ_EXCHANGE: "dither"
-      RABBITMQ_DLX_EXCHANGE: "dither-dlx"
-      RABBITMQ_DLX_QUEUE: "dlx-queue"
-      RABBITMQ_QUEUE: "dither.Follow"
-      RABBITMQ_LOG_EXCHANGE: "dither-log"
-      RABBITMQ_LOG_QUEUE: "log-queue"
-      API_ROOT: "http://api-main:3001/v1"
-    restart: always
-    command: ["pnpm", "start"]
-
-  service-unfollow:
-    container_name: "service-unfollow"
-    build: ./packages/service-unfollow
-    depends_on:
-      api-main:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
-    environment:
-      RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
-      RABBITMQ_EXCHANGE: "dither"
-      RABBITMQ_DLX_EXCHANGE: "dither-dlx"
-      RABBITMQ_DLX_QUEUE: "dlx-queue"
-      RABBITMQ_QUEUE: "dither.Unfollow"
-      RABBITMQ_LOG_EXCHANGE: "dither-log"
-      RABBITMQ_LOG_QUEUE: "log-queue"
-      API_ROOT: "http://api-main:3001/v1"
-    restart: always
-    command: ["pnpm", "start"]
-
-  service-flag:
-    container_name: "service-flag"
-    build: ./packages/service-flag
-    depends_on:
-      api-main:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
-    environment:
-      RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
-      RABBITMQ_EXCHANGE: "dither"
-      RABBITMQ_DLX_EXCHANGE: "dither-dlx"
-      RABBITMQ_DLX_QUEUE: "dlx-queue"
-      RABBITMQ_QUEUE: "dither.Flag"
-      RABBITMQ_LOG_EXCHANGE: "dither-log"
-      RABBITMQ_LOG_QUEUE: "log-queue"
-      API_ROOT: "http://api-main:3001/v1"
-    restart: always
-    command: ["pnpm", "start"]
-
-  service-post-remove:
-    container_name: "service-post-remove"
-    build: ./packages/service-post-remove
-    depends_on:
-      api-main:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
-    environment:
-      RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
-      RABBITMQ_EXCHANGE: "dither"
-      RABBITMQ_DLX_EXCHANGE: "dither-dlx"
-      RABBITMQ_DLX_QUEUE: "dlx-queue"
-      RABBITMQ_QUEUE: "dither.Remove"
-      RABBITMQ_LOG_EXCHANGE: "dither-log"
-      RABBITMQ_LOG_QUEUE: "log-queue"
-      API_ROOT: "http://api-main:3001/v1"
-    restart: always
-    command: ["pnpm", "start"]
-
-  service-dead-letter:
-    container_name: "service-dead-letter"
-    build: ./packages/service-dead-letter
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
-    environment:
-      RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
-      RABBITMQ_EXCHANGE: "dither-dlx"
-      RABBITMQ_DLX_EXCHANGE: "dither"
-      RABBITMQ_DLX_QUEUE: "dlx-queue"
-      RABBITMQ_LOG_EXCHANGE: "dither-log"
-      RABBITMQ_LOG_QUEUE: "log-queue"
-      API_ROOT: "http://api-main:3001/v1"
-    restart: always
-    command: ["pnpm", "start"]
-  # ================================
-  # ChronoSync Services (Readers)
+  # ChronoSync Service
   # ================================
   reader-main:
     container_name: "reader-main"
@@ -253,18 +51,17 @@ services:
     restart: always
     command: ["pnpm", "start"]
     depends_on:
-      rabbitmq:
-        condition: service_healthy
       postgres:
         condition: service_healthy
+      api-main:
+        condition: service_healthy
     environment:
-      RABBITMQ_ENDPOINT: "amqp://guest:guest@rabbitmq:5672"
-      RABBITMQ_EXCHANGE: "dither"
       API_URLS: "https://atomone-devnet-1-api.allinbits.services"
       START_BLOCK: "2272226"
       BATCH_SIZE: 50
       MEMO_PREFIX: "dither."
       RECEIVER: "atone1uq6zjslvsa29cy6uu75y8txnl52mw06j6fzlep"
+      API_ROOT: "http://api-main:3001/v1"
       # PG_URI: postgres://username:password@postgres-feed:5432/feed
       # LOG: process.env.LOG === 'true' ? true : false,
 
@@ -280,9 +77,3 @@ services:
   #   depends_on:
   #     - postgres
   #     - api-main
-
-volumes:
-  rabbitmq-lib:
-    driver: local
-  rabbitmq-log:
-    driver: local
