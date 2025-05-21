@@ -6,6 +6,7 @@ import { FeedTable } from '../../drizzle/schema';
 import { useSharedQueries } from '../shared/useSharedQueries';
 
 const sharedQueries = useSharedQueries();
+import { notify } from '../shared/notify';
 
 const statement = getDatabase()
     .insert(FeedTable)
@@ -48,6 +49,13 @@ export async function Reply(body: typeof Posts.ReplyBody.static) {
 
         await statementAddReplyCount.execute({
             post_hash: body.post_hash,
+        });
+
+        await notify({
+            post_hash: body.post_hash,
+            hash: body.hash,
+            type: 'reply',
+            timestamp: new Date(body.timestamp),
         });
 
         return { status: 200 };
