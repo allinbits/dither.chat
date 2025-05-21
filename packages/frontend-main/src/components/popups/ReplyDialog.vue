@@ -5,10 +5,11 @@ import { useBalanceFetcher } from '@/composables/useBalanceFetcher';
 import { usePopups } from '@/composables/usePopups';
 import { useWallet } from '@/composables/useWallet';
 
+import PostMessage from '../feed/PostMessage.vue';
+import PrettyTimestamp from '../feed/PrettyTimestamp.vue';
+
 import UserAvatar from '@/components//users/UserAvatar.vue';
 import Username from '@/components//users/Username.vue';
-import PostMessage from '@/components/feed/PostMessage.vue';
-import PrettyTimestamp from '@/components/feed/PrettyTimestamp.vue';
 import
 { Button }
     from '@/components/ui/button';
