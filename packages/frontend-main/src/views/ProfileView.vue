@@ -8,6 +8,7 @@ import { useTabs } from '@/composables/useTabs';
 import { useWallet } from '@/composables/useWallet';
 
 import PostsList from '@/components/posts/PostsList.vue';
+import Button from '@/components/ui/button/Button.vue';
 import Tab from '@/components/ui/tabs/Tab.vue';
 import TabsContainer from '@/components/ui/tabs/TabsContainer.vue';
 import UserAvatarUsername from '@/components/users/UserAvatarUsername.vue';
@@ -41,7 +42,12 @@ watch(address, async () => {
         {{ $t(`components.Titles.${isMyProfile ? 'myProfile' : 'profile'}`) }}
       </h1>
 
-      <UserAvatarUsername :userAddress="address" size="lg" />
+      <div class="flex flex-row justify-between items-center">
+        <UserAvatarUsername :userAddress="address" size="lg" />
+        <Button v-if="!isMyProfile" size="sm">
+          {{ $t('components.Button.follow') }}
+        </Button>
+      </div>
 
       <div class="border-b mt-6" />
 
