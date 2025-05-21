@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { nextTick, onMounted } from 'vue';
 
+import WalletConnectDialog from './components/wallet/WalletConnectDialog.vue';
 import { useBalanceFetcher } from './composables/useBalanceFetcher';
 import { useWallet } from './composables/useWallet';
 
@@ -22,4 +23,5 @@ onMounted(() => {
 
 <template>
   <RouterView />
+  <WalletConnectDialog/>
 </template>

@@ -5,14 +5,14 @@ import { useBalanceFetcher } from '@/composables/useBalanceFetcher';
 import { usePopups } from '@/composables/usePopups';
 import { useWallet } from '@/composables/useWallet';
 
-import UserAvatar from '@/components//users/UserAvatar.vue';
-import Username from '@/components//users/Username.vue';
 import PostMessage from '@/components/posts/PostMessage.vue';
 import PrettyTimestamp from '@/components/posts/PrettyTimestamp.vue';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import InputPhoton from '@/components/ui/input/InputPhoton.vue';
 import { Textarea } from '@/components/ui/textarea';
+import UserAvatar from '@/components/users/UserAvatar.vue';
+import Username from '@/components/users/Username.vue';
 
 const popups = usePopups();
 const wallet = useWallet();
