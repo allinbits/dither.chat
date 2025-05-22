@@ -11,8 +11,8 @@ import UserAvatarUsername from '@/components/users/UserAvatarUsername.vue';
 import MainLayout from '@/layouts/MainLayout.vue';
 
 const route = useRoute();
-const hash = typeof route.query.hash === 'string' ? route.query.hash : '';
-const postHash = typeof route.query.postHash === 'string' ? route.query.postHash : undefined;
+const hash = typeof route.params.hash === 'string' ? route.params.hash : '';
+const postHash = typeof route.params.postHash === 'string' ? route.params.postHash : undefined;
 const { data: post, isLoading, isError, error } = usePost({
     hash, postHash,
 });
