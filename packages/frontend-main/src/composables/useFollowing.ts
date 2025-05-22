@@ -1,4 +1,4 @@
-import type { Follow } from 'api-main/types/follows';
+import type { FollowUser } from 'api-main/types/follows';
 
 import { computed } from 'vue';
 import { useInfiniteQuery } from '@tanstack/vue-query';
@@ -15,7 +15,7 @@ export function useFollowing(params: Params) {
         queryKey: ['following'],
         queryFn: async ({ pageParam = 0 }) => {
             const res = await fetch(`${apiRoot}/following?address=${params.userAddress}&offset=${pageParam}&limit=${LIMIT}`);
-            const json = await res.json() as { status: number; rows: Follow[] };
+            const json = await res.json() as { status: number; rows: FollowUser[] };
             return json.rows ?? [];
         },
         initialPageParam: 0,
@@ -24,6 +24,8 @@ export function useFollowing(params: Params) {
             return allPages.length * LIMIT;
         },
     });
+
+    console.log('query.data.valuequery.data.value', query.data.value?.pages.flat());
 
     return {
         data: computed(() => query.data.value?.pages.flat() ?? []),

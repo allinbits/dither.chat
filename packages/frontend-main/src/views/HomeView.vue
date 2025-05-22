@@ -27,9 +27,9 @@ const query = useFeed();
     <PostsList v-if="state.activeTab === FEED_TAB" :query="query"/>
 
     <div v-if="state.activeTab === FOLLOWING_TAB">
-      <FollowingList :userAddress="wallet.address.value" class="mb-6"/>
+      <FollowingList :userAddress="wallet.address.value"/>
 
-      <!-- TODO: Fetch followed user's posts -->
+      <!-- TODO: Fetch following users posts -->
       <PostsList :query="query"/>
 
     </div>

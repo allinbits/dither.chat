@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { nextTick, onMounted } from 'vue';
 
-import FollowDialog from './components/popups/FollowDialog.vue';
-import UnfollowDialog from './components/popups/UnfollowDialog.vue';
+import FollowDialog from './components/popups/FollowUserDialog.vue';
+import UnfollowDialog from './components/popups/UnfollowUserDialog.vue';
 import WalletConnectDialog from './components/wallet/WalletConnectDialog.vue';
 import { useBalanceFetcher } from './composables/useBalanceFetcher';
 import { useWallet } from './composables/useWallet';

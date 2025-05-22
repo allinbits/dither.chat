@@ -36,12 +36,15 @@ export const messages = {
                 showMore: 'Show more',
                 copyLink: 'Copy link',
                 follow: 'Follow',
+                unfollow: 'Unfollow',
             },
             PopupTitles: {
                 likePost: 'Like Post',
                 dislikePost: 'Dislike Post',
                 newPost: 'New Post',
                 reply: 'Reply to Post',
+                follow: 'Follow User',
+                unfollow: 'Unfollow User',
             },
             Tabs: {
                 feed: 'Global Feed',

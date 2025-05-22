@@ -1,8 +1,7 @@
-import type { InferSelectModel } from 'drizzle-orm';
+import type { GetColumnData } from 'drizzle-orm';
+import type { FollowsTable } from '../../drizzle/schema';
 
-import { createSelectSchema } from 'drizzle-typebox';
-
-import { FollowsTable } from '../../drizzle/schema';
-
-export type Follow = InferSelectModel<typeof FollowsTable>;
-export const followSchema = createSelectSchema(FollowsTable);
+export type FollowUser = {
+    address: GetColumnData<typeof FollowsTable.following, 'query'>;
+    hash: GetColumnData<typeof FollowsTable.hash, 'query'>;
+};
