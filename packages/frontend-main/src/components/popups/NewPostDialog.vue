@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { computed, ref, watch } from 'vue';
+import { Loader } from 'lucide-vue-next';
 
 import { useBalanceFetcher } from '@/composables/useBalanceFetcher';
 import { usePopups } from '@/composables/usePopups';
@@ -98,6 +99,7 @@ watch(wallet.loggedIn, async () => {
         <!-- Broadcast Status -->
         <div class="flex flex-col w-full gap-4" v-if="isBroadcasting && !txSuccess">
           {{  $t('components.Wallet.popupSign') }}
+          <Loader class="animate-spin w-full"/>
         </div>
         <!-- Success Status -->
         <div class="flex flex-col w-full gap-4 overflow-hidden" v-if="!isBroadcasting && txSuccess">
