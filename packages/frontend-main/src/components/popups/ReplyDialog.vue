@@ -100,7 +100,7 @@ watch(wallet.loggedIn, async () => {
         </div>
 
         <Textarea
-          placeholder="Write your reply"
+          :placeholder="$t('placeholders.yourReply')"
           v-model="message"
           @input="capChars"
           v-if="!isBroadcasting && !txSuccess"

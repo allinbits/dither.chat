@@ -47,7 +47,6 @@ export const messages = {
                 following: 'Following',
             },
             SearchInput: {
-                placeholder: 'Type to search',
                 noResults: 'No results found',
                 failedToSearch: 'Failed to search',
             },
@@ -55,10 +54,14 @@ export const messages = {
         feedbacks: {
             copied: 'Copied to clipboard',
             SearchInput: {
-                placeholder: 'Type to search',
                 noResults: 'No results found',
                 failedToSearch: 'Failed to search',
             },
+        },
+        placeholders: {
+            typeToSearch: 'Type to search',
+            whatsUp: 'What\'s up?',
+            yourReply: 'Your reply',
         },
     },
 };
