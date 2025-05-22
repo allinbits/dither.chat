@@ -35,6 +35,7 @@ export const messages = {
                 close: 'Close',
                 showMore: 'Show more',
                 copyLink: 'Copy link',
+                reply: 'Reply',
             },
             PopupTitles: {
                 likePost: 'Like Post',
