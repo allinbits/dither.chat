@@ -7,7 +7,7 @@ import { FeedTable } from '../../drizzle/schema';
 const statement = getDatabase()
     .select()
     .from(FeedTable)
-    .where(and(eq(FeedTable.hash, sql.placeholder('hash')), isNull(FeedTable.removed_at)))
+    .where(and(eq(FeedTable.post_hash, sql.placeholder('hash')), isNull(FeedTable.removed_at)))
     .limit(sql.placeholder('limit'))
     .offset(sql.placeholder('offset'))
     .orderBy(desc(FeedTable.timestamp))
