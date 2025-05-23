@@ -11,7 +11,7 @@ interface Params {
 
 export function useReplies(params: Params) {
     const query = useInfiniteQuery({
-        queryKey: ['replies'],
+        queryKey: ['replies', params.hash],
         queryFn: async ({ pageParam = 0 }) => {
             const res = await fetch(`${apiRoot}/replies?hash=${params.hash}&offset=${pageParam}&limit=${LIMIT}`);
             const json = await res.json() as { status: number; rows: Post[] };

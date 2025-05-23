@@ -25,7 +25,7 @@ const { data: post, isLoading, isError, error } = usePost({
     hash, postHash,
 });
 const wallet = useWallet();
-const query = useReplies({ hash });
+const repliesQuery = useReplies({ hash });
 const POST_HASH_LEN = 64;
 const MAX_CHARS = 512 - ('dither.Reply("", "")'.length + POST_HASH_LEN);
 const reply = ref('');
@@ -65,7 +65,7 @@ async function handleReply() {
 }
 </script>
 
-<!-- TODO: Refresh replies post list after replying -->
+<!-- FIXME: Posts and replies refreshed only after unfocus/focus the browser's tab -->
 
 <template>
   <MainLayout>
@@ -84,8 +84,10 @@ async function handleReply() {
       </div>
 
       <!-- Broadcast Status -->
-      <span v-if="isBroadcasting && !txSuccess" class="mt-4">{{ $t('components.Wallet.popupSign') }}</span>
-
+      <div class="flex flex-col w-full gap-2 mt-4" v-if="isBroadcasting">
+        {{  $t('components.Wallet.popupSign') }}
+        <Loader class="animate-spin w-full"/>
+      </div>
       <!-- Transaction Form -->
       <template v-if="wallet.loggedIn.value && !isBroadcasting">
         <div class="flex flex-row item-center mt-4">
@@ -106,6 +108,6 @@ async function handleReply() {
     </div>
 
     <!-- Replies posts list -->
-    <PostsList :query="query" />
+    <PostsList :query="repliesQuery" />
   </MainLayout>
 </template>
