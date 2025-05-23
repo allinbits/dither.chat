@@ -745,11 +745,15 @@ describe('v1 - mod', { sequential: true }, () => {
         const response = await post(`post`, body);
         assert.isOk(response?.status === 200, 'response was not okay');
 
-        const results1 = await get<{ status: number; rows: { message: string }[] }>('search?text="very unique message"');
+        const results1 = await get<{ status: number; rows: { message: string }[] }>(
+            'search?text="very unique message"',
+        );
         assert.isOk(results1?.status === 200);
         assert.isOk(results1.rows.length === 1);
 
-        const results2 = await get<{ status: number; rows: { message: string }[] }>('search?text="supercalifragilisticexpialidocious"');
+        const results2 = await get<{ status: number; rows: { message: string }[] }>(
+            'search?text="supercalifragilisticexpialidocious"',
+        );
         assert.isOk(results2?.status === 200);
         assert.isOk(results2.rows.length <= 0);
     });
@@ -906,5 +910,58 @@ describe('v1/notifications', async () => {
         }>(`notifications?address=${walletA.publicKey}`, 'READ', bearerToken);
 
         assert.isTrue(lastResponse?.rows[0].was_read, `notification was not marked as read, got true`);
+    });
+});
+
+describe('user replies with parent', async () => {
+    const walletA = await createWallet();
+    const walletB = await createWallet();
+    const parentPost = getRandomHash();
+    const replyPost = getRandomHash();
+    const postMessage = 'this is a post';
+    const replyMessage = 'this is a reply';
+
+    it('POST - /post', async () => {
+        const body: typeof Posts.PostBody.static = {
+            from: walletA.publicKey,
+            hash: parentPost,
+            msg: postMessage,
+            quantity: '1',
+            timestamp: '2025-04-16T19:46:42Z',
+        };
+
+        const response = await post(`post`, body);
+        assert.isOk(response?.status === 200, 'response was not okay');
+    });
+
+    it('POST - /reply', async () => {
+        const body: typeof Posts.ReplyBody.static = {
+            from: walletB.publicKey,
+            hash: replyPost,
+            post_hash: parentPost,
+            msg: replyMessage,
+            quantity: '1',
+            timestamp: '2025-04-16T19:46:42Z',
+        };
+
+        const replyResponse = await post(`reply`, body);
+        assert.isOk(replyResponse?.status === 200, 'response was not okay');
+    });
+
+    it('Get user replies', async () => {
+        const bearerToken = await userLogin(walletB);
+        const userRepliesResponse = await get<{
+            status: number;
+            rows: {
+                parent: { hash: string; author: string; message: string };
+                reply: { hash: string; author: string; message: string };
+            }[];
+        }>(`user-replies?address=${walletA.publicKey}`, 'READ', bearerToken);
+        assert.isOk(userRepliesResponse?.status === 200, `response was not okay, got ${userRepliesResponse?.status}`);
+        assert.lengthOf(userRepliesResponse.rows, 1);
+        assert.equal(userRepliesResponse.rows[0].reply.hash, replyPost);
+        assert.equal(userRepliesResponse.rows[0].parent.hash, parentPost);
+        assert.equal(userRepliesResponse.rows[0].reply.message, replyMessage);
+        assert.equal(userRepliesResponse.rows[0].parent.message, postMessage);
     });
 });
