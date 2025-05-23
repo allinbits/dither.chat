@@ -3,6 +3,7 @@ import { computed, ref, watch } from 'vue';
 import { Loader } from 'lucide-vue-next';
 
 import { useBalanceFetcher } from '@/composables/useBalanceFetcher';
+import { useCreatePost } from '@/composables/useCreatePost';
 import { usePopups } from '@/composables/usePopups';
 import { useWallet } from '@/composables/useWallet';
 
@@ -22,29 +23,14 @@ const wallet = useWallet();
 const balanceFetcher = useBalanceFetcher();
 
 const photonValue = ref(1);
-const txError = ref<string>();
-const txSuccess = ref<string>();
 const isBalanceInputValid = ref(false);
 const message = ref('');
 
 const MAX_CHARS = 512 - 'dither.Post("")'.length;
 
-async function handleSubmit() {
-    if (!popovers.state.newPost) {
-        return;
-    }
-
-    const result = await wallet.dither.post(message.value, BigInt(photonValue.value).toString());
-    if (!result.broadcast) {
-        txError.value = result.msg;
-        return;
-    }
-
-    txSuccess.value = result.tx?.transactionHash;
-    if (txSuccess.value) {
-        message.value = '';
-    }
-}
+const { createPost,
+    txError,
+    txSuccess } = useCreatePost();
 
 const isBroadcasting = computed(() => {
     return wallet.isBroadcasting.value;
@@ -92,7 +78,7 @@ watch(wallet.loggedIn, async () => {
         <div class="flex flex-col w-full gap-4" v-if="!isBroadcasting && !txSuccess">
           <InputPhoton v-model="photonValue" @on-validity-change="handleInputValidity" />
           <span v-if="txError" class="text-red-500 text-left text-xs">{{ txError }}</span>
-          <Button class="w-full xl:inline hidden" :disabled="!canSubmit" @click="isBalanceInputValid ? handleSubmit() : () => {}">
+          <Button class="w-full xl:inline hidden" :disabled="!canSubmit" @click="isBalanceInputValid ? createPost({message, photonValue}) : () => {}">
             {{ $t('components.Button.submit') }}
           </Button>
         </div>
