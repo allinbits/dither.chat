@@ -17,13 +17,13 @@ export function useCreatePost(
     const wallet = useWallet();
     const txError = ref<string>();
     const txSuccess = ref<string>();
-    const newPost: Post = {
-        hash: '',
+    const buildNewPost = (message: string, photonValue: number, hash: string): Post => ({
+        hash: hash.toLowerCase(),
         post_hash: null,
         author: wallet.address.value,
         timestamp: new Date(),
-        message: '',
-        quantity: 0,
+        message,
+        quantity: photonValue,
         replies: 0,
         likes: 0,
         dislikes: 0,
@@ -34,7 +34,7 @@ export function useCreatePost(
         removed_hash: null,
         removed_at: null,
         removed_by: null,
-    };
+    });
 
     const {
         mutateAsync,
@@ -65,12 +65,7 @@ export function useCreatePost(
             if (!hash) throw new Error('Error: No hash in TX');
 
             const feedOpts = feed();
-            const optimisticNewPost: Post = {
-                ...newPost,
-                hash: hash.toLowerCase(),
-                message: variables.message,
-                quantity: variables.photonValue,
-            };
+            const optimisticNewPost = buildNewPost(variables.message, variables.photonValue, hash);
             const newPages = context.previousFeed?.pages ? [...context.previousFeed.pages] : [];
             if (newPages.length > 0) {
                 newPages[0] = [optimisticNewPost, ...newPages[0]];
