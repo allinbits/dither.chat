@@ -1,5 +1,5 @@
 import { type Gets } from '@atomone/dither-api-types';
-import { and, desc, eq, isNotNull, isNull, sql } from 'drizzle-orm';
+import { and, desc, eq, gte, isNotNull, isNull, sql } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
 
 import { getDatabase } from '../../drizzle/db';
@@ -8,7 +8,11 @@ import { FeedTable } from '../../drizzle/schema';
 const statement = getDatabase()
     .select()
     .from(FeedTable)
-    .where(and(eq(FeedTable.post_hash, sql.placeholder('hash')), isNull(FeedTable.removed_at)))
+    .where(and(
+        eq(FeedTable.post_hash, sql.placeholder('hash')),
+        isNull(FeedTable.removed_at),
+        gte(FeedTable.quantity, sql.placeholder('minQuantity')),
+    ))
     .limit(sql.placeholder('limit'))
     .offset(sql.placeholder('offset'))
     .orderBy(desc(FeedTable.timestamp))
@@ -17,6 +21,7 @@ const statement = getDatabase()
 export async function Replies(query: typeof Gets.RepliesQuery.static) {
     let limit = typeof query.limit !== 'undefined' ? Number(query.limit) : 100;
     const offset = typeof query.offset !== 'undefined' ? Number(query.offset) : 0;
+    const minQuantity = typeof query.minQuantity !== 'undefined' ? query.minQuantity : BigInt(0);
 
     if (limit > 100) {
         limit = 100;
@@ -31,7 +36,7 @@ export async function Replies(query: typeof Gets.RepliesQuery.static) {
     }
 
     try {
-        const results = await statement.execute({ hash: query.hash, limit, offset });
+        const results = await statement.execute({ hash: query.hash, limit, offset, minQuantity });
         return { status: 200, rows: results };
     }
     catch (error) {
@@ -56,9 +61,10 @@ const getUserRepliesWithParent = getDatabase()
     .offset(sql.placeholder('offset'))
     .prepare('stmnt_get_user_replies_with_parents');
 
-export async function UserReplies(query: typeof Gets.NotificationsQuery.static, store: { userAddress: string }) {
+export async function UserReplies(query: typeof Gets.UserRepliesQuery.static, store: { userAddress: string }) {
     let limit = typeof query.limit !== 'undefined' ? Number(query.limit) : 100;
     const offset = typeof query.offset !== 'undefined' ? Number(query.offset) : 0;
+    const minQuantity = typeof query.minQuantity !== 'undefined' ? query.minQuantity : BigInt(0);
 
     if (limit > 100) {
         limit = 100;

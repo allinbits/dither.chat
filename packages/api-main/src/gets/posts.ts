@@ -20,6 +20,7 @@ const statement = getDatabase()
 export async function Posts(query: typeof Gets.PostsQuery.static) {
     let limit = typeof query.limit !== 'undefined' ? Number(query.limit) : 100;
     const offset = typeof query.offset !== 'undefined' ? Number(query.offset) : 0;
+    const minQuantity = typeof query.minQuantity !== 'undefined' ? query.minQuantity : BigInt(0);
 
     if (limit > 100) {
         limit = 100;
@@ -34,7 +35,7 @@ export async function Posts(query: typeof Gets.PostsQuery.static) {
     }
 
     try {
-        const results = await statement.execute({ author: query.address, limit, offset });
+        const results = await statement.execute({ author: query.address, limit, offset, minQuantity });
         return { status: 200, rows: results };
     }
     catch (error) {
@@ -44,10 +45,14 @@ export async function Posts(query: typeof Gets.PostsQuery.static) {
 }
 
 const followingPostsStatement = getDatabase()
-    .select(FeedTable)
+    .select()
     .from(FeedTable)
     .innerJoin(FollowsTable, eq(FeedTable.author, FollowsTable.following))
-    .where(and(eq(FollowsTable.follower, sql.placeholder('address')), isNull(FeedTable.post_hash))) // Only get posts not replies
+    .where(and(
+        eq(FollowsTable.follower, sql.placeholder('address')),
+        isNull(FeedTable.post_hash),
+        gte(FeedTable.quantity, sql.placeholder('minQuantity')),
+    )) // Only get posts not replies
     .orderBy(desc(FeedTable.timestamp))
     .limit(sql.placeholder('limit'))
     .offset(sql.placeholder('offset'))
@@ -56,6 +61,7 @@ const followingPostsStatement = getDatabase()
 export async function FollowingPosts(query: typeof Gets.PostsQuery.static, store: { userAddress: string }) {
     let limit = typeof query.limit !== 'undefined' ? Number(query.limit) : 100;
     const offset = typeof query.offset !== 'undefined' ? Number(query.offset) : 0;
+    const minQuantity = typeof query.minQuantity !== 'undefined' ? query.minQuantity : BigInt(0);
 
     if (limit > 100) {
         limit = 100;
@@ -70,7 +76,7 @@ export async function FollowingPosts(query: typeof Gets.PostsQuery.static, store
     }
 
     try {
-        const results = await followingPostsStatement.execute({ address: store.userAddress, limit, offset });
+        const results = await followingPostsStatement.execute({ address: store.userAddress, limit, offset, minQuantity });
         return { status: 200, rows: results };
     }
     catch (error) {
