@@ -18,7 +18,7 @@ import {
 import InputPhoton from '@/components/ui/input/InputPhoton.vue';
 import { Textarea } from '@/components/ui/textarea';
 
-const popovers = usePopups();
+const popups = usePopups();
 const wallet = useWallet();
 const balanceFetcher = useBalanceFetcher();
 
@@ -37,7 +37,7 @@ const isBroadcasting = computed(() => {
 });
 
 function handleClose() {
-    popovers.state.newPost = null;
+    popups.state.newPost = null;
     txError.value = undefined;
     txSuccess.value = undefined;
     photonValue.value = 1;
@@ -57,18 +57,23 @@ function capChars(event: { target: HTMLTextAreaElement }) {
     }
 }
 
-watch(wallet.loggedIn, async () => {
+watch([wallet.loggedIn, wallet.address], async () => {
     if (!wallet.loggedIn.value) {
         return;
     }
 
     balanceFetcher.updateAddress(wallet.address.value);
 });
+
+async function onClickSubmit() {
+    await createPost({ message: message.value, photonValue: photonValue.value });
+    message.value = '';
+}
 </script>
 
 <template>
   <div>
-    <Dialog :open="popovers.state.newPost !== null" @update:open="handleClose" v-if="popovers.state.newPost !== null">
+    <Dialog :open="popups.state.newPost !== null" @update:open="handleClose" v-if="popups.state.newPost !== null">
       <DialogContent>
         <DialogTitle>{{ $t('components.PopupTitles.newPost') }}</DialogTitle>
 
@@ -78,7 +83,7 @@ watch(wallet.loggedIn, async () => {
         <div class="flex flex-col w-full gap-4" v-if="!isBroadcasting && !txSuccess">
           <InputPhoton v-model="photonValue" @on-validity-change="handleInputValidity" />
           <span v-if="txError" class="text-red-500 text-left text-xs">{{ txError }}</span>
-          <Button class="w-full xl:inline hidden" :disabled="!canSubmit" @click="isBalanceInputValid ? createPost({message, photonValue}) : () => {}">
+          <Button class="w-full" :disabled="!canSubmit" @click="onClickSubmit">
             {{ $t('components.Button.submit') }}
           </Button>
         </div>
@@ -91,7 +96,7 @@ watch(wallet.loggedIn, async () => {
         <div class="flex flex-col w-full gap-4 overflow-hidden" v-if="!isBroadcasting && txSuccess">
           <span>{{ $t('components.Wallet.broadcastSuccess') }}</span>
           <span class="flex lowercase overflow-x-scroll py-2">{{ txSuccess }}</span>
-          <Button class="w-full xl:inline hidden" @click="handleClose">
+          <Button class="w-full" @click="handleClose">
             {{ $t('components.Button.close') }}
           </Button>
         </div>
