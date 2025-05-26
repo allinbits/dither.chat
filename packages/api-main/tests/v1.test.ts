@@ -965,3 +965,82 @@ describe('user replies with parent', async () => {
         assert.equal(userRepliesResponse.rows[0].parent.message, postMessage);
     });
 });
+
+describe('get post from followed', async () => {
+    const walletA = await createWallet();
+    const walletB = await createWallet();
+    const postMessage = 'this is a post';
+
+    const bearerToken = await userLogin(walletA);
+    it('zero posts if not followers', async () => {
+        const readResponse = await get<{
+            status: number;
+            rows: {
+                hash: string;
+                author: string;
+                message: string;
+                deleted_at: Date;
+                deleted_reason: string;
+                deleted_hash: string;
+            }[];
+        }>(`following-posts?address=${walletA.publicKey}`, 'READ', bearerToken);
+        assert.isOk(readResponse?.status === 200, `response was not okay, got ${readResponse?.status}`);
+        assert.lengthOf(readResponse.rows, 0);
+    });
+
+    it('POST - now followed user posts', async () => {
+        const body: typeof Posts.PostBody.static = {
+            from: walletB.publicKey,
+            hash: getRandomHash(),
+            msg: postMessage,
+            quantity: '1',
+            timestamp: '2025-04-16T19:46:42Z',
+        };
+
+        const postResponse = await post(`post`, body);
+        assert.isOk(postResponse != null);
+        assert.isOk(postResponse && postResponse.status === 200, 'response was not okay');
+    });
+
+    it('Still empty response', async () => {
+        const readResponse = await get<{
+            status: number;
+            rows: {
+                hash: string;
+                author: string;
+                message: string;
+                deleted_at: Date;
+                deleted_reason: string;
+                deleted_hash: string;
+            }[];
+        }>(`following-posts?address=${walletA.publicKey}`, 'READ', bearerToken);
+        assert.isOk(readResponse?.status === 200, `response was not okay, got ${readResponse?.status}`);
+        assert.lengthOf(readResponse.rows, 0);
+    });
+
+    it('One post when user follows', async () => {
+        const body: typeof Posts.FollowBody.static = {
+            from: walletA.publicKey,
+            hash: getRandomHash(),
+            address: walletB.publicKey,
+            timestamp: '2025-04-16T19:46:42Z',
+        };
+
+        const response = await post(`follow`, body);
+        assert.isOk(response?.status === 200, 'unable to follow user');
+
+        const readResponse = await get<{
+            status: number;
+            rows: {
+                hash: string;
+                author: string;
+                message: string;
+                deleted_at: Date;
+                deleted_reason: string;
+                deleted_hash: string;
+            }[];
+        }>(`following-posts?address=${walletA.publicKey}`, 'READ', bearerToken);
+        assert.isOk(readResponse?.status === 200, `response was not okay, got ${readResponse?.status}`);
+        assert.lengthOf(readResponse.rows, 1);
+    });
+});

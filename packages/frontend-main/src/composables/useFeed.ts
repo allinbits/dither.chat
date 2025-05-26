@@ -1,12 +1,12 @@
 import type { Post } from 'api-main/types/feed';
 
-import { useInfiniteQuery } from '@tanstack/vue-query';
+import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/vue-query';
 
 const apiRoot = import.meta.env.VITE_API_ROOT ?? 'http://localhost:3000';
 const LIMIT = 15;
 
-export function useFeed() {
-    const query = useInfiniteQuery({
+export const feed = () =>
+    infiniteQueryOptions({
         queryKey: ['feed'],
         queryFn: async ({ pageParam = 0 }) => {
             const res = await fetch(`${apiRoot}/feed?offset=${pageParam}&limit=${LIMIT}`);
@@ -20,5 +20,6 @@ export function useFeed() {
         },
     });
 
-    return query;
+export function useFeed() {
+    return useInfiniteQuery(feed());
 }

@@ -8,7 +8,7 @@ import { SearchInput } from '@/components/ui/search';
 <template>
   <!-- TODO -->
   <aside
-    class="flex flex-col h-full w-full gap-4">
+    class="flex flex-col h-full w-full gap-4 p-6">
     <ToggleThemeButton/>
     <SearchInput />
   </aside>
