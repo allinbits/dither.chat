@@ -2,8 +2,8 @@
 import { ref } from 'vue';
 import { format, formatDistanceToNowStrict } from 'date-fns';
 
-defineProps<{ timestamp: Date }>();
-const isToNow = ref(true);
+const props = defineProps<{ timestamp: Date; isFullDate?: boolean }>();
+const isToNow = ref(!props.isFullDate);
 
 </script>
 <template>

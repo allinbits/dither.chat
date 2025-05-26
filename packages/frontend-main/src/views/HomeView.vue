@@ -21,6 +21,6 @@ const query = useFeed();
       <Tab :label="$t('components.Tabs.following')" :isActive="state.activeTab === FOLLOWING_TAB" :onClick="() => setActiveTab(FOLLOWING_TAB)"/>
     </TabsContainer>
 
-    <PostsList v-if="state.activeTab === FEED_TAB" class="border-t" :query="query"/>
+    <PostsList v-if="state.activeTab === FEED_TAB" :query="query"/>
   </MainLayout>
 </template>
