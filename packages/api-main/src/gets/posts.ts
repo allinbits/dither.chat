@@ -2,7 +2,7 @@ import { type Gets } from '@atomone/dither-api-types';
 import { and, desc, eq, isNull, sql } from 'drizzle-orm';
 
 import { getDatabase } from '../../drizzle/db';
-import { FeedTable } from '../../drizzle/schema';
+import { FeedTable, FollowsTable } from '../../drizzle/schema';
 
 const statement = getDatabase()
     .select()
@@ -36,5 +36,41 @@ export async function Posts(query: typeof Gets.PostsQuery.static) {
     catch (error) {
         console.error(error);
         return { status: 404, error: 'failed to find matching reply' };
+    }
+}
+
+const followingPostsStatement = getDatabase()
+    .select(FeedTable)
+    .from(FeedTable)
+    .innerJoin(FollowsTable, eq(FeedTable.author, FollowsTable.following))
+    .where(and(eq(FollowsTable.follower, sql.placeholder('address')), isNull(FeedTable.post_hash))) // Only get posts not replies
+    .orderBy(desc(FeedTable.timestamp))
+    .limit(sql.placeholder('limit'))
+    .offset(sql.placeholder('offset'))
+    .prepare('stmnt_posts_from_following');
+
+export async function FollowingPosts(query: typeof Gets.PostsQuery.static, store: { userAddress: string }) {
+    let limit = typeof query.limit !== 'undefined' ? Number(query.limit) : 100;
+    const offset = typeof query.offset !== 'undefined' ? Number(query.offset) : 0;
+
+    if (limit > 100) {
+        limit = 100;
+    }
+
+    if (limit <= 0) {
+        return { status: 400, error: 'limit must be at least 1' };
+    }
+
+    if (offset < 0) {
+        return { status: 400, error: 'offset must be at least 0' };
+    }
+
+    try {
+        const results = await followingPostsStatement.execute({ address: store.userAddress, limit, offset });
+        return { status: 200, rows: results };
+    }
+    catch (error) {
+        console.error(error);
+        return { status: 404, error: 'failed to posts from followed users' };
     }
 }
