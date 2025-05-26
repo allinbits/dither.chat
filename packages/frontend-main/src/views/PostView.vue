@@ -3,6 +3,7 @@ import { computed, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { Loader } from 'lucide-vue-next';
 
+import { useCreateReply } from '@/composables/useCreateReply';
 import { usePost } from '@/composables/usePost';
 import { useReplies } from '@/composables/useReplies';
 import { useWallet } from '@/composables/useWallet';
@@ -20,7 +21,7 @@ import MainLayout from '@/layouts/MainLayout.vue';
 
 const route = useRoute();
 const hash = typeof route.params.hash === 'string' ? route.params.hash : '';
-const postHash = typeof route.params.postHash === 'string' ? route.params.postHash : undefined;
+const postHash = typeof route.params.postHash === 'string' && !!route.params.postHash.length ? route.params.postHash : null;
 const { data: post, isLoading, isError, error } = usePost({
     hash, postHash,
 });
@@ -31,8 +32,10 @@ const MAX_CHARS = 512 - ('dither.Reply("", "")'.length + POST_HASH_LEN);
 const reply = ref('');
 const isBalanceInputValid = ref(false);
 const photonValue = ref(1);
-const txError = ref<string>();
-const txSuccess = ref<string>();
+
+const { createReply,
+    txError } = useCreateReply();
+
 const isBroadcasting = computed(() => {
     return wallet.isBroadcasting.value;
 });
@@ -48,24 +51,13 @@ function handleInputValidity(value: boolean) {
     isBalanceInputValid.value = value;
 }
 async function handleReply() {
-    if (!post.value) return;
-    const result = await wallet.dither.reply(
-        post.value.hash,
-        reply.value,
-        BigInt(photonValue.value).toString(),
-    );
-    if (!result.broadcast) {
-        txError.value = result.msg;
+    if (!canReply.value || !post.value) {
         return;
     }
-    txSuccess.value = result.tx?.transactionHash;
-    if (txSuccess.value) {
-        reply.value = '';
-    }
+    await createReply({ hash: post.value.hash, postHash: post.value.post_hash, message: reply.value, photonValue: photonValue.value });
+    reply.value = '';
 }
 </script>
-
-<!-- FIXME: Posts and replies refreshed only after unfocus/focus the browser's tab -->
 
 <template>
   <MainLayout>
@@ -97,7 +89,7 @@ async function handleReply() {
 
         <div class="flex flex-row mt-4 gap-4">
           <InputPhoton v-model="photonValue" @on-validity-change="handleInputValidity" />
-          <Button size="sm" :disabled="!canReply" @click="isBalanceInputValid ? handleReply() : () => { }">
+          <Button size="sm" :disabled="!canReply" @click="handleReply">
             {{ $t('components.Button.reply') }}
           </Button>
         </div>

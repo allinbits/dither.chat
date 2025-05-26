@@ -1,6 +1,4 @@
-import type { Post } from 'api-main/types/feed';
-
-import { useQuery } from '@tanstack/vue-query';
+import { queryOptions, useQuery } from '@tanstack/vue-query';
 import { postSchema } from 'api-main/types/feed';
 
 import { checkTypeboxSchema } from '@/utility/sanitize';
@@ -9,11 +7,11 @@ const apiRoot = import.meta.env.VITE_API_ROOT ?? 'http://localhost:3000';
 
 interface Params {
     hash: string;
-    postHash?: string;
+    postHash: string | null;
 }
 
-export function usePost(params: Params) {
-    const query = useQuery<Post | null>({
+export const post = (params: Params) =>
+    queryOptions({
         queryKey: ['post', params.hash, params.postHash],
         queryFn: async () => {
             let url = `${apiRoot}/post?hash=${params.hash}`;
@@ -46,11 +44,6 @@ export function usePost(params: Params) {
         retry: false,
     });
 
-    return {
-        data: query.data,
-        error: query.error,
-        isLoading: query.isLoading,
-        isError: query.isError,
-        refetch: query.refetch,
-    };
+export function usePost(params: Params) {
+    return useQuery(post(params));
 }
