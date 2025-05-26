@@ -1,6 +1,6 @@
 import type { Post } from 'api-main/types/feed';
 
-import { computed, type Ref } from 'vue';
+import { type Ref } from 'vue';
 import { useQuery } from '@tanstack/vue-query';
 import { postSchema } from 'api-main/types/feed';
 
@@ -15,7 +15,7 @@ interface Params {
 
 export function usePost(params: Params) {
     const query = useQuery<Post | null>({
-        queryKey: computed(() => ['post', params.hash, params.postHash]),
+        queryKey: ['post', params.hash, params.postHash],
         queryFn: async () => {
             let url = `${apiRoot}/post?hash=${params.hash.value}`;
             if (params.postHash?.value) {
