@@ -8,11 +8,12 @@ export const DislikesQuery = t.Object({
     count: t.Optional(t.Boolean()),
 });
 
-export type FeedQuery = { limit?: number; offset?: number; count?: boolean };
+export type FeedQuery = { limit?: number; offset?: number; count?: boolean; minQuantity?: bigint };
 export const FeedQuery = t.Object({
     limit: t.Optional(t.Number()),
     offset: t.Optional(t.Number()),
     count: t.Optional(t.Boolean()),
+    minQuantity: t.Optional(t.BigInt()),
 });
 
 export type FlagsQuery = { hash: string; limit?: number; offset?: number; count?: boolean };
@@ -51,18 +52,28 @@ export const PostQuery = t.Object({
     post_hash: t.Optional(t.String()),
 });
 
-export type PostsQuery = { limit?: number; offset?: number; address: string };
+export type PostsQuery = { limit?: number; offset?: number; address: string; minQuantity?: bigint };
 export const PostsQuery = t.Object({
     limit: t.Optional(t.Number()),
     offset: t.Optional(t.Number()),
     address: t.String(),
+    minQuantity: t.Optional(t.BigInt()),
 });
 
-export type RepliesQuery = { limit?: number; offset?: number; hash: string };
+export type RepliesQuery = { limit?: number; offset?: number; hash: string; minQuantity?: bigint };
 export const RepliesQuery = t.Object({
     limit: t.Optional(t.Number()),
     offset: t.Optional(t.Number()),
     hash: t.String(),
+    minQuantity: t.Optional(t.BigInt()),
+});
+
+export type UserRepliesQuery = { limit?: number; offset?: number; address: string; minQuantity?: bigint };
+export const UserRepliesQuery = t.Object({
+    limit: t.Optional(t.Number()),
+    offset: t.Optional(t.Number()),
+    address: t.String(),
+    minQuantity: t.Optional(t.BigInt()),
 });
 
 export type NotificationsQuery = { limit?: number; offset?: number; address: string };
@@ -78,7 +89,8 @@ export const ReadNotificationQuery = t.Object({
     hash: t.String(),
 });
 
-export type SearchQuery = { text: string };
+export type SearchQuery = { text: string; minQuantity?: bigint };
 export const SearchQuery = t.Object({
     text: t.String(),
+    minQuantity: t.Optional(t.BigInt()),
 });

@@ -1,23 +1,67 @@
 <script setup lang="ts">
+import { computed, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { Loader } from 'lucide-vue-next';
 
+import { useCreateReply } from '@/composables/useCreateReply';
 import { usePost } from '@/composables/usePost';
+import { useReplies } from '@/composables/useReplies';
+import { useWallet } from '@/composables/useWallet';
 
 import PostMoreActionsPopover from '@/components/popups/PostMoreActionsPopover.vue';
 import PostActions from '@/components/posts/PostActions.vue';
 import PostMessage from '@/components/posts/PostMessage.vue';
+import PostsList from '@/components/posts/PostsList.vue';
 import PrettyTimestamp from '@/components/posts/PrettyTimestamp.vue';
+import Button from '@/components/ui/button/Button.vue';
+import InputPhoton from '@/components/ui/input/InputPhoton.vue';
+import Textarea from '@/components/ui/textarea/Textarea.vue';
+import UserAvatar from '@/components/users/UserAvatar.vue';
 import UserAvatarUsername from '@/components/users/UserAvatarUsername.vue';
 import MainLayout from '@/layouts/MainLayout.vue';
 
 const route = useRoute();
-const hash = typeof route.params.hash === 'string' ? route.params.hash : '';
-const postHash = typeof route.params.postHash === 'string' ? route.params.postHash : undefined;
+const hash = computed(() =>
+    typeof route.params.hash === 'string' ? route.params.hash : '',
+);
+const postHash = computed(() =>
+    typeof route.params.postHash === 'string' && route.params.postHash.length ? route.params.postHash : null,
+);
 const { data: post, isLoading, isError, error } = usePost({
     hash, postHash,
 });
+const wallet = useWallet();
+const repliesQuery = useReplies({ hash });
+const POST_HASH_LEN = 64;
+const MAX_CHARS = 512 - ('dither.Reply("", "")'.length + POST_HASH_LEN);
+const reply = ref('');
+const isBalanceInputValid = ref(false);
+const photonValue = ref(1);
 
+const { createReply,
+    txError } = useCreateReply();
+
+const isBroadcasting = computed(() => {
+    return wallet.isBroadcasting.value;
+});
+const canReply = computed(() => {
+    return isBalanceInputValid.value && reply.value.length > 0;
+});
+function capChars(event: { target: HTMLTextAreaElement }) {
+    if (event.target.value.length > MAX_CHARS) {
+        event.target.value = event.target.value.substring(0, MAX_CHARS);
+    }
+}
+function handleInputValidity(value: boolean) {
+    isBalanceInputValid.value = value;
+}
+async function handleReply() {
+    if (!canReply.value || !post.value) {
+        return;
+    }
+    await createReply({ hash, postHash, message: reply.value, photonValue: photonValue.value });
+    reply.value = '';
+}
 </script>
 
 <template>
@@ -38,9 +82,37 @@ const { data: post, isLoading, isError, error } = usePost({
       </div>
 
       <PostMessage :post="post" />
+      <PrettyTimestamp :timestamp="new Date(post.timestamp)" :isFullDate="true" class="flex mt-4" />
+
       <div class="py-2 mt-4 border-y">
         <PostActions :post="post" class="px-2" />
       </div>
+
+      <!-- Broadcast Status -->
+      <div class="flex flex-col w-full gap-2 mt-4" v-if="isBroadcasting">
+        {{  $t('components.Wallet.popupSign') }}
+        <Loader class="animate-spin w-full"/>
+      </div>
+      <!-- Transaction Form -->
+      <template v-if="wallet.loggedIn.value && !isBroadcasting">
+        <div class="flex flex-row item-center mt-4">
+          <UserAvatar :userAddress="wallet.address.value" />
+          <Textarea :placeholder="$t('placeholders.reply')" v-model="reply" @input="capChars" class="mt-1" />
+        </div>
+
+        <div class="flex flex-row mt-4 gap-4">
+          <InputPhoton v-model="photonValue" @on-validity-change="handleInputValidity" />
+          <Button size="sm" :disabled="!canReply" @click="handleReply">
+            {{ $t('components.Button.reply') }}
+          </Button>
+        </div>
+
+        <!-- TX error -->
+        <span v-if="txError" class="text-red-500 text-left text-xs mt-2">{{ txError }}</span>
+      </template>
     </div>
+
+    <!-- Replies posts list -->
+    <PostsList :query="repliesQuery" />
   </MainLayout>
 </template>

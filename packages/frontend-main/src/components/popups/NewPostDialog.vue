@@ -65,7 +65,10 @@ watch([wallet.loggedIn, wallet.address], async () => {
     balanceFetcher.updateAddress(wallet.address.value);
 });
 
-async function onClickSubmit() {
+async function handleSumbit() {
+    if (!canSubmit.value) {
+        return;
+    }
     await createPost({ message: message.value, photonValue: photonValue.value });
     message.value = '';
 }
@@ -77,13 +80,13 @@ async function onClickSubmit() {
       <DialogContent>
         <DialogTitle>{{ $t('components.PopupTitles.newPost') }}</DialogTitle>
 
-        <Textarea placeholder="What's up?" v-model="message" @input="capChars" v-if="!isBroadcasting && !txSuccess" />
+        <Textarea :placeholder="$t('placeholders.post')" v-model="message" @input="capChars" v-if="!isBroadcasting && !txSuccess" />
 
         <!-- Transaction Form -->
         <div class="flex flex-col w-full gap-4" v-if="!isBroadcasting && !txSuccess">
           <InputPhoton v-model="photonValue" @on-validity-change="handleInputValidity" />
           <span v-if="txError" class="text-red-500 text-left text-xs">{{ txError }}</span>
-          <Button class="w-full" :disabled="!canSubmit" @click="onClickSubmit">
+          <Button class="w-full" :disabled="!canSubmit" @click="handleSumbit">
             {{ $t('components.Button.submit') }}
           </Button>
         </div>

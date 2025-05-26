@@ -10,6 +10,8 @@ import Button from '../ui/button/Button.vue';
 
 import PostItem from './PostItem.vue';
 
+import { cn } from '@/utility';
+
 type PostsInfiniteQueryReturnType = UseInfiniteQueryReturnType<InfiniteData<Post[], unknown>, Error>;
 const props = defineProps<{ query: PostsInfiniteQueryReturnType }>();
 const { data, fetchNextPage, isLoading, isFetchingNextPage, hasNextPage } = props.query;
@@ -17,7 +19,7 @@ const flatPosts = computed(() => data.value?.pages.flat() ?? []);
 </script>
 
 <template>
-  <div class="flex flex-col w-full border-t">
+  <div :class="cn('flex flex-col w-full', flatPosts.length && 'border-t')">
     <Loader v-if="isLoading" class="animate-spin w-full mt-10" />
 
     <PostItem v-for="(post, index) in flatPosts" :key="index" :post="post" class="p-4" />
