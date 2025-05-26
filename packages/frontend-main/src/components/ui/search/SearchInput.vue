@@ -1,19 +1,12 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
-import { CircleX, Loader2 } from 'lucide-vue-next';
+import { CircleX, Loader } from 'lucide-vue-next';
 
 import { useSearchPosts } from '@/composables/useSearchPosts';
 
+import Input from '../input/Input.vue';
+
 import UserAvatarUsername from '@/components/users/UserAvatarUsername.vue';
-
-interface SearchInputProps {
-    placeholder?: string;
-}
-
-const props = withDefaults(
-    defineProps<SearchInputProps>(),
-    { placeholder: 'Type to search...' },
-);
 
 const clearSearch = () => {
     query.value = '';
@@ -30,12 +23,8 @@ const navigateToPost = (hash: string) => {
 
 <template>
   <div class="w-full max-w-[310px] min-w-[140px]">
-    <div class="search-input flex items-center gap-2 relative ">
-      <input
-        v-model="query"
-        :placeholder="props.placeholder"
-        class="bg-neutral-200 p-2 h-[40px] flex-1 pr-10 w-full"
-      />
+    <div class="search-input flex items-center gap-2 relative">
+      <Input class="w-full h-[40px] rounded-xs" v-model="query" :placeholder="$t('components.SearchInput.placeholder')"/>
 
       <CircleX
         v-if="query"
@@ -45,7 +34,7 @@ const navigateToPost = (hash: string) => {
     </div>
 
     <div v-if="isLoading" class="flex items-center justify-center mt-2 mb-2">
-      <Loader2 class="size-4 animate-spin" />
+      <Loader class="animate-spin" />
     </div>
 
     <div v-else-if="error" class="flex items-center justify-center mt-2 mb-2">
@@ -60,16 +49,16 @@ const navigateToPost = (hash: string) => {
       </p>
     </div>
 
-    <div v-else
+    <div v-else-if="posts?.length && posts?.length > 0"
          class="search-results border-neutral-200 bg-background border-1 max-h-[60vh] pl-2 pr-2 rounded-b-md overflow-y-auto overflow-x-hidden"
     >
       <div
         v-for="(post, index) in posts"
         :key="index"
-        class="pb-2 pt-2 border-b border-neutral-200 last:border-b-0 truncate cursor-pointer"
+        class="pt-3 pb-2 border-b border-neutral-200 last:border-b-0 cursor-pointer flex flex-col gap-1"
         @click="navigateToPost(post.hash)"
       >
-        {{ post.message }}
+        <span class="truncate ">{{ post.message }}</span>
         <UserAvatarUsername :userAddress="post.author" size="sm" />
       </div>
     </div>
