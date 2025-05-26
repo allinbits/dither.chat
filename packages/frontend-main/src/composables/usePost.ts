@@ -1,5 +1,6 @@
 import type { Post } from 'api-main/types/feed';
 
+import { computed, type Ref } from 'vue';
 import { useQuery } from '@tanstack/vue-query';
 import { postSchema } from 'api-main/types/feed';
 
@@ -8,17 +9,17 @@ import { checkTypeboxSchema } from '@/utility/sanitize';
 const apiRoot = import.meta.env.VITE_API_ROOT ?? 'http://localhost:3000';
 
 interface Params {
-    hash: string;
-    postHash?: string;
+    hash: Ref<string>;
+    postHash?: Ref<string | undefined>;
 }
 
 export function usePost(params: Params) {
     const query = useQuery<Post | null>({
-        queryKey: ['post', params.hash, params.postHash],
+        queryKey: computed(() => ['post', params.hash, params.postHash]),
         queryFn: async () => {
-            let url = `${apiRoot}/post?hash=${params.hash}`;
-            if (params.postHash) {
-                url += `&post_hash=${params.postHash}`;
+            let url = `${apiRoot}/post?hash=${params.hash.value}`;
+            if (params.postHash?.value) {
+                url += `&post_hash=${params.postHash.value}`;
             }
 
             const rawResponse = await fetch(url);

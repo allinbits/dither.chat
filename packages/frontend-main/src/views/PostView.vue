@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { Loader } from 'lucide-vue-next';
 
@@ -11,11 +12,10 @@ import UserAvatarUsername from '@/components/users/UserAvatarUsername.vue';
 import MainLayout from '@/layouts/MainLayout.vue';
 
 const route = useRoute();
-const hash = typeof route.params.hash === 'string' ? route.params.hash : '';
-const postHash = typeof route.params.postHash === 'string' ? route.params.postHash : undefined;
-const { data: post, isLoading, isError, error } = usePost({
-    hash, postHash,
-});
+const hash = computed(() => typeof route.params.hash === 'string' ? route.params.hash : '');
+const postHash = computed(() => typeof route.params.postHash === 'string' ? route.params.postHash : undefined);
+
+const { data: post, isLoading, isError, error } = usePost({ hash, postHash });
 
 </script>
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router';
+import { RouterLink } from 'vue-router';
 import { CircleX, Loader } from 'lucide-vue-next';
 
 import { useSearchPosts } from '@/composables/useSearchPosts';
@@ -14,11 +14,7 @@ const clearSearch = () => {
 };
 
 const { query, posts, isLoading, error } = useSearchPosts();
-const router = useRouter();
 
-const navigateToPost = (hash: string) => {
-    router.push(`/post?hash=${hash}`);
-};
 </script>
 
 <template>
@@ -52,15 +48,15 @@ const navigateToPost = (hash: string) => {
     <div v-else-if="posts?.length && posts?.length > 0"
          class="border-neutral-200 border-x border-b max-h-[60vh] px-3 rounded-b-md overflow-y-auto overflow-x-hidden"
     >
-      <div
+      <RouterLink
         v-for="(post, index) in posts"
         :key="index"
+        :to="`/post/${post.hash}`"
         class="pt-3 pb-2 border-b border-neutral-200 last:border-b-0 cursor-pointer flex flex-col gap-1"
-        @click="navigateToPost(post.hash)"
       >
         <span class="truncate ">{{ post.message }}</span>
         <UserAvatarUsername :userAddress="post.author" size="sm" />
-      </div>
+      </RouterLink>
     </div>
 
   </div>
