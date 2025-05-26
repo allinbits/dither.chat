@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router';
 
 import { useTabs } from '@/composables/useTabs';
 import { useUserPosts } from '@/composables/useUserPosts';
+import { useUserReplies } from '@/composables/useUserReplies';
 import { useWallet } from '@/composables/useWallet';
 
 import PostsList from '@/components/posts/PostsList.vue';
@@ -26,7 +27,8 @@ const isMyProfile = computed(() =>
     address.value === wallet.address.value && !!wallet.loggedIn.value,
 );
 
-const query = useUserPosts({ userAddress: address });
+const postsQuery = useUserPosts({ userAddress: address });
+const repliesQuery = useUserReplies({ userAddress: address });
 </script>
 
 <template>
@@ -54,7 +56,8 @@ const query = useUserPosts({ userAddress: address });
       </TabsContainer>
     </div>
 
-    <PostsList v-if="state.activeTab === POSTS_TAB" class="border-t" :query="query"/>
+    <PostsList v-if="state.activeTab === POSTS_TAB" class="border-t" :query="postsQuery"/>
+    <PostsList v-if="state.activeTab === REPLIES_TAB" class="border-t" :query="repliesQuery"/>
 
   </MainLayout>
 </template>
