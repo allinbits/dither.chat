@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { computed, ref, watch } from 'vue';
+import { Loader } from 'lucide-vue-next';
 
 import { useBalanceFetcher } from '@/composables/useBalanceFetcher';
 import { usePopups } from '@/composables/usePopups';
@@ -111,7 +112,7 @@ watch(wallet.loggedIn, async () => {
           <InputPhoton v-model="photonValue" @on-validity-change="handleInputValidity" />
           <span v-if="txError" class="text-red-500 text-left text-xs">{{ txError }}</span>
           <Button
-            class="w-full xl:inline hidden"
+            class="w-full"
             :disabled="!canSubmit"
             @click="isBalanceInputValid ? handleSubmit() : () => {}"
           >
@@ -121,12 +122,13 @@ watch(wallet.loggedIn, async () => {
         <!-- Broadcast Status -->
         <div class="flex flex-col w-full gap-4" v-if="isBroadcasting && !txSuccess">
           {{ $t('components.Wallet.popupSign') }}
+          <Loader class="animate-spin w-full"/>
         </div>
         <!-- Success Status -->
         <div class="flex flex-col w-full gap-4 overflow-hidden" v-if="!isBroadcasting && txSuccess">
           <span>{{ $t('components.Wallet.broadcastSuccess') }}</span>
           <span class="flex lowercase overflow-x-scroll py-2">{{ txSuccess }}</span>
-          <Button class="w-full xl:inline hidden" @click="handleClose">
+          <Button class="w-full" @click="handleClose">
             {{ $t('components.Button.close') }}
           </Button>
         </div>

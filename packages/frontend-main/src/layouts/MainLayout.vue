@@ -20,9 +20,7 @@ const isMobile = useMediaQuery(`(max-width: ${breakpoints.md - 1}px)`);
     class="flex flex-row justify-between"
   >
     <div class="w-full h-[100vh] flex-1 xl:flex-auto overflow-y-auto sticky top-0">
-      <div class="w-full max-w-[280px] h-full py-6 pl-6 pr-4 ml-auto">
-        <LeftPanel />
-      </div>
+      <LeftPanel class="max-w-[280px] ml-auto"/>
     </div>
 
     <main class="sm:w-[var(--main-min-width-desktop)] min-w-[var(--main-min-width-desktop)] md:border-x">
@@ -30,9 +28,7 @@ const isMobile = useMediaQuery(`(max-width: ${breakpoints.md - 1}px)`);
     </main>
 
     <div class="w-full h-[100vh] flex-1 lg:flex-4 xl:flex-auto overflow-y-auto sticky top-0">
-      <div class="w-full max-w-[358px] h-full p-6 hidden lg:block">
-        <RightPanel />
-      </div>
+      <RightPanel class="max-w-[358px] hidden lg:flex"/>
     </div>
   </div>
 </template>
