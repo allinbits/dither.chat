@@ -1,5 +1,5 @@
 import { type Gets } from '@atomone/dither-api-types';
-import { and, desc, eq, isNull, sql } from 'drizzle-orm';
+import { and, desc, eq, gte, isNull, sql } from 'drizzle-orm';
 
 import { getDatabase } from '../../drizzle/db';
 import { FeedTable, FollowsTable } from '../../drizzle/schema';
@@ -7,7 +7,11 @@ import { FeedTable, FollowsTable } from '../../drizzle/schema';
 const statement = getDatabase()
     .select()
     .from(FeedTable)
-    .where(and(eq(FeedTable.author, sql.placeholder('author')), isNull(FeedTable.removed_at)))
+    .where(and(
+        eq(FeedTable.author, sql.placeholder('author')),
+        isNull(FeedTable.removed_at),
+        gte(FeedTable.quantity, sql.placeholder('minQuantity')),
+    ))
     .limit(sql.placeholder('limit'))
     .offset(sql.placeholder('offset'))
     .orderBy(desc(FeedTable.timestamp))
