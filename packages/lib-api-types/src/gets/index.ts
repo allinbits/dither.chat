@@ -68,6 +68,14 @@ export const RepliesQuery = t.Object({
     minQuantity: t.Optional(t.BigInt()),
 });
 
+export type UserRepliesQuery = { limit?: number; offset?: number; address: string; minQuantity?: bigint };
+export const UserRepliesQuery = t.Object({
+    limit: t.Optional(t.Number()),
+    offset: t.Optional(t.Number()),
+    address: t.String(),
+    minQuantity: t.Optional(t.BigInt()),
+});
+
 export type NotificationsQuery = { limit?: number; offset?: number; address: string };
 export const NotificationsQuery = t.Object({
     limit: t.Optional(t.Number()),
