@@ -35,6 +35,7 @@ export const messages = {
                 close: 'Close',
                 showMore: 'Show more',
                 copyLink: 'Copy link',
+                newPost: 'New post',
                 follow: 'Follow',
             },
             PopupTitles: {
@@ -64,7 +65,6 @@ export const messages = {
         feedbacks: {
             copied: 'Copied to clipboard',
             SearchInput: {
-                placeholder: 'Type to search',
                 noResults: 'No results found',
                 failedToSearch: 'Failed to search',
             },

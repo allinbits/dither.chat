@@ -31,6 +31,8 @@ function startReadOnlyServer() {
     app.group('', group =>
         group
             .onBeforeHandle(verifyJWT)
+            .get('/user-replies', ({ query, store }) => GetRequests.UserReplies(query, store), { query: Gets.NotificationsQuery })
+            .get('/following-posts', ({ query, store }) => GetRequests.FollowingPosts(query, store), { query: Gets.PostsQuery })
             .get('/notifications', ({ query, store }) => GetRequests.Notifications(query, store), {
                 query: Gets.NotificationsQuery,
             }),
