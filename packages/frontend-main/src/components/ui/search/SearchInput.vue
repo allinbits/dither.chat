@@ -24,7 +24,7 @@ const navigateToPost = (hash: string) => {
 <template>
   <div class="w-full max-w-[310px] min-w-[140px]">
     <div class="search-input flex items-center gap-2 relative">
-      <Input class="w-full h-[40px] rounded-xs" v-model="query" :placeholder="$t('components.SearchInput.placeholder')"/>
+      <Input class="w-full h-[40px] rounded-xs" v-model="query" :placeholder="$t('placeholders.search')"/>
 
       <CircleX
         v-if="query"
