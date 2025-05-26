@@ -4,6 +4,7 @@ import { ref } from 'vue';
 import { type InfiniteData, useMutation, useQueryClient } from '@tanstack/vue-query';
 
 import { feed } from './useFeed';
+import { userPosts } from './useUserPosts';
 import { useWallet } from './useWallet';
 
 interface CreatePostRequestMutation {
@@ -53,36 +54,62 @@ export function useCreatePost(
         },
         onMutate: async () => {
             const feedOpts = feed();
-            await queryClient.cancelQueries(feedOpts);
+            const userPostsOpts = userPosts({ userAddress: wallet.address });
+            await Promise.all([
+                queryClient.cancelQueries(feedOpts),
+                queryClient.cancelQueries(userPostsOpts),
+            ]);
 
             const previousFeed = queryClient.getQueryData(
                 feedOpts.queryKey,
             ) as InfiniteData<Post[], unknown> | undefined;
+            const previousUserPosts = queryClient.getQueryData(
+                userPostsOpts.queryKey,
+            ) as InfiniteData<Post[], unknown> | undefined;
 
-            return { previousFeed };
+            return { previousFeed, previousUserPosts };
         },
         onSuccess: (hash, variables, context) => {
             if (!hash) throw new Error('Error: No hash in TX');
 
             const feedOpts = feed();
+            const userPostsOpts = userPosts({ userAddress: wallet.address });
+
             const optimisticNewPost = buildNewPost(variables.message, variables.photonValue, hash);
-            const newPages = context.previousFeed?.pages ? [...context.previousFeed.pages] : [];
-            if (newPages.length > 0) {
-                newPages[0] = [optimisticNewPost, ...newPages[0]];
+
+            // Build new feed
+            const newFeedPages = context.previousFeed?.pages ? [...context.previousFeed.pages] : [];
+            if (newFeedPages.length > 0) {
+                newFeedPages[0] = [optimisticNewPost, ...newFeedPages[0]];
             }
             else {
-                newPages.push([optimisticNewPost]);
+                newFeedPages.push([optimisticNewPost]);
             }
             const newFeedData: InfiniteData<Post[], unknown> = {
-                pages: newPages,
+                pages: newFeedPages,
                 pageParams: context.previousFeed?.pageParams ?? [0],
+            };
+            // Build new user's posts
+            const newUserPostsPages = context.previousUserPosts?.pages ? [...context.previousUserPosts.pages] : [];
+            if (newUserPostsPages.length > 0) {
+                newUserPostsPages[0] = [optimisticNewPost, ...newUserPostsPages[0]];
+            }
+            else {
+                newUserPostsPages.push([optimisticNewPost]);
+            }
+            const newUserPostsData: InfiniteData<Post[], unknown> = {
+                pages: newUserPostsPages,
+                pageParams: context.previousUserPosts?.pageParams ?? [0],
             };
 
             queryClient.setQueryData(feedOpts.queryKey, newFeedData);
+            queryClient.setQueryData(userPostsOpts.queryKey, newUserPostsData);
         },
         onError: (_, __, context) => {
             const feedOpts = feed();
+            const userPostsOpts = userPosts({ userAddress: wallet.address });
             queryClient.setQueryData(feedOpts.queryKey, context?.previousFeed);
+            queryClient.setQueryData(userPostsOpts.queryKey, context?.previousUserPosts);
         },
     });
 

@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { computed, watch } from 'vue';
+import { computed } from 'vue';
 import { useRoute } from 'vue-router';
-import { useQueryClient } from '@tanstack/vue-query';
 
-import { usePosts } from '@/composables/usePosts';
 import { useTabs } from '@/composables/useTabs';
+import { useUserPosts } from '@/composables/useUserPosts';
 import { useWallet } from '@/composables/useWallet';
 
 import PostsList from '@/components/posts/PostsList.vue';
@@ -27,11 +26,7 @@ const isMyProfile = computed(() =>
     address.value === wallet.address.value && !!wallet.loggedIn.value,
 );
 
-const queryClient = useQueryClient();
-const query = usePosts({ userAddress: address.value });
-watch(address, async () => {
-    await queryClient.invalidateQueries({ queryKey: ['posts', address.value] });
-});
+const query = useUserPosts({ userAddress: address });
 </script>
 
 <template>
