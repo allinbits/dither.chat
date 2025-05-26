@@ -20,8 +20,12 @@ import UserAvatarUsername from '@/components/users/UserAvatarUsername.vue';
 import MainLayout from '@/layouts/MainLayout.vue';
 
 const route = useRoute();
-const hash = typeof route.params.hash === 'string' ? route.params.hash : '';
-const postHash = typeof route.params.postHash === 'string' && !!route.params.postHash.length ? route.params.postHash : null;
+const hash = computed(() =>
+    typeof route.params.hash === 'string' ? route.params.hash : '',
+);
+const postHash = computed(() =>
+    typeof route.params.postHash === 'string' && route.params.postHash.length ? route.params.postHash : null,
+);
 const { data: post, isLoading, isError, error } = usePost({
     hash, postHash,
 });
@@ -54,7 +58,7 @@ async function handleReply() {
     if (!canReply.value || !post.value) {
         return;
     }
-    await createReply({ hash: post.value.hash, postHash: post.value.post_hash, message: reply.value, photonValue: photonValue.value });
+    await createReply({ hash, postHash, message: reply.value, photonValue: photonValue.value });
     reply.value = '';
 }
 </script>
@@ -84,7 +88,7 @@ async function handleReply() {
       <template v-if="wallet.loggedIn.value && !isBroadcasting">
         <div class="flex flex-row item-center mt-4">
           <UserAvatar :userAddress="wallet.address.value" />
-          <Textarea :placeholder="$t('placeholders.yourReply')" v-model="reply" @input="capChars" class="mt-1" />
+          <Textarea :placeholder="$t('placeholders.reply')" v-model="reply" @input="capChars" class="mt-1" />
         </div>
 
         <div class="flex flex-row mt-4 gap-4">

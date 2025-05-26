@@ -80,7 +80,7 @@ async function handleSumbit() {
       <DialogContent>
         <DialogTitle>{{ $t('components.PopupTitles.newPost') }}</DialogTitle>
 
-        <Textarea :placeholder="$t('placeholders.whatsUp')" v-model="message" @input="capChars" v-if="!isBroadcasting && !txSuccess" />
+        <Textarea :placeholder="$t('placeholders.post')" v-model="message" @input="capChars" v-if="!isBroadcasting && !txSuccess" />
 
         <!-- Transaction Form -->
         <div class="flex flex-col w-full gap-4" v-if="!isBroadcasting && !txSuccess">

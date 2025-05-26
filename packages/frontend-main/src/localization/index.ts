@@ -55,15 +55,11 @@ export const messages = {
         },
         feedbacks: {
             copied: 'Copied to clipboard',
-            SearchInput: {
-                noResults: 'No results found',
-                failedToSearch: 'Failed to search',
-            },
         },
         placeholders: {
-            typeToSearch: 'Type to search',
-            whatsUp: 'What\'s up?',
-            yourReply: 'Your reply',
+            search: 'Type to search',
+            post: 'What\'s up?',
+            reply: 'Your reply',
         },
     },
 };

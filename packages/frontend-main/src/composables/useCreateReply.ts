@@ -1,6 +1,6 @@
 import type { Post } from 'api-main/types/feed';
 
-import { ref } from 'vue';
+import { type Ref, ref } from 'vue';
 import { type InfiniteData, useMutation, useQueryClient } from '@tanstack/vue-query';
 
 import { post } from './usePost';
@@ -8,8 +8,8 @@ import { replies } from './useReplies';
 import { useWallet } from './useWallet';
 
 interface CreateReplyRequestMutation {
-    hash: string;
-    postHash: string | null;
+    hash: Ref<string>;
+    postHash: Ref<string | null>;
     message: string;
     photonValue: number;
 }
@@ -44,7 +44,7 @@ export function useCreateReply(
     } = useMutation({
         mutationFn: async ({ hash, message, photonValue }: CreateReplyRequestMutation) => {
             const result = await wallet.dither.reply(
-                hash,
+                hash.value,
                 message,
                 BigInt(photonValue).toString(),
             );

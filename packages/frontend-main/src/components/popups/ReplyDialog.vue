@@ -46,7 +46,7 @@ async function handleSumbit() {
     if (!canSubmit.value || !popups.state.reply) {
         return;
     }
-    await createReply({ hash: popups.state.reply.hash, postHash: popups.state.reply.post_hash, message: message.value, photonValue: photonValue.value });
+    await createReply({ hash: ref(popups.state.reply.hash), postHash: ref(popups.state.reply.post_hash), message: message.value, photonValue: photonValue.value });
     message.value = '';
 }
 
@@ -91,7 +91,7 @@ watch([wallet.loggedIn, wallet.address], async () => {
           </div>
         </div>
 
-        <Textarea :placeholder="$t('placeholders.yourReply')" v-model="message" @input="capChars"
+        <Textarea :placeholder="$t('placeholders.reply')" v-model="message" @input="capChars"
                   v-if="!isBroadcasting && !txSuccess" />
 
         <!-- Transaction Form -->
