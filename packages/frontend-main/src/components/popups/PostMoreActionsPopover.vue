@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Post } from 'api-main/types/feed';
 
-import { Ellipsis, FlaskConical, UserPlus } from 'lucide-vue-next';
+import { Ellipsis, FlaskConical, UserMinus, UserPlus } from 'lucide-vue-next';
 
 import { type PopupState, usePopups } from '@/composables/usePopups';
 import { useWallet } from '@/composables/useWallet';
@@ -18,10 +18,12 @@ defineProps<{ post: Post }>();
 
 const buttonClass = 'flex flex-row items-center justify-start gap-2 w-full';
 const buttonLabelClass = 'text-sm font-semibold';
-
 const wallet = useWallet();
 const popups = usePopups();
 const walletDialogStore = useWalletDialogStore();
+
+// TODO: Get isFollowing from post?
+const isFollowing = false;
 
 function handleAction(type: keyof PopupState, userAddress: string) {
     if (wallet.loggedIn.value) {
@@ -42,9 +44,13 @@ function handleAction(type: keyof PopupState, userAddress: string) {
     </PopoverTrigger>
 
     <PopoverContent class="p-2">
-      <Button @click="handleAction('follow', post.author)" size="sm" :class=buttonClass variant="ghost">
+      <Button v-if="!isFollowing" @click="handleAction('follow', post.author)" size="sm" :class="buttonClass" variant="ghost">
         <UserPlus class="size-5" />
         <span :class="buttonLabelClass">{{ $t('components.Button.follow') + ' ' + shorten(post.author, 8, 4) }}</span>
+      </Button>
+      <Button v-else @click="handleAction('unfollow', post.author)" size="sm" :class="buttonClass" variant="ghost">
+        <UserMinus class="size-5" />
+        <span :class="buttonLabelClass">{{ $t('components.Button.unfollow') + ' ' + shorten(post.author, 8, 4) }}</span>
       </Button>
 
       <Button size="sm" :class="buttonClass" variant="ghost">

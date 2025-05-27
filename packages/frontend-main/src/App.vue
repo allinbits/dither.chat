@@ -2,10 +2,10 @@
 import { nextTick, onMounted } from 'vue';
 
 import DislikePostDialog from './components/popups/DislikePostDialog.vue';
+import FollowDialog from './components/popups/FollowUserDialog.vue';
 import LikePostDialog from './components/popups/LikePostDialog.vue';
 import NewPostDialog from './components/popups/NewPostDialog.vue';
 import ReplyDialog from './components/popups/ReplyDialog.vue';
-import FollowDialog from './components/popups/FollowUserDialog.vue';
 import UnfollowDialog from './components/popups/UnfollowUserDialog.vue';
 import WalletConnectDialog from './components/wallet/WalletConnectDialog.vue';
 import { useBalanceFetcher } from './composables/useBalanceFetcher';

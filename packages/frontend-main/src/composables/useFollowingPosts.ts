@@ -1,4 +1,4 @@
-import type { FollowUser } from 'api-main/types/follows';
+import type { Post } from 'api-main/types/feed';
 
 import { type Ref } from 'vue';
 import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/vue-query';
@@ -10,12 +10,12 @@ interface Params {
     userAddress: Ref<string>;
 }
 
-export const following = (params: Params) =>
+export const followingPosts = (params: Params) =>
     infiniteQueryOptions({
         queryKey: ['posts', params.userAddress],
         queryFn: async ({ pageParam = 0 }) => {
-            const res = await fetch(`${apiRoot}/following?address=${params.userAddress}&offset=${pageParam}&limit=${LIMIT}`);
-            const json = await res.json() as { status: number; rows: FollowUser[] };
+            const res = await fetch(`${apiRoot}/following-posts?address=${params.userAddress}&offset=${pageParam}&limit=${LIMIT}`);
+            const json = await res.json() as { status: number; rows: Post[] };
             return json.rows ?? [];
         },
         initialPageParam: 0,
@@ -26,6 +26,6 @@ export const following = (params: Params) =>
         enabled: () => !!params.userAddress,
     });
 
-export function useFollowing(params: Params) {
-    return useInfiniteQuery(following(params));
+export function useFollowingPosts(params: Params) {
+    return useInfiniteQuery(followingPosts(params));
 }

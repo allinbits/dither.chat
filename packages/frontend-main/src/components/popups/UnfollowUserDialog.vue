@@ -1,8 +1,10 @@
 <script lang="ts" setup>
 import { computed, ref, watch } from 'vue';
+import { Loader } from 'lucide-vue-next';
 
 import { useBalanceFetcher } from '@/composables/useBalanceFetcher';
 import { usePopups } from '@/composables/usePopups';
+import { useUnfollowUser } from '@/composables/useUnfollowUser';
 import { useWallet } from '@/composables/useWallet';
 
 import DialogDescription from '../ui/dialog/DialogDescription.vue';
@@ -21,28 +23,16 @@ import InputPhoton from '@/components/ui/input/InputPhoton.vue';
 const popups = usePopups();
 const wallet = useWallet();
 const balanceFetcher = useBalanceFetcher();
-
 const photonValue = ref(1);
-const txError = ref<string>();
-const txSuccess = ref<string>();
 const isBalanceInputValid = ref(false);
-
-async function handleSubmit() {
-    if (!popups.state.unfollow) {
-        return;
-    }
-
-    const result = await wallet.dither.unfollow(popups.state.unfollow, BigInt(photonValue.value).toString());
-    if (!result.broadcast) {
-        txError.value = result.msg;
-        return;
-    }
-
-    txSuccess.value = result.tx?.transactionHash;
-}
-
+const { unfollowUser,
+    txError,
+    txSuccess } = useUnfollowUser();
 const isBroadcasting = computed(() => {
     return wallet.isBroadcasting.value;
+});
+const canSubmit = computed(() => {
+    return isBalanceInputValid.value;
 });
 
 function handleClose() {
@@ -56,13 +46,20 @@ function handleInputValidity(value: boolean) {
     isBalanceInputValid.value = value;
 }
 
-watch(wallet.loggedIn, async () => {
+watch([wallet.loggedIn, wallet.address], async () => {
     if (!wallet.loggedIn.value) {
         return;
     }
 
     balanceFetcher.updateAddress(wallet.address.value);
 });
+
+async function handleSumbit() {
+    if (!canSubmit.value || !popups.state.unfollow) {
+        return;
+    }
+    await unfollowUser({ userAddress: popups.state.unfollow, photonValue: photonValue.value });
+}
 </script>
 
 <template>
@@ -77,13 +74,14 @@ watch(wallet.loggedIn, async () => {
       <div class="flex flex-col w-full gap-4" v-if="!isBroadcasting && !txSuccess">
         <InputPhoton v-model="photonValue" @on-validity-change="handleInputValidity" />
         <span v-if="txError" class="text-red-500 text-left text-xs">{{ txError }}</span>
-        <Button class="w-full xl:inline hidden" :disabled="!isBalanceInputValid" @click="isBalanceInputValid ? handleSubmit() : () => {}">
+        <Button class="w-full xl:inline hidden" :disabled="!isBalanceInputValid" @click="handleSumbit">
           {{ $t('components.Button.submit') }}
         </Button>
       </div>
       <!-- Broadcast Status -->
       <div class="flex flex-col w-full gap-4" v-if="isBroadcasting && !txSuccess">
         {{  $t('components.Wallet.popupSign') }}
+        <Loader class="animate-spin w-full"/>
       </div>
       <!-- Success Status -->
       <div class="flex flex-col w-full gap-4 overflow-hidden" v-if="!isBroadcasting && txSuccess">
