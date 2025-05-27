@@ -58,7 +58,7 @@ services:
     environment:
       API_URLS: "https://atomone-devnet-1-api.allinbits.services"
       START_BLOCK: "2272226"
-      BATCH_SIZE: 50
+      BATCH_SIZE: 500
       MEMO_PREFIX: "dither."
       RECEIVER: "atone1uq6zjslvsa29cy6uu75y8txnl52mw06j6fzlep"
       API_ROOT: "http://api-main:3001/v1"

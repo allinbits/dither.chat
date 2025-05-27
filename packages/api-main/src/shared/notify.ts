@@ -11,6 +11,7 @@ const statementInsertNotification = getDatabase()
         type: sql.placeholder('type'),
         timestamp: sql.placeholder('timestamp'),
     })
+    .onConflictDoNothing()
     .prepare('stmnt_insert_notification');
 
 export const notify = async (data: {
