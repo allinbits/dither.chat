@@ -76,7 +76,7 @@ watch(wallet.loggedIn, async () => {
       <div class="flex flex-col w-full gap-4" v-if="!isBroadcasting && !txSuccess">
         <InputPhoton v-model="photonValue" @on-validity-change="handleInputValidity" />
         <span v-if="txError" class="text-red-500 text-left text-xs">{{ txError }}</span>
-        <Button class="w-full xl:inline hidden" :disabled="!isBalanceInputValid" @click="isBalanceInputValid ? handleSubmit() : () => {}">
+        <Button class="w-full" :disabled="!isBalanceInputValid" @click="isBalanceInputValid ? handleSubmit() : () => {}">
           {{ $t('components.Button.submit') }}
         </Button>
       </div>
@@ -89,7 +89,7 @@ watch(wallet.loggedIn, async () => {
       <div class="flex flex-col w-full gap-4 overflow-hidden" v-if="!isBroadcasting && txSuccess">
         <span>{{ $t('components.Wallet.broadcastSuccess') }}</span>
         <span class="flex lowercase overflow-x-scroll py-2">{{ txSuccess }}</span>
-        <Button class="w-full xl:inline hidden" @click="handleClose">
+        <Button class="w-full" @click="handleClose">
           {{ $t('components.Button.close') }}
         </Button>
       </div>

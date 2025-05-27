@@ -35,6 +35,8 @@ export const messages = {
                 close: 'Close',
                 showMore: 'Show more',
                 copyLink: 'Copy link',
+                newPost: 'New post',
+                reply: 'Reply',
             },
             PopupTitles: {
                 likePost: 'Like Post',
@@ -47,17 +49,17 @@ export const messages = {
                 following: 'Following',
             },
             SearchInput: {
-                placeholder: 'Type to search',
                 noResults: 'No results found',
                 failedToSearch: 'Failed to search',
             },
         },
         feedbacks: {
             copied: 'Copied to clipboard',
-            SearchInput: {
-                noResults: 'No results found',
-                failedToSearch: 'Failed to search',
-            },
+        },
+        placeholders: {
+            search: 'Type to search',
+            post: 'What\'s up?',
+            reply: 'Your reply',
         },
     },
 };
