@@ -970,7 +970,6 @@ describe('get post from followed', async () => {
     const walletB = await createWallet();
     const postMessage = 'this is a post';
 
-    const bearerToken = await userLogin(walletA);
     it('zero posts if not followers', async () => {
         const readResponse = await get<{
             status: number;
@@ -982,7 +981,7 @@ describe('get post from followed', async () => {
                 deleted_reason: string;
                 deleted_hash: string;
             }[];
-        }>(`following-posts?address=${walletA.publicKey}`, 'READ', bearerToken);
+        }>(`following-posts?address=${walletA.publicKey}`, 'READ');
         assert.isOk(readResponse?.status === 200, `response was not okay, got ${readResponse?.status}`);
         assert.lengthOf(readResponse.rows, 0);
     });
@@ -1012,7 +1011,7 @@ describe('get post from followed', async () => {
                 deleted_reason: string;
                 deleted_hash: string;
             }[];
-        }>(`following-posts?address=${walletA.publicKey}`, 'READ', bearerToken);
+        }>(`following-posts?address=${walletA.publicKey}`, 'READ');
         assert.isOk(readResponse?.status === 200, `response was not okay, got ${readResponse?.status}`);
         assert.lengthOf(readResponse.rows, 0);
     });
@@ -1038,7 +1037,7 @@ describe('get post from followed', async () => {
                 deleted_reason: string;
                 deleted_hash: string;
             }[];
-        }>(`following-posts?address=${walletA.publicKey}`, 'READ', bearerToken);
+        }>(`following-posts?address=${walletA.publicKey}`, 'READ');
         assert.isOk(readResponse?.status === 200, `response was not okay, got ${readResponse?.status}`);
         assert.lengthOf(readResponse.rows, 1);
     });
