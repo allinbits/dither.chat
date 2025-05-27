@@ -13,6 +13,7 @@ import Tab from '@/components/ui/tabs/Tab.vue';
 import TabsContainer from '@/components/ui/tabs/TabsContainer.vue';
 import UserAvatarUsername from '@/components/users/UserAvatarUsername.vue';
 import MainLayout from '@/layouts/MainLayout.vue';
+
 const wallet = useWallet();
 
 const POSTS_TAB = 'post';
@@ -24,8 +25,11 @@ const address = computed(() =>
     typeof route.params.address === 'string' ? route.params.address : '',
 );
 const isMyProfile = computed(() =>
-    address.value === wallet.address.value && !!wallet.loggedIn.value,
+    address.value === wallet.address.value,
 );
+
+// TODO:
+const isFollowing = false;
 
 const postsQuery = useUserPosts({ userAddress: address });
 const repliesQuery = useUserReplies({ userAddress: address });
@@ -41,9 +45,15 @@ const repliesQuery = useUserReplies({ userAddress: address });
 
       <div class="flex flex-row justify-between items-center">
         <UserAvatarUsername :userAddress="address" size="lg" />
-        <Button v-if="!isMyProfile" size="sm">
-          {{ $t('components.Button.follow') }}
-        </Button>
+        <template v-if="!isMyProfile && wallet.loggedIn.value">
+          <Button v-if="isFollowing" size="sm">
+            {{ $t('components.Button.unfollow') }}
+          </Button>
+          <Button v-else size="sm">
+            {{ $t('components.Button.follow') }}
+          </Button>
+        </template>
+
       </div>
 
       <div class="border-b mt-6" />
@@ -56,8 +66,8 @@ const repliesQuery = useUserReplies({ userAddress: address });
       </TabsContainer>
     </div>
 
-    <PostsList v-if="state.activeTab === POSTS_TAB" class="border-t" :query="postsQuery"/>
-    <PostsList v-if="state.activeTab === REPLIES_TAB" class="border-t" :query="repliesQuery"/>
+    <PostsList v-if="state.activeTab === POSTS_TAB" :query="postsQuery"/>
+    <PostsList v-if="state.activeTab === REPLIES_TAB" :query="repliesQuery"/>
 
   </MainLayout>
 </template>

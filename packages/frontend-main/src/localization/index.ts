@@ -38,6 +38,7 @@ export const messages = {
                 newPost: 'New post',
                 reply: 'Reply',
                 follow: 'Follow',
+                unfollow: 'Unfollow',
             },
             PopupTitles: {
                 likePost: 'Like Post',
