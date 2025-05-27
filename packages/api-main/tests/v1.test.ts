@@ -949,14 +949,13 @@ describe('user replies with parent', async () => {
     });
 
     it('Get user replies', async () => {
-        const bearerToken = await userLogin(walletB);
         const userRepliesResponse = await get<{
             status: number;
             rows: {
                 parent: { hash: string; author: string; message: string };
                 reply: { hash: string; author: string; message: string };
             }[];
-        }>(`user-replies?address=${walletA.publicKey}`, 'READ', bearerToken);
+        }>(`user-replies?address=${walletB.publicKey}`, 'READ');
         assert.isOk(userRepliesResponse?.status === 200, `response was not okay, got ${userRepliesResponse?.status}`);
         assert.lengthOf(userRepliesResponse.rows, 1);
         assert.equal(userRepliesResponse.rows[0].reply.hash, replyPost);
