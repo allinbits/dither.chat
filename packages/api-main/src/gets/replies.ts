@@ -61,7 +61,7 @@ const getUserRepliesWithParent = getDatabase()
     .offset(sql.placeholder('offset'))
     .prepare('stmnt_get_user_replies_with_parents');
 
-export async function UserReplies(query: typeof Gets.UserRepliesQuery.static, store: { userAddress: string }) {
+export async function UserReplies(query: typeof Gets.UserRepliesQuery.static) {
     let limit = typeof query.limit !== 'undefined' ? Number(query.limit) : 100;
     const offset = typeof query.offset !== 'undefined' ? Number(query.offset) : 0;
     const minQuantity = typeof query.minQuantity !== 'undefined' ? query.minQuantity : BigInt(0);
@@ -79,7 +79,7 @@ export async function UserReplies(query: typeof Gets.UserRepliesQuery.static, st
     }
 
     try {
-        const results = await getUserRepliesWithParent.execute({ author: store.userAddress, limit, offset });
+        const results = await getUserRepliesWithParent.execute({ author: query.address, limit, offset, minQuantity });
         return { status: 200, rows: results };
     }
     catch (error) {

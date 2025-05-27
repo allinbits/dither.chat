@@ -58,7 +58,7 @@ const followingPostsStatement = getDatabase()
     .offset(sql.placeholder('offset'))
     .prepare('stmnt_posts_from_following');
 
-export async function FollowingPosts(query: typeof Gets.PostsQuery.static, store: { userAddress: string }) {
+export async function FollowingPosts(query: typeof Gets.PostsQuery.static) {
     let limit = typeof query.limit !== 'undefined' ? Number(query.limit) : 100;
     const offset = typeof query.offset !== 'undefined' ? Number(query.offset) : 0;
     const minQuantity = typeof query.minQuantity !== 'undefined' ? query.minQuantity : BigInt(0);
@@ -76,7 +76,7 @@ export async function FollowingPosts(query: typeof Gets.PostsQuery.static, store
     }
 
     try {
-        const results = await followingPostsStatement.execute({ address: store.userAddress, limit, offset, minQuantity });
+        const results = await followingPostsStatement.execute({ address: query.address, limit, offset, minQuantity });
         return { status: 200, rows: results };
     }
     catch (error) {
