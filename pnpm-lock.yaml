@@ -48,8 +48,8 @@ importers:
         specifier: ^2.2.1
         version: 2.2.2
       '@atomone/dither-api-types':
-        specifier: ^1.2.1
-        version: 1.2.1(@sinclair/typebox@0.34.33)(openapi-types@12.1.3)(typescript@5.8.3)
+        specifier: ^1.4.0
+        version: 1.4.0(@sinclair/typebox@0.34.33)(openapi-types@12.1.3)(typescript@5.8.3)
       '@cosmjs/crypto':
         specifier: ^0.33.1
         version: 0.33.1
@@ -231,8 +231,8 @@ importers:
         specifier: ^2.2.2
         version: 2.2.2
       '@atomone/dither-api-types':
-        specifier: ^1.2.1
-        version: 1.2.1(@sinclair/typebox@0.34.33)(openapi-types@12.1.3)(typescript@5.8.3)
+        specifier: ^1.4.0
+        version: 1.4.0(@sinclair/typebox@0.34.33)(openapi-types@12.1.3)(typescript@5.8.3)
       tsx:
         specifier: ^4.19.3
         version: 4.19.4
@@ -281,8 +281,8 @@ packages:
   '@atomone/chronostate@2.2.2':
     resolution: {integrity: sha512-7/1HlTahEwILdg4j7Vs4rMinDZjjpxadr4BWVO63y2Z+MOWHj33l3H+seP0//T8B3UJJ0W8rT9SWcht4lwx6mA==}
 
-  '@atomone/dither-api-types@1.2.1':
-    resolution: {integrity: sha512-7Pp9K685SvVQIVJiRd/mN0Ew0UtZpPLaftVsJTCjhu56iWe+dndHEJ3kUMA8nive0aqlOBqg1pj7kwWXD4Rt0A==}
+  '@atomone/dither-api-types@1.4.0':
+    resolution: {integrity: sha512-Oj+gjKSzhRTxTJ54lg/d/lIRIAGAibkzDtu2Gd4259RlYFMosgGoN89VO9K0adhPjAo7CYJFduNT5MtEpmsx0w==}
 
   '@babel/helper-string-parser@7.27.1':
     resolution: {integrity: sha512-qMlSxKbpRlAridDExk92nSobyDdpPijUq2DW6oDnUqd0iOGxmQjyqhMIihI9+zv4LPyZdRje2cavWPbCbWm3eA==}
@@ -3830,7 +3830,7 @@ snapshots:
 
   '@atomone/chronostate@2.2.2': {}
 
-  '@atomone/dither-api-types@1.2.1(@sinclair/typebox@0.34.33)(openapi-types@12.1.3)(typescript@5.8.3)':
+  '@atomone/dither-api-types@1.4.0(@sinclair/typebox@0.34.33)(openapi-types@12.1.3)(typescript@5.8.3)':
     dependencies:
       elysia: 1.2.25(@sinclair/typebox@0.34.33)(openapi-types@12.1.3)(typescript@5.8.3)
     transitivePeerDependencies:
