@@ -1,5 +1,5 @@
 import { type Gets } from '@atomone/dither-api-types';
-import { and, desc, eq, isNull, sql } from 'drizzle-orm';
+import { and, desc, eq, gte, isNull, sql } from 'drizzle-orm';
 
 import { getDatabase } from '../../drizzle/db';
 import { FeedTable, FollowsTable } from '../../drizzle/schema';
@@ -7,7 +7,11 @@ import { FeedTable, FollowsTable } from '../../drizzle/schema';
 const statement = getDatabase()
     .select()
     .from(FeedTable)
-    .where(and(eq(FeedTable.author, sql.placeholder('author')), isNull(FeedTable.removed_at)))
+    .where(and(
+        eq(FeedTable.author, sql.placeholder('author')),
+        isNull(FeedTable.removed_at),
+        gte(FeedTable.quantity, sql.placeholder('minQuantity')),
+    ))
     .limit(sql.placeholder('limit'))
     .offset(sql.placeholder('offset'))
     .orderBy(desc(FeedTable.timestamp))
@@ -16,6 +20,7 @@ const statement = getDatabase()
 export async function Posts(query: typeof Gets.PostsQuery.static) {
     let limit = typeof query.limit !== 'undefined' ? Number(query.limit) : 100;
     const offset = typeof query.offset !== 'undefined' ? Number(query.offset) : 0;
+    const minQuantity = typeof query.minQuantity !== 'undefined' ? query.minQuantity : BigInt(0);
 
     if (limit > 100) {
         limit = 100;
@@ -30,7 +35,7 @@ export async function Posts(query: typeof Gets.PostsQuery.static) {
     }
 
     try {
-        const results = await statement.execute({ author: query.address, limit, offset });
+        const results = await statement.execute({ author: query.address, limit, offset, minQuantity });
         return { status: 200, rows: results };
     }
     catch (error) {
@@ -43,15 +48,20 @@ const followingPostsStatement = getDatabase()
     .select(FeedTable)
     .from(FeedTable)
     .innerJoin(FollowsTable, eq(FeedTable.author, FollowsTable.following))
-    .where(and(eq(FollowsTable.follower, sql.placeholder('address')), isNull(FeedTable.post_hash))) // Only get posts not replies
+    .where(and(
+        eq(FollowsTable.follower, sql.placeholder('address')),
+        isNull(FeedTable.post_hash),
+        gte(FeedTable.quantity, sql.placeholder('minQuantity')),
+    )) // Only get posts not replies
     .orderBy(desc(FeedTable.timestamp))
     .limit(sql.placeholder('limit'))
     .offset(sql.placeholder('offset'))
     .prepare('stmnt_posts_from_following');
 
-export async function FollowingPosts(query: typeof Gets.PostsQuery.static, store: { userAddress: string }) {
+export async function FollowingPosts(query: typeof Gets.PostsQuery.static) {
     let limit = typeof query.limit !== 'undefined' ? Number(query.limit) : 100;
     const offset = typeof query.offset !== 'undefined' ? Number(query.offset) : 0;
+    const minQuantity = typeof query.minQuantity !== 'undefined' ? query.minQuantity : BigInt(0);
 
     if (limit > 100) {
         limit = 100;
@@ -66,7 +76,7 @@ export async function FollowingPosts(query: typeof Gets.PostsQuery.static, store
     }
 
     try {
-        const results = await followingPostsStatement.execute({ address: store.userAddress, limit, offset });
+        const results = await followingPostsStatement.execute({ address: query.address, limit, offset, minQuantity });
         return { status: 200, rows: results };
     }
     catch (error) {

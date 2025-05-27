@@ -24,6 +24,8 @@ function startReadOnlyServer() {
     app.get('/post', ({ query }) => GetRequests.Post(query), { query: Gets.PostQuery });
     app.get('/replies', ({ query }) => GetRequests.Replies(query), { query: Gets.RepliesQuery });
     app.get('/search', ({ query }) => GetRequests.Search(query), { query: Gets.SearchQuery });
+    app.get('/user-replies', ({ query }) => GetRequests.UserReplies(query), { query: Gets.UserRepliesQuery });
+    app.get('/following-posts', ({ query }) => GetRequests.FollowingPosts(query), { query: Gets.PostsQuery });
 
     app.post('/auth', ({ body }) => PostRequests.Auth(body), { body: Posts.AuthBody });
     app.post('/auth-create', ({ body }) => PostRequests.AuthCreate(body), { body: Posts.AuthCreateBody });
@@ -31,8 +33,6 @@ function startReadOnlyServer() {
     app.group('', group =>
         group
             .onBeforeHandle(verifyJWT)
-            .get('/user-replies', ({ query, store }) => GetRequests.UserReplies(query, store), { query: Gets.UserRepliesQuery })
-            .get('/following-posts', ({ query, store }) => GetRequests.FollowingPosts(query, store), { query: Gets.PostsQuery })
             .get('/notifications', ({ query, store }) => GetRequests.Notifications(query, store), {
                 query: Gets.NotificationsQuery,
             }),
