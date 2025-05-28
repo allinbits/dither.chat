@@ -27,20 +27,21 @@ export const notify = async (data: {
 }) => {
     let owner = data.owner;
 
-    if (!data.post_hash) {
-        throw new Error('post_hash or owner is required');
+    if (data.post_hash) {
+        const [post] = await statementGetTargetPost.execute({ post_hash: data.post_hash?.toLowerCase() });
+        if (!post) {
+            throw new Error('post not found');
+        }
+        owner ??= post.author;
+
+        if (!data.subcontext) {
+            const subcontext = post.message.length >= 64 ? post.message.slice(0, 61) + '...' : post.message;
+            data.subcontext = subcontext;
+        }
     }
 
-    const [post] = await statementGetTargetPost.execute({ post_hash: data.post_hash?.toLowerCase() });
-    if (!post) {
-        throw new Error('post not found');
-    }
-
-    owner ??= post.author;
-
-    if (!data.subcontext) {
-        const subcontext = post.message.length >= 64 ? post.message.slice(0, 61) + '...' : post.message;
-        data.subcontext = subcontext;
+    if (!owner) {
+        throw new Error('failed to add owner');
     }
 
     await statementInsertNotification.execute({
