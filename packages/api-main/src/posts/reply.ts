@@ -38,7 +38,7 @@ export async function Reply(body: typeof Posts.ReplyBody.static) {
             return { status: result.status, error: 'provided post_hash does not exist' };
         }
 
-        await statement.execute({
+        const resultChanges = await statement.execute({
             author: body.from.toLowerCase(),
             hash: body.hash.toLowerCase(),
             message: body.msg,
@@ -47,17 +47,19 @@ export async function Reply(body: typeof Posts.ReplyBody.static) {
             timestamp: new Date(body.timestamp),
         });
 
-        await statementAddReplyCount.execute({
-            post_hash: body.post_hash,
-        });
+        if (typeof resultChanges.rowCount === 'number' && resultChanges.rowCount >= 1) {
+            await statementAddReplyCount.execute({
+                post_hash: body.post_hash,
+            });
 
-        await notify({
-            post_hash: body.post_hash,
-            hash: body.hash,
-            type: 'reply',
-            timestamp: new Date(body.timestamp),
-            subcontext: body.msg.length >= 61 ? body.msg.slice(0, 61) + '...' : body.msg,
-        });
+            await notify({
+                post_hash: body.post_hash,
+                hash: body.hash,
+                type: 'reply',
+                timestamp: new Date(body.timestamp),
+                subcontext: body.msg.length >= 61 ? body.msg.slice(0, 61) + '...' : body.msg,
+            });
+        }
 
         return { status: 200 };
     }
