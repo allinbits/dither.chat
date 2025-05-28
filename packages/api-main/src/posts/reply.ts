@@ -56,6 +56,7 @@ export async function Reply(body: typeof Posts.ReplyBody.static) {
             hash: body.hash,
             type: 'reply',
             timestamp: new Date(body.timestamp),
+            subcontext: body.msg.length >= 61 ? body.msg.slice(0, 61) + '...' : body.msg,
         });
 
         return { status: 200 };
