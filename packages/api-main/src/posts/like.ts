@@ -48,16 +48,17 @@ export async function Like(body: typeof Posts.LikeBody.static) {
             timestamp: new Date(body.timestamp),
         });
 
+        // Ensure that 'like' was triggered, and not already existing.
         if (typeof resultChanges.rowCount === 'number' && resultChanges.rowCount >= 1) {
             await statementAddLikeToPost.execute({ post_hash: body.post_hash, quantity: body.quantity });
+            await notify({
+                post_hash: body.post_hash,
+                hash: body.hash,
+                type: 'like',
+                timestamp: new Date(body.timestamp),
+            });
         }
 
-        await notify({
-            post_hash: body.post_hash,
-            hash: body.hash,
-            type: 'like',
-            timestamp: new Date(body.timestamp),
-        });
         return { status: 200 };
     }
     catch (err) {
