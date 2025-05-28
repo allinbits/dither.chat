@@ -37,6 +37,8 @@ export const messages = {
                 copyLink: 'Copy link',
                 newPost: 'New post',
                 reply: 'Reply',
+                mintscan: 'See on Mintscan',
+                pingpub: 'See on Ping.pub',
             },
             PopupTitles: {
                 likePost: 'Like Post',
