@@ -51,7 +51,7 @@ export async function Reply(action: ActionWithData): Promise<ResponseStatus> {
             return 'RETRY';
         }
 
-        if (response.status === 401) {
+        if (response.status === 400) {
             console.log(`dither.Reply message skipped, invalid parameters provided: ${action.hash}`);
             return 'SKIP';
         }
@@ -61,7 +61,7 @@ export async function Reply(action: ActionWithData): Promise<ResponseStatus> {
             return 'SKIP';
         }
 
-        console.warn(`dither.Reply message failed: ${action.hash} (${response.error})`);
+        console.warn(`dither.Reply message failed, retrying: ${action.hash} (${response.error})`);
         return 'RETRY';
     }
     catch (error) {

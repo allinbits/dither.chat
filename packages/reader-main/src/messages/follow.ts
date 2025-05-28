@@ -49,12 +49,12 @@ export async function Follow(action: ActionWithData): Promise<ResponseStatus> {
             return 'RETRY';
         }
 
-        if (response.status === 401) {
-            console.log(`dither.Follow message skipped, invalid address provided: ${action.hash}`);
+        if (response.status === 400) {
+            console.log(`dither.Follow message skipped, ${response.error} | Hash: ${action.hash}`);
             return 'SKIP';
         }
 
-        console.warn(`dither.Follow failed: ${action.hash} (${response.error})`);
+        console.warn(`dither.Follow failed: ${response.error} | Hash: ${action.hash}`);
         return 'RETRY';
     }
     catch (error) {
