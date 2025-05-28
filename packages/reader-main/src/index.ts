@@ -10,12 +10,14 @@ import { useQueue } from './queue';
 
 const config = useConfig();
 const queue = useQueue();
+const apiRoot = process.env.API_ROOT ?? 'http://localhost:3000';
+const msCheckpointTime = 1_000;
 const actionTypes = ['Post', 'Reply', 'Like', 'Flag', 'Dislike', 'Follow', 'Unfollow', 'Remove'];
 
 let state: ChronoState;
 let lastHash: string;
-let _lastBlock: string;
 let isProcessing = false;
+let lastActionProcessed = Date.now();
 
 export function getTransferMessage(messages: Array<MsgGeneric>) {
     const msgTransfer = messages.find(msg => msg['@type'] === '/cosmos.bank.v1beta1.MsgSend');
@@ -52,10 +54,18 @@ async function handleAction(action: Action) {
     queue.add(action);
 }
 
-function handleLastBlock(block: string) {
-    // db.lastBlock.update(block as string);
-    // Need to switch this out to store last block somewhere, otherwise rely on
-    console.log(`Updated | Block: ${block} | Queue Size: ${queue.size()} | Retry Count: ${queue.getRetryCount()}`);
+async function handleLastBlock(block: string) {
+    if (lastActionProcessed + msCheckpointTime < Date.now()) {
+        lastActionProcessed = Date.now();
+        const didUpdate = await updateLastBlock(block);
+        if (!didUpdate) {
+            throw new Error(`Failed to update last block: ${block}`);
+        }
+    }
+
+    if (queue.size() >= 1) {
+        console.log(`Updated | Block: ${block} | Queue Size: ${queue.size()} | Retry Count: ${queue.getRetryCount()}`);
+    }
 }
 
 async function processAction(action: Action): Promise<ResponseStatus> {
@@ -84,6 +94,37 @@ async function processAction(action: Action): Promise<ResponseStatus> {
     return 'SKIP';
 }
 
+async function updateLastBlock(height: string, attempt = 0) {
+    const rawResponse = await fetch(apiRoot + '/update-state', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ last_block: height }),
+    });
+
+    if (attempt >= 3) {
+        return false;
+    }
+
+    if (rawResponse.status !== 200) {
+        console.error('Error posting to API:', rawResponse);
+        await new Promise(resolve => setTimeout(resolve, attempt * 5_000));
+        return updateLastBlock(height, attempt + 1);
+    }
+
+    const response = await rawResponse.json() as { status: number; error?: string };
+    if (response.status === 500) {
+        console.error('Error posting to API:', rawResponse);
+        await new Promise(resolve => setTimeout(resolve, attempt * 5_000));
+        return updateLastBlock(height, attempt + 1);
+    }
+
+    console.log(`Updated Block Checkpoint | ${height}`);
+    return true;
+}
+
 async function handleQueue() {
     if (!queue.hasElements() || isProcessing) {
         return;
@@ -91,11 +132,19 @@ async function handleQueue() {
 
     // Process Action
     isProcessing = true;
-    const response = await processAction(queue.peek());
+    const action = queue.peek();
+    const response = await processAction(action);
 
     // Success OR explicitly skip
     if (response === 'SUCCESS' || response === 'SKIP') {
         queue.remove();
+
+        const didUpdate = await updateLastBlock(action.height);
+        if (!didUpdate) {
+            throw new Error(`Failed to update last block: ${action.height}`);
+        }
+
+        lastActionProcessed = Date.now();
         isProcessing = false;
         return;
     }
@@ -116,8 +165,27 @@ async function handleQueue() {
     isProcessing = false;
 }
 
+async function getLastBlock() {
+    const rawResponse = await fetch(apiRoot + '/last-block');
+
+    if (rawResponse.status !== 200) {
+        console.warn(`Block Height Not Stored, Starting from ${config.START_BLOCK}`);
+        return null;
+    }
+
+    const response = await rawResponse.json() as { status: number; rows: { last_block: string }[] };
+    if (response.status === 404) {
+        console.warn(`Block Height Not Stored, Starting from ${config.START_BLOCK}`);
+        return null;
+    }
+
+    return response.rows[0].last_block;
+}
+
 export async function start() {
-    state = new ChronoState({ ...config });
+    let lastBlock = await getLastBlock();
+    lastBlock ??= config.START_BLOCK;
+    state = new ChronoState({ ...config, START_BLOCK: lastBlock });
     state.onLastBlock(handleLastBlock);
     state.onAction(handleAction);
     state.start();
