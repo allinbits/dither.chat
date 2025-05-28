@@ -2,6 +2,7 @@
 import { nextTick, onMounted } from 'vue';
 
 import DislikePostDialog from './components/popups/DislikePostDialog.vue';
+import FlagPostDialog from './components/popups/FlagPostDialog.vue';
 import LikePostDialog from './components/popups/LikePostDialog.vue';
 import NewPostDialog from './components/popups/NewPostDialog.vue';
 import ReplyDialog from './components/popups/ReplyDialog.vue';
@@ -32,4 +33,5 @@ onMounted(() => {
   <DislikePostDialog />
   <NewPostDialog />
   <ReplyDialog/>
+  <FlagPostDialog/>
 </template>
