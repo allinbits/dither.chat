@@ -87,7 +87,7 @@ watch([wallet.loggedIn, wallet.address], async () => {
               <Username :userAddress="popups.state.reply.author" />
               <PrettyTimestamp :timestamp="new Date(popups.state.reply.timestamp)" />
             </div>
-            <PostMessage :post="popups.state.reply" />
+            <PostMessage :message="popups.state.reply.message" />
           </div>
         </div>
 

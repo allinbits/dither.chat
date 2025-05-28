@@ -72,7 +72,7 @@ async function handleReply() {
 
     <div v-if="post" class="flex flex-col p-4 w-full ">
       <UserAvatarUsername :userAddress="post.author" class="mb-2" />
-      <PostMessage :post="post" />
+      <PostMessage :message="post.message" />
       <PrettyTimestamp :timestamp="new Date(post.timestamp)" :isFullDate="true" class="flex mt-4" />
 
       <div class="py-2 mt-4 border-y">

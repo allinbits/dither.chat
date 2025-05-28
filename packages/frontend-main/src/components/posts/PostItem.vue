@@ -26,7 +26,7 @@ defineProps<{ post: Post }>();
           </RouterLink>
           <PrettyTimestamp :timestamp="new Date(post.timestamp)" />
         </div>
-        <PostMessage :post="post" />
+        <PostMessage :message="post.message" />
         <PostActions :post="post" />
       </div>
     </div>

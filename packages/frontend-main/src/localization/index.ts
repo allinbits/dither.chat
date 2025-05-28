@@ -48,9 +48,19 @@ export const messages = {
                 feed: 'Global Feed',
                 following: 'Following',
             },
+            Titles: {
+                notifications: 'Notifications',
+            },
             SearchInput: {
                 noResults: 'No results found',
                 failedToSearch: 'Failed to search',
+            },
+            Notifications: {
+                like: 'Liked your post',
+                dislike: 'Disliked your post',
+                flag: 'Redflagged your post',
+                follow: 'Followed you',
+                reply: 'Replied to your post',
             },
         },
         feedbacks: {
