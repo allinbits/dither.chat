@@ -1,12 +1,10 @@
 <script setup lang="ts">
 import type { Post } from 'api-main/types/feed';
 
-import { MessageCircle, ThumbsDown, ThumbsUp } from 'lucide-vue-next';
+import { Flag, MessageCircle, ThumbsDown, ThumbsUp } from 'lucide-vue-next';
 
 import { type PopupState, usePopups } from '@/composables/usePopups';
 import { useWallet } from '@/composables/useWallet';
-
-import SharePostPopover from '../popups/SharePostPopover.vue';
 
 import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
 
@@ -46,6 +44,8 @@ function handleAction(type: keyof PopupState, post: Post) {
       <ThumbsDown class="size-5 scale-x-[-1]" color="#A2A2A9" />
       <span :class="buttonLabelClass">{{ post.dislikes }}</span>
     </button>
-    <SharePostPopover :post="post"/>
+    <button :class="buttonClass" @click.stop="handleAction('flag', post)">
+      <Flag class="size-5" color="#A2A2A9" />
+    </button>
   </div>
 </template>
