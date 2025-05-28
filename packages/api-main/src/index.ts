@@ -11,6 +11,7 @@ const config = useConfig();
 
 function startReadOnlyServer() {
     const app = new Elysia({ adapter: node(), prefix: '/v1' });
+
     app.use(cors());
     app.get('/dislikes', ({ query }) => GetRequests.Dislikes(query), { query: Gets.DislikesQuery });
     app.get('/feed', ({ query }) => GetRequests.Feed(query), { query: Gets.FeedQuery });
@@ -27,7 +28,12 @@ function startReadOnlyServer() {
     app.get('/following-posts', ({ query }) => GetRequests.FollowingPosts(query), { query: Gets.PostsQuery });
     app.get('/last-block', GetRequests.LastBlock);
 
-    app.post('/auth', ({ body }) => PostRequests.Auth(body), { body: Posts.AuthBody });
+    app.post('/auth', ({ body, cookie: { auth } }) => PostRequests.Auth(body, auth), { body: t.Object({
+        id: t.Number(),
+        pub_key: t.Object({ type: t.String(), value: t.String() }),
+        signature: t.String(),
+        json: t.Boolean(),
+    }) });
     app.post('/auth-create', ({ body }) => PostRequests.AuthCreate(body), { body: Posts.AuthCreateBody });
     // Protected route group
     app.get('/notifications', ({ query, cookie: { auth } }) => GetRequests.Notifications(query, auth), {

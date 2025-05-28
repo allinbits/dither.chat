@@ -430,9 +430,10 @@ describe('v1 - mod', { sequential: true }, () => {
         assert.isOk(response?.status === 200, 'response was not okay');
 
         const signData = await signADR36Document(walletA.mnemonic, response.message);
-        const verifyBody: typeof Posts.AuthBody.static = {
+        const verifyBody: typeof Posts.AuthBody.static & { json?: boolean } = {
             id: response.id,
             ...signData.signature,
+            json: true,
         };
 
         const responseVerify = (await post(`auth`, verifyBody, 'READ')) as { status: 200; bearer: string };
@@ -770,9 +771,10 @@ describe('v1/auth', async () => {
         assert.isOk(response?.status === 200, 'response was not okay');
 
         const signData = await signADR36Document(walletA.mnemonic, response.message);
-        const verifyBody: typeof Posts.AuthBody.static = {
+        const verifyBody: typeof Posts.AuthBody.static & { json?: boolean } = {
             id: response.id,
             ...signData.signature,
+            json: true,
         };
 
         const responseVerify = (await post(`auth`, verifyBody, 'READ')) as { status: 200; bearer: string };

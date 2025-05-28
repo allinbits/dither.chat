@@ -135,9 +135,10 @@ export async function userLogin(wallet: { mnemonic: string; publicKey: string })
     }
 
     const signData = await signADR36Document(wallet.mnemonic, response.message);
-    const verifyBody: typeof Posts.AuthBody.static = {
+    const verifyBody: typeof Posts.AuthBody.static & { json: boolean } = {
         id: response.id,
         ...signData.signature,
+        json: true,
     };
 
     const responseVerify = (await post(`auth`, verifyBody, 'READ')) as { status: 200; bearer: string };
