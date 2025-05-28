@@ -50,7 +50,7 @@ export async function Dislike(action: ActionWithData): Promise<ResponseStatus> {
             return 'RETRY';
         }
 
-        if (response.status === 401) {
+        if (response.status === 400) {
             console.log(`dither.Dislike message skipped, invalid post hash provided: ${action.hash}`);
             return 'SKIP';
         }

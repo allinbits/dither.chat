@@ -251,7 +251,7 @@ describe('v1', { sequential: true }, () => {
         };
 
         const response = await post(`follow`, body, 'WRITE');
-        assert.isOk(response?.status === 401, 'additional follow was allowed somehow');
+        assert.isOk(response?.status === 400, 'additional follow was allowed somehow');
     });
 
     it('GET - /following', async () => {
