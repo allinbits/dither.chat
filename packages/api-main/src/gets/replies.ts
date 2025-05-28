@@ -55,7 +55,11 @@ const getUserRepliesWithParent = getDatabase()
     })
     .from(feed)
     .innerJoin(parentFeed, eq(feed.post_hash, parentFeed.hash))
-    .where(and(eq(feed.author, sql.placeholder('author')), isNotNull(feed.post_hash)))
+    .where(and(
+        eq(feed.author, sql.placeholder('author')),
+        isNotNull(feed.post_hash),
+        gte(feed.quantity, sql.placeholder('minQuantity')),
+    ))
     .orderBy(desc(feed.timestamp))
     .limit(sql.placeholder('limit'))
     .offset(sql.placeholder('offset'))
