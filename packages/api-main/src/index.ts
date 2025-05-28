@@ -5,7 +5,6 @@ import { Elysia, t } from 'elysia';
 
 import * as GetRequests from './gets/index';
 import * as PostRequests from './posts/index';
-import { verifyJWT } from './shared/jwt';
 import { useConfig } from './config';
 
 const config = useConfig();
@@ -31,13 +30,9 @@ function startReadOnlyServer() {
     app.post('/auth', ({ body }) => PostRequests.Auth(body), { body: Posts.AuthBody });
     app.post('/auth-create', ({ body }) => PostRequests.AuthCreate(body), { body: Posts.AuthCreateBody });
     // Protected route group
-    app.group('', group =>
-        group
-            .onBeforeHandle(verifyJWT)
-            .get('/notifications', ({ query, store }) => GetRequests.Notifications(query, store), {
-                query: Gets.NotificationsQuery,
-            }),
-    );
+    app.get('/notifications', ({ query, cookie: { auth } }) => GetRequests.Notifications(query, auth), {
+        query: Gets.NotificationsQuery,
+    });
 
     app.listen(config.READ_ONLY_PORT ?? 3000);
     console.log(`[API Read Only] Running on ${config.READ_ONLY_PORT ?? 3000}`);
@@ -58,27 +53,22 @@ function startWriteOnlyServer() {
     app.post('/post-remove', ({ body }) => PostRequests.PostRemove(body), { body: Posts.PostRemoveBody });
     app.post('/update-state', ({ body }) => PostRequests.UpdateState(body), { body: t.Object({ last_block: t.String() }) });
     app.get('/last-block', GetRequests.LastBlock);
+    app.post('/mod/post-remove', ({ body, cookie: { auth } }) => PostRequests.ModRemovePost(body, auth), {
+        body: Posts.ModRemovePostBody,
+    });
+    app.post('/mod/post-restore', ({ body, cookie: { auth } }) => PostRequests.ModRestorePost(body, auth), {
+        body: Posts.ModRemovePostBody,
+    });
+    app.post('/mod/ban', ({ body, cookie: { auth } }) => PostRequests.ModBan(body, auth), {
+        body: Posts.ModBanBody,
+    });
+    app.post('/mod/unban', ({ body, cookie: { auth } }) => PostRequests.ModUnban(body, auth), {
+        body: Posts.ModBanBody,
+    });
+    app.get('/notification-read', ({ query, cookie: { auth } }) => GetRequests.ReadNotification(query, auth), {
+        query: Gets.ReadNotificationQuery,
+    });
 
-    // Protected route group
-    app.group('', group =>
-        group
-            .onBeforeHandle(verifyJWT)
-            .post('/mod/post-remove', ({ body, store }) => PostRequests.ModRemovePost(body, store), {
-                body: Posts.ModRemovePostBody,
-            })
-            .post('/mod/post-restore', ({ body, store }) => PostRequests.ModRestorePost(body, store), {
-                body: Posts.ModRemovePostBody,
-            })
-            .post('/mod/ban', ({ body, store }) => PostRequests.ModBan(body, store), {
-                body: Posts.ModBanBody,
-            })
-            .post('/mod/unban', ({ body, store }) => PostRequests.ModUnban(body, store), {
-                body: Posts.ModBanBody,
-            })
-            .get('/notification-read', ({ query, store }) => GetRequests.ReadNotification(query, store), {
-                query: Gets.ReadNotificationQuery,
-            }),
-    );
     app.listen(config.WRITE_ONLY_PORT ?? 3001);
     console.log(`[API Write Only] Running on ${config.WRITE_ONLY_PORT ?? 3001}`);
 }

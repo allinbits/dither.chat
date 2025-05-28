@@ -1,8 +1,11 @@
+import type { Cookie } from 'elysia';
+
 import { type Posts } from '@atomone/dither-api-types';
 import { and, eq, inArray, isNull, sql } from 'drizzle-orm';
 
 import { getDatabase } from '../../drizzle/db';
 import { AuditTable, FeedTable, ModeratorTable } from '../../drizzle/schema';
+import { verifyJWT } from '../shared/jwt';
 
 const statementAuditRemovePost = getDatabase()
     .insert(AuditTable)
@@ -15,12 +18,17 @@ const statementAuditRemovePost = getDatabase()
     })
     .prepare('stmnt_audit_remove_post');
 
-export async function ModRemovePost(body: typeof Posts.ModRemovePostBody.static, store: { userAddress: string }) {
+export async function ModRemovePost(body: typeof Posts.ModRemovePostBody.static, auth: Cookie<string | undefined>) {
+    const response = await verifyJWT(auth.value);
+    if (typeof response !== 'string') {
+        return response;
+    }
+
     try {
         const [mod] = await getDatabase()
             .select()
             .from(ModeratorTable)
-            .where(eq(ModeratorTable.address, store.userAddress))
+            .where(eq(ModeratorTable.address, response))
             .limit(1);
         if (!mod) {
             return { status: 404, error: 'moderator not found' };
@@ -70,12 +78,17 @@ const statementAuditRestorePost = getDatabase()
     })
     .prepare('stmnt_audit_restore_post');
 
-export async function ModRestorePost(body: typeof Posts.ModRemovePostBody.static, store: { userAddress: string }) {
+export async function ModRestorePost(body: typeof Posts.ModRemovePostBody.static, auth: Cookie<string | undefined>) {
+    const response = await verifyJWT(auth.value);
+    if (typeof response !== 'string') {
+        return response;
+    }
+
     try {
         const [mod] = await getDatabase()
             .select()
             .from(ModeratorTable)
-            .where(eq(ModeratorTable.address, store.userAddress))
+            .where(eq(ModeratorTable.address, response))
             .limit(1);
         if (!mod) {
             return { status: 404, error: 'moderator not found' };
@@ -138,12 +151,17 @@ const statementAuditBanUser = getDatabase()
     })
     .prepare('stmnt_audit_ban_user');
 
-export async function ModBan(body: typeof Posts.ModBanBody.static, store: { userAddress: string }) {
+export async function ModBan(body: typeof Posts.ModBanBody.static, auth: Cookie<string | undefined>) {
+    const response = await verifyJWT(auth.value);
+    if (typeof response !== 'string') {
+        return response;
+    }
+
     try {
         const [mod] = await getDatabase()
             .select()
             .from(ModeratorTable)
-            .where(eq(ModeratorTable.address, store.userAddress))
+            .where(eq(ModeratorTable.address, response))
             .limit(1);
         if (!mod) {
             return { status: 404, error: 'moderator not found' };
@@ -188,12 +206,17 @@ const statementAuditUnbanUser = getDatabase()
     })
     .prepare('stmnt_audit_unban_user');
 
-export async function ModUnban(body: typeof Posts.ModBanBody.static, store: { userAddress: string }) {
+export async function ModUnban(body: typeof Posts.ModBanBody.static, auth: Cookie<string | undefined>) {
+    const response = await verifyJWT(auth.value);
+    if (typeof response !== 'string') {
+        return response;
+    }
+
     try {
         const [mod] = await getDatabase()
             .select()
             .from(ModeratorTable)
-            .where(eq(ModeratorTable.address, store.userAddress))
+            .where(eq(ModeratorTable.address, response))
             .limit(1);
         if (!mod) {
             return { status: 404, error: 'moderator not found' };
