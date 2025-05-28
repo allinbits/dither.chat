@@ -12,7 +12,7 @@ const wallet = useWallet();
     <TopPanel />
   </div>
 
-  <main class="h-[100vh]">
+  <main class="min-h-[100vh]">
     <slot />
   </main>
 
