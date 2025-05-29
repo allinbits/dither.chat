@@ -69,7 +69,7 @@ export const messages = {
                 empty: 'User has not made any posts',
             },
             RepliesGroupsList: {
-                empty: 'There is no reply yet',
+                empty: 'User has not made any replies',
             },
         },
         feedbacks: {
