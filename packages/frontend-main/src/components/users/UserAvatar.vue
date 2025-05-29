@@ -19,9 +19,8 @@ const mode = useColorMode();
 
 <template>
   <Avatar :class="cn(size === 'lg' ? 'size-[64px]' : size === 'sm' ? 'size-[32px]' : 'size-[40px]')">
-    <div v-if="!userAddress" class="size-[40px] bg-[#D9D9D9]"/>
-    <AvatarImage v-else :class="mode === 'dark' && 'filter-[invert(0.96))]'" :src="`https://api.dicebear.com/9.x/notionists-neutral/svg?seed=${userAddress}`" alt="user-avatar-image" />
-    <AvatarFallback class="bg-[#D9D9D9]"/>
+    <AvatarImage v-if="userAddress" :class="mode === 'dark' && 'filter-[invert(0.96))]'" :src="`https://api.dicebear.com/9.x/notionists-neutral/svg?seed=${userAddress}`" alt="user-avatar-image" />
+    <AvatarFallback v-else class="bg-[#D9D9D9] size-full"/>
   </Avatar>
 
 </template>

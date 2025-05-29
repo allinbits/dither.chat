@@ -7,14 +7,14 @@ const apiRoot = import.meta.env.VITE_API_ROOT ?? 'http://localhost:3000';
 const LIMIT = 15;
 
 interface Params {
-    hash: Ref<string>;
+    userAddress: Ref<string>;
 }
 
-export const replies = (params: Params) =>
+export const userPosts = (params: Params) =>
     infiniteQueryOptions({
-        queryKey: ['replies', params.hash],
+        queryKey: ['posts', params.userAddress],
         queryFn: async ({ pageParam = 0 }) => {
-            const res = await fetch(`${apiRoot}/replies?hash=${params.hash.value}&offset=${pageParam}&limit=${LIMIT}`);
+            const res = await fetch(`${apiRoot}/posts?address=${params.userAddress.value}&offset=${pageParam}&limit=${LIMIT}`);
             const json = await res.json() as { status: number; rows: Post[] };
             return json.rows ?? [];
         },
@@ -23,9 +23,9 @@ export const replies = (params: Params) =>
             if (lastPage.length < LIMIT) return undefined;
             return allPages.length * LIMIT;
         },
-        enabled: () => !!params.hash.value,
+        enabled: () => !!params.userAddress.value,
     });
 
-export function useReplies(params: Params) {
-    return useInfiniteQuery(replies(params));
+export function useUserPosts(params: Params) {
+    return useInfiniteQuery(userPosts(params));
 }

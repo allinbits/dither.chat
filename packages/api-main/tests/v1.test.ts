@@ -2,11 +2,11 @@ import '../src/index';
 
 import type { Posts } from '@atomone/dither-api-types';
 
-import { sql } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { assert, describe, it } from 'vitest';
 
 import { getDatabase } from '../drizzle/db';
-import { ModeratorTable, tables } from '../drizzle/schema';
+import { ModeratorTable, ReaderState, tables } from '../drizzle/schema';
 
 import { createWallet, get, getAtomOneAddress, getRandomHash, post, signADR36Document, userLogin } from './shared';
 
@@ -126,7 +126,6 @@ describe('v1', { sequential: true }, () => {
 
         assert.isOk(response, 'failed to fetch posts data');
         assert.isOk(Array.isArray(response.rows) && response.rows.length >= 1, 'feed result was not an array type');
-        console.log(response);
         assert.isOk(response && response.rows[1].likes >= 50, 'likes were not incremented on post');
 
         const getResponse = await get<{ status: number; rows: Array<{ hash: string }> }>(
@@ -251,7 +250,7 @@ describe('v1', { sequential: true }, () => {
         };
 
         const response = await post(`follow`, body, 'WRITE');
-        assert.isOk(response?.status === 401, 'additional follow was allowed somehow');
+        assert.isOk(response?.status === 400, 'additional follow was allowed somehow');
     });
 
     it('GET - /following', async () => {
@@ -1040,5 +1039,21 @@ describe('get post from followed', async () => {
         }>(`following-posts?address=${walletA.publicKey}`, 'READ');
         assert.isOk(readResponse?.status === 200, `response was not okay, got ${readResponse?.status}`);
         assert.lengthOf(readResponse.rows, 1);
+    });
+});
+
+describe('update state', () => {
+    it('should update state', async () => {
+        let response = await post<{ status: number; error: string }>(`update-state`, { last_block: '1' });
+        assert.isOk(response?.status === 200, 'could not post to update state');
+
+        let [state] = await getDatabase().select().from(ReaderState).where(eq(ReaderState.id, 0)).limit(1);
+        assert.isOk(state.last_block == '1');
+
+        response = await post<{ status: number; error: string }>(`update-state`, { last_block: '2' });
+        assert.isOk(response?.status === 200, 'could not post to update state');
+
+        [state] = await getDatabase().select().from(ReaderState).where(eq(ReaderState.id, 0)).limit(1);
+        assert.isOk(state.last_block == '2');
     });
 });

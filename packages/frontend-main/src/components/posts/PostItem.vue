@@ -2,13 +2,13 @@
 
 import type { Post } from 'api-main/types/feed';
 
-import PostMoreActionsPopover from '../popups/PostMoreActionsPopover.vue';
 import PostActions from '../posts/PostActions.vue';
 import PrettyTimestamp from '../posts/PrettyTimestamp.vue';
 import UserAvatar from '../users/UserAvatar.vue';
 import Username from '../users/Username.vue';
 
 import PostMessage from './PostMessage.vue';
+import PostMoreActions from './PostMoreActions.vue';
 
 defineProps<{ post: Post }>();
 
@@ -29,9 +29,8 @@ defineProps<{ post: Post }>();
             </RouterLink>
             <PrettyTimestamp :timestamp="new Date(post.timestamp)" />
           </div>
-          <PostMoreActionsPopover :post="post" />
+          <PostMoreActions :post="post" />
         </div>
-
         <PostMessage :post="post" />
         <PostActions :post="post" />
       </div>

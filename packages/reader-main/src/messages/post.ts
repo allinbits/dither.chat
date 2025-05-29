@@ -50,7 +50,7 @@ export async function Post(action: ActionWithData): Promise<ResponseStatus> {
             return 'RETRY';
         }
 
-        if (response.status === 401) {
+        if (response.status === 400) {
             console.log(`dither.Post message skipped, invalid parameters provided: ${action.hash}`);
             return 'SKIP';
         }
