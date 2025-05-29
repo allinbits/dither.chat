@@ -10,36 +10,45 @@ const statementInsertNotification = getDatabase()
         hash: sql.placeholder('hash'),
         type: sql.placeholder('type'),
         timestamp: sql.placeholder('timestamp'),
+        subcontext: sql.placeholder('subcontext'),
     })
+    .onConflictDoNothing()
     .prepare('stmnt_insert_notification');
+
+const statementGetTargetPost = getDatabase().select().from(FeedTable).where(eq(FeedTable.hash, sql.placeholder('post_hash'))).limit(1).prepare('stmnt_fetch_target_post');
 
 export const notify = async (data: {
     hash: string;
     type: string;
     timestamp: Date;
+    subcontext?: string;
     post_hash?: string;
     owner?: string;
 }) => {
     let owner = data.owner;
-    if (!owner) {
-        if (!data.post_hash) {
-            throw new Error('post_hash or owner is required');
-        }
-        // Owner was not send, take if from post
-        const [post] = await getDatabase()
-            .select()
-            .from(FeedTable)
-            .where(eq(FeedTable.hash, data.post_hash.toLowerCase()))
-            .limit(1);
+
+    if (data.post_hash) {
+        const [post] = await statementGetTargetPost.execute({ post_hash: data.post_hash?.toLowerCase() });
         if (!post) {
             throw new Error('post not found');
         }
-        owner = post.author;
+        owner ??= post.author;
+
+        if (!data.subcontext) {
+            const subcontext = post.message.length >= 64 ? post.message.slice(0, 61) + '...' : post.message;
+            data.subcontext = subcontext;
+        }
     }
+
+    if (!owner) {
+        throw new Error('failed to add owner');
+    }
+
     await statementInsertNotification.execute({
         owner: owner.toLowerCase(),
         hash: data.hash.toLowerCase(),
         type: data.type,
-        timestamp: data.timestamp,
+        timestamp: data.timestamp ?? null,
+        subcontext: data.subcontext,
     });
 };

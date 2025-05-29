@@ -48,16 +48,16 @@ export async function Flag(body: typeof Posts.FlagBody.static) {
             timestamp: new Date(body.timestamp),
         });
 
+        // Ensure that 'flag' was triggered, and not already existing.
         if (typeof resultChanges.rowCount === 'number' && resultChanges.rowCount >= 1) {
             await statementAddFlagToPost.execute({ post_hash: body.post_hash, quantity: body.quantity });
+            await notify({
+                post_hash: body.post_hash,
+                hash: body.hash,
+                type: 'flag',
+                timestamp: new Date(body.timestamp),
+            });
         }
-
-        await notify({
-            post_hash: body.post_hash,
-            hash: body.hash,
-            type: 'flag',
-            timestamp: new Date(body.timestamp),
-        });
 
         return { status: 200 };
     }

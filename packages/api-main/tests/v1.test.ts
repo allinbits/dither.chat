@@ -126,7 +126,6 @@ describe('v1', { sequential: true }, () => {
 
         assert.isOk(response, 'failed to fetch posts data');
         assert.isOk(Array.isArray(response.rows) && response.rows.length >= 1, 'feed result was not an array type');
-        console.log(response);
         assert.isOk(response && response.rows[1].likes >= 50, 'likes were not incremented on post');
 
         const getResponse = await get<{ status: number; rows: Array<{ hash: string }> }>(
@@ -251,7 +250,7 @@ describe('v1', { sequential: true }, () => {
         };
 
         const response = await post(`follow`, body, 'WRITE');
-        assert.isOk(response?.status === 401, 'additional follow was allowed somehow');
+        assert.isOk(response?.status === 400, 'additional follow was allowed somehow');
     });
 
     it('GET - /following', async () => {
