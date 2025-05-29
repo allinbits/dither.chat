@@ -37,10 +37,10 @@ function handleAction(type: keyof PopupState, userAddress: string) {
 </script>
 
 <template>
-  <div class="px-4 pb-10 pt-4">
+  <div class="flex flex-col w-full px-4 pb-10 pt-4">
     <Loader v-if="isLoading" class="animate-spin w-full mt-10" />
 
-    <span v-else-if="!flatFollowUsers.length" class="text-md font-semibold text-base">{{
+    <span v-else-if="!flatFollowUsers.length" class="self-center text-md font-semibold text-base">{{
       $t('components.FollowingList.empty') }}</span>
 
     <!-- Following users -->
@@ -62,6 +62,6 @@ function handleAction(type: keyof PopupState, userAddress: string) {
     </div>
 
     <!-- Posts of following users -->
-    <PostsList :query="postsQuery" />
+    <PostsList :query="postsQuery" :hideEmptyText="true"/>
   </div>
 </template>

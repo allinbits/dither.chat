@@ -10,6 +10,7 @@ import { useWallet } from '@/composables/useWallet';
 
 import PostActions from '@/components/posts/PostActions.vue';
 import PostMessage from '@/components/posts/PostMessage.vue';
+import PostMoreActions from '@/components/posts/PostMoreActions.vue';
 import PostsList from '@/components/posts/PostsList.vue';
 import PrettyTimestamp from '@/components/posts/PrettyTimestamp.vue';
 import Button from '@/components/ui/button/Button.vue';
@@ -18,17 +19,16 @@ import Textarea from '@/components/ui/textarea/Textarea.vue';
 import UserAvatar from '@/components/users/UserAvatar.vue';
 import UserAvatarUsername from '@/components/users/UserAvatarUsername.vue';
 import MainLayout from '@/layouts/MainLayout.vue';
-import PostMoreActions from '@/components/posts/PostMoreActions.vue';
 
 const route = useRoute();
 const hash = computed(() =>
-  typeof route.params.hash === 'string' ? route.params.hash : '',
+    typeof route.params.hash === 'string' ? route.params.hash : '',
 );
 const postHash = computed(() =>
-  typeof route.params.postHash === 'string' && route.params.postHash.length ? route.params.postHash : null,
+    typeof route.params.postHash === 'string' && route.params.postHash.length ? route.params.postHash : null,
 );
 const { data: post, isLoading, isError, error } = usePost({
-  hash, postHash,
+    hash, postHash,
 });
 const wallet = useWallet();
 const repliesQuery = useReplies({ hash });
@@ -39,28 +39,28 @@ const isBalanceInputValid = ref(false);
 const photonValue = ref(1);
 
 const { createReply,
-  txError } = useCreateReply();
+    txError } = useCreateReply();
 
 const isBroadcasting = computed(() => {
-  return wallet.isBroadcasting.value;
+    return wallet.isBroadcasting.value;
 });
 const canReply = computed(() => {
-  return isBalanceInputValid.value && reply.value.length > 0;
+    return isBalanceInputValid.value && reply.value.length > 0;
 });
 function capChars(event: { target: HTMLTextAreaElement }) {
-  if (event.target.value.length > MAX_CHARS) {
-    event.target.value = event.target.value.substring(0, MAX_CHARS);
-  }
+    if (event.target.value.length > MAX_CHARS) {
+        event.target.value = event.target.value.substring(0, MAX_CHARS);
+    }
 }
 function handleInputValidity(value: boolean) {
-  isBalanceInputValid.value = value;
+    isBalanceInputValid.value = value;
 }
 async function handleReply() {
-  if (!canReply.value || !post.value) {
-    return;
-  }
-  await createReply({ parentPost: post, message: reply.value, photonValue: photonValue.value });
-  reply.value = '';
+    if (!canReply.value || !post.value) {
+        return;
+    }
+    await createReply({ parentPost: post, message: reply.value, photonValue: photonValue.value });
+    reply.value = '';
 }
 </script>
 
