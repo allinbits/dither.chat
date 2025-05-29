@@ -7,6 +7,8 @@ import { feed } from './useFeed';
 import { userPosts } from './useUserPosts';
 import { useWallet } from './useWallet';
 
+import { buildNewInfiniteData, buildNewPost } from '@/utility/optimisticBuilders';
+
 interface CreatePostRequestMutation {
     message: string;
     photonValue: number;
@@ -18,25 +20,6 @@ export function useCreatePost(
     const wallet = useWallet();
     const txError = ref<string>();
     const txSuccess = ref<string>();
-    const buildNewPost = (message: string, photonValue: number, hash: string): Post => ({
-        hash: hash.toLowerCase(),
-        post_hash: null,
-        author: wallet.address.value,
-        timestamp: new Date(),
-        message,
-        quantity: photonValue,
-        replies: 0,
-        likes: 0,
-        dislikes: 0,
-        flags: null,
-        likes_burnt: null,
-        dislikes_burnt: null,
-        flags_burnt: null,
-        removed_hash: null,
-        removed_at: null,
-        removed_by: null,
-    });
-
     const {
         mutateAsync,
     } = useMutation({
@@ -75,32 +58,11 @@ export function useCreatePost(
             const feedOpts = feed();
             const userPostsOpts = userPosts({ userAddress: wallet.address });
 
-            const optimisticNewPost = buildNewPost(variables.message, variables.photonValue, hash);
+            // Created Post
+            const optimisticNewPost: Post = buildNewPost({ message: variables.message, quantity: variables.photonValue, hash, author: wallet.address.value, postHash: null });
 
-            // Build new feed
-            const newFeedPages = context.previousFeed?.pages ? [...context.previousFeed.pages] : [];
-            if (newFeedPages.length > 0) {
-                newFeedPages[0] = [optimisticNewPost, ...newFeedPages[0]];
-            }
-            else {
-                newFeedPages.push([optimisticNewPost]);
-            }
-            const newFeedData: InfiniteData<Post[], unknown> = {
-                pages: newFeedPages,
-                pageParams: context.previousFeed?.pageParams ?? [0],
-            };
-            // Build new user's posts
-            const newUserPostsPages = context.previousUserPosts?.pages ? [...context.previousUserPosts.pages] : [];
-            if (newUserPostsPages.length > 0) {
-                newUserPostsPages[0] = [optimisticNewPost, ...newUserPostsPages[0]];
-            }
-            else {
-                newUserPostsPages.push([optimisticNewPost]);
-            }
-            const newUserPostsData: InfiniteData<Post[], unknown> = {
-                pages: newUserPostsPages,
-                pageParams: context.previousUserPosts?.pageParams ?? [0],
-            };
+            const newFeedData = buildNewInfiniteData<Post>({ previousItems: context.previousFeed, newItem: optimisticNewPost });
+            const newUserPostsData = buildNewInfiniteData<Post>({ previousItems: context.previousUserPosts, newItem: optimisticNewPost });
 
             queryClient.setQueryData(feedOpts.queryKey, newFeedData);
             queryClient.setQueryData(userPostsOpts.queryKey, newUserPostsData);

@@ -8,6 +8,7 @@ import { useUserReplies } from '@/composables/useUserReplies';
 import { useWallet } from '@/composables/useWallet';
 
 import PostsList from '@/components/posts/PostsList.vue';
+import RepliesGroupsList from '@/components/posts/RepliesGroupsList.vue';
 import Button from '@/components/ui/button/Button.vue';
 import Tab from '@/components/ui/tabs/Tab.vue';
 import TabsContainer from '@/components/ui/tabs/TabsContainer.vue';
@@ -67,7 +68,6 @@ const repliesQuery = useUserReplies({ userAddress: address });
     </div>
 
     <PostsList v-if="state.activeTab === POSTS_TAB" :query="postsQuery"/>
-    <PostsList v-if="state.activeTab === REPLIES_TAB" :query="repliesQuery"/>
-
+    <RepliesGroupsList v-if="state.activeTab === REPLIES_TAB" :query="repliesQuery"/>
   </MainLayout>
 </template>

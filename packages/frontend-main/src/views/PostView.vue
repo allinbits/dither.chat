@@ -58,7 +58,7 @@ async function handleReply() {
     if (!canReply.value || !post.value) {
         return;
     }
-    await createReply({ hash, postHash, message: reply.value, photonValue: photonValue.value });
+    await createReply({ parentPost: post, message: reply.value, photonValue: photonValue.value });
     reply.value = '';
 }
 </script>

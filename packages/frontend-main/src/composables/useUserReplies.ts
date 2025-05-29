@@ -1,4 +1,4 @@
-import type { Post } from 'api-main/types/feed';
+import type { ReplyWithParent } from 'api-main/types/feed';
 
 import { type Ref } from 'vue';
 import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/vue-query';
@@ -15,7 +15,7 @@ export const userReplies = (params: Params) =>
         queryKey: ['user-replies', params.userAddress],
         queryFn: async ({ pageParam = 0 }) => {
             const res = await fetch(`${apiRoot}/user-replies?address=${params.userAddress.value}&offset=${pageParam}&limit=${LIMIT}`);
-            const json = await res.json() as { status: number; rows: Post[] };
+            const json = await res.json() as { status: number; rows: ReplyWithParent[] };
             return json.rows ?? [];
         },
         initialPageParam: 0,
