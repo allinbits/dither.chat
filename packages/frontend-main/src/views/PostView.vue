@@ -58,7 +58,7 @@ async function handleReply() {
     if (!canReply.value || !post.value) {
         return;
     }
-    await createReply({ hash, postHash, message: reply.value, photonValue: photonValue.value });
+    await createReply({ parentPost: post, message: reply.value, photonValue: photonValue.value });
     reply.value = '';
 }
 </script>
@@ -70,9 +70,14 @@ async function handleReply() {
       <span v-else-if="isError && error" class="text-center text-red-500">{{ error.message }}</span>
     </div>
 
-    <div v-if="post" class="flex flex-col p-4 w-full ">
-      <UserAvatarUsername :userAddress="post.author" class="mb-2" />
-      <PostMessage :post="post" />
+    <div v-if="post" class="flex flex-col p-4 w-full">
+      <RouterLink :to="`/profile/${post.author}`">
+        <div class="flex flex-row gap-3">
+          <UserAvatarUsername :userAddress="post.author" />
+          <PrettyTimestamp :timestamp="new Date(post.timestamp)" />
+        </div>
+      </RouterLink>
+      <PostMessage :post="post" class="mt-2"/>
       <PrettyTimestamp :timestamp="new Date(post.timestamp)" :isFullDate="true" class="flex mt-4" />
 
       <div class="py-2 mt-4 border-y">
