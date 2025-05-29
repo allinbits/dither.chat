@@ -5,6 +5,7 @@ import { useClipboard } from '@vueuse/core';
 import { Ellipsis, Link2 } from 'lucide-vue-next';
 
 import Button from '../ui/button/Button.vue';
+import Icon from '../ui/icon/Icon.vue';
 
 import Popover from '@/components/ui/popover/Popover.vue';
 import PopoverContent from '@/components/ui/popover/PopoverContent.vue';
@@ -33,6 +34,21 @@ const buttonLabelClass = 'text-sm font-semibold';
         </div>
         <span v-if="copied" class="text-xs font-normal">{{ $t('feedbacks.copied') }}</span>
       </Button>
+
+      <Button @click="() => { }" size="sm" :class="buttonClass" variant="ghost">
+        <div class="flex flex-row items-center gap-2">
+          <Icon icon="mintscan" :size="1.25" />
+          <span :class="buttonLabelClass">{{ $t('components.Button.mintscan') }}</span>
+        </div>
+      </Button>
+
+      <Button @click="() => { }" size="sm" :class="buttonClass" variant="ghost">
+        <div class="flex flex-row items-center gap-2">
+          <Icon icon="pingpub" :size="1.25" />
+          <span :class="buttonLabelClass">{{ $t('components.Button.pingpub') }}</span>
+        </div>
+      </Button>
+
     </PopoverContent>
   </Popover>
 </template>
