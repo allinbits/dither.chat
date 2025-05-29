@@ -1,7 +1,7 @@
 import { Gets, Posts } from '@atomone/dither-api-types';
 import { cors } from '@elysiajs/cors';
 import node from '@elysiajs/node';
-import { Elysia } from 'elysia';
+import { Elysia, t } from 'elysia';
 
 import * as GetRequests from './gets/index';
 import * as PostRequests from './posts/index';
@@ -26,6 +26,7 @@ function startReadOnlyServer() {
     app.get('/search', ({ query }) => GetRequests.Search(query), { query: Gets.SearchQuery });
     app.get('/user-replies', ({ query }) => GetRequests.UserReplies(query), { query: Gets.UserRepliesQuery });
     app.get('/following-posts', ({ query }) => GetRequests.FollowingPosts(query), { query: Gets.PostsQuery });
+    app.get('/last-block', GetRequests.LastBlock);
 
     app.post('/auth', ({ body }) => PostRequests.Auth(body), { body: Posts.AuthBody });
     app.post('/auth-create', ({ body }) => PostRequests.AuthCreate(body), { body: Posts.AuthCreateBody });
@@ -55,6 +56,8 @@ function startWriteOnlyServer() {
     app.post('/dislike', ({ body }) => PostRequests.Dislike(body), { body: Posts.DislikeBody });
     app.post('/flag', ({ body }) => PostRequests.Flag(body), { body: Posts.FlagBody });
     app.post('/post-remove', ({ body }) => PostRequests.PostRemove(body), { body: Posts.PostRemoveBody });
+    app.post('/update-state', ({ body }) => PostRequests.UpdateState(body), { body: t.Object({ last_block: t.String() }) });
+    app.get('/last-block', GetRequests.LastBlock);
 
     // Protected route group
     app.group('', group =>

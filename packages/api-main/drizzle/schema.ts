@@ -128,4 +128,9 @@ export const NotificationTable = pgTable(
     ],
 );
 
-export const tables = ['feed', 'likes', 'dislikes', 'flags', 'follows', 'audits', 'moderators', 'notifications'];
+export const ReaderState = pgTable('state', {
+    id: serial().primaryKey(),
+    last_block: varchar().notNull(),
+});
+
+export const tables = ['feed', 'likes', 'dislikes', 'flags', 'follows', 'audits', 'moderators', 'notifications', 'state'];
