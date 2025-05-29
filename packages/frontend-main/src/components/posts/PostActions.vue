@@ -7,6 +7,7 @@ import { type PopupState, usePopups } from '@/composables/usePopups';
 import { useWallet } from '@/composables/useWallet';
 
 import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
+import { formatCompactNumber } from '@/utility/text';
 
 defineProps<{ post: Post }>();
 
@@ -34,15 +35,15 @@ function handleAction(type: keyof PopupState, post: Post) {
   <div class="flex flex-row items-center justify-between">
     <button :class="buttonClass" @click.stop="handleAction('reply', post)">
       <MessageCircle class="size-5" color="#A2A2A9" />
-      <span :class="buttonLabelClass">{{ post.replies }}</span>
+      <span :class="buttonLabelClass">{{ formatCompactNumber(post.replies) }}</span>
     </button>
     <button :class="buttonClass" @click.stop="handleAction('like', post)">
       <ThumbsUp class="size-5" color="#A2A2A9" />
-      <span :class="buttonLabelClass">{{ post.likes }}</span>
+      <span :class="buttonLabelClass">{{ formatCompactNumber(post.likes) }}</span>
     </button>
     <button :class="buttonClass" @click.stop="handleAction('dislike', post)">
       <ThumbsDown class="size-5 scale-x-[-1]" color="#A2A2A9" />
-      <span :class="buttonLabelClass">{{ post.dislikes }}</span>
+      <span :class="buttonLabelClass">{{ formatCompactNumber(post.dislikes) }}</span>
     </button>
     <button :class="buttonClass" @click.stop="handleAction('flag', post)">
       <Flag class="size-5" color="#A2A2A9" />
