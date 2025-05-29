@@ -8,16 +8,14 @@ const { verify } = useUserAuth();
 
 export async function Auth(body: typeof Posts.AuthBody.static, auth: Cookie<string | undefined>) {
     try {
-        console.log(body);
-
         if (Object.hasOwn(body, 'json')) {
             return verify(body.pub_key.value, body.signature, body.id);
         }
 
         const result = verify(body.pub_key.value, body.signature, body.id);
         if (result.status === 200) {
-            auth.cookie.httpOnly = true;
-            auth.sameSite = 'strict';
+            auth.set({ sameSite: 'strict', httpOnly: false, value: result.bearer });
+            return { status: 200 };
         }
     }
     catch (err) {

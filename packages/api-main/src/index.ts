@@ -32,7 +32,7 @@ function startReadOnlyServer() {
         id: t.Number(),
         pub_key: t.Object({ type: t.String(), value: t.String() }),
         signature: t.String(),
-        json: t.Boolean(),
+        json: t.Optional(t.Boolean()),
     }) });
     app.post('/auth-create', ({ body }) => PostRequests.AuthCreate(body), { body: Posts.AuthCreateBody });
     // Protected route group

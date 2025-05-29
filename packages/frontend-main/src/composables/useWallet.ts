@@ -158,6 +158,21 @@ const useWalletInstance = () => {
                 break;
         }
 
+        if (walletState.address.value) {
+            const apiRoot = import.meta.env.VITE_API_ROOT ?? 'http://localhost:3000';
+            const headers: Record<string, string> = {
+                'Content-Type': 'application/json',
+            };
+            const postBody = {
+                address: walletState.address.value,
+            };
+
+            const responseRaw = await fetch(apiRoot + '/auth-create', { body: JSON.stringify(postBody), method: 'POST', headers });
+            const response = await responseRaw.json() as { status: number; id: number; message: string };
+            const signedMsg = await signMessage(response.message);
+            await fetch(apiRoot + '/auth', { body: JSON.stringify({ ...signedMsg, id: response.id }), method: 'POST', headers, credentials: 'include' });
+        }
+
         walletDialogStore.hideDialog();
     };
 
@@ -238,15 +253,15 @@ const useWalletInstance = () => {
         }
 
         if (walletState.used.value === Wallets.keplr) {
-            return window.keplr?.signArbitrary(chainInfo.rpc, walletState.address.value, text);
+            return window.keplr?.signArbitrary(chainInfo.chainId, walletState.address.value, text);
         }
 
         if (walletState.used.value === Wallets.cosmostation) {
-            return window.cosmostation.providers.keplr.signArbitrary(chainInfo.rpc, walletState.address.value, text);
+            return window.cosmostation.providers.keplr.signArbitrary(chainInfo.chainId, walletState.address.value, text);
         }
 
         if (walletState.used.value === Wallets.leap) {
-            return window.leap?.signArbitrary(chainInfo.rpc, walletState.address.value, text);
+            return window.leap?.signArbitrary(chainInfo.chainId, walletState.address.value, text);
         }
 
         throw new Error(`No valid wallet connected to sign messages.`);
