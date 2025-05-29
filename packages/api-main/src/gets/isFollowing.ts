@@ -12,8 +12,6 @@ const statementIsFollowing = getDatabase()
     .prepare('stmnt_is_following');
 
 export async function IsFollowing(query: typeof Gets.IsFollowingQuery.static) {
-    console.log(query);
-
     try {
         const results = await statementIsFollowing.execute({ following: query.following, follower: query.follower });
         if (results.length <= 0) {
