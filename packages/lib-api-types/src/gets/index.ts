@@ -94,3 +94,9 @@ export const SearchQuery = t.Object({
     text: t.String(),
     minQuantity: t.Optional(t.BigInt()),
 });
+
+export type IsFollowingQuery = { follower: string; following: string };
+export const IsFollowingQuery = t.Object({
+    follower: t.String(),
+    following: t.String(),
+});
