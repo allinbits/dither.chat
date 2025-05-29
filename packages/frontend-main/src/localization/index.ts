@@ -65,6 +65,12 @@ export const messages = {
                 noResults: 'No results found',
                 failedToSearch: 'Failed to search',
             },
+            PostsList: {
+                empty: 'There is no post yet',
+            },
+            RepliesGroupsList: {
+                empty: 'There is no reply yet',
+            },
         },
         feedbacks: {
             copied: 'Copied to clipboard',
