@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 import { Bell, Feather, House, User } from 'lucide-vue-next';
 
 import { usePopups } from '@/composables/usePopups';
@@ -10,24 +9,23 @@ import WalletConnect from '@/components/wallet/WalletConnect.vue';
 
 const wallet = useWallet();
 const popups = usePopups();
-
 </script>
 
 <template>
   <!-- TODO: Adjust style, buttons, etc -->
   <header class="flex flex-col justify-between h-full w-full py-6 pl-6 pr-4">
     <div class="flex flex-col justify-between gap-3 xl:gap-22 w-full xl:items-start items-end">
-
-      <span class="hidden xl:inline  text-2xl font-semibold">Dither</span>
+      <span class="hidden xl:inline text-2xl font-semibold hover:underline">
+        <RouterLink to="/">Dither</RouterLink></span
+      >
+      <RouterLink to="/" class="flex flex-row items-center gap-3">
+        <div class="flex items-center justify-center h-[52px]">
+          <House class="size-7" />
+        </div>
+        <span class="hidden xl:inline text-lg font-semibold">Home</span>
+      </RouterLink>
 
       <nav v-if="wallet.loggedIn.value" class="contents xl:flex flex-col gap-3">
-        <RouterLink to="/" class="flex flex-row items-center gap-3">
-          <div class="flex items-center justify-center h-[52px]">
-            <House class="size-7" />
-          </div>
-          <span class="hidden xl:inline text-lg font-semibold">Home</span>
-        </RouterLink>
-
         <RouterLink to="/notifications" class="flex flex-row items-center gap-3">
           <div class="flex items-center justify-center h-[52px]">
             <Bell class="size-7" />
