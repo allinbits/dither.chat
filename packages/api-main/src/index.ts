@@ -27,6 +27,7 @@ function startReadOnlyServer() {
     app.get('/user-replies', ({ query }) => GetRequests.UserReplies(query), { query: Gets.UserRepliesQuery });
     app.get('/following-posts', ({ query }) => GetRequests.FollowingPosts(query), { query: Gets.PostsQuery });
     app.get('/last-block', GetRequests.LastBlock);
+    app.get('/auth-verify', ({ cookie: { auth } }) => GetRequests.AuthVerify(auth));
 
     app.post('/auth', ({ body, cookie: { auth } }) => PostRequests.Auth(body, auth), { body: t.Object({
         id: t.Number(),

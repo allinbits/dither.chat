@@ -777,9 +777,12 @@ describe('v1/auth', async () => {
             json: true,
         };
 
-        const responseVerify = (await post(`auth`, verifyBody, 'READ')) as { status: 200; bearer: string };
-        assert.isOk(responseVerify?.status === 200, 'response was not verified and confirmed okay');
-        assert.isOk(responseVerify.bearer.length >= 1, 'bearer was not passed back');
+        const responseVerifyCreated = (await post(`auth`, verifyBody, 'READ')) as { status: 200; bearer: string };
+        assert.isOk(responseVerifyCreated?.status === 200, 'response was not verified and confirmed okay');
+        assert.isOk(responseVerifyCreated.bearer.length >= 1, 'bearer was not passed back');
+
+        const responseVerify = await get('auth-verify', 'READ', responseVerifyCreated.bearer) as { status: number };
+        assert.isOk(responseVerify.status === 200, 'could not verify through auth-verify endpoint, invalid cookie?');
     });
 });
 
