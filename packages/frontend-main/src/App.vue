@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { nextTick, onMounted } from 'vue';
 
+import NotificationToast from './components/notifications/NotificationToast.vue';
 import DislikePostDialog from './components/popups/DislikePostDialog.vue';
 import FlagPostDialog from './components/popups/FlagPostDialog.vue';
 import LikePostDialog from './components/popups/LikePostDialog.vue';
@@ -32,6 +33,7 @@ onMounted(() => {
   <LikePostDialog />
   <DislikePostDialog />
   <NewPostDialog />
-  <ReplyDialog/>
-  <FlagPostDialog/>
+  <ReplyDialog />
+  <FlagPostDialog />
+  <NotificationToast />
 </template>

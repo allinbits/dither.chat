@@ -4,6 +4,7 @@ import { computed, ref } from 'vue';
 import { useMediaQuery } from '@vueuse/core';
 import { Wallet } from 'lucide-vue-next';
 
+import { useToast } from '@/composables/useToast';
 import { useWallet } from '@/composables/useWallet';
 
 import UserAvatar from '../users/UserAvatar.vue';
@@ -24,6 +25,7 @@ const isError = ref(false);
 
 const { signOut, address, loggedIn } = useWallet();
 const walletDialogStore = useWalletDialogStore();
+const { showToast } = useToast();
 
 const connectedState = computed(() => !isConnecting.value && loggedIn.value && !isError.value);
 
@@ -60,6 +62,10 @@ const connectedState = computed(() => !isConnecting.value && loggedIn.value && !
       <button @click="walletDialogStore.showDialog"  class="flex items-center justify-center flex-row xl:hidden h-[52px]">
         <Wallet class="size-7" />
       </button>
+
+      <Button @click="showToast('Test', 'Test')" class="w-[207px] xl:inline hidden">
+        Test
+      </Button>
     </template>
   </div>
 </template>
