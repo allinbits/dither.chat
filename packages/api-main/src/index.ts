@@ -16,6 +16,7 @@ function startReadOnlyServer() {
     app.get('/dislikes', ({ query }) => GetRequests.Dislikes(query), { query: Gets.DislikesQuery });
     app.get('/feed', ({ query }) => GetRequests.Feed(query), { query: Gets.FeedQuery });
     app.get('/flags', ({ query }) => GetRequests.Flags(query), { query: Gets.FlagsQuery });
+    app.get('/is-following', ({ query }) => GetRequests.IsFollowing(query), { query: Gets.IsFollowingQuery });
     app.get('/followers', ({ query }) => GetRequests.Followers(query), { query: Gets.FollowersQuery });
     app.get('/following', ({ query }) => GetRequests.Following(query), { query: Gets.FollowingQuery });
     app.get('/health', GetRequests.health);
