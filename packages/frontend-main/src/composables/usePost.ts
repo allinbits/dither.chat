@@ -1,4 +1,4 @@
-import { computed, type Ref } from 'vue';
+import { type Ref } from 'vue';
 import { queryOptions, useQuery } from '@tanstack/vue-query';
 import { postSchema } from 'api-main/types/feed';
 
@@ -13,7 +13,7 @@ interface Params {
 
 export const post = (params: Params) =>
     queryOptions({
-        queryKey: computed(() => ['post', params.hash.value, params.postHash.value]),
+        queryKey: ['post', params.hash, params.postHash],
         queryFn: async () => {
             let url = `${apiRoot}/post?hash=${params.hash.value}`;
             if (params.postHash.value) {
@@ -42,7 +42,7 @@ export const post = (params: Params) =>
 
             return checkedData;
         },
-        enabled: computed(() => !!params.hash.value),
+        enabled: () => !!params.hash.value,
         retry: false,
     });
 

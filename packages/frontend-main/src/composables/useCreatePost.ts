@@ -4,7 +4,10 @@ import { ref } from 'vue';
 import { type InfiniteData, useMutation, useQueryClient } from '@tanstack/vue-query';
 
 import { feed } from './useFeed';
+import { userPosts } from './useUserPosts';
 import { useWallet } from './useWallet';
+
+import { buildNewInfiniteData, buildNewPost } from '@/utility/optimisticBuilders';
 
 interface CreatePostRequestMutation {
     message: string;
@@ -17,25 +20,6 @@ export function useCreatePost(
     const wallet = useWallet();
     const txError = ref<string>();
     const txSuccess = ref<string>();
-    const buildNewPost = (message: string, photonValue: number, hash: string): Post => ({
-        hash: hash.toLowerCase(),
-        post_hash: null,
-        author: wallet.address.value,
-        timestamp: new Date(),
-        message,
-        quantity: photonValue,
-        replies: 0,
-        likes: 0,
-        dislikes: 0,
-        flags: null,
-        likes_burnt: null,
-        dislikes_burnt: null,
-        flags_burnt: null,
-        removed_hash: null,
-        removed_at: null,
-        removed_by: null,
-    });
-
     const {
         mutateAsync,
     } = useMutation({
@@ -53,36 +37,41 @@ export function useCreatePost(
         },
         onMutate: async () => {
             const feedOpts = feed();
-            await queryClient.cancelQueries(feedOpts);
+            const userPostsOpts = userPosts({ userAddress: wallet.address });
+            await Promise.all([
+                queryClient.cancelQueries(feedOpts),
+                queryClient.cancelQueries(userPostsOpts),
+            ]);
 
             const previousFeed = queryClient.getQueryData(
                 feedOpts.queryKey,
             ) as InfiniteData<Post[], unknown> | undefined;
+            const previousUserPosts = queryClient.getQueryData(
+                userPostsOpts.queryKey,
+            ) as InfiniteData<Post[], unknown> | undefined;
 
-            return { previousFeed };
+            return { previousFeed, previousUserPosts };
         },
         onSuccess: (hash, variables, context) => {
             if (!hash) throw new Error('Error: No hash in TX');
 
             const feedOpts = feed();
-            const optimisticNewPost = buildNewPost(variables.message, variables.photonValue, hash);
-            const newPages = context.previousFeed?.pages ? [...context.previousFeed.pages] : [];
-            if (newPages.length > 0) {
-                newPages[0] = [optimisticNewPost, ...newPages[0]];
-            }
-            else {
-                newPages.push([optimisticNewPost]);
-            }
-            const newFeedData: InfiniteData<Post[], unknown> = {
-                pages: newPages,
-                pageParams: context.previousFeed?.pageParams ?? [0],
-            };
+            const userPostsOpts = userPosts({ userAddress: wallet.address });
+
+            // Created Post
+            const optimisticNewPost: Post = buildNewPost({ message: variables.message, quantity: variables.photonValue, hash, author: wallet.address.value, postHash: null });
+
+            const newFeedData = buildNewInfiniteData<Post>({ previousItems: context.previousFeed, newItem: optimisticNewPost });
+            const newUserPostsData = buildNewInfiniteData<Post>({ previousItems: context.previousUserPosts, newItem: optimisticNewPost });
 
             queryClient.setQueryData(feedOpts.queryKey, newFeedData);
+            queryClient.setQueryData(userPostsOpts.queryKey, newUserPostsData);
         },
         onError: (_, __, context) => {
             const feedOpts = feed();
+            const userPostsOpts = userPosts({ userAddress: wallet.address });
             queryClient.setQueryData(feedOpts.queryKey, context?.previousFeed);
+            queryClient.setQueryData(userPostsOpts.queryKey, context?.previousUserPosts);
         },
     });
 

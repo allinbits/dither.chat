@@ -39,6 +39,8 @@ export const messages = {
                 reply: 'Reply',
                 mintscan: 'See on Mintscan',
                 pingpub: 'See on Ping.pub',
+                follow: 'Follow',
+                unfollow: 'Unfollow',
             },
             PopupTitles: {
                 likePost: 'Like Post',
@@ -50,10 +52,24 @@ export const messages = {
             Tabs: {
                 feed: 'Global Feed',
                 following: 'Following',
+                posts: 'Posts',
+                myPosts: 'My Posts',
+                replies: 'Replies',
+                myReplies: 'My Replies',
+            },
+            Titles: {
+                profile: 'Profile',
+                myProfile: 'My Profile',
             },
             SearchInput: {
                 noResults: 'No results found',
                 failedToSearch: 'Failed to search',
+            },
+            PostsList: {
+                empty: 'User has not made any posts',
+            },
+            RepliesGroupsList: {
+                empty: 'User has not made any replies',
             },
         },
         feedbacks: {
