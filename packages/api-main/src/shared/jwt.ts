@@ -4,13 +4,13 @@ import { secretKey } from './useUserAuth';
 
 export const verifyJWT = async (token: string | undefined) => {
     if (!token) {
-        return { status: 401, error: 'Unauthorized: No token' };
+        return undefined;
     }
 
     try {
         const tokenData = jwt.verify(token, secretKey) as { data: string; iat: number; exp: number };
         if (!tokenData) {
-            return { status: 401, error: 'Unauthorized: Invalid token' };
+            return undefined;
         }
 
         // token data is on the form Login,id,date,publicKey,nonce
@@ -20,6 +20,6 @@ export const verifyJWT = async (token: string | undefined) => {
     }
     catch (err) {
         console.error(err);
-        return { status: 401, error: 'Unauthorized: Invalid token' };
+        return undefined;
     }
 };

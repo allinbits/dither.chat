@@ -20,8 +20,8 @@ const statementAuditRemovePost = getDatabase()
 
 export async function ModRemovePost(body: typeof Posts.ModRemovePostBody.static, auth: Cookie<string | undefined>) {
     const response = await verifyJWT(auth.value);
-    if (typeof response !== 'string') {
-        return response;
+    if (typeof response === 'undefined') {
+        return { status: 401, error: 'Unauthorized token proivided' };
     }
 
     try {
@@ -80,8 +80,8 @@ const statementAuditRestorePost = getDatabase()
 
 export async function ModRestorePost(body: typeof Posts.ModRemovePostBody.static, auth: Cookie<string | undefined>) {
     const response = await verifyJWT(auth.value);
-    if (typeof response !== 'string') {
-        return response;
+    if (typeof response === 'undefined') {
+        return { status: 401, error: 'Unauthorized token proivided' };
     }
 
     try {
@@ -153,8 +153,8 @@ const statementAuditBanUser = getDatabase()
 
 export async function ModBan(body: typeof Posts.ModBanBody.static, auth: Cookie<string | undefined>) {
     const response = await verifyJWT(auth.value);
-    if (typeof response !== 'string') {
-        return response;
+    if (typeof response === 'undefined') {
+        return { status: 401, error: 'Unauthorized token proivided' };
     }
 
     try {
@@ -208,8 +208,8 @@ const statementAuditUnbanUser = getDatabase()
 
 export async function ModUnban(body: typeof Posts.ModBanBody.static, auth: Cookie<string | undefined>) {
     const response = await verifyJWT(auth.value);
-    if (typeof response !== 'string') {
-        return response;
+    if (typeof response === 'undefined') {
+        return { status: 401, error: 'Unauthorized token proivided' };
     }
 
     try {

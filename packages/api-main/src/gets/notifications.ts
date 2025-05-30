@@ -17,8 +17,8 @@ const getNotificationsStatement = getDatabase()
 
 export async function Notifications(query: typeof Gets.NotificationsQuery.static, auth: Cookie<string | undefined>) {
     const response = await verifyJWT(auth.value);
-    if (typeof response !== 'string') {
-        return response;
+    if (typeof response === 'undefined') {
+        return { status: 401, error: 'Unauthorized token proivided' };
     }
 
     let limit = typeof query.limit !== 'undefined' ? Number(query.limit) : 100;
@@ -58,8 +58,8 @@ const statementReadNotification = getDatabase()
 
 export async function ReadNotification(query: typeof Gets.ReadNotificationQuery.static, auth: Cookie<string | undefined>) {
     const response = await verifyJWT(auth.value);
-    if (typeof response !== 'string') {
-        return response;
+    if (typeof response === 'undefined') {
+        return { status: 401, error: 'Unauthorized token proivided' };
     }
 
     try {
