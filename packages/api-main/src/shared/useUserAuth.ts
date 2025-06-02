@@ -84,7 +84,7 @@ export function useUserAuth() {
      * @param {number} id
      * @return {*}
      */
-    const verify = (publicKey: string, signature: string, id: number) => {
+    const verifyAndCreate = (publicKey: string, signature: string, id: number) => {
         const publicAddress = getSignerAddressFromPublicKey(publicKey, 'atone');
         const requestIdentifier = publicAddress + id;
 
@@ -115,11 +115,11 @@ export function useUserAuth() {
             return { status: 401, error: 'request expired' };
         }
 
-        return { status: 200, bearer: jwt.sign({ data: originalMessage }, secretKey, { expiresIn: '1d' }) };
+        return { status: 200, bearer: jwt.sign({ data: originalMessage }, secretKey, { expiresIn: '3d' }) };
     };
 
     return {
         add,
-        verify,
+        verifyAndCreate,
     };
 }
