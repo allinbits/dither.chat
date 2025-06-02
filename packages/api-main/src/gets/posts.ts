@@ -45,7 +45,7 @@ export async function Posts(query: typeof Gets.PostsQuery.static) {
 }
 
 const followingPostsStatement = getDatabase()
-    .select(FeedTable)
+    .select()
     .from(FeedTable)
     .innerJoin(FollowsTable, eq(FeedTable.author, FollowsTable.following))
     .where(and(
