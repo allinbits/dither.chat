@@ -48,8 +48,8 @@ importers:
         specifier: ^2.2.1
         version: 2.2.2
       '@atomone/dither-api-types':
-        specifier: ^1.4.0
-        version: 1.4.0(@sinclair/typebox@0.34.33)(openapi-types@12.1.3)(typescript@5.8.3)
+        specifier: ^1.5.0
+        version: 1.5.0(@sinclair/typebox@0.34.33)(openapi-types@12.1.3)(typescript@5.8.3)
       '@cosmjs/crypto':
         specifier: ^0.33.1
         version: 0.33.1
@@ -283,6 +283,9 @@ packages:
 
   '@atomone/dither-api-types@1.4.0':
     resolution: {integrity: sha512-Oj+gjKSzhRTxTJ54lg/d/lIRIAGAibkzDtu2Gd4259RlYFMosgGoN89VO9K0adhPjAo7CYJFduNT5MtEpmsx0w==}
+
+  '@atomone/dither-api-types@1.5.0':
+    resolution: {integrity: sha512-dzZclELKGksQTNjGO0/bJhC5QJg/UPjjj9j8dZWCZwiCN+71VtCV55K3HvSPiXuWdUjRdVfPnU4Dh+AGLh6oxg==}
 
   '@babel/helper-string-parser@7.27.1':
     resolution: {integrity: sha512-qMlSxKbpRlAridDExk92nSobyDdpPijUq2DW6oDnUqd0iOGxmQjyqhMIihI9+zv4LPyZdRje2cavWPbCbWm3eA==}
@@ -3831,6 +3834,14 @@ snapshots:
   '@atomone/chronostate@2.2.2': {}
 
   '@atomone/dither-api-types@1.4.0(@sinclair/typebox@0.34.33)(openapi-types@12.1.3)(typescript@5.8.3)':
+    dependencies:
+      elysia: 1.2.25(@sinclair/typebox@0.34.33)(openapi-types@12.1.3)(typescript@5.8.3)
+    transitivePeerDependencies:
+      - '@sinclair/typebox'
+      - openapi-types
+      - typescript
+
+  '@atomone/dither-api-types@1.5.0(@sinclair/typebox@0.34.33)(openapi-types@12.1.3)(typescript@5.8.3)':
     dependencies:
       elysia: 1.2.25(@sinclair/typebox@0.34.33)(openapi-types@12.1.3)(typescript@5.8.3)
     transitivePeerDependencies:

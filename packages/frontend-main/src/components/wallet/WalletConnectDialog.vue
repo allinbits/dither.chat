@@ -16,10 +16,7 @@ import ConnectButton from './ConnectButton.vue';
 
 import chainConfig from '@/chain-config.json';
 import { Button } from '@/components/ui/button';
-import {
-    Dialog,
-    DialogContent,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
 import { shorten } from '@/utility/text';
 
@@ -126,7 +123,6 @@ const isValidAddress = computed(() => {
         return false;
     }
 });
-
 </script>
 <template>
   <Dialog v-model:open="walletDialogStore.isOpen">
@@ -170,18 +166,22 @@ const isValidAddress = computed(() => {
           <div class="flex flex-col text-grey-100 text-200 font-medium text-center leading-5">
             {{ $t('components.WalletConnect.enterAddress') }}
           </div>
-          <input v-model="publicAddress"
-                 class="flex p-4 items-center self-stretch rounded-lg bg-grey-200 outline-none text-100 leading-4 placeholder-grey-100"
-                 :placeholder="$t('components.WalletConnect.addressPlaceholder')" />
+          <input
+            v-model="publicAddress"
+            class="flex p-4 items-center self-stretch rounded-lg bg-grey-200 outline-none text-100 leading-4 placeholder-grey-100"
+            :placeholder="$t('components.WalletConnect.addressPlaceholder')"
+          />
           <div class="flex flex-col gap-4">
-            <ConnectButton v-if="isValidAddress" class="justify-center link-gradient"
-                           @click="connectWallet(Wallets.addressOnly, publicAddress)">
+            <ConnectButton
+              v-if="isValidAddress"
+              class="justify-center link-gradient"
+              @click="connectWallet(Wallets.addressOnly, publicAddress)"
+            >
               {{ $t('components.WalletConnect.ctaAddress') }}
             </ConnectButton>
-            <ConnectButton class="justify-center" @click="
-              isAddressOnlyConnection = false;
-            ">
-              {{ $t('components.WalletConnect.cancel') }}</ConnectButton>
+            <ConnectButton class="justify-center" @click="isAddressOnlyConnection = false">
+              {{ $t('components.WalletConnect.cancel') }}</ConnectButton
+            >
           </div>
           <span class="text-grey-100 text-100 text-center leading-4">
             {{ $t('components.WalletConnect.publicAddressDisclaimer') }}
@@ -218,10 +218,9 @@ const isValidAddress = computed(() => {
               <UserBalance :address="address" /> {{ chainConfig.stakeCurrency.coinDenom }}
             </div>
             <div class="buttons">
-              <ConnectButton class="my-4 justify-center" @click="
-                signOut();
-              ">
-                {{ $t('components.WalletConnect.disconnect') }}</ConnectButton>
+              <ConnectButton class="my-4 justify-center" @click="signOut()">
+                {{ $t('components.WalletConnect.disconnect') }}</ConnectButton
+              >
             </div>
           </div>
         </div>
@@ -235,18 +234,23 @@ const isValidAddress = computed(() => {
           </div>
           <div class="text-muted-foreground text-lg">{{ $t('components.WalletConnect.wait') }}</div>
           <div class="buttons">
-            <ConnectButton @click="
-              () => {
-                cancelConnect();
-              }
-            ">
-              {{ $t('components.WalletConnect.cancel') }}</ConnectButton>
+            <ConnectButton
+              @click="
+                () => {
+                  cancelConnect();
+                }
+              "
+            >
+              {{ $t('components.WalletConnect.cancel') }}</ConnectButton
+            >
           </div>
 
           <div v-if="isSlowConnecting">
-            <a :href="getWalletHelp(chosenWallet)" target="_blank"
-               class="text-100 flex my-2 justify-center items-center">{{ chosenWallet }} {{
-                 $t('components.WalletConnect.trouble') }}
+            <a
+              :href="getWalletHelp(chosenWallet)"
+              target="_blank"
+              class="text-100 flex my-2 justify-center items-center"
+            >{{ chosenWallet }} {{ $t('components.WalletConnect.trouble') }}
               <Icon icon="link" class="ml-2" />
             </a>
           </div>
@@ -263,24 +267,34 @@ const isValidAddress = computed(() => {
             {{ $t('components.WalletConnect.failedSub') }}
           </div>
           <div class="buttons">
-            <ConnectButton class="my-4 justify-center" @click="
-              () => {
-                connectWallet(chosenWallet);
-              }
-            ">
-              {{ $t('components.WalletConnect.retry') }}</ConnectButton>
-            <ConnectButton class="my-4 justify-center" @click="
-              () => {
-                cancelConnect();
-              }
-            ">
-              {{ $t('ui.actions.done') }}</ConnectButton>
+            <ConnectButton
+              class="my-4 justify-center"
+              @click="
+                () => {
+                  connectWallet(chosenWallet);
+                }
+              "
+            >
+              {{ $t('components.WalletConnect.retry') }}</ConnectButton
+            >
+            <ConnectButton
+              class="my-4 justify-center"
+              @click="
+                () => {
+                  cancelConnect();
+                }
+              "
+            >
+              {{ $t('ui.actions.done') }}</ConnectButton
+            >
           </div>
 
           <div>
-            <a :href="getWalletHelp(chosenWallet)" target="_blank"
-               class="text-100 flex my-2 justify-center items-center">{{ chosenWallet }} {{
-                 $t('components.WalletConnect.trouble') }}
+            <a
+              :href="getWalletHelp(chosenWallet)"
+              target="_blank"
+              class="text-100 flex my-2 justify-center items-center"
+            >{{ chosenWallet }} {{ $t('components.WalletConnect.trouble') }}
               <Icon icon="link" class="ml-2" />
             </a>
           </div>

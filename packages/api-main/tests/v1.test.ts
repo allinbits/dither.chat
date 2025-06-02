@@ -13,6 +13,7 @@ import { createWallet, get, getAtomOneAddress, getRandomHash, post, signADR36Doc
 describe('v1', { sequential: true }, () => {
     const addressUserA = getAtomOneAddress();
     const addressUserB = getAtomOneAddress();
+    const addressUserC = getAtomOneAddress();
     const genericPostMessage
         = 'hello world, this is a really intereresting post $@!($)@!()@!$21,4214,12,42142,14,12,421,';
 
@@ -241,6 +242,19 @@ describe('v1', { sequential: true }, () => {
         assert.isOk(response?.status === 200, 'response was not okay');
     });
 
+    it('GET - /is-following', async () => {
+        let response = await get<{ status: number; rows: { hash: string; address: string }[] }>(
+            `is-following?follower=${addressUserA}&following=${addressUserB}`,
+        );
+
+        assert.isOk(response?.status === 200, 'follower was not found, should have follower');
+        response = await get<{ status: number; rows: { hash: string; address: string }[] }>(
+            `is-following?follower=${addressUserA}&following=${addressUserC}`,
+        );
+
+        assert.isOk(response?.status === 404, 'follower was found when follower should not be following anyone');
+    });
+
     it('POST - /follow - no duplicates', async () => {
         const body: typeof Posts.FollowBody.static = {
             hash: getRandomHash(),
@@ -430,9 +444,10 @@ describe('v1 - mod', { sequential: true }, () => {
         assert.isOk(response?.status === 200, 'response was not okay');
 
         const signData = await signADR36Document(walletA.mnemonic, response.message);
-        const verifyBody: typeof Posts.AuthBody.static = {
+        const verifyBody: typeof Posts.AuthBody.static & { json?: boolean } = {
             id: response.id,
             ...signData.signature,
+            json: true,
         };
 
         const responseVerify = (await post(`auth`, verifyBody, 'READ')) as { status: 200; bearer: string };
@@ -770,9 +785,10 @@ describe('v1/auth', async () => {
         assert.isOk(response?.status === 200, 'response was not okay');
 
         const signData = await signADR36Document(walletA.mnemonic, response.message);
-        const verifyBody: typeof Posts.AuthBody.static = {
+        const verifyBody: typeof Posts.AuthBody.static & { json?: boolean } = {
             id: response.id,
             ...signData.signature,
+            json: true,
         };
 
         const responseVerify = (await post(`auth`, verifyBody, 'READ')) as { status: 200; bearer: string };
