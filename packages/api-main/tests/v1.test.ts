@@ -998,6 +998,7 @@ describe('get post from followed', async () => {
                 deleted_at: Date;
                 deleted_reason: string;
                 deleted_hash: string;
+                quantity: string;
             }[];
         }>(`following-posts?address=${walletA.publicKey}`, 'READ');
         assert.isOk(readResponse?.status === 200, `response was not okay, got ${readResponse?.status}`);
@@ -1054,10 +1055,14 @@ describe('get post from followed', async () => {
                 deleted_at: Date;
                 deleted_reason: string;
                 deleted_hash: string;
+                quantity: string;
             }[];
         }>(`following-posts?address=${walletA.publicKey}`, 'READ');
         assert.isOk(readResponse?.status === 200, `response was not okay, got ${readResponse?.status}`);
         assert.lengthOf(readResponse.rows, 1);
+        assert.isOk(readResponse.rows[0].author, 'Author was not included');
+        assert.isOk(readResponse.rows[0].message, 'message was not included');
+        assert.isOk(readResponse.rows[0].quantity, 'quantity was not included');
     });
 });
 
