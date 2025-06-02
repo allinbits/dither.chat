@@ -12,9 +12,9 @@ interface Params {
 
 export const followingPosts = (params: Params) =>
     infiniteQueryOptions({
-        queryKey: ['posts', params.userAddress],
+        queryKey: ['following-posts', params.userAddress],
         queryFn: async ({ pageParam = 0 }) => {
-            const res = await fetch(`${apiRoot}/following-posts?address=${params.userAddress}&offset=${pageParam}&limit=${LIMIT}`);
+            const res = await fetch(`${apiRoot}/following-posts?address=${params.userAddress.value}&offset=${pageParam}&limit=${LIMIT}`);
             const json = await res.json() as { status: number; rows: Post[] };
             return json.rows ?? [];
         },
@@ -23,7 +23,8 @@ export const followingPosts = (params: Params) =>
             if (lastPage.length < LIMIT) return undefined;
             return allPages.length * LIMIT;
         },
-        enabled: () => !!params.userAddress,
+        enabled: () => !!params.userAddress.value,
+        retry: false,
     });
 
 export function useFollowingPosts(params: Params) {

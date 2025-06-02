@@ -1,14 +1,17 @@
 import type { FollowUser } from 'api-main/types/follows';
 
-import { ref } from 'vue';
+import { type Ref, ref } from 'vue';
 import { type InfiniteData, useMutation, useQueryClient } from '@tanstack/vue-query';
 
 import { following } from './useFollowing';
 import { followingPosts } from './useFollowingPosts';
+import { isFollowing } from './useIsFollowing';
 import { useWallet } from './useWallet';
 
+import { buildNewInfiniteData } from '@/utility/optimisticBuilders';
+
 interface FollowUserRequestMutation {
-    userAddress: string;
+    userAddress: Ref<string>;
     photonValue: number;
 }
 
@@ -22,19 +25,23 @@ export function useFollowUser(
         mutateAsync,
     } = useMutation({
         mutationFn: async ({ userAddress, photonValue }: FollowUserRequestMutation) => {
-            const result = await wallet.dither.follow(userAddress, BigInt(photonValue).toString());
+            const result = await wallet.dither.follow(userAddress.value, BigInt(photonValue).toString());
             if (!result.broadcast) {
                 txError.value = result.msg;
                 throw new Error(result.msg);
             }
             txSuccess.value = result.tx?.transactionHash;
         },
-        onMutate: async () => {
+        onMutate: async (variables) => {
             const followingOpts = following({ userAddress: wallet.address });
             const followingPostsOpts = followingPosts({ userAddress: wallet.address });
+            const isFollowingOpts = isFollowing({ followerAddress: wallet.address, followingAddress: variables.userAddress });
 
-            await queryClient.cancelQueries(followingOpts);
-            await queryClient.cancelQueries(followingPostsOpts);
+            await Promise.all([
+                queryClient.cancelQueries(followingOpts),
+                queryClient.cancelQueries(followingPostsOpts),
+                queryClient.cancelQueries(isFollowingOpts),
+            ]);
 
             const previousFollowing = queryClient.getQueryData(
                 followingOpts.queryKey,
@@ -45,37 +52,54 @@ export function useFollowUser(
             //     followingOpts.queryKey,
             // ) as InfiniteData<Post[], unknown> | undefined;
 
-            return { previousFollowing,
+            const previousIsFollowing = queryClient.getQueryData(
+                isFollowingOpts.queryKey,
+            ) as boolean | undefined;
+
+            return {
+                previousFollowing,
                 // , previousFollowingPosts
+                previousIsFollowing,
             };
         },
         onSuccess: (_, variables, context) => {
             const followingOpts = following({ userAddress: wallet.address });
-            const optimisticNewFollowUser: FollowUser = { address: variables.userAddress };
+            const isFollowingOpts = isFollowing({ followerAddress: wallet.address, followingAddress: variables.userAddress });
 
-            const newPages = context.previousFollowing?.pages ? [...context.previousFollowing.pages] : [];
-            if (newPages.length > 0) {
-                newPages[0] = [optimisticNewFollowUser, ...newPages[0]];
-            }
-            else {
-                newPages.push([optimisticNewFollowUser]);
-            }
-            const newFollowingData: InfiniteData<FollowUser[], unknown> = {
-                pages: newPages,
-                pageParams: context.previousFollowing?.pageParams ?? [0],
-            };
+            const optimisticNewFollowUser: FollowUser = { address: variables.userAddress.value };
+
+            // const newPages = context.previousFollowing?.pages ? [...context.previousFollowing.pages] : [];
+            // if (newPages.length > 0) {
+            //     newPages[0] = [optimisticNewFollowUser, ...newPages[0]];
+            // }
+            // else {
+            //     newPages.push([optimisticNewFollowUser]);
+            // }
+            const newFollowingData = buildNewInfiniteData<FollowUser>({ previousItems: context.previousFollowing, newItem: optimisticNewFollowUser });
+
+            // const newFollowingData: InfiniteData<FollowUser[], unknown> = {
+            //     pages: newPages,
+            //     pageParams: context.previousFollowing?.pageParams ?? [0],
+            // };
 
             // const followingPostsOpts = followingPosts({ userAddress: wallet.address});
             queryClient.setQueryData(followingOpts.queryKey, newFollowingData);
 
             // TODO: Handle following posts?
             // queryClient.setQueryData(repliesOpts.queryKey, newFollowingPostsData);
+
+            queryClient.setQueryData(isFollowingOpts.queryKey, true);
         },
-        onError: (_, __, context) => {
+        onError: (_, variables, context) => {
             const followingOpts = following({ userAddress: wallet.address });
+            const isFollowingOpts = isFollowing({ followerAddress: wallet.address, followingAddress: variables.userAddress });
+
             queryClient.setQueryData(followingOpts.queryKey, context?.previousFollowing);
             // queryClient.setQueryData(followingPostsOpts.queryKey, context?.previousFollowingPosts);
+
+            queryClient.setQueryData(isFollowingOpts.queryKey, context?.previousIsFollowing);
         },
+        retry: false,
     });
 
     return {

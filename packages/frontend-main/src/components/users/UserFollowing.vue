@@ -37,17 +37,19 @@ function handleAction(type: keyof PopupState, userAddress: string) {
 </script>
 
 <template>
-  <div class="flex flex-col w-full px-4 pb-10 pt-4">
+  <div class="flex flex-col w-full">
     <Loader v-if="isLoading" class="animate-spin w-full mt-10" />
 
     <span v-else-if="!flatFollowUsers.length" class="self-center text-md font-semibold text-base">{{
       $t('components.FollowingList.empty') }}</span>
 
     <!-- Following users -->
-    <div v-else class="flex flex-col gap-4">
+    <div v-else class="flex flex-col gap-4 px-4 pt-4 pb-6">
       <div v-for="(followUser, index) in flatFollowUsers" :key="index"
            class="flex flex-row items-center justify-between">
-        <UserAvatarUsername :userAddress="followUser.address" />
+        <RouterLink :to="`/profile/${followUser.address}`">
+          <UserAvatarUsername :userAddress="followUser.address" />
+        </RouterLink>
         <Button @click="handleAction('unfollow', followUser.address)" size="sm" class="w-[160px]">{{
           $t('components.Button.unfollow') }}</Button>
       </div>
@@ -62,6 +64,6 @@ function handleAction(type: keyof PopupState, userAddress: string) {
     </div>
 
     <!-- Posts of following users -->
-    <PostsList :query="postsQuery" :hideEmptyText="true"/>
+    <PostsList :query="postsQuery" hideEmptyText />
   </div>
 </template>

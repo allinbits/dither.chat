@@ -14,7 +14,7 @@ export const following = (params: Params) =>
     infiniteQueryOptions({
         queryKey: ['posts', params.userAddress],
         queryFn: async ({ pageParam = 0 }) => {
-            const res = await fetch(`${apiRoot}/following?address=${params.userAddress}&offset=${pageParam}&limit=${LIMIT}`);
+            const res = await fetch(`${apiRoot}/following?address=${params.userAddress.value}&offset=${pageParam}&limit=${LIMIT}`);
             const json = await res.json() as { status: number; rows: FollowUser[] };
             return json.rows ?? [];
         },
@@ -23,7 +23,8 @@ export const following = (params: Params) =>
             if (lastPage.length < LIMIT) return undefined;
             return allPages.length * LIMIT;
         },
-        enabled: () => !!params.userAddress,
+        enabled: () => !!params.userAddress.value,
+        retry: false,
     });
 
 export function useFollowing(params: Params) {

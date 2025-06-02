@@ -4,6 +4,7 @@ import type { Post } from 'api-main/types/feed';
 interface BuildNewPostParams {
     message: string; hash: string; postHash: string | null; author: string; quantity: number;
 }
+// Returns a new Post, used for display
 export const buildNewPost = ({ message, hash, postHash, author, quantity }: BuildNewPostParams): Post => ({
     hash: hash.toLowerCase(),
     post_hash: postHash ? postHash.toLocaleLowerCase() : null,
@@ -27,6 +28,7 @@ interface BuildNewInfiniteDataParams<T> {
     previousItems: InfiniteData<T[], unknown> | undefined;
     newItem: T;
 }
+// Returns an InfiniteData with pages and pageParams after adding a new item to previous items, used for display
 export function buildNewInfiniteData<T>({ previousItems, newItem }: BuildNewInfiniteDataParams<T>) {
     const newPages = previousItems?.pages ? [...previousItems.pages] : [];
     if (newPages.length > 0) {

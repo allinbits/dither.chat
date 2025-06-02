@@ -82,7 +82,7 @@ async function handleReply() {
         <PostMoreActions :post="post" />
       </div>
       <PostMessage :post="post" class="mt-2" />
-      <PrettyTimestamp :timestamp="new Date(post.timestamp)" :isFullDate="true" class="flex mt-4" />
+      <PrettyTimestamp :timestamp="new Date(post.timestamp)" isFullDate class="flex mt-4" />
 
       <div class="py-2 mt-4 border-y">
         <PostActions :post="post" class="px-2" />
@@ -113,6 +113,6 @@ async function handleReply() {
     </div>
 
     <!-- Replies posts list -->
-    <PostsList :query="repliesQuery" />
+    <PostsList :query="repliesQuery" hideEmptyText/>
   </MainLayout>
 </template>
