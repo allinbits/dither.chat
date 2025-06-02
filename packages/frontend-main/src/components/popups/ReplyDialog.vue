@@ -1,10 +1,12 @@
 <script lang="ts" setup>
-import { computed, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { Loader } from 'lucide-vue-next';
 
 import { useBalanceFetcher } from '@/composables/useBalanceFetcher';
 import { useCreateReply } from '@/composables/useCreateReply';
 import { usePopups } from '@/composables/usePopups';
+import { useToast } from '@/composables/useToast';
+import { useTxNotification } from '@/composables/useTxNotification';
 import { useWallet } from '@/composables/useWallet';
 
 import PostMessage from '@/components/posts/PostMessage.vue';
@@ -19,6 +21,7 @@ import Username from '@/components/users/Username.vue';
 const popups = usePopups();
 const wallet = useWallet();
 const balanceFetcher = useBalanceFetcher();
+const { toastState, showToast } = useToast();
 
 const photonValue = ref(1);
 const isBalanceInputValid = ref(false);
@@ -46,6 +49,8 @@ async function handleSumbit() {
     if (!canSubmit.value || !popups.state.reply) {
         return;
     }
+    handleClose();
+    showToast('info', 'Processing', 'Replying to post...');
     await createReply({ parentPost: ref(popups.state.reply), message: message.value, photonValue: photonValue.value });
     message.value = '';
 }
@@ -72,11 +77,15 @@ watch([wallet.loggedIn, wallet.address], async () => {
     balanceFetcher.updateAddress(wallet.address.value);
 });
 
+onMounted(() => {
+    useTxNotification(txSuccess, txError);
+});
+
 </script>
 
 <template>
   <div>
-    <Dialog :open="popups.state.reply !== null" @update:open="handleClose" v-if="popups.state.reply !== null">
+    <Dialog :open="popups.state.reply !== null && !toastState.open" @update:open="handleClose" v-if="popups.state.reply !== null && !toastState.open">
       <DialogContent>
         <DialogTitle>{{ $t('components.PopupTitles.reply') }}</DialogTitle>
 

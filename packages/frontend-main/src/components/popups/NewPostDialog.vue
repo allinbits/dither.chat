@@ -1,10 +1,12 @@
 <script lang="ts" setup>
-import { computed, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { Loader } from 'lucide-vue-next';
 
 import { useBalanceFetcher } from '@/composables/useBalanceFetcher';
 import { useCreatePost } from '@/composables/useCreatePost';
 import { usePopups } from '@/composables/usePopups';
+import { useToast } from '@/composables/useToast';
+import { useTxNotification } from '@/composables/useTxNotification';
 import { useWallet } from '@/composables/useWallet';
 
 import
@@ -31,6 +33,7 @@ const MAX_CHARS = 512 - 'dither.Post("")'.length;
 const { createPost,
     txError,
     txSuccess } = useCreatePost();
+const { toastState, showToast } = useToast();
 
 const isBroadcasting = computed(() => {
     return wallet.isBroadcasting.value;
@@ -69,14 +72,20 @@ async function handleSumbit() {
     if (!canSubmit.value) {
         return;
     }
+    handleClose();
+    showToast('info', 'Processing', 'Creating post...');
     await createPost({ message: message.value, photonValue: photonValue.value });
     message.value = '';
 }
+
+onMounted(() => {
+    useTxNotification(txSuccess, txError);
+});
 </script>
 
 <template>
   <div>
-    <Dialog :open="popups.state.newPost !== null" @update:open="handleClose" v-if="popups.state.newPost !== null">
+    <Dialog :open="popups.state.newPost !== null && !toastState.open" @update:open="handleClose" v-if="popups.state.newPost !== null && !toastState.open">
       <DialogContent>
         <DialogTitle>{{ $t('components.PopupTitles.newPost') }}</DialogTitle>
 

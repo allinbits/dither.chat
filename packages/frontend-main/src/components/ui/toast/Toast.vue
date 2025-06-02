@@ -1,25 +1,30 @@
 <script setup lang="ts">
 import type { ToastRootEmits, ToastRootProps } from 'reka-ui';
 
-import { onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { ToastProvider, ToastRoot, ToastViewport, useForwardPropsEmits } from 'reka-ui';
 
-const DEFAULT_DURATION = 2_000;
+import { useToast } from '@/composables/useToast';
 
-const props = withDefaults(defineProps<ToastRootProps & { duration?: number }>(), {
-    duration: DEFAULT_DURATION,
-});
+const props = defineProps<ToastRootProps>();
 const emits = defineEmits<ToastRootEmits>();
 
 const forwarded = useForwardPropsEmits(props, emits);
+
+const { toastState } = useToast();
 
 const progress = ref(100);
 let startTime = 0;
 let frame: number | null = null;
 
 function animate() {
+    // if duration is 0, the toast will stay open until hideToast is called
+    if (props.duration === 0) {
+        return;
+    }
+
     const elapsed = Date.now() - startTime;
-    progress.value = Math.max(0, 100 - (elapsed / props.duration) * 100);
+    progress.value = Math.max(0, 100 - (elapsed / (props.duration ?? 0)) * 100);
     if (progress.value > 0) {
         frame = requestAnimationFrame(animate);
     }
@@ -39,6 +44,18 @@ onMounted(() => {
 onBeforeUnmount(() => {
     if (frame) cancelAnimationFrame(frame);
 });
+
+const typeClass = computed(() => {
+    switch (toastState.type) {
+        case 'success':
+            return 'bg-green-50 text-green-900 border-green-200';
+        case 'error':
+            return 'bg-red-50 text-red-900 border-red-200';
+        case 'info':
+        default:
+            return 'bg-white text-gray-900 border-gray-200';
+    }
+});
 </script>
 
 <template>
@@ -46,7 +63,14 @@ onBeforeUnmount(() => {
     <ToastRoot
       data-slot="toast"
       v-bind="forwarded"
-      class="bg-white rounded-lg shadow-lg border p-4 flex flex-col gap-2 relative min-w-0 max-w-full data-[state=open]:animate-slideIn data-[state=closed]:animate-hide data-[swipe=move]:translate-x-[var(--reka-toast-swipe-move-x)] data-[swipe=cancel]:translate-x-0 data-[swipe=cancel]:transition-[transform_200ms_ease-out] data-[swipe=end]:animate-swipeOut"
+      :class="[
+        'rounded-lg shadow-lg p-4 flex flex-col gap-2 relative min-w-0 max-w-full',
+        'data-[state=open]:animate-slideIn data-[state=closed]:animate-hide',
+        'data-[swipe=move]:translate-x-[var(--reka-toast-swipe-move-x)]',
+        'data-[swipe=cancel]:translate-x-0 data-[swipe=cancel]:transition-[transform_200ms_ease-out]',
+        'data-[swipe=end]:animate-swipeOut',
+        typeClass
+      ]"
     >
       <!-- Close Icon -->
       <button
@@ -66,8 +90,8 @@ onBeforeUnmount(() => {
       </div>
 
       <!-- Progress Bar -->
-      <div
-        class="absolute left-0 bottom-0 h-1 w-full bg-gray-200 overflow-hidden rounded-b-lg"
+      <div v-if="props.duration && props.duration > 0"
+           class="absolute left-0 bottom-0 h-1 w-full bg-gray-200 overflow-hidden rounded-b-lg"
       >
         <div
           class="h-full bg-primary transition-all duration-100 linear"
