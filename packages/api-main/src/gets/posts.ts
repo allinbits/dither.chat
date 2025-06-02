@@ -1,5 +1,5 @@
 import { type Gets } from '@atomone/dither-api-types';
-import { and, desc, eq, gte, isNull, sql } from 'drizzle-orm';
+import { and, desc, eq, gte, inArray, isNull, sql } from 'drizzle-orm';
 
 import { getDatabase } from '../../drizzle/db';
 import { FeedTable, FollowsTable } from '../../drizzle/schema';
@@ -45,14 +45,18 @@ export async function Posts(query: typeof Gets.PostsQuery.static) {
 }
 
 const followingPostsStatement = getDatabase()
-    .select(FeedTable)
+    .select()
     .from(FeedTable)
-    .innerJoin(FollowsTable, eq(FeedTable.author, FollowsTable.following))
     .where(and(
-        eq(FollowsTable.follower, sql.placeholder('address')),
+        inArray(FeedTable.author,
+            getDatabase()
+                .select({ following: FollowsTable.following })
+                .from(FollowsTable)
+                .where(eq(FollowsTable.follower, sql.placeholder('address'))),
+        ),
         isNull(FeedTable.post_hash),
         gte(FeedTable.quantity, sql.placeholder('minQuantity')),
-    )) // Only get posts not replies
+    ))
     .orderBy(desc(FeedTable.timestamp))
     .limit(sql.placeholder('limit'))
     .offset(sql.placeholder('offset'))
