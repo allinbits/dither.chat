@@ -32,7 +32,7 @@ const imageUrl = computed(() => {
     <span class="leading-6 text-sm break-all">
       {{ post.message }}
     </span>
-    <div v-if="hasImage" class="flex flex-col border p-4 gap-3">
+    <div v-if="hasImage" class="flex flex-col border p-4 gap-3 cursor-default" @click.stop="() => {}" >
       <Button class="w-full" @click.stop="isEmbedToggled = true" v-if="!isEmbedToggled">
         {{ $t('components.Button.show') }}
       </Button>
