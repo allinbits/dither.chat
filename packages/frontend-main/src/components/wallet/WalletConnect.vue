@@ -63,7 +63,7 @@ const connectedState = computed(() => !isConnecting.value && loggedIn.value && !
         <Wallet class="size-7" />
       </button>
 
-      <Button @click="showToast('Test', 'Test')" class="w-[207px] xl:inline hidden">
+      <Button @click="showToast('This is title', 'This is long long long description')" class="w-[207px] xl:inline hidden">
         Test
       </Button>
     </template>

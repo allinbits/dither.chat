@@ -1,4 +1,4 @@
-import { ref } from 'vue';
+import { nextTick, ref } from 'vue';
 
 const notifTitle = ref('');
 const notifDesc = ref('');
@@ -6,9 +6,14 @@ const open = ref(false);
 
 export const useToast = () => {
     const showToast = (title: string, desc: string) => {
-        notifTitle.value = title;
-        notifDesc.value = desc;
-        open.value = true;
+        // Hide all other toasts
+        hideToast();
+
+        nextTick(() => {
+            notifTitle.value = title;
+            notifDesc.value = desc;
+            open.value = true;
+        });
     };
 
     const hideToast = () => {

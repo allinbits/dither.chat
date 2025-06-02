@@ -13,7 +13,6 @@ const forwarded = useForwardProps(props);
   <ToastDescription
     data-slot="toast-description"
     v-bind="forwarded"
-    class="text-sm text-gray-500"
   >
     <slot />
   </ToastDescription>
