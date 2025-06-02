@@ -18,27 +18,32 @@ const popups = usePopups();
       <span class="hidden xl:inline text-2xl font-semibold hover:underline">
         <RouterLink to="/">Dither</RouterLink></span
       >
-      <RouterLink to="/" class="flex flex-row items-center gap-3">
-        <div class="flex items-center justify-center h-[52px]">
-          <House class="size-7" />
-        </div>
-        <span class="hidden xl:inline text-lg font-semibold">Home</span>
-      </RouterLink>
 
-      <nav v-if="wallet.loggedIn.value" class="contents xl:flex flex-col gap-3">
-        <RouterLink to="/notifications" class="flex flex-row items-center gap-3">
+      <nav class="contents xl:flex flex-col gap-3">
+        <RouterLink to="/" class="flex flex-row items-center gap-3 hover:underline">
           <div class="flex items-center justify-center h-[52px]">
-            <Bell class="size-7" />
+            <House class="size-6" />
           </div>
-          <span class="hidden xl:inline text-lg font-semibold">Notifications</span>
+          <span class="hidden xl:inline text-lg font-semibold">Home</span>
         </RouterLink>
+        <template v-if="wallet.loggedIn.value">
+          <RouterLink to="/notifications" class="flex flex-row items-center gap-3 hover:underline">
+            <div class="flex items-center justify-center h-[52px]">
+              <Bell class="size-6" />
+            </div>
+            <span class="hidden xl:inline text-lg font-semibold">Notifications</span>
+          </RouterLink>
 
-        <RouterLink :to="`/profile/${wallet.address.value}`" class="flex flex-row items-center gap-3">
-          <div class="flex items-center justify-center h-[52px]">
-            <User class="size-7" />
-          </div>
-          <span class="hidden xl:inline text-lg font-semibold">My Profile</span>
-        </RouterLink>
+          <RouterLink
+            :to="`/profile/${wallet.address.value}`"
+            class="flex flex-row items-center gap-3 hover:underline"
+          >
+            <div class="flex items-center justify-center h-[52px]">
+              <User class="size-6" />
+            </div>
+            <span class="hidden xl:inline text-lg font-semibold">My Profile</span>
+          </RouterLink>
+        </template>
       </nav>
 
       <Button class="w-[207px] xl:inline hidden" @click="popups.show('newPost', {})" v-if="wallet.loggedIn.value">
