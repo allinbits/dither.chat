@@ -32,7 +32,6 @@ const router = createRouter({
 });
 
 router.beforeEach((to, _, next) => {
-    // FIXME: should handle the auth state base on JWT instead wallet connected
     const walletState = useWalletStateStore();
 
     // If the route is auth required and the user is not authenticated, redirect to the unauthorized page
