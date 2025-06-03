@@ -791,9 +791,12 @@ describe('v1/auth', async () => {
             json: true,
         };
 
-        const responseVerify = (await post(`auth`, verifyBody, 'READ')) as { status: 200; bearer: string };
-        assert.isOk(responseVerify?.status === 200, 'response was not verified and confirmed okay');
-        assert.isOk(responseVerify.bearer.length >= 1, 'bearer was not passed back');
+        const responseVerifyCreated = (await post(`auth`, verifyBody, 'READ')) as { status: 200; bearer: string };
+        assert.isOk(responseVerifyCreated?.status === 200, 'response was not verified and confirmed okay');
+        assert.isOk(responseVerifyCreated.bearer.length >= 1, 'bearer was not passed back');
+
+        const responseVerify = await get('auth-verify', 'READ', responseVerifyCreated.bearer) as { status: number };
+        assert.isOk(responseVerify.status === 200, 'could not verify through auth-verify endpoint, invalid cookie?');
     });
 });
 
@@ -995,6 +998,7 @@ describe('get post from followed', async () => {
                 deleted_at: Date;
                 deleted_reason: string;
                 deleted_hash: string;
+                quantity: string;
             }[];
         }>(`following-posts?address=${walletA.publicKey}`, 'READ');
         assert.isOk(readResponse?.status === 200, `response was not okay, got ${readResponse?.status}`);
@@ -1051,10 +1055,14 @@ describe('get post from followed', async () => {
                 deleted_at: Date;
                 deleted_reason: string;
                 deleted_hash: string;
+                quantity: string;
             }[];
         }>(`following-posts?address=${walletA.publicKey}`, 'READ');
         assert.isOk(readResponse?.status === 200, `response was not okay, got ${readResponse?.status}`);
         assert.lengthOf(readResponse.rows, 1);
+        assert.isOk(readResponse.rows[0].author, 'Author was not included');
+        assert.isOk(readResponse.rows[0].message, 'message was not included');
+        assert.isOk(readResponse.rows[0].quantity, 'quantity was not included');
     });
 });
 

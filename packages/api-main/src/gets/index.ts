@@ -1,3 +1,4 @@
+export * from './authVerify';
 export * from './dislikes';
 export * from './feed';
 export * from './flags';

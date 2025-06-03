@@ -66,10 +66,10 @@ export const messages = {
                 failedToSearch: 'Failed to search',
             },
             PostsList: {
-                empty: 'User has not made any posts',
+                empty: 'No Posts Available',
             },
             RepliesGroupsList: {
-                empty: 'User has not made any replies',
+                empty: 'No Replies Available',
             },
         },
         feedbacks: {
