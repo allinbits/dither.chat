@@ -40,8 +40,8 @@ const photonValue = ref(1);
 const { createReply,
     txError } = useCreateReply();
 
-const isBroadcasting = computed(() => {
-    return wallet.isBroadcasting.value;
+const isProcessing = computed(() => {
+    return wallet.processState.value !== 'idle';
 });
 const canReply = computed(() => {
     return isBalanceInputValid.value && reply.value.length > 0;
@@ -85,12 +85,12 @@ async function handleReply() {
       </div>
 
       <!-- Broadcast Status -->
-      <div class="flex flex-col w-full gap-2 mt-4" v-if="isBroadcasting">
+      <div class="flex flex-col w-full gap-2 mt-4" v-if="isProcessing">
         {{  $t('components.Wallet.popupSign') }}
         <Loader class="animate-spin w-full"/>
       </div>
       <!-- Transaction Form -->
-      <template v-if="wallet.loggedIn.value && !isBroadcasting">
+      <template v-if="wallet.loggedIn.value && !isProcessing">
         <div class="flex flex-row item-center mt-4">
           <UserAvatar :userAddress="wallet.address.value" />
           <Textarea :placeholder="$t('placeholders.reply')" v-model="reply" @input="capChars" class="mt-1" />

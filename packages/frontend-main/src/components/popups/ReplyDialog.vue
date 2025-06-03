@@ -5,7 +5,6 @@ import { Loader } from 'lucide-vue-next';
 import { useBalanceFetcher } from '@/composables/useBalanceFetcher';
 import { useCreateReply } from '@/composables/useCreateReply';
 import { usePopups } from '@/composables/usePopups';
-import { useToast } from '@/composables/useToast';
 import { useTxNotification } from '@/composables/useTxNotification';
 import { useWallet } from '@/composables/useWallet';
 
@@ -21,7 +20,6 @@ import Username from '@/components/users/Username.vue';
 const popups = usePopups();
 const wallet = useWallet();
 const balanceFetcher = useBalanceFetcher();
-const { toastState, showToast } = useToast();
 
 const photonValue = ref(1);
 const isBalanceInputValid = ref(false);
@@ -30,12 +28,14 @@ const message = ref('');
 const POST_HASH_LEN = 64;
 const MAX_CHARS = 512 - ('dither.Reply("", "")'.length + POST_HASH_LEN);
 
-const { createReply,
-    txError,
-    txSuccess } = useCreateReply();
+const { createReply, txError, txSuccess } = useCreateReply();
+
+const isProcessing = computed(() => {
+    return wallet.processState.value !== 'idle';
+});
 
 const isBroadcasting = computed(() => {
-    return wallet.isBroadcasting.value;
+    return wallet.processState.value === 'broadcasting';
 });
 
 function handleClose() {
@@ -49,10 +49,9 @@ async function handleSumbit() {
     if (!canSubmit.value || !popups.state.reply) {
         return;
     }
-    handleClose();
-    showToast('info', 'Processing', 'Replying to post...');
     await createReply({ parentPost: ref(popups.state.reply), message: message.value, photonValue: photonValue.value });
     message.value = '';
+    handleClose();
 }
 
 function handleInputValidity(value: boolean) {
@@ -85,11 +84,11 @@ onMounted(() => {
 
 <template>
   <div>
-    <Dialog :open="popups.state.reply !== null && !toastState.open" @update:open="handleClose" v-if="popups.state.reply !== null && !toastState.open">
+    <Dialog :open="popups.state.reply !== null && !isBroadcasting" @update:open="handleClose" v-if="popups.state.reply !== null && !isBroadcasting">
       <DialogContent>
         <DialogTitle>{{ $t('components.PopupTitles.reply') }}</DialogTitle>
 
-        <div v-if="!isBroadcasting && !txSuccess" class="flex flex-row gap-3 border-b pb-3">
+        <div v-if="!isProcessing && !txSuccess" class="flex flex-row gap-3 border-b pb-3">
           <UserAvatar :userAddress="popups.state.reply.author" />
           <div class="flex flex-col w-full gap-3">
             <div class="flex flex-row gap-3 pt-2.5">
@@ -101,10 +100,10 @@ onMounted(() => {
         </div>
 
         <Textarea :placeholder="$t('placeholders.reply')" v-model="message" @input="capChars"
-                  v-if="!isBroadcasting && !txSuccess" />
+                  v-if="!isProcessing && !txSuccess" />
 
         <!-- Transaction Form -->
-        <div class="flex flex-col w-full gap-4" v-if="!isBroadcasting && !txSuccess">
+        <div class="flex flex-col w-full gap-4" v-if="!isProcessing && !txSuccess">
           <InputPhoton v-model="photonValue" @on-validity-change="handleInputValidity" />
           <span v-if="txError" class="text-red-500 text-left text-xs">{{ txError }}</span>
           <Button class="w-full" :disabled="!canSubmit" @click="handleSumbit">
@@ -112,12 +111,12 @@ onMounted(() => {
           </Button>
         </div>
         <!-- Broadcast Status -->
-        <div class="flex flex-col w-full gap-4" v-if="isBroadcasting && !txSuccess">
+        <div class="flex flex-col w-full gap-4" v-if="isProcessing && !txSuccess">
           {{ $t('components.Wallet.popupSign') }}
           <Loader class="animate-spin w-full" />
         </div>
         <!-- Success Status -->
-        <div class="flex flex-col w-full gap-4 overflow-hidden" v-if="!isBroadcasting && txSuccess">
+        <div class="flex flex-col w-full gap-4 overflow-hidden" v-if="!isProcessing && txSuccess">
           <span>{{ $t('components.Wallet.broadcastSuccess') }}</span>
           <span class="flex lowercase overflow-x-scroll py-2">{{ txSuccess }}</span>
           <Button class="w-full" @click="handleClose">
