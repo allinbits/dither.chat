@@ -1,13 +1,3 @@
-<template>
-  <div class="flex flex-col">
-    <label class="font-semibold text-sm mb-4">{{ $t('components.Filter.posts') }}</label>
-    <Slider :min="0" :max="100" :step="1" v-model="sliderValue" class="cursor-pointer"/>
-    <span class="text-sm  mt-2">
-      {{ $t('components.Filter.amount') + ': ' + formatCompactNumber(Math.trunc(displayValue)) }}
-    </span>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { computed } from 'vue';
 
@@ -38,5 +28,14 @@ function inverseExponentialScale(scaledValue: number) {
     const exponent = Math.log10(scaledValue);
     return (exponent / maxExponent) * 100;
 }
-
 </script>
+
+<template>
+  <div class="flex flex-col gap-4">
+    <label class="font-semibold text-sm">{{ $t('components.Filter.posts') }}</label>
+    <Slider :min="0" :max="100" :step="1" v-model="sliderValue" class="cursor-pointer"/>
+    <span class="text-sm">
+      {{ $t('components.Filter.amount') + ': ' + formatCompactNumber(Math.trunc(displayValue)) }}
+    </span>
+  </div>
+</template>
