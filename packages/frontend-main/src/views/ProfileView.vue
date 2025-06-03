@@ -47,12 +47,18 @@ const repliesQuery = useUserReplies({ userAddress: address });
       <div class="flex flex-row justify-between items-center">
         <UserAvatarUsername :userAddress="address" size="lg" />
         <template v-if="!isMyProfile && wallet.loggedIn.value">
-          <Button v-if="isFollowing" size="sm">
-            {{ $t('components.Button.unfollow') }}
-          </Button>
-          <Button v-else size="sm">
-            {{ $t('components.Button.follow') }}
-          </Button>
+          <div class="flex flex-row gap-2">
+            <Button size="sm">
+              {{ $t('components.Button.tip') }}
+            </Button>
+
+            <Button v-if="isFollowing" size="sm">
+              {{ $t('components.Button.unfollow') }}
+            </Button>
+            <Button v-else size="sm">
+              {{ $t('components.Button.follow') }}
+            </Button>
+          </div>
         </template>
 
       </div>
