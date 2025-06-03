@@ -8,6 +8,7 @@ import UserAvatar from '../users/UserAvatar.vue';
 import Username from '../users/Username.vue';
 
 import PostMessage from './PostMessage.vue';
+import PostMoreActions from './PostMoreActions.vue';
 
 defineProps<{ post: Post }>();
 
@@ -20,11 +21,14 @@ defineProps<{ post: Post }>();
         <UserAvatar :userAddress="post.author" />
       </RouterLink>
       <div class="flex flex-col w-full gap-3" @click="navigate">
-        <div class="flex flex-row gap-3 pt-2.5">
-          <RouterLink :to="`/profile/${post.author}`">
-            <Username :userAddress="post.author" />
-          </RouterLink>
-          <PrettyTimestamp :timestamp="new Date(post.timestamp)" />
+        <div class="flex flex-row justify-between items-center">
+          <div class="flex flex-row gap-3 pt-2.5">
+            <RouterLink :to="`/profile/${post.author}`">
+              <Username :userAddress="post.author" />
+            </RouterLink>
+            <PrettyTimestamp :timestamp="new Date(post.timestamp)" />
+          </div>
+          <PostMoreActions :post="post" />
         </div>
         <PostMessage :post="post" />
         <PostActions :post="post" />

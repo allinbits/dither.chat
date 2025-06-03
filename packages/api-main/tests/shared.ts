@@ -12,8 +12,9 @@ export async function get<T>(endpoint: string, port: 'WRITE' | 'READ' = 'READ', 
     const headers: Record<string, string> = {
         'Content-Type': 'application/json',
     };
+
     if (token) {
-        headers['authorization'] = `Bearer ${token}`;
+        headers['Cookie'] = `auth=${token}`;
     }
 
     const response = await fetch(`http://localhost:${port === 'WRITE' ? 3001 : 3000}/v1/${endpoint}`, {
@@ -43,8 +44,9 @@ export async function post<T = { status: number }>(
     };
 
     if (token) {
-        headers['authorization'] = `Bearer ${token}`;
+        headers['Cookie'] = `auth=${token}`;
     }
+
     const response = await fetch(`http://localhost:${port === 'WRITE' ? 3001 : 3000}/v1/${endpoint}`, {
         method: 'POST',
         headers,
@@ -133,9 +135,10 @@ export async function userLogin(wallet: { mnemonic: string; publicKey: string })
     }
 
     const signData = await signADR36Document(wallet.mnemonic, response.message);
-    const verifyBody: typeof Posts.AuthBody.static = {
+    const verifyBody: typeof Posts.AuthBody.static & { json: boolean } = {
         id: response.id,
         ...signData.signature,
+        json: true,
     };
 
     const responseVerify = (await post(`auth`, verifyBody, 'READ')) as { status: 200; bearer: string };

@@ -1,15 +1,17 @@
-import type { Post } from 'api-main/types/feed';
+import type { Post, ReplyWithParent } from 'api-main/types/feed';
 
 import { type Ref, ref } from 'vue';
 import { type InfiniteData, useMutation, useQueryClient } from '@tanstack/vue-query';
 
 import { post } from './usePost';
 import { replies } from './useReplies';
+import { userReplies } from './useUserReplies';
 import { useWallet } from './useWallet';
 
+import { buildNewInfiniteData, buildNewPost } from '@/utility/optimisticBuilders';
+
 interface CreateReplyRequestMutation {
-    hash: Ref<string>;
-    postHash: Ref<string | null>;
+    parentPost: Ref<Post>;
     message: string;
     photonValue: number;
 }
@@ -20,31 +22,12 @@ export function useCreateReply(
     const wallet = useWallet();
     const txError = ref<string>();
     const txSuccess = ref<string>();
-    const buildNewPost = (message: string, photonValue: number, hash: string): Post => ({
-        hash: hash.toLowerCase(),
-        post_hash: null,
-        author: wallet.address.value,
-        timestamp: new Date(),
-        message,
-        quantity: photonValue,
-        replies: 0,
-        likes: 0,
-        dislikes: 0,
-        flags: null,
-        likes_burnt: null,
-        dislikes_burnt: null,
-        flags_burnt: null,
-        removed_hash: null,
-        removed_at: null,
-        removed_by: null,
-    });
-
     const {
         mutateAsync,
     } = useMutation({
-        mutationFn: async ({ hash, message, photonValue }: CreateReplyRequestMutation) => {
+        mutationFn: async ({ parentPost, message, photonValue }: CreateReplyRequestMutation) => {
             const result = await wallet.dither.reply(
-                hash.value,
+                parentPost.value.hash,
                 message,
                 BigInt(photonValue).toString(),
             );
@@ -59,51 +42,65 @@ export function useCreateReply(
             }
         },
         onMutate: async (variables) => {
-            const postOpts = post({ hash: variables.hash, postHash: variables.postHash });
-            const repliesOpts = replies({ hash: variables.hash });
+            const parentPostOpts = post({ hash: ref(variables.parentPost.value.hash), postHash: ref(variables.parentPost.value.post_hash) });
+            const repliesOpts = replies({ hash: ref(variables.parentPost.value.hash) });
+            const userRepliesOpts = userReplies({ userAddress: wallet.address });
 
-            await queryClient.cancelQueries(postOpts);
-            await queryClient.cancelQueries(repliesOpts);
+            await Promise.all([
+                queryClient.cancelQueries(parentPostOpts),
+                queryClient.cancelQueries(repliesOpts),
+                queryClient.cancelQueries(userRepliesOpts),
+            ]);
 
-            const previousPost = queryClient.getQueryData(
-                postOpts.queryKey,
+            const previousParentPost = queryClient.getQueryData(
+                parentPostOpts.queryKey,
             ) as Post | undefined;
             const previousReplies = queryClient.getQueryData(
                 repliesOpts.queryKey,
             ) as InfiniteData<Post[], unknown> | undefined;
+            const previousUserReplies = queryClient.getQueryData(
+                userRepliesOpts.queryKey,
+            ) as InfiniteData<ReplyWithParent[], unknown> | undefined;
 
-            return { previousReplies, previousPost };
+            return { previousParentPost, previousReplies, previousUserReplies };
         },
-        onSuccess: (hash, variables, context) => {
-            if (!hash) throw new Error('Error: No hash in TX');
+        onSuccess: (createdHash, variables, context) => {
+            if (!createdHash) throw new Error('Error: No hash in TX');
 
-            const postOpts = post({ hash: variables.hash, postHash: variables.postHash });
-            const repliesOpts = replies({ hash: variables.hash });
+            const parentPostOpts = post({ hash: ref(variables.parentPost.value.hash), postHash: ref(variables.parentPost.value.post_hash) });
+            const repliesOpts = replies({ hash: ref(variables.parentPost.value.hash) });
+            const userRepliesOpts = userReplies({ userAddress: wallet.address });
 
-            const optimisticNewPost = context.previousPost ? { ...context.previousPost, replies: (context.previousPost.replies || 0) + 1 } : undefined;
-            const optimisticNewReply = buildNewPost(variables.message, variables.photonValue, hash);
-
-            const newPages = context.previousReplies?.pages ? [...context.previousReplies.pages] : [];
-            if (newPages.length > 0) {
-                newPages[0] = [optimisticNewReply, ...newPages[0]];
-            }
-            else {
-                newPages.push([optimisticNewReply]);
-            }
-            const newRepliesData: InfiniteData<Post[], unknown> = {
-                pages: newPages,
-                pageParams: context.previousReplies?.pageParams ?? [0],
+            // Parent Post with updated replies count
+            const optimisticParentPost: Post
+                = context.previousParentPost
+                    ? { ...context.previousParentPost, replies: (context.previousParentPost.replies || 0) + 1 }
+                    : { ...variables.parentPost.value, replies: (variables.parentPost.value.replies || 0) + 1 };
+            // Created Post with parent hash as post_hash
+            const optimisticNewReply: Post = buildNewPost({ message: variables.message, quantity: variables.photonValue, hash: createdHash, postHash: variables.parentPost.value.hash, author: wallet.address.value });
+            // Created Post in ReplyWithParent
+            const optimisticNewUserReply: ReplyWithParent = {
+                reply: buildNewPost(
+                    { message: variables.message, quantity: variables.photonValue, hash: createdHash, postHash: variables.parentPost.value.hash, author: wallet.address.value },
+                ),
+                parent: optimisticParentPost,
             };
 
-            queryClient.setQueryData(postOpts.queryKey, optimisticNewPost);
+            const newRepliesData = buildNewInfiniteData<Post>({ previousItems: context.previousReplies, newItem: optimisticNewReply });
+            const newUserRepliesData = buildNewInfiniteData<ReplyWithParent>({ previousItems: context.previousUserReplies, newItem: optimisticNewUserReply });
+
+            queryClient.setQueryData(parentPostOpts.queryKey, optimisticParentPost);
             queryClient.setQueryData(repliesOpts.queryKey, newRepliesData);
+            queryClient.setQueryData(userRepliesOpts.queryKey, newUserRepliesData);
         },
         onError: (_, variables, context) => {
-            const postOpts = post({ hash: variables.hash, postHash: variables.postHash });
-            const repliesOpts = replies({ hash: variables.hash });
+            const parentPostOpts = post({ hash: ref(variables.parentPost.value.hash), postHash: ref(variables.parentPost.value.post_hash) });
+            const repliesOpts = replies({ hash: ref(variables.parentPost.value.hash) });
+            const userRepliesOpts = userReplies({ userAddress: wallet.address });
 
-            queryClient.setQueryData(postOpts.queryKey, context?.previousPost);
+            queryClient.setQueryData(parentPostOpts.queryKey, context?.previousParentPost);
             queryClient.setQueryData(repliesOpts.queryKey, context?.previousReplies);
+            queryClient.setQueryData(userRepliesOpts.queryKey, context?.previousUserReplies);
         },
     });
 

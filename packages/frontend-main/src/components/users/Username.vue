@@ -6,5 +6,5 @@ defineProps<{ userAddress?: string }>();
 </script>
 
 <template>
-  <span class='font-semibold'>{{ shorten(userAddress || '...............', 8, 4) }}</span>
+  <span class='font-semibold text-base'>{{ shorten(userAddress || '...............', 8, 4) }}</span>
 </template>
