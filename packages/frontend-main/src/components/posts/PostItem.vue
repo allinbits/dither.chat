@@ -10,6 +10,8 @@ import Username from '../users/Username.vue';
 import PostMessage from './PostMessage.vue';
 import PostMoreActions from './PostMoreActions.vue';
 
+import { formatAmount } from '@/utility/text';
+
 defineProps<{ post: Post }>();
 
 </script>
@@ -21,8 +23,8 @@ defineProps<{ post: Post }>();
         <UserAvatar :userAddress="post.author" />
       </RouterLink>
       <div class="flex flex-col w-full gap-3" @click="navigate">
-        <div class="flex flex-row justify-between items-center">
-          <div class="flex flex-row gap-3 pt-2.5">
+        <div class="flex flex-row justify-between items-center pt-2.5">
+          <div class="flex flex-row gap-3">
             <RouterLink :to="`/profile/${post.author}`">
               <Username :userAddress="post.author" />
             </RouterLink>
@@ -31,6 +33,7 @@ defineProps<{ post: Post }>();
           <PostMoreActions :post="post" />
         </div>
         <PostMessage :post="post" />
+        <span class="text-xs w-full text-right text-neutral-400">{{ formatAmount(post.quantity, 6) }} PHOTON</span>
         <PostActions :post="post" />
       </div>
     </div>
