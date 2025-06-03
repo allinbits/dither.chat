@@ -8,6 +8,7 @@ export type PopupState = {
     flag: Post | null;
     reply: Post | null;
     newPost: object | null;
+    tipUser: string | null;
 };
 
 const state = reactive<PopupState>({
@@ -16,6 +17,7 @@ const state = reactive<PopupState>({
     flag: null,
     reply: null,
     newPost: null,
+    tipUser: null,
 });
 
 export function usePopups() {

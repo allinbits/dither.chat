@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 
+import { usePopups } from '@/composables/usePopups';
 import { useTabs } from '@/composables/useTabs';
 import { useUserPosts } from '@/composables/useUserPosts';
 import { useUserReplies } from '@/composables/useUserReplies';
@@ -16,6 +17,7 @@ import UserAvatarUsername from '@/components/users/UserAvatarUsername.vue';
 import MainLayout from '@/layouts/MainLayout.vue';
 
 const wallet = useWallet();
+const popups = usePopups();
 
 const POSTS_TAB = 'post';
 const REPLIES_TAB = 'replies';
@@ -48,7 +50,7 @@ const repliesQuery = useUserReplies({ userAddress: address });
         <UserAvatarUsername :userAddress="address" size="lg" />
         <template v-if="!isMyProfile && wallet.loggedIn.value">
           <div class="flex flex-row gap-2">
-            <Button size="sm">
+            <Button size="sm" @click="popups.show('tipUser', address)">
               {{ $t('components.Button.tip') }}
             </Button>
 

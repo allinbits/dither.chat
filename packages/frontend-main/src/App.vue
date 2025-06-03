@@ -6,6 +6,7 @@ import FlagPostDialog from './components/popups/FlagPostDialog.vue';
 import LikePostDialog from './components/popups/LikePostDialog.vue';
 import NewPostDialog from './components/popups/NewPostDialog.vue';
 import ReplyDialog from './components/popups/ReplyDialog.vue';
+import TipUserDialog from './components/popups/TipUserDialog.vue';
 import WalletConnectDialog from './components/wallet/WalletConnectDialog.vue';
 import { useBalanceFetcher } from './composables/useBalanceFetcher';
 import { useWallet } from './composables/useWallet';
@@ -32,6 +33,7 @@ onMounted(() => {
   <LikePostDialog />
   <DislikePostDialog />
   <NewPostDialog />
-  <ReplyDialog/>
-  <FlagPostDialog/>
+  <ReplyDialog />
+  <FlagPostDialog />
+  <TipUserDialog />
 </template>

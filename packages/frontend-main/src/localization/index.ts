@@ -49,6 +49,7 @@ export const messages = {
                 newPost: 'New Post',
                 reply: 'Reply to Post',
                 flagPost: 'Redflag Post',
+                tipUser: 'Tip User',
             },
             Tabs: {
                 feed: 'Global Feed',
