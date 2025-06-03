@@ -1,17 +1,16 @@
 <script setup lang="ts">
 
-import Filters from '@/components/filters/filters.vue';
 import ToggleThemeButton from '@/components/ToggleThemeButton.vue';
+import FilterPhoton from '@/components/ui/filter/FilterPhoton.vue';
 import { SearchInput } from '@/components/ui/search';
 
 </script>
 
 <template>
-  <!-- TODO -->
-  <aside
-    class="flex flex-col h-full w-full gap-4 p-6">
-    <ToggleThemeButton/>
+  <aside class="flex flex-col h-full w-full gap-8 p-6">
+    <!-- TODO: Find a better place for this button -->
+    <ToggleThemeButton />
     <SearchInput />
-    <Filters />
+    <FilterPhoton />
   </aside>
 </template>

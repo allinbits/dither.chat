@@ -1,10 +1,10 @@
 <template>
-  <div class="w-64 p-4">
-    <label class="mb-2 block font-medium text-sm text-gray-700 " style="padding-bottom: 8px;">Filter by Send tokens</label>
-    <Slider :min="0" :max="100" :step="1" v-model="sliderValue" />
-    <div class="mt-2 text-sm text-gray-600">
-      Tokens: {{ formatCompactNumber(Math.trunc(displayValue)) }}
-    </div>
+  <div class="flex flex-col">
+    <label class="font-semibold text-sm mb-4">{{ $t('components.Filter.posts') }}</label>
+    <Slider :min="0" :max="100" :step="1" v-model="sliderValue" class="cursor-pointer"/>
+    <span class="text-sm  mt-2">
+      {{ $t('components.Filter.amount') + ': ' + formatCompactNumber(Math.trunc(displayValue)) }}
+    </span>
   </div>
 </template>
 

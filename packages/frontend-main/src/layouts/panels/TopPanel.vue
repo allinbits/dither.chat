@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import Filters from '@/components/filters/filters.vue';
+import { SlidersHorizontal } from 'lucide-vue-next';
+
 import ToggleThemeButton from '@/components/ToggleThemeButton.vue';
-import Icon from '@/components/ui/icon/Icon.vue';
+import FilterPhoton from '@/components/ui/filter/FilterPhoton.vue';
 import {
     Popover,
     PopoverContent,
@@ -13,21 +14,23 @@ import WalletConnect from '@/components/wallet/WalletConnect.vue';
 </script>
 
 <template>
-  <header class="h-full w-full flex flex-row items-center justify-between border-b bg-background px-4 gap-4">
+  <header class="h-full w-full flex flex-row items-center justify-between border-b bg-background px-4 gap-2">
     <WalletConnect class="w-[40px] h-full flex justify-center items-center" />
-    <Popover>
-      <PopoverTrigger>
-        <div class="flex flex-row items-center justify-center cursor-pointer">
-          <Icon icon="filter" class="ml-2" :size="2" />
-        </div>
-      </PopoverTrigger>
-      <PopoverContent>
-        <Filters />
-      </PopoverContent>
-    </Popover>
 
-    <!-- <input placeholder="search" class="bg-neutral-200 p-2 h-[40px] min-w-[140px]"> -->
-    <SearchInput class="self-start mt-2" />
+    <div class="flex flex-row items-center gap-2">
+      <SearchInput class="self-start" />
+      <Popover>
+        <PopoverTrigger>
+          <div class="flex flex-row items-center justify-center size-[40px]">
+            <SlidersHorizontal />
+          </div>
+        </PopoverTrigger>
+        <PopoverContent>
+          <FilterPhoton />
+        </PopoverContent>
+      </Popover>
+    </div>
+
     <ToggleThemeButton />
   </header>
 </template>
