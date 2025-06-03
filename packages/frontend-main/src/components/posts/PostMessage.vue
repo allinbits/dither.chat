@@ -33,11 +33,11 @@ const imageUrl = computed(() => {
       {{ post.message }}
     </span>
     <div v-if="hasImage" class="flex flex-col gap-2 cursor-default" @click.stop="() => {}">
-      <Button class="w-full text-sm" @click.stop="isEmbedToggled = true" v-if="!isEmbedToggled" size="xs" variant="ghost">
+      <Button class="w-full text-sm" @click.stop="isEmbedToggled = true" v-if="!isEmbedToggled" size="xs" variant="outline">
         {{ $t('components.Button.showImage') }}
       </Button>
       <template v-else>
-        <Button class="w-full text-sm" @click.stop="isEmbedToggled = false" size="xs" variant="ghost">
+        <Button class="w-full text-sm" @click.stop="isEmbedToggled = false" size="xs" variant="outline">
           {{ $t('components.Button.hideImage') }}
         </Button>
         <div class="flex flex-col">

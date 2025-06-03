@@ -19,11 +19,11 @@ defineProps<{ post: Post }>();
 <template>
   <RouterLink :to="`/post/${post.hash}`" custom v-slot="{ navigate }">
     <div class="flex flex-row gap-3 border-b cursor-pointer">
-      <RouterLink :to="`/profile/${post.author}`" class="size-[40px]">
+      <RouterLink :to="`/profile/${post.author}`">
         <UserAvatar :userAddress="post.author" />
       </RouterLink>
       <div class="flex flex-col w-full gap-3" @click="navigate">
-        <div class="flex flex-row justify-between items-center pt-2.5">
+        <div class="flex flex-row justify-between items-center h-[40px]">
           <div class="flex flex-row gap-3">
             <RouterLink :to="`/profile/${post.author}`">
               <Username :userAddress="post.author" />
