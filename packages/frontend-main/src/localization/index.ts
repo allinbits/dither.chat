@@ -41,8 +41,8 @@ export const messages = {
                 pingpub: 'See on Ping.pub',
                 follow: 'Follow',
                 unfollow: 'Unfollow',
-                show: 'Show',
-                hide: 'Hide',
+                showImage: 'Show image',
+                hideImage: 'Hide image',
             },
             PopupTitles: {
                 likePost: 'Like Post',
