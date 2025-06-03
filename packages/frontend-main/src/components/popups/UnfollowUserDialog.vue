@@ -58,7 +58,7 @@ async function handleSumbit() {
     if (!canSubmit.value || !popups.state.unfollow) {
         return;
     }
-    await unfollowUser({ userAddress: popups.state.unfollow, photonValue: photonValue.value });
+    await unfollowUser({ userAddress: ref(popups.state.unfollow), photonValue: photonValue.value });
 }
 </script>
 

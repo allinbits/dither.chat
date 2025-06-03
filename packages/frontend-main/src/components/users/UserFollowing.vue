@@ -40,13 +40,13 @@ function handleAction(type: keyof PopupState, userAddress: string) {
   <div class="flex flex-col w-full">
     <Loader v-if="isLoading" class="animate-spin w-full mt-10" />
 
-    <span v-else-if="!flatFollowUsers.length" class="self-center text-md font-semibold text-base">{{
+    <span v-else-if="!flatFollowUsers.length" class="self-center text-md font-semibold text-base pt-4 pb-6">{{
       $t('components.FollowingList.empty') }}</span>
 
     <!-- Following users -->
-    <div v-else class="flex flex-col gap-4 px-4 pt-4 pb-6">
+    <div v-else class="flex flex-col gap-4 px-4 pt-4">
       <div v-for="(followUser, index) in flatFollowUsers" :key="index"
-           class="flex flex-row items-center justify-between">
+           class="flex flex-row items-center justify-between last:pb-6">
         <RouterLink :to="`/profile/${followUser.address}`">
           <UserAvatarUsername :userAddress="followUser.address" />
         </RouterLink>
@@ -54,8 +54,8 @@ function handleAction(type: keyof PopupState, userAddress: string) {
           $t('components.Button.unfollow') }}</Button>
       </div>
 
-      <div v-if="isFetchingNextPage || hasNextPage" class="flex items-center justify-center px-4 h-[40px]">
-        <Loader v-if="isFetchingNextPage" class="animate-spin " />
+      <div v-if="isFetchingNextPage || hasNextPage" class="flex items-center justify-center px-4 pb-4 h-[40px]">
+        <Loader v-if="isFetchingNextPage" class="animate-spin w-full" />
         <Button v-if="hasNextPage && !isFetchingNextPage" @click="fetchNextPage" size="sm" class="w-full text-sm"
                 variant="ghost">
           {{ $t('components.Button.showMore') }}

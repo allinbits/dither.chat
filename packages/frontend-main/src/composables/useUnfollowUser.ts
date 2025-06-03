@@ -1,3 +1,4 @@
+import type { Post } from 'api-main/types/feed';
 import type { FollowUser } from 'api-main/types/follows';
 
 import { type Ref, ref } from 'vue';
@@ -25,7 +26,7 @@ export function useUnfollowUser(
     } = useMutation({
         mutationFn: async ({ userAddress, photonValue }: UnfollowUserRequestMutation) => {
             console.log('userAddress', userAddress, 'photonValue', photonValue);
-            const result = await wallet.dither.follow(userAddress.value, BigInt(photonValue).toString());
+            const result = await wallet.dither.unfollow(userAddress.value, BigInt(photonValue).toString());
             console.log('resultresult', result);
             if (!result.broadcast) {
                 txError.value = result.msg;
@@ -47,49 +48,57 @@ export function useUnfollowUser(
             const previousFollowing = queryClient.getQueryData(
                 followingOpts.queryKey,
             ) as InfiniteData<FollowUser[], unknown> | undefined;
-
-            // TODO: Handle following posts?
-            // const previousFollowingPosts = queryClient.getQueryData(
-            //     followingOpts.queryKey,
-            // ) as InfiniteData<Post[], unknown> | undefined;
-
+            const previousFollowingPosts = queryClient.getQueryData(
+                followingOpts.queryKey,
+            ) as InfiniteData<Post[], unknown> | undefined;
             const previousIsFollowing = queryClient.getQueryData(
                 isFollowingOpts.queryKey,
             ) as boolean | undefined;
 
             return {
                 previousFollowing,
-                // , previousFollowingPosts
+                previousFollowingPosts,
                 previousIsFollowing,
             };
         },
         onSuccess: (_, variables, context) => {
             const followingOpts = following({ userAddress: wallet.address });
+            const followingPostsOpts = followingPosts({ userAddress: wallet.address });
             const isFollowingOpts = isFollowing({ followerAddress: wallet.address, followingAddress: variables.userAddress });
 
-            const optimisticFollowUserToRemove = variables.userAddress.value;
-            const previousPages = context.previousFollowing?.pages ?? [];
-            const newPages = previousPages.map(page =>
-                page.filter(user => user.address !== optimisticFollowUserToRemove),
+            const followUserAddressToRemove = variables.userAddress.value;
+            const previousFollowingPages = context.previousFollowing?.pages ?? [];
+            const newFollowingPages = previousFollowingPages.map(page =>
+                page.filter(user => user.address !== followUserAddressToRemove),
             );
             const newFollowingData: InfiniteData<FollowUser[], unknown> = {
-                pages: newPages,
+                pages: newFollowingPages,
                 pageParams: context.previousFollowing?.pageParams ?? [0],
             };
+            console.log('context.previousFollowingcontext.previousFollowing', context.previousFollowing);
+            console.log('newFollowingDatanewFollowingDatanewFollowingData', newFollowingData);
+
+            // const previousFollowingPostsPages = context.previousFollowingPosts?.pages ?? [];
+            // const newFollowingPostsPages = previousFollowingPostsPages.map(page =>
+            //     page.filter(post => post.author !== followUserAddressToRemove),
+            // );
+            // const newFollowingPostsData: InfiniteData<Post[], unknown> = {
+            //     pages: newFollowingPostsPages,
+            //     pageParams: context.previousFollowingPosts?.pageParams ?? [0],
+            // };
 
             queryClient.setQueryData(followingOpts.queryKey, newFollowingData);
-
-            // TODO: Handle following posts?
-
+            // queryClient.setQueryData(followingPostsOpts.queryKey, newFollowingPostsData);
+            queryClient.invalidateQueries(followingPostsOpts);
             queryClient.setQueryData(isFollowingOpts.queryKey, false);
         },
         onError: (_, variables, context) => {
             const followingOpts = following({ userAddress: wallet.address });
             const isFollowingOpts = isFollowing({ followerAddress: wallet.address, followingAddress: variables.userAddress });
+            const followingPostsOpts = followingPosts({ userAddress: wallet.address });
 
             queryClient.setQueryData(followingOpts.queryKey, context?.previousFollowing);
-            // queryClient.setQueryData(followingPostsOpts.queryKey, context?.previousFollowingPosts);
-
+            queryClient.setQueryData(followingPostsOpts.queryKey, context?.previousFollowingPosts);
             queryClient.setQueryData(isFollowingOpts.queryKey, context?.previousIsFollowing);
         },
     });

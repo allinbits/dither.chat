@@ -1,3 +1,4 @@
+import type { Post } from 'api-main/types/feed';
 import type { FollowUser } from 'api-main/types/follows';
 
 import { type Ref, ref } from 'vue';
@@ -46,25 +47,24 @@ export function useFollowUser(
             const previousFollowing = queryClient.getQueryData(
                 followingOpts.queryKey,
             ) as InfiniteData<FollowUser[], unknown> | undefined;
-
-            // TODO: Handle following posts?
-            // const previousFollowingPosts = queryClient.getQueryData(
-            //     followingOpts.queryKey,
-            // ) as InfiniteData<Post[], unknown> | undefined;
-
+            const previousFollowingPosts = queryClient.getQueryData(
+                followingOpts.queryKey,
+            ) as InfiniteData<Post[], unknown> | undefined;
             const previousIsFollowing = queryClient.getQueryData(
                 isFollowingOpts.queryKey,
             ) as boolean | undefined;
 
             return {
                 previousFollowing,
-                // , previousFollowingPosts
+                previousFollowingPosts,
                 previousIsFollowing,
             };
         },
         onSuccess: (_, variables, context) => {
             const followingOpts = following({ userAddress: wallet.address });
             const isFollowingOpts = isFollowing({ followerAddress: wallet.address, followingAddress: variables.userAddress });
+            const followingPostsOpts = followingPosts({ userAddress: wallet.address });
+            // const newFollowingUserPosts = userPosts({userAddress: variables.userAddress})
 
             const optimisticNewFollowUser: FollowUser = { address: variables.userAddress.value };
 
@@ -80,22 +80,38 @@ export function useFollowUser(
             // const newFollowingData: InfiniteData<FollowUser[], unknown> = {
             //     pages: newPages,
             //     pageParams: context.previousFollowing?.pageParams ?? [0],
+            // };*
+
+            // const newFollowingPostsData = buildNewInfiniteData<Post>({ previousItems: context.previousFollowingPosts, newItem: optimisticNewFollowUser });
+
+            // const newPages = context.previousFollowingPosts?.pages ? [...context.previousFollowingPosts.pages] : [];
+            // if (newPages.length > 0) {
+            //     newPages[0] = [...userPosts({userAddress: variables.userAddress}), ...newPages[0]];
+            // }
+            // else {
+            //     newPages.push([newItem]);
+            // }
+            // const newData: InfiniteData<T[], unknown> = {
+            //     pages: newPages,
+            //     pageParams: previousItems?.pageParams ?? [0],
             // };
 
             // const followingPostsOpts = followingPosts({ userAddress: wallet.address});
             queryClient.setQueryData(followingOpts.queryKey, newFollowingData);
 
             // TODO: Handle following posts?
-            // queryClient.setQueryData(repliesOpts.queryKey, newFollowingPostsData);
+            // queryClient.setQueryData(followingPostsOpts.queryKey, newFollowingPostsData);
+            queryClient.invalidateQueries(followingPostsOpts);
 
             queryClient.setQueryData(isFollowingOpts.queryKey, true);
         },
         onError: (_, variables, context) => {
             const followingOpts = following({ userAddress: wallet.address });
             const isFollowingOpts = isFollowing({ followerAddress: wallet.address, followingAddress: variables.userAddress });
+            const followingPostsOpts = followingPosts({ userAddress: wallet.address });
 
             queryClient.setQueryData(followingOpts.queryKey, context?.previousFollowing);
-            // queryClient.setQueryData(followingPostsOpts.queryKey, context?.previousFollowingPosts);
+            queryClient.setQueryData(followingPostsOpts.queryKey, context?.previousFollowingPosts);
 
             queryClient.setQueryData(isFollowingOpts.queryKey, context?.previousIsFollowing);
         },
