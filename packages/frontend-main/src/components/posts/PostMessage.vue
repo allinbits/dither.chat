@@ -32,16 +32,16 @@ const imageUrl = computed(() => {
     <span class="leading-6 text-sm break-all">
       {{ post.message }}
     </span>
-    <div v-if="hasImage" class="flex flex-col border p-4 gap-3 cursor-default" @click.stop="() => {}" >
-      <Button class="w-full" @click.stop="isEmbedToggled = true" v-if="!isEmbedToggled">
+    <div v-if="hasImage" class="flex flex-col gap-3 cursor-default" @click.stop="() => {}">
+      <Button class="w-full rounded" @click.stop="isEmbedToggled = true" v-if="!isEmbedToggled" size="sm" variant="outline">
         {{ $t('components.Button.show') }}
       </Button>
       <template v-else>
-        <Button class="w-full" @click.stop="isEmbedToggled = false">
+        <Button class="w-full rounded" @click.stop="isEmbedToggled = false" size="sm" variant="outline">
           {{ $t('components.Button.hide') }}
         </Button>
-        <div class="flex flex-col border">
-          <img  alt="embedded content" :src="imageUrl" />
+        <div class="flex flex-col">
+          <img  alt="embedded content" class="rounded" :src="imageUrl" />
         </div>
       </template>
     </div>

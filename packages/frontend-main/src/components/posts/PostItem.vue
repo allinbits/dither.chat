@@ -10,6 +10,8 @@ import Username from '../users/Username.vue';
 import PostMessage from './PostMessage.vue';
 import PostMoreActions from './PostMoreActions.vue';
 
+import { formatAmount } from '@/utility/text';
+
 defineProps<{ post: Post }>();
 
 </script>
@@ -31,6 +33,7 @@ defineProps<{ post: Post }>();
           <PostMoreActions :post="post" />
         </div>
         <PostMessage :post="post" />
+        <span class="text-xs w-full text-right text-neutral-400">{{ formatAmount(post.quantity, 6) }} PHOTON</span>
         <PostActions :post="post" />
       </div>
     </div>
