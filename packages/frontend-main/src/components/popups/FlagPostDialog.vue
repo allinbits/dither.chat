@@ -69,7 +69,7 @@ async function handleSumbit() {
             <Username :userAddress="popups.state.flag.author" />
             <PrettyTimestamp :timestamp="new Date(popups.state.flag.timestamp)" />
           </div>
-          <PostMessage :post="popups.state.flag" />
+          <PostMessage :message="popups.state.flag.message" />
         </div>
       </div>
 

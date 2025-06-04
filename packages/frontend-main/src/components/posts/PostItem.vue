@@ -34,7 +34,7 @@ defineProps<{ post: Post }>();
         </div>
 
         <span class="text-xs w-full text-right text-neutral-400">{{ formatAmount(post.quantity, 6) }} PHOTON</span>
-        <PostMessage :post="post" />
+        <PostMessage :message="post.message" />
         <PostActions :post="post" />
       </div>
     </div>

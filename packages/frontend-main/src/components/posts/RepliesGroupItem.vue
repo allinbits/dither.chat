@@ -37,7 +37,7 @@ defineProps<{ repliesGroup: RepliesGroup }>();
             </div>
             <PostMoreActions :post="repliesGroup.parent" />
           </div>
-          <PostMessage :post="repliesGroup.parent" />
+          <PostMessage :message="repliesGroup.parent.message" />
           <PostActions :post="repliesGroup.parent" />
         </div>
       </div>
@@ -62,7 +62,7 @@ defineProps<{ repliesGroup: RepliesGroup }>();
             </div>
             <PostMoreActions :post="reply" />
           </div>
-          <PostMessage :post="reply" />
+          <PostMessage :message="reply.message" />
           <PostActions :post="reply" />
         </div>
       </div>
