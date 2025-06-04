@@ -35,7 +35,7 @@ export const useTxNotification = (
                 toast.dismiss(broadcastToastId.value);
             }
 
-            toast.success(`${txLabel} successful`, {
+            toast.success(`${txLabel} successfully`, {
                 description: h(
                     'div',
                     {
