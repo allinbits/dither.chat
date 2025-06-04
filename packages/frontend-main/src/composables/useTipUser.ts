@@ -1,6 +1,7 @@
 import { type Ref, ref } from 'vue';
 import { useMutation, useQueryClient } from '@tanstack/vue-query';
 
+import { userTips } from './useUserTips';
 import { useWallet } from './useWallet';
 
 interface TipUserRequestMutation {
@@ -22,14 +23,25 @@ export function useTipUser() {
             }
             txSuccess.value = result.tx?.transactionHash;
         },
-        onMutate: async (variables) => {},
-        onSuccess: (_, variables, context) => {},
-        onError: (_, variables, context) => {},
+        onMutate: async (_) => {
+            const userTipsOpts = userTips({ userAddress: wallet.address });
+            await queryClient.cancelQueries(userTipsOpts);
+
+            const previousUserTips = queryClient.getQueryData(userTipsOpts.queryKey);
+
+            return {
+                previousUserTips,
+            };
+        },
+        onSuccess: () => {
+        },
+        onError: () => {
+        },
         retry: false,
     });
 
     return {
-        followUser: mutateAsync,
+        tipUser: mutateAsync,
         txError,
         txSuccess,
     };

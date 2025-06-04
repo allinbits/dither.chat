@@ -323,6 +323,11 @@ const useWalletInstance = () => {
         return await sendBankTx(formattedMemo, amount);
     };
 
+    const ditherTipUser = async (address: string, amount = '1') => {
+        const formattedMemo = `dither.TipUser("${address}")`;
+        return await sendBankTx(formattedMemo, amount);
+    };
+
     const ditherLike = async (postHash: string, amount = '1') => {
         const formattedMemo = `dither.Like("${postHash}")`;
         return await sendBankTx(formattedMemo, amount);
@@ -358,6 +363,7 @@ const useWalletInstance = () => {
             postRemove: ditherPostRemove,
             follow: ditherFollow,
             unfollow: ditherUnfollow,
+            tipUser: ditherTipUser,
         },
     };
 };
