@@ -167,19 +167,26 @@ const useWalletInstance = () => {
                 address: walletState.address.value,
             };
 
-            const responseRaw = await fetch(apiRoot + '/auth-create', {
-                body: JSON.stringify(postBody),
-                method: 'POST',
-                headers,
-            });
-            const response = (await responseRaw.json()) as { status: number; id: number; message: string };
-            const signedMsg = await signMessage(response.message);
-            await fetch(apiRoot + '/auth', {
-                body: JSON.stringify({ ...signedMsg, id: response.id }),
-                method: 'POST',
-                headers,
-                credentials: 'include',
-            });
+            try {
+                const responseRaw = await fetch(apiRoot + '/auth-create', {
+                    body: JSON.stringify(postBody),
+                    method: 'POST',
+                    headers,
+                });
+                const response = (await responseRaw.json()) as { status: number; id: number; message: string };
+                const signedMsg = await signMessage(response.message);
+                await fetch(apiRoot + '/auth', {
+                    body: JSON.stringify({ ...signedMsg, id: response.id }),
+                    method: 'POST',
+                    headers,
+                    credentials: 'include',
+                });
+                walletState.isAuthenticated.value = true;
+            }
+            catch (e) {
+                walletState.isAuthenticated.value = false;
+                throw e;
+            }
         }
 
         walletDialogStore.hideDialog();

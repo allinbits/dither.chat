@@ -16,12 +16,14 @@ export const useWalletStateStore = defineStore(
         const address = ref('');
         const used = ref<Wallets | null>(null);
         const processState = ref<WalletProcessState>('idle');
+        const isAuthenticated = ref(false);
 
         const signOut = () => {
             loggedIn.value = false;
             address.value = '';
             used.value = null;
             processState.value = 'idle';
+            isAuthenticated.value = false;
         };
 
         const signIn = (userAddress: string, walletUsed: Wallets) => {
@@ -30,7 +32,7 @@ export const useWalletStateStore = defineStore(
             used.value = walletUsed;
         };
 
-        return { keplr, leap, cosmostation, loggedIn, address, used, processState, signOut, signIn };
+        return { keplr, leap, cosmostation, loggedIn, address, used, processState, isAuthenticated, signOut, signIn };
     },
     {
         persist: {

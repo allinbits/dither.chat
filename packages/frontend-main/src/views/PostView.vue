@@ -10,6 +10,7 @@ import { useWallet } from '@/composables/useWallet';
 
 import PostActions from '@/components/posts/PostActions.vue';
 import PostMessage from '@/components/posts/PostMessage.vue';
+import PostMoreActions from '@/components/posts/PostMoreActions.vue';
 import PostsList from '@/components/posts/PostsList.vue';
 import PrettyTimestamp from '@/components/posts/PrettyTimestamp.vue';
 import Button from '@/components/ui/button/Button.vue';
@@ -71,13 +72,16 @@ async function handleReply() {
     </div>
 
     <div v-if="post" class="flex flex-col p-4 w-full">
-      <RouterLink :to="`/profile/${post.author}`">
-        <div class="flex flex-row gap-3">
-          <UserAvatarUsername :userAddress="post.author" />
-          <PrettyTimestamp :timestamp="new Date(post.timestamp)" />
-        </div>
-      </RouterLink>
-      <PostMessage :post="post" class="mt-2"/>
+      <div class="flex flex-row justify-between items-center h-[40px]">
+        <RouterLink :to="`/profile/${post.author}`">
+          <div class="flex flex-row gap-3">
+            <UserAvatarUsername :userAddress="post.author" />
+            <PrettyTimestamp :timestamp="new Date(post.timestamp)" />
+          </div>
+        </RouterLink>
+        <PostMoreActions :post="post" />
+      </div>
+      <PostMessage :post="post" class="mt-2" />
       <PrettyTimestamp :timestamp="new Date(post.timestamp)" :isFullDate="true" class="flex mt-4" />
 
       <div class="py-2 mt-4 border-y">
