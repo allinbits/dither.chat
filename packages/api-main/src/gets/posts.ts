@@ -50,11 +50,12 @@ const followingPostsStatement = getDatabase()
     .where(and(
         inArray(FeedTable.author,
             getDatabase()
-                .select({ following: FollowsTable.following })
+                .select()
                 .from(FollowsTable)
                 .where(eq(FollowsTable.follower, sql.placeholder('address'))),
         ),
         isNull(FeedTable.post_hash),
+        isNull(FeedTable.removed_at),
         gte(FeedTable.quantity, sql.placeholder('minQuantity')),
     ))
     .orderBy(desc(FeedTable.timestamp))

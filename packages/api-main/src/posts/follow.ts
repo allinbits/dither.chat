@@ -13,7 +13,12 @@ const statementAddFollower = getDatabase()
         hash: sql.placeholder('hash'),
         timestamp: sql.placeholder('timestamp'),
     })
-    .onConflictDoNothing()
+    .onConflictDoUpdate({
+        target: [FollowsTable.follower, FollowsTable.following],
+        set: {
+            removed_at: null,
+        },
+    })
     .prepare('stmnt_add_follower');
 
 export async function Follow(body: typeof Posts.FollowBody.static) {
