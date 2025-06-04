@@ -1,5 +1,5 @@
 import { type Gets } from '@atomone/dither-api-types';
-import { and, count, desc, isNull, sql } from 'drizzle-orm';
+import { and, count, desc, gte, isNull, sql } from 'drizzle-orm';
 
 import { getDatabase } from '../../drizzle/db';
 import { FeedTable } from '../../drizzle/schema';
@@ -9,7 +9,13 @@ const statement = getDatabase()
     .from(FeedTable)
     .limit(sql.placeholder('limit'))
     .offset(sql.placeholder('offset'))
-    .where(and(isNull(FeedTable.removed_at), isNull(FeedTable.post_hash)))
+    .where(
+        and(
+            isNull(FeedTable.removed_at),
+            isNull(FeedTable.post_hash),
+            gte(FeedTable.quantity, sql.placeholder('minQuantity')),
+        ),
+    )
     .orderBy(desc(FeedTable.timestamp))
     .prepare('stmnt_get_feed');
 
@@ -26,6 +32,7 @@ export async function Feed(query: typeof Gets.FeedQuery.static) {
 
     let limit = typeof query.limit !== 'undefined' ? Number(query.limit) : 100;
     const offset = typeof query.offset !== 'undefined' ? Number(query.offset) : 0;
+    const minQuantity = typeof query.minQuantity !== 'undefined' ? query.minQuantity : BigInt(0);
 
     if (limit > 100) {
         limit = 100;
@@ -40,7 +47,7 @@ export async function Feed(query: typeof Gets.FeedQuery.static) {
     }
 
     try {
-        const results = await statement.execute({ offset, limit });
+        const results = await statement.execute({ offset, limit, minQuantity });
         return { status: 200, rows: results };
     }
     catch (error) {

@@ -1,5 +1,5 @@
 import { type Gets } from '@atomone/dither-api-types';
-import { desc, sql } from 'drizzle-orm';
+import { and, desc, gte, sql } from 'drizzle-orm';
 
 import { getDatabase } from '../../drizzle/db';
 import { FeedTable } from '../../drizzle/schema';
@@ -16,11 +16,20 @@ export async function Search(query: typeof Gets.SearchQuery.static) {
         if (!processedQuery) {
             return [];
         }
-
+        const minQuantity = typeof query.minQuantity !== 'undefined' ? query.minQuantity : BigInt(0);
         const results = await getDatabase()
             .select()
             .from(FeedTable)
-            .where(sql`to_tsvector('english', ${FeedTable.message}) @@ to_tsquery('english', ${processedQuery})`).limit(100).offset(0).orderBy(desc(FeedTable.timestamp)).execute();
+            .where(
+                and(
+                    sql`to_tsvector('english', ${FeedTable.message}) @@ to_tsquery('english', ${processedQuery})`,
+                    gte(FeedTable.quantity, minQuantity),
+                ),
+            )
+            .limit(100)
+            .offset(0)
+            .orderBy(desc(FeedTable.timestamp))
+            .execute();
 
         return { status: 200, rows: [...results] };
     }

@@ -67,6 +67,10 @@ export const messages = {
                 noResults: 'No results found',
                 failedToSearch: 'Failed to search',
             },
+            Filter: {
+                posts: 'Filter posts by PHOTON',
+                amount: 'Amount',
+            },
             PostsList: {
                 empty: 'No Posts Available',
             },
