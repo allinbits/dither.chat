@@ -26,7 +26,6 @@ const { signOut, address, loggedIn } = useWallet();
 const walletDialogStore = useWalletDialogStore();
 
 const connectedState = computed(() => !isConnecting.value && loggedIn.value && !isError.value);
-
 </script>
 
 <template>

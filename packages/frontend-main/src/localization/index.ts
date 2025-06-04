@@ -43,6 +43,7 @@ export const messages = {
                 unfollow: 'Unfollow',
                 showImage: 'Show image',
                 hideImage: 'Hide image',
+                viewOnExplorer: 'View on explorer',
             },
             PopupTitles: {
                 likePost: 'Like Post',
@@ -76,6 +77,12 @@ export const messages = {
             },
             RepliesGroupsList: {
                 empty: 'No Replies Available',
+            },
+            Toast: {
+                broadcasting: 'Broadcasting transaction',
+                wait: 'Please wait a moment...',
+                success: '{txLabel} successfully',
+                fail: '{txLabel} failed',
             },
         },
         feedbacks: {

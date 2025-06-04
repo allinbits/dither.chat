@@ -5,6 +5,7 @@ import { Loader } from 'lucide-vue-next';
 import { useBalanceFetcher } from '@/composables/useBalanceFetcher';
 import { useCreatePost } from '@/composables/useCreatePost';
 import { usePopups } from '@/composables/usePopups';
+import { useTxNotification } from '@/composables/useTxNotification';
 import { useWallet } from '@/composables/useWallet';
 
 import
@@ -28,12 +29,17 @@ const message = ref('');
 
 const MAX_CHARS = 512 - 'dither.Post("")'.length;
 
-const { createPost,
-    txError,
-    txSuccess } = useCreatePost();
+const { createPost, txError, txSuccess } = useCreatePost();
+
+const isShown = computed(() => !!popups.state.newPost);
+useTxNotification(isShown, 'Post', txSuccess, txError);
+
+const isProcessing = computed(() => {
+    return wallet.processState.value !== 'idle';
+});
 
 const isBroadcasting = computed(() => {
-    return wallet.isBroadcasting.value;
+    return wallet.processState.value === 'broadcasting';
 });
 
 function handleClose() {
@@ -71,19 +77,20 @@ async function handleSumbit() {
     }
     await createPost({ message: message.value, photonValue: photonValue.value });
     message.value = '';
+    handleClose();
 }
 </script>
 
 <template>
   <div>
-    <Dialog :open="popups.state.newPost !== null" @update:open="handleClose" v-if="popups.state.newPost !== null">
+    <Dialog :open="popups.state.newPost !== null && !isBroadcasting" @update:open="handleClose" v-if="popups.state.newPost !== null && !isBroadcasting">
       <DialogContent>
         <DialogTitle>{{ $t('components.PopupTitles.newPost') }}</DialogTitle>
 
-        <Textarea :placeholder="$t('placeholders.post')" v-model="message" @input="capChars" v-if="!isBroadcasting && !txSuccess" />
+        <Textarea :placeholder="$t('placeholders.post')" v-model="message" @input="capChars" v-if="!isProcessing && !txSuccess" />
 
         <!-- Transaction Form -->
-        <div class="flex flex-col w-full gap-4" v-if="!isBroadcasting && !txSuccess">
+        <div class="flex flex-col w-full gap-4" v-if="!isProcessing && !txSuccess">
           <InputPhoton v-model="photonValue" @on-validity-change="handleInputValidity" />
           <span v-if="txError" class="text-red-500 text-left text-xs">{{ txError }}</span>
           <Button class="w-full" :disabled="!canSubmit" @click="handleSumbit">
@@ -91,12 +98,12 @@ async function handleSumbit() {
           </Button>
         </div>
         <!-- Broadcast Status -->
-        <div class="flex flex-col w-full gap-4" v-if="isBroadcasting && !txSuccess">
+        <div class="flex flex-col w-full gap-4" v-if="isProcessing && !txSuccess">
           {{  $t('components.Wallet.popupSign') }}
           <Loader class="animate-spin w-full"/>
         </div>
         <!-- Success Status -->
-        <div class="flex flex-col w-full gap-4 overflow-hidden" v-if="!isBroadcasting && txSuccess">
+        <div class="flex flex-col w-full gap-4 overflow-hidden" v-if="!isProcessing && txSuccess">
           <span>{{ $t('components.Wallet.broadcastSuccess') }}</span>
           <span class="flex lowercase overflow-x-scroll py-2">{{ txSuccess }}</span>
           <Button class="w-full" @click="handleClose">

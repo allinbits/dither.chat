@@ -6,6 +6,7 @@ import FlagPostDialog from './components/popups/FlagPostDialog.vue';
 import LikePostDialog from './components/popups/LikePostDialog.vue';
 import NewPostDialog from './components/popups/NewPostDialog.vue';
 import ReplyDialog from './components/popups/ReplyDialog.vue';
+import Sonner from './components/ui/sonner/Sonner.vue';
 import WalletConnectDialog from './components/wallet/WalletConnectDialog.vue';
 import { useBalanceFetcher } from './composables/useBalanceFetcher';
 import { useWallet } from './composables/useWallet';
@@ -32,6 +33,7 @@ onMounted(() => {
   <LikePostDialog />
   <DislikePostDialog />
   <NewPostDialog />
-  <ReplyDialog/>
-  <FlagPostDialog/>
+  <ReplyDialog />
+  <FlagPostDialog />
+  <Sonner closeButton expand dismissible :visible-toasts="5" />
 </template>
