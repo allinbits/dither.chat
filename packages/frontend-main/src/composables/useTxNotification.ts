@@ -21,9 +21,10 @@ export const useTxNotification = (
 
     watch(wallet.processState, (newState) => {
         if (newState === 'broadcasting' && enabled.value) {
-            broadcastToastId.value = toast.info('Broadcasting transaction', {
-                description: 'Please wait a moment...',
-                icon: () => h(Loader, { class: 'animate-spin mr-2' }),
+            broadcastToastId.value = toast.info(h('span', { class: 'ml-2 font-semibold text-sm' }, t('components.Toast.broadcasting')), {
+                cancelButtonStyle: { width: 100 },
+                description: h('span', { class: 'ml-2 text-sm' }, t('components.Toast.wait')),
+                icon: h(Loader, { class: 'animate-spin' }),
                 duration: Infinity, // stays until dismissed
             });
         }
@@ -35,19 +36,19 @@ export const useTxNotification = (
                 toast.dismiss(broadcastToastId.value);
             }
 
-            toast.success(`${txLabel} successfully`, {
+            toast.success(h('span', { class: 'ml-2 font-semibold text-sm' }, t('components.Toast.success', { txLabel })), {
                 description: h(
                     'div',
                     {
-                        class: 'flex items-center gap-2 underline cursor-pointer',
+                        class: 'flex items-center gap-2 ml-2 underline cursor-pointer',
                         onClick: () => window.open(`${explorerURL}/${newValue}`, '_blank'),
                     },
                     [
-                        h('span', t('components.Button.viewOnExplorer')),
+                        h('span', { class: 'text-sm' }, t('components.Button.viewOnExplorer')),
                         h(ExternalLink, { class: 'text-green-500 size-4' }),
                     ],
                 ),
-                icon: () => h(Check, { class: 'text-green-500' }),
+                icon: h(Check, { class: 'text-green-500' }),
                 duration: 10_000,
             });
         }
@@ -59,9 +60,9 @@ export const useTxNotification = (
                 toast.dismiss(broadcastToastId.value);
             }
 
-            toast.error(`${txLabel} failed`, {
-                description: newValue,
-                icon: () => h(X, { class: 'text-red-500' }),
+            toast.error(h('span', { class: 'ml-2 font-semibold text-sm' }, t('components.Toast.fail', { txLabel })), {
+                description: h('span', { class: 'ml-2 text-sm' }, newValue),
+                icon: h(X, { class: 'text-red-500' }),
                 duration: 5_000,
             });
         }

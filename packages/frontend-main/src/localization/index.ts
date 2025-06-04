@@ -74,6 +74,12 @@ export const messages = {
             RepliesGroupsList: {
                 empty: 'No Replies Available',
             },
+            Toast: {
+                broadcasting: 'Broadcasting transaction',
+                wait: 'Please wait a moment...',
+                success: '{txLabel} successfully',
+                fail: '{txLabel} failed',
+            },
         },
         feedbacks: {
             copied: 'Copied to clipboard',
