@@ -80,6 +80,7 @@ export const messages = {
                 flag: 'Redflagged your post',
                 follow: 'Followed you',
                 reply: 'Replied to your post',
+                empty: 'Nothing to show',
             },
         },
         feedbacks: {

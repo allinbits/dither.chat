@@ -10,15 +10,15 @@ defineProps<{ notification: Notification }>();
 </script>
 
 <template>
-  <RouterLink :to="`/post/${'post.hash'}`" custom v-slot="{ navigate }">
+  <RouterLink :to="`/post/${notification.hash}`" custom v-slot="{ navigate }">
     <div class="flex flex-row gap-3 cursor-pointer py-2">
-      <RouterLink :to="`/profile/${'post.author'}`" class="size-[40px]">
-        <UserAvatar :userAddress="'post.author'" />
+      <RouterLink :to="`/profile/${notification.owner}`" class="size-[40px]">
+        <UserAvatar :userAddress="notification.owner" />
       </RouterLink>
       <div class="flex flex-col w-full" @click="navigate">
         <div class="flex flex-row gap-3 pt-2.5">
-          <RouterLink :to="`/profile/${'post.author'}`">
-            <Username :userAddress="'post.author'" />
+          <RouterLink :to="`/profile/${notification.owner}`">
+            <Username :userAddress="notification.owner" />
           </RouterLink>
           <PrettyTimestamp v-if="notification.timestamp" :timestamp="notification.timestamp" />
         </div>

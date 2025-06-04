@@ -14,7 +14,12 @@ export const notifications = (params: Params) =>
     infiniteQueryOptions({
         queryKey: ['notifications', params.userAddress],
         queryFn: async ({ pageParam = 0 }) => {
-            const res = await fetch(`${apiRoot}/notifications?address=${params.userAddress.value}&offset=${pageParam}&limit=${LIMIT}`);
+            const res = await fetch(
+                `${apiRoot}/notifications?address=${params.userAddress.value}&offset=${pageParam}&limit=${LIMIT}`,
+                {
+                    credentials: 'include',
+                },
+            );
             const json = await res.json() as { status: number; rows: Notification[] };
             return json.rows ?? [];
         },

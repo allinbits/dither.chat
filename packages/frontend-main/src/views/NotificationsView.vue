@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import type { Notification } from 'api-main/types/notifications';
-
+import { computed } from 'vue';
 import { Loader } from 'lucide-vue-next';
 
 import { useNotifications } from '@/composables/useNotifications';
@@ -15,55 +14,282 @@ import MainLayout from '@/layouts/MainLayout.vue';
 
 const wallet = useWallet();
 
-const { fetchNextPage, isLoading, isFetchingNextPage, hasNextPage } = useNotifications({ userAddress: wallet.address });
-// const flatNotifications = computed(() => data.value?.pages.flat() ?? []);
+const { data, fetchNextPage, isLoading, isFetchingNextPage, hasNextPage } = useNotifications({ userAddress: wallet.address });
+const flatNotifications = computed(() => data.value?.pages.flat() ?? []);
 
-const flatNotifications: Notification[] = [
-    {
-        hash: '',
-        owner: 'atone1c4a8e6lc9uuaeqmlsw6gyyxpvun5pjag9y40el',
-        type: 'like',
-        timestamp: new Date(),
-        was_read: false,
-        subcontext: 'd gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug ',
-    },
-    {
-        hash: '',
-        owner: 'atone1c4a8e6lc9uuaeqmlsw6gyyxpvun5pjag9y40el',
-        type: 'dislike',
-        timestamp: new Date(),
-        was_read: false,
-        subcontext: 'd gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug ',
+console.log('flatNotificationsflatNotifications', flatNotifications);
 
-    },
-    {
-        hash: '',
-        owner: 'atone1c4a8e6lc9uuaeqmlsw6gyyxpvun5pjag9y40el',
-        type: 'follow',
-        timestamp: new Date(),
-        was_read: false,
-        subcontext: 'd gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug ',
+// const flatNotifications: Notification[] = [
+//     {
+//         hash: '',
+//         owner: 'atone1c4a8e6lc9uuaeqmlsw6gyyxpvun5pjag9y40el',
+//         type: 'like',
+//         timestamp: new Date(),
+//         was_read: false,
+//         subcontext: 'd gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug ',
+//     },
+//     {
+//         hash: '',
+//         owner: 'atone1c4a8e6lc9uuaeqmlsw6gyyxpvun5pjag9y40el',
+//         type: 'dislike',
+//         timestamp: new Date(),
+//         was_read: false,
+//         subcontext: 'd gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug ',
 
-    },
-    {
-        hash: '',
-        owner: 'atone1c4a8e6lc9uuaeqmlsw6gyyxpvun5pjag9y40el',
-        type: 'reply',
-        timestamp: new Date(),
-        was_read: false,
-        subcontext: 'd gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug ',
+//     },
+//     {
+//         hash: '',
+//         owner: 'atone1c4a8e6lc9uuaeqmlsw6gyyxpvun5pjag9y40el',
+//         type: 'follow',
+//         timestamp: new Date(),
+//         was_read: false,
+//         subcontext: 'd gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug ',
 
-    },
-    {
-        hash: '',
-        owner: 'atone1c4a8e6lc9uuaeqmlsw6gyyxpvun5pjag9y40el',
-        type: 'flag',
-        timestamp: new Date(),
-        was_read: false,
-        subcontext: 'd gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug ',
+//     },
+//     {
+//         hash: '',
+//         owner: 'atone1c4a8e6lc9uuaeqmlsw6gyyxpvun5pjag9y40el',
+//         type: 'reply',
+//         timestamp: new Date(),
+//         was_read: false,
+//         subcontext: 'd gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug ',
 
-    },
-];
+//     },
+//     {
+//         hash: '',
+//         owner: 'atone1c4a8e6lc9uuaeqmlsw6gyyxpvun5pjag9y40el',
+//         type: 'flag',
+//         timestamp: new Date(),
+//         was_read: false,
+//         subcontext: 'd gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug ',
+
+//     },
+//         {
+//         hash: '',
+//         owner: 'atone1c4a8e6lc9uuaeqmlsw6gyyxpvun5pjag9y40el',
+//         type: 'flag',
+//         timestamp: new Date(),
+//         was_read: false,
+//         subcontext: 'd gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug ',
+
+//     },
+//         {
+//         hash: '',
+//         owner: 'atone1c4a8e6lc9uuaeqmlsw6gyyxpvun5pjag9y40el',
+//         type: 'flag',
+//         timestamp: new Date(),
+//         was_read: false,
+//         subcontext: 'd gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug ',
+
+//     },
+//         {
+//         hash: '',
+//         owner: 'atone1c4a8e6lc9uuaeqmlsw6gyyxpvun5pjag9y40el',
+//         type: 'flag',
+//         timestamp: new Date(),
+//         was_read: false,
+//         subcontext: 'd gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug ',
+
+//     },
+//         {
+//         hash: '',
+//         owner: 'atone1c4a8e6lc9uuaeqmlsw6gyyxpvun5pjag9y40el',
+//         type: 'flag',
+//         timestamp: new Date(),
+//         was_read: false,
+//         subcontext: 'd gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug ',
+
+//     },
+//         {
+//         hash: '',
+//         owner: 'atone1c4a8e6lc9uuaeqmlsw6gyyxpvun5pjag9y40el',
+//         type: 'flag',
+//         timestamp: new Date(),
+//         was_read: false,
+//         subcontext: 'd gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug ',
+
+//     },
+//         {
+//         hash: '',
+//         owner: 'atone1c4a8e6lc9uuaeqmlsw6gyyxpvun5pjag9y40el',
+//         type: 'flag',
+//         timestamp: new Date(),
+//         was_read: false,
+//         subcontext: 'd gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug ',
+
+//     },
+//         {
+//         hash: '',
+//         owner: 'atone1c4a8e6lc9uuaeqmlsw6gyyxpvun5pjag9y40el',
+//         type: 'flag',
+//         timestamp: new Date(),
+//         was_read: false,
+//         subcontext: 'd gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug ',
+
+//     },
+//         {
+//         hash: '',
+//         owner: 'atone1c4a8e6lc9uuaeqmlsw6gyyxpvun5pjag9y40el',
+//         type: 'flag',
+//         timestamp: new Date(),
+//         was_read: false,
+//         subcontext: 'd gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug ',
+
+//     },
+//         {
+//         hash: '',
+//         owner: 'atone1c4a8e6lc9uuaeqmlsw6gyyxpvun5pjag9y40el',
+//         type: 'flag',
+//         timestamp: new Date(),
+//         was_read: false,
+//         subcontext: 'd gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug ',
+
+//     },
+//         {
+//         hash: '',
+//         owner: 'atone1c4a8e6lc9uuaeqmlsw6gyyxpvun5pjag9y40el',
+//         type: 'flag',
+//         timestamp: new Date(),
+//         was_read: false,
+//         subcontext: 'd gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug ',
+
+//     },
+//         {
+//         hash: '',
+//         owner: 'atone1c4a8e6lc9uuaeqmlsw6gyyxpvun5pjag9y40el',
+//         type: 'flag',
+//         timestamp: new Date(),
+//         was_read: false,
+//         subcontext: 'd gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug ',
+
+//     },
+//         {
+//         hash: '',
+//         owner: 'atone1c4a8e6lc9uuaeqmlsw6gyyxpvun5pjag9y40el',
+//         type: 'flag',
+//         timestamp: new Date(),
+//         was_read: false,
+//         subcontext: 'd gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug ',
+
+//     },
+//         {
+//         hash: '',
+//         owner: 'atone1c4a8e6lc9uuaeqmlsw6gyyxpvun5pjag9y40el',
+//         type: 'flag',
+//         timestamp: new Date(),
+//         was_read: false,
+//         subcontext: 'd gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug ',
+
+//     },
+//         {
+//         hash: '',
+//         owner: 'atone1c4a8e6lc9uuaeqmlsw6gyyxpvun5pjag9y40el',
+//         type: 'flag',
+//         timestamp: new Date(),
+//         was_read: false,
+//         subcontext: 'd gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug ',
+
+//     },
+//         {
+//         hash: '',
+//         owner: 'atone1c4a8e6lc9uuaeqmlsw6gyyxpvun5pjag9y40el',
+//         type: 'flag',
+//         timestamp: new Date(),
+//         was_read: false,
+//         subcontext: 'd gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug ',
+
+//     },
+//         {
+//         hash: '',
+//         owner: 'atone1c4a8e6lc9uuaeqmlsw6gyyxpvun5pjag9y40el',
+//         type: 'flag',
+//         timestamp: new Date(),
+//         was_read: false,
+//         subcontext: 'd gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug ',
+
+//     },
+//         {
+//         hash: '',
+//         owner: 'atone1c4a8e6lc9uuaeqmlsw6gyyxpvun5pjag9y40el',
+//         type: 'flag',
+//         timestamp: new Date(),
+//         was_read: false,
+//         subcontext: 'd gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug ',
+
+//     },
+//         {
+//         hash: '',
+//         owner: 'atone1c4a8e6lc9uuaeqmlsw6gyyxpvun5pjag9y40el',
+//         type: 'flag',
+//         timestamp: new Date(),
+//         was_read: false,
+//         subcontext: 'd gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug ',
+
+//     },
+//         {
+//         hash: '',
+//         owner: 'atone1c4a8e6lc9uuaeqmlsw6gyyxpvun5pjag9y40el',
+//         type: 'flag',
+//         timestamp: new Date(),
+//         was_read: false,
+//         subcontext: 'd gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug ',
+
+//     },
+//         {
+//         hash: '',
+//         owner: 'atone1c4a8e6lc9uuaeqmlsw6gyyxpvun5pjag9y40el',
+//         type: 'flag',
+//         timestamp: new Date(),
+//         was_read: false,
+//         subcontext: 'd gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug ',
+
+//     },
+//         {
+//         hash: '',
+//         owner: 'atone1c4a8e6lc9uuaeqmlsw6gyyxpvun5pjag9y40el',
+//         type: 'flag',
+//         timestamp: new Date(),
+//         was_read: false,
+//         subcontext: 'd gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug ',
+
+//     },
+//         {
+//         hash: '',
+//         owner: 'atone1c4a8e6lc9uuaeqmlsw6gyyxpvun5pjag9y40el',
+//         type: 'flag',
+//         timestamp: new Date(),
+//         was_read: false,
+//         subcontext: 'd gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug ',
+
+//     },
+//         {
+//         hash: '',
+//         owner: 'atone1c4a8e6lc9uuaeqmlsw6gyyxpvun5pjag9y40el',
+//         type: 'flag',
+//         timestamp: new Date(),
+//         was_read: false,
+//         subcontext: 'd gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug ',
+
+//     },
+//         {
+//         hash: '',
+//         owner: 'atone1c4a8e6lc9uuaeqmlsw6gyyxpvun5pjag9y40el',
+//         type: 'flag',
+//         timestamp: new Date(),
+//         was_read: false,
+//         subcontext: 'd gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug ',
+
+//     },
+//         {
+//         hash: '',
+//         owner: 'atone1c4a8e6lc9uuaeqmlsw6gyyxpvun5pjag9y40el',
+//         type: 'flag',
+//         timestamp: new Date(),
+//         was_read: false,
+//         subcontext: 'd gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug gjn ezigbe zoi gbzigo ezezgbu ezug ',
+
+//     },
+// ];
 
 </script>
 
@@ -75,6 +301,9 @@ const flatNotifications: Notification[] = [
       </h1>
 
       <Loader v-if="isLoading" class="animate-spin w-full mt-10" />
+
+      <span v-else-if="!flatNotifications.length" class="self-center mt-4 text-md font-semibold text-base">{{
+        $t('components.Notifications.empty') }}</span>
 
       <template v-for="(notification, index) in flatNotifications">
         <LikeNotification :key="index" v-if="notification.type === 'like'" :notification="notification"/>
