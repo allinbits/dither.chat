@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { Loader } from 'lucide-vue-next';
 
 import { useBalanceFetcher } from '@/composables/useBalanceFetcher';
@@ -27,6 +27,9 @@ const balanceFetcher = useBalanceFetcher();
 const photonValue = ref(1);
 const isBalanceInputValid = ref(false);
 const { flagPost, txError, txSuccess } = useFlagPost();
+
+const isShown = computed(() => !!popups.state.flag);
+useTxNotification(isShown, 'Flag', txSuccess, txError);
 
 const isProcessing = computed(() => {
     return wallet.processState.value !== 'idle';
@@ -61,10 +64,6 @@ async function handleSumbit() {
     await flagPost({ postHash: popups.state.flag.hash, photonValue: photonValue.value });
     handleClose();
 }
-
-onMounted(() => {
-    useTxNotification(txSuccess, txError);
-});
 </script>
 
 <template>

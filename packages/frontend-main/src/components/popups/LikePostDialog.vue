@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, nextTick, onMounted, ref, watch } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
 import { Loader } from 'lucide-vue-next';
 
 import { useBalanceFetcher } from '@/composables/useBalanceFetcher';
@@ -28,6 +28,9 @@ const photonValue = ref(1);
 const txError = ref<string>();
 const txSuccess = ref<string>();
 const isBalanceInputValid = ref(false);
+
+const isShown = computed(() => !!popups.state.like);
+useTxNotification(isShown, 'Like', txSuccess, txError);
 
 async function handleSubmit() {
     if (!popups.state.like) {
@@ -73,10 +76,6 @@ watch(wallet.loggedIn, async () => {
     }
 
     balanceFetcher.updateAddress(wallet.address.value);
-});
-
-onMounted(() => {
-    useTxNotification(txSuccess, txError);
 });
 </script>
 

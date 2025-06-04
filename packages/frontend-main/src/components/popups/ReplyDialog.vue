@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { Loader } from 'lucide-vue-next';
 
 import { useBalanceFetcher } from '@/composables/useBalanceFetcher';
@@ -29,6 +29,9 @@ const POST_HASH_LEN = 64;
 const MAX_CHARS = 512 - ('dither.Reply("", "")'.length + POST_HASH_LEN);
 
 const { createReply, txError, txSuccess } = useCreateReply();
+
+const isShown = computed(() => !!popups.state.reply);
+useTxNotification(isShown, 'Reply', txSuccess, txError);
 
 const isProcessing = computed(() => {
     return wallet.processState.value !== 'idle';
@@ -75,11 +78,6 @@ watch([wallet.loggedIn, wallet.address], async () => {
 
     balanceFetcher.updateAddress(wallet.address.value);
 });
-
-onMounted(() => {
-    useTxNotification(txSuccess, txError);
-});
-
 </script>
 
 <template>

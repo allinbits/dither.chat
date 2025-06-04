@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { Loader } from 'lucide-vue-next';
 
 import { useBalanceFetcher } from '@/composables/useBalanceFetcher';
@@ -30,6 +30,9 @@ const message = ref('');
 const MAX_CHARS = 512 - 'dither.Post("")'.length;
 
 const { createPost, txError, txSuccess } = useCreatePost();
+
+const isShown = computed(() => !!popups.state.newPost);
+useTxNotification(isShown, 'Post', txSuccess, txError);
 
 const isProcessing = computed(() => {
     return wallet.processState.value !== 'idle';
@@ -76,10 +79,6 @@ async function handleSumbit() {
     message.value = '';
     handleClose();
 }
-
-onMounted(() => {
-    useTxNotification(txSuccess, txError);
-});
 </script>
 
 <template>
