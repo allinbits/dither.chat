@@ -267,155 +267,155 @@ describe('v1', { sequential: true }, () => {
         assert.isOk(response?.status === 400, 'additional follow was allowed somehow');
     });
 
-    // it('GET - /following', async () => {
-    //     const response = await get<{ status: number; rows: { hash: string; address: string }[] }>(
-    //         `following?address=${addressUserA}`,
-    //     );
+    it('GET - /following', async () => {
+        const response = await get<{ status: number; rows: { hash: string; address: string }[] }>(
+            `following?address=${addressUserA}`,
+        );
 
-    //     assert.isOk(response && Array.isArray(response.rows), 'following response was not an array');
-    //     assert.isOk(response && response.rows.find(x => x.address === addressUserB));
-    // });
+        assert.isOk(response && Array.isArray(response.rows), 'following response was not an array');
+        assert.isOk(response && response.rows.find(x => x.address === addressUserB));
+    });
 
-    // it('GET - /followers', async () => {
-    //     const response = await get<{ status: number; rows: { hash: string; address: string }[] }>(
-    //         `followers?address=${addressUserB}`,
-    //     );
+    it('GET - /followers', async () => {
+        const response = await get<{ status: number; rows: { hash: string; address: string }[] }>(
+            `followers?address=${addressUserB}`,
+        );
 
-    //     assert.isOk(response && Array.isArray(response.rows), 'following response was not an array');
-    //     assert.isOk(response && response.rows.find(x => x.address === addressUserA));
-    // });
+        assert.isOk(response && Array.isArray(response.rows), 'following response was not an array');
+        assert.isOk(response && response.rows.find(x => x.address === addressUserA));
+    });
 
-    // // Unfollow
-    // it('POST - /unfollow', async () => {
-    //     const body: typeof Posts.UnfollowBody.static = {
-    //         hash: getRandomHash(),
-    //         from: addressUserA,
-    //         address: addressUserB,
-    //         timestamp: '2025-04-16T19:46:42Z',
-    //     };
+    // Unfollow
+    it('POST - /unfollow', async () => {
+        const body: typeof Posts.UnfollowBody.static = {
+            hash: getRandomHash(),
+            from: addressUserA,
+            address: addressUserB,
+            timestamp: '2025-04-16T19:46:42Z',
+        };
 
-    //     const response = await post(`unfollow`, body);
-    //     assert.isOk(response?.status === 200, 'response was not okay');
-    // });
+        const response = await post(`unfollow`, body);
+        assert.isOk(response?.status === 200, 'response was not okay');
+    });
 
-    // it('GET - /followers', async () => {
-    //     const response = await get<{ status: number; rows: { hash: string; address: string }[] }>(
-    //         `followers?address=${addressUserB}`,
-    //     );
-    //     assert.isOk(response && Array.isArray(response.rows), 'followers response was not an array');
-    //     assert.isOk(response && response.rows.length <= 0, 'did not unfollow all users');
-    // });
+    it('GET - /followers', async () => {
+        const response = await get<{ status: number; rows: { hash: string; address: string }[] }>(
+            `followers?address=${addressUserB}`,
+        );
+        assert.isOk(response && Array.isArray(response.rows), 'followers response was not an array');
+        assert.isOk(response && response.rows.length <= 0, 'did not unfollow all users');
+    });
 
-    // it('GET - /following', async () => {
-    //     const response = await get<{ status: number; rows: { hash: string; address: string }[] }>(
-    //         `following?address=${addressUserA}`,
-    //     );
-    //     assert.isOk(response && Array.isArray(response.rows), 'following response was not an array');
-    //     assert.isOk(response && response.rows.length <= 0, 'did not unfollow all users');
-    // });
+    it('GET - /following', async () => {
+        const response = await get<{ status: number; rows: { hash: string; address: string }[] }>(
+            `following?address=${addressUserA}`,
+        );
+        assert.isOk(response && Array.isArray(response.rows), 'following response was not an array');
+        assert.isOk(response && response.rows.length <= 0, 'did not unfollow all users');
+    });
 
-    // // PostRemove
-    // it('POST - /post-remove', async () => {
-    //     const response = await get<{ status: number; rows: { hash: string; author: string; message: string }[] }>(
-    //         `posts?address=${addressUserA}`,
-    //     );
-    //     assert.isOk(response, 'failed to fetch posts data');
-    //     assert.isOk(Array.isArray(response.rows) && response.rows.length >= 1, 'feed result was not an array type');
+    // PostRemove
+    it('POST - /post-remove', async () => {
+        const response = await get<{ status: number; rows: { hash: string; author: string; message: string }[] }>(
+            `posts?address=${addressUserA}`,
+        );
+        assert.isOk(response, 'failed to fetch posts data');
+        assert.isOk(Array.isArray(response.rows) && response.rows.length >= 1, 'feed result was not an array type');
 
-    //     const body: typeof Posts.PostRemoveBody.static = {
-    //         from: addressUserA,
-    //         hash: getRandomHash(),
-    //         timestamp: '2025-04-16T19:46:42Z',
-    //         post_hash: response.rows[0].hash,
-    //     };
+        const body: typeof Posts.PostRemoveBody.static = {
+            from: addressUserA,
+            hash: getRandomHash(),
+            timestamp: '2025-04-16T19:46:42Z',
+            post_hash: response.rows[0].hash,
+        };
 
-    //     const replyResponse = await post(`post-remove`, body);
-    //     assert.isOk(replyResponse?.status === 200, 'response was not okay');
+        const replyResponse = await post(`post-remove`, body);
+        assert.isOk(replyResponse?.status === 200, 'response was not okay');
 
-    //     const postsResponse = await get<{
-    //         status: number;
-    //         rows: {
-    //             hash: string;
-    //             author: string;
-    //             message: string;
-    //             deleted_at: Date;
-    //             deleted_reason: string;
-    //             deleted_hash: string;
-    //         }[];
-    //     }>(`posts?address=${addressUserA}`);
+        const postsResponse = await get<{
+            status: number;
+            rows: {
+                hash: string;
+                author: string;
+                message: string;
+                deleted_at: Date;
+                deleted_reason: string;
+                deleted_hash: string;
+            }[];
+        }>(`posts?address=${addressUserA}`);
 
-    //     assert.isOk(postsResponse?.status === 200, 'posts did not resolve');
-    //     const data = postsResponse?.rows.find(x => x.hash === response.rows[0].hash);
-    //     assert.isUndefined(data, 'data was not hidden');
-    // });
+        assert.isOk(postsResponse?.status === 200, 'posts did not resolve');
+        const data = postsResponse?.rows.find(x => x.hash === response.rows[0].hash);
+        assert.isUndefined(data, 'data was not hidden');
+    });
 
-    // it('POST - /post-remove - No Permission', async () => {
-    //     const response = await get<{ status: number; rows: { hash: string; author: string; message: string }[] }>(
-    //         `posts?address=${addressUserA}`,
-    //     );
-    //     assert.isOk(response, 'failed to fetch posts data');
-    //     assert.isOk(Array.isArray(response.rows) && response.rows.length >= 1, 'feed result was not an array type');
+    it('POST - /post-remove - No Permission', async () => {
+        const response = await get<{ status: number; rows: { hash: string; author: string; message: string }[] }>(
+            `posts?address=${addressUserA}`,
+        );
+        assert.isOk(response, 'failed to fetch posts data');
+        assert.isOk(Array.isArray(response.rows) && response.rows.length >= 1, 'feed result was not an array type');
 
-    //     const body: typeof Posts.PostRemoveBody.static = {
-    //         from: addressUserA + 'abcd',
-    //         hash: getRandomHash(),
-    //         timestamp: '2025-04-16T19:46:42Z',
-    //         post_hash: response.rows[0].hash,
-    //     };
+        const body: typeof Posts.PostRemoveBody.static = {
+            from: addressUserA + 'abcd',
+            hash: getRandomHash(),
+            timestamp: '2025-04-16T19:46:42Z',
+            post_hash: response.rows[0].hash,
+        };
 
-    //     const replyResponse = await post(`post-remove`, body);
-    //     assert.isOk(replyResponse?.status === 200, 'response was not okay');
+        const replyResponse = await post(`post-remove`, body);
+        assert.isOk(replyResponse?.status === 200, 'response was not okay');
 
-    //     const postsResponse = await get<{
-    //         status: number;
-    //         rows: {
-    //             hash: string;
-    //             author: string;
-    //             message: string;
-    //             deleted_at: Date;
-    //             deleted_reason: string;
-    //             deleted_hash: string;
-    //         }[];
-    //     }>(`posts?address=${addressUserA}`);
+        const postsResponse = await get<{
+            status: number;
+            rows: {
+                hash: string;
+                author: string;
+                message: string;
+                deleted_at: Date;
+                deleted_reason: string;
+                deleted_hash: string;
+            }[];
+        }>(`posts?address=${addressUserA}`);
 
-    //     assert.isOk(postsResponse?.status === 200, 'posts did not resolve');
-    //     const data = postsResponse?.rows.find(x => x.hash === response.rows[0].hash);
-    //     assert.isOk(data, 'data was hidden');
-    // });
+        assert.isOk(postsResponse?.status === 200, 'posts did not resolve');
+        const data = postsResponse?.rows.find(x => x.hash === response.rows[0].hash);
+        assert.isOk(data, 'data was hidden');
+    });
 
-    // it('POST - /mod/post-remove - No Permission', async () => {
-    //     const response = await get<{ status: number; rows: { hash: string; author: string; message: string }[] }>(
-    //         `posts?address=${addressUserA}`,
-    //     );
-    //     assert.isOk(response, 'failed to fetch posts data');
-    //     assert.isOk(Array.isArray(response.rows) && response.rows.length >= 1, 'feed result was not an array type');
+    it('POST - /mod/post-remove - No Permission', async () => {
+        const response = await get<{ status: number; rows: { hash: string; author: string; message: string }[] }>(
+            `posts?address=${addressUserA}`,
+        );
+        assert.isOk(response, 'failed to fetch posts data');
+        assert.isOk(Array.isArray(response.rows) && response.rows.length >= 1, 'feed result was not an array type');
 
-    //     const body: typeof Posts.PostRemoveBody.static = {
-    //         from: addressUserA + 'abcd',
-    //         hash: getRandomHash(),
-    //         timestamp: '2025-04-16T19:46:42Z',
-    //         post_hash: response.rows[0].hash,
-    //     };
+        const body: typeof Posts.PostRemoveBody.static = {
+            from: addressUserA + 'abcd',
+            hash: getRandomHash(),
+            timestamp: '2025-04-16T19:46:42Z',
+            post_hash: response.rows[0].hash,
+        };
 
-    //     const replyResponse = await post(`post-remove`, body);
-    //     assert.isOk(replyResponse?.status === 200, 'response was not okay');
+        const replyResponse = await post(`post-remove`, body);
+        assert.isOk(replyResponse?.status === 200, 'response was not okay');
 
-    //     const postsResponse = await get<{
-    //         status: number;
-    //         rows: {
-    //             hash: string;
-    //             author: string;
-    //             message: string;
-    //             deleted_at: Date;
-    //             deleted_reason: string;
-    //             deleted_hash: string;
-    //         }[];
-    //     }>(`posts?address=${addressUserA}`);
+        const postsResponse = await get<{
+            status: number;
+            rows: {
+                hash: string;
+                author: string;
+                message: string;
+                deleted_at: Date;
+                deleted_reason: string;
+                deleted_hash: string;
+            }[];
+        }>(`posts?address=${addressUserA}`);
 
-    //     assert.isOk(postsResponse?.status === 200, 'posts did not resolve');
-    //     const data = postsResponse?.rows.find(x => x.hash === response.rows[0].hash);
-    //     assert.isOk(data, 'data was hidden');
-    // });
+        assert.isOk(postsResponse?.status === 200, 'posts did not resolve');
+        const data = postsResponse?.rows.find(x => x.hash === response.rows[0].hash);
+        assert.isOk(data, 'data was hidden');
+    });
 });
 
 describe('v1 - mod', { sequential: true }, () => {
