@@ -37,23 +37,42 @@ export const messages = {
                 copyLink: 'Copy link',
                 newPost: 'New post',
                 reply: 'Reply',
+                mintscan: 'See on Mintscan',
+                pingpub: 'See on Ping.pub',
+                follow: 'Follow',
+                unfollow: 'Unfollow',
+                showImage: 'Show image',
+                hideImage: 'Hide image',
             },
             PopupTitles: {
                 likePost: 'Like Post',
                 dislikePost: 'Dislike Post',
                 newPost: 'New Post',
                 reply: 'Reply to Post',
+                flagPost: 'Redflag Post',
             },
             Tabs: {
                 feed: 'Global Feed',
                 following: 'Following',
+                posts: 'Posts',
+                myPosts: 'My Posts',
+                replies: 'Replies',
+                myReplies: 'My Replies',
             },
             Titles: {
+                profile: 'Profile',
+                myProfile: 'My Profile',
                 notifications: 'Notifications',
             },
             SearchInput: {
                 noResults: 'No results found',
                 failedToSearch: 'Failed to search',
+            },
+            PostsList: {
+                empty: 'No Posts Available',
+            },
+            RepliesGroupsList: {
+                empty: 'No Replies Available',
             },
             Notifications: {
                 like: 'Liked your post',

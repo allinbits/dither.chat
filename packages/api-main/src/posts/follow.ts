@@ -17,6 +17,22 @@ const statementAddFollower = getDatabase()
     .prepare('stmnt_add_follower');
 
 export async function Follow(body: typeof Posts.FollowBody.static) {
+    if (body.hash.length !== 64) {
+        return { status: 400, error: 'Provided hash is not valid for follow' };
+    }
+
+    if (body.address.length !== 44) {
+        return { status: 400, error: 'Provided address is not valid for follow' };
+    }
+
+    if (body.from.length !== 44) {
+        return { status: 400, error: 'Provided from address is not valid for follow' };
+    }
+
+    if (body.from === body.address) {
+        return { status: 400, error: 'Provided from address cannot equal provided address, cannot follow self' };
+    }
+
     try {
         const result = await statementAddFollower.execute({
             follower: body.from.toLowerCase(),
@@ -26,7 +42,7 @@ export async function Follow(body: typeof Posts.FollowBody.static) {
         });
 
         if (typeof result.rowCount !== 'number' || result.rowCount <= 0) {
-            return { status: 401, error: 'failed to add follow, follow already exists' };
+            return { status: 400, error: 'failed to add follow, follow already exists' };
         }
 
         await notify({

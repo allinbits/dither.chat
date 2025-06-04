@@ -1,8 +1,11 @@
+import type { Cookie } from 'elysia';
+
 import { type Gets } from '@atomone/dither-api-types';
 import { and, eq, sql } from 'drizzle-orm';
 
 import { getDatabase } from '../../drizzle/db';
 import { NotificationTable } from '../../drizzle/schema';
+import { verifyJWT } from '../shared/jwt';
 
 const getNotificationsStatement = getDatabase()
     .select()
@@ -12,7 +15,12 @@ const getNotificationsStatement = getDatabase()
     .offset(sql.placeholder('offset'))
     .prepare('stmnt_get_notifications');
 
-export async function Notifications(query: typeof Gets.NotificationsQuery.static, store: { userAddress: string }) {
+export async function Notifications(query: typeof Gets.NotificationsQuery.static, auth: Cookie<string | undefined>) {
+    const response = await verifyJWT(auth.value);
+    if (typeof response === 'undefined') {
+        return { status: 401, error: 'Unauthorized token proivided' };
+    }
+
     let limit = typeof query.limit !== 'undefined' ? Number(query.limit) : 100;
     const offset = typeof query.offset !== 'undefined' ? Number(query.offset) : 0;
 
@@ -29,7 +37,7 @@ export async function Notifications(query: typeof Gets.NotificationsQuery.static
     }
 
     try {
-        const results = await getNotificationsStatement.execute({ owner: store.userAddress, limit, offset });
+        const results = await getNotificationsStatement.execute({ owner: response, limit, offset });
         return { status: 200, rows: results };
     }
     catch (error) {
@@ -48,17 +56,22 @@ const statementReadNotification = getDatabase()
     )
     .prepare('stmnt_read_notification');
 
-export async function ReadNotification(query: typeof Gets.ReadNotificationQuery.static, store: { userAddress: string }) {
+export async function ReadNotification(query: typeof Gets.ReadNotificationQuery.static, auth: Cookie<string | undefined>) {
+    const response = await verifyJWT(auth.value);
+    if (typeof response === 'undefined') {
+        return { status: 401, error: 'Unauthorized token proivided' };
+    }
+
     try {
         const [notification] = await getDatabase()
             .select()
             .from(NotificationTable)
-            .where(and(eq(NotificationTable.hash, query.hash), eq(NotificationTable.owner, store.userAddress)))
+            .where(and(eq(NotificationTable.hash, query.hash), eq(NotificationTable.owner, response)))
             .limit(1);
         if (!notification) {
             return { status: 404, error: 'notification not found' };
         }
-        const results = await statementReadNotification.execute({ owner: store.userAddress, hash: query.hash });
+        const results = await statementReadNotification.execute({ owner: response, hash: query.hash });
         return { status: 200, rows: results };
     }
     catch (error) {

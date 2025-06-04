@@ -50,7 +50,7 @@ export async function Flag(action: ActionWithData): Promise<ResponseStatus> {
             return 'RETRY';
         }
 
-        if (response.status === 401) {
+        if (response.status === 400) {
             console.log(`dither.Flag message skipped, invalid post hash provided: ${action.hash}`);
             return 'SKIP';
         }

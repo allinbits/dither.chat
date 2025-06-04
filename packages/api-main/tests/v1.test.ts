@@ -2,17 +2,18 @@ import '../src/index';
 
 import type { Posts } from '@atomone/dither-api-types';
 
-import { sql } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { assert, describe, it } from 'vitest';
 
 import { getDatabase } from '../drizzle/db';
-import { ModeratorTable, tables } from '../drizzle/schema';
+import { ModeratorTable, ReaderState, tables } from '../drizzle/schema';
 
 import { createWallet, get, getAtomOneAddress, getRandomHash, post, signADR36Document, userLogin } from './shared';
 
 describe('v1', { sequential: true }, () => {
     const addressUserA = getAtomOneAddress();
     const addressUserB = getAtomOneAddress();
+    const addressUserC = getAtomOneAddress();
     const genericPostMessage
         = 'hello world, this is a really intereresting post $@!($)@!()@!$21,4214,12,42142,14,12,421,';
 
@@ -126,7 +127,6 @@ describe('v1', { sequential: true }, () => {
 
         assert.isOk(response, 'failed to fetch posts data');
         assert.isOk(Array.isArray(response.rows) && response.rows.length >= 1, 'feed result was not an array type');
-        console.log(response);
         assert.isOk(response && response.rows[1].likes >= 50, 'likes were not incremented on post');
 
         const getResponse = await get<{ status: number; rows: Array<{ hash: string }> }>(
@@ -242,6 +242,19 @@ describe('v1', { sequential: true }, () => {
         assert.isOk(response?.status === 200, 'response was not okay');
     });
 
+    it('GET - /is-following', async () => {
+        let response = await get<{ status: number; rows: { hash: string; address: string }[] }>(
+            `is-following?follower=${addressUserA}&following=${addressUserB}`,
+        );
+
+        assert.isOk(response?.status === 200, 'follower was not found, should have follower');
+        response = await get<{ status: number; rows: { hash: string; address: string }[] }>(
+            `is-following?follower=${addressUserA}&following=${addressUserC}`,
+        );
+
+        assert.isOk(response?.status === 404, 'follower was found when follower should not be following anyone');
+    });
+
     it('POST - /follow - no duplicates', async () => {
         const body: typeof Posts.FollowBody.static = {
             hash: getRandomHash(),
@@ -251,7 +264,7 @@ describe('v1', { sequential: true }, () => {
         };
 
         const response = await post(`follow`, body, 'WRITE');
-        assert.isOk(response?.status === 401, 'additional follow was allowed somehow');
+        assert.isOk(response?.status === 400, 'additional follow was allowed somehow');
     });
 
     it('GET - /following', async () => {
@@ -431,9 +444,10 @@ describe('v1 - mod', { sequential: true }, () => {
         assert.isOk(response?.status === 200, 'response was not okay');
 
         const signData = await signADR36Document(walletA.mnemonic, response.message);
-        const verifyBody: typeof Posts.AuthBody.static = {
+        const verifyBody: typeof Posts.AuthBody.static & { json?: boolean } = {
             id: response.id,
             ...signData.signature,
+            json: true,
         };
 
         const responseVerify = (await post(`auth`, verifyBody, 'READ')) as { status: 200; bearer: string };
@@ -771,14 +785,18 @@ describe('v1/auth', async () => {
         assert.isOk(response?.status === 200, 'response was not okay');
 
         const signData = await signADR36Document(walletA.mnemonic, response.message);
-        const verifyBody: typeof Posts.AuthBody.static = {
+        const verifyBody: typeof Posts.AuthBody.static & { json?: boolean } = {
             id: response.id,
             ...signData.signature,
+            json: true,
         };
 
-        const responseVerify = (await post(`auth`, verifyBody, 'READ')) as { status: 200; bearer: string };
-        assert.isOk(responseVerify?.status === 200, 'response was not verified and confirmed okay');
-        assert.isOk(responseVerify.bearer.length >= 1, 'bearer was not passed back');
+        const responseVerifyCreated = (await post(`auth`, verifyBody, 'READ')) as { status: 200; bearer: string };
+        assert.isOk(responseVerifyCreated?.status === 200, 'response was not verified and confirmed okay');
+        assert.isOk(responseVerifyCreated.bearer.length >= 1, 'bearer was not passed back');
+
+        const responseVerify = await get('auth-verify', 'READ', responseVerifyCreated.bearer) as { status: number };
+        assert.isOk(responseVerify.status === 200, 'could not verify through auth-verify endpoint, invalid cookie?');
     });
 });
 
@@ -980,6 +998,7 @@ describe('get post from followed', async () => {
                 deleted_at: Date;
                 deleted_reason: string;
                 deleted_hash: string;
+                quantity: string;
             }[];
         }>(`following-posts?address=${walletA.publicKey}`, 'READ');
         assert.isOk(readResponse?.status === 200, `response was not okay, got ${readResponse?.status}`);
@@ -1036,9 +1055,29 @@ describe('get post from followed', async () => {
                 deleted_at: Date;
                 deleted_reason: string;
                 deleted_hash: string;
+                quantity: string;
             }[];
         }>(`following-posts?address=${walletA.publicKey}`, 'READ');
         assert.isOk(readResponse?.status === 200, `response was not okay, got ${readResponse?.status}`);
         assert.lengthOf(readResponse.rows, 1);
+        assert.isOk(readResponse.rows[0].author, 'Author was not included');
+        assert.isOk(readResponse.rows[0].message, 'message was not included');
+        assert.isOk(readResponse.rows[0].quantity, 'quantity was not included');
+    });
+});
+
+describe('update state', () => {
+    it('should update state', async () => {
+        let response = await post<{ status: number; error: string }>(`update-state`, { last_block: '1' });
+        assert.isOk(response?.status === 200, 'could not post to update state');
+
+        let [state] = await getDatabase().select().from(ReaderState).where(eq(ReaderState.id, 0)).limit(1);
+        assert.isOk(state.last_block == '1');
+
+        response = await post<{ status: number; error: string }>(`update-state`, { last_block: '2' });
+        assert.isOk(response?.status === 200, 'could not post to update state');
+
+        [state] = await getDatabase().select().from(ReaderState).where(eq(ReaderState.id, 0)).limit(1);
+        assert.isOk(state.last_block == '2');
     });
 });

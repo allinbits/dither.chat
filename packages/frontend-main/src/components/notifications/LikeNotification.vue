@@ -11,6 +11,6 @@ defineProps<{ notification: Notification }>();
 
 <template>
   <NotificationWrapper :notification="notification">
-    <PostMessage class="line-clamp-3" :message="'post.message post.message post.message post.message post.message post.message post.message post.message post.message post.message post.message post.message post.message post.message post.message post.message post.message post.message post.message post.message post.message post.message post.message post.message post.message post.message post.message post.message post.message post.message post.message post.message post.message post.message post.message post.message post.message post.message post.message post.message post.message post.message post.message post.message post.message post.message post.message post.message post.message post.message '" />
+    <PostMessage v-if="notification.subcontext" class="line-clamp-3" :message="notification.subcontext" />
   </NotificationWrapper>
 </template>

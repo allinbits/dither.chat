@@ -8,6 +8,9 @@ import UserAvatar from '../users/UserAvatar.vue';
 import Username from '../users/Username.vue';
 
 import PostMessage from './PostMessage.vue';
+import PostMoreActions from './PostMoreActions.vue';
+
+import { formatAmount } from '@/utility/text';
 
 defineProps<{ post: Post }>();
 
@@ -16,17 +19,22 @@ defineProps<{ post: Post }>();
 <template>
   <RouterLink :to="`/post/${post.hash}`" custom v-slot="{ navigate }">
     <div class="flex flex-row gap-3 border-b cursor-pointer">
-      <RouterLink :to="`/profile/${post.author}`" class="size-[40px]">
+      <RouterLink :to="`/profile/${post.author}`">
         <UserAvatar :userAddress="post.author" />
       </RouterLink>
       <div class="flex flex-col w-full gap-3" @click="navigate">
-        <div class="flex flex-row gap-3 pt-2.5">
-          <RouterLink :to="`/profile/${post.author}`">
-            <Username :userAddress="post.author" />
-          </RouterLink>
-          <PrettyTimestamp :timestamp="new Date(post.timestamp)" />
+        <div class="flex flex-row justify-between items-center h-[40px]">
+          <div class="flex flex-row gap-3">
+            <RouterLink :to="`/profile/${post.author}`">
+              <Username :userAddress="post.author" />
+            </RouterLink>
+            <PrettyTimestamp :timestamp="new Date(post.timestamp)" />
+          </div>
+          <PostMoreActions :post="post" />
         </div>
-        <PostMessage :message="post.message" />
+
+        <span class="text-xs w-full text-right text-neutral-400">{{ formatAmount(post.quantity, 6) }} PHOTON</span>
+        <PostMessage :post="post" />
         <PostActions :post="post" />
       </div>
     </div>

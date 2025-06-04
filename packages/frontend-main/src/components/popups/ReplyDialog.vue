@@ -46,7 +46,7 @@ async function handleSumbit() {
     if (!canSubmit.value || !popups.state.reply) {
         return;
     }
-    await createReply({ hash: ref(popups.state.reply.hash), postHash: ref(popups.state.reply.post_hash), message: message.value, photonValue: photonValue.value });
+    await createReply({ parentPost: ref(popups.state.reply), message: message.value, photonValue: photonValue.value });
     message.value = '';
 }
 
