@@ -1095,7 +1095,7 @@ describe('filter post depending on send tokens', async () => {
 
         let postResponse = await post(`post`, body);
 
-        const expesiveBody: typeof Posts.PostBody.static = {
+        const expensiveBody: typeof Posts.PostBody.static = {
             from: walletB.publicKey,
             hash: getRandomHash(),
             msg: expensivePostMessage,
@@ -1103,7 +1103,7 @@ describe('filter post depending on send tokens', async () => {
             timestamp: '2025-04-16T19:46:42Z',
         };
 
-        postResponse = await post(`post`, expesiveBody);
+        postResponse = await post(`post`, expensiveBody);
         assert.isOk(postResponse != null);
         assert.isOk(postResponse && postResponse.status === 200, 'response was not okay');
     });
