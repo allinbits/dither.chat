@@ -50,7 +50,7 @@ const followingPostsStatement = getDatabase()
     .where(and(
         inArray(FeedTable.author,
             getDatabase()
-                .select()
+                .select({ following: FollowsTable.following })
                 .from(FollowsTable)
                 .where(eq(FollowsTable.follower, sql.placeholder('address'))),
         ),

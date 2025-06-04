@@ -1,8 +1,20 @@
 import { type Posts } from '@atomone/dither-api-types';
+import { and, eq, isNotNull, sql } from 'drizzle-orm';
 
 import { getDatabase } from '../../drizzle/db';
 import { FollowsTable } from '../../drizzle/schema';
 import { notify } from '../shared/notify';
+
+const statementAddFollower = getDatabase()
+    .insert(FollowsTable)
+    .values({
+        follower: sql.placeholder('follower'),
+        following: sql.placeholder('following'),
+        hash: sql.placeholder('hash'),
+        timestamp: sql.placeholder('timestamp'),
+    })
+    .onConflictDoNothing()
+    .prepare('stmnt_add_follower');
 
 export async function Follow(body: typeof Posts.FollowBody.static) {
     if (body.hash.length !== 64) {
@@ -22,32 +34,37 @@ export async function Follow(body: typeof Posts.FollowBody.static) {
     }
 
     try {
-        const result = await getDatabase()
-            .insert(FollowsTable)
-            .values({
-                follower: body.from.toLowerCase(),
-                following: body.address.toLowerCase(),
-                hash: body.hash.toLowerCase(),
-                timestamp: new Date(body.timestamp),
-            })
-            .onConflictDoUpdate({
-                target: [FollowsTable.follower, FollowsTable.following],
-                set: {
-                    removed_at: null,
-                    hash: body.hash.toLowerCase(),
-                },
-            }).execute();
-
-        if (typeof result.rowCount !== 'number' || result.rowCount <= 0) {
-            return { status: 400, error: 'failed to add follow, follow already exists' };
-        }
-
-        await notify({
-            owner: body.address,
-            hash: body.hash,
-            type: 'follow',
+        let result = await statementAddFollower.execute({
+            follower: body.from.toLowerCase(),
+            following: body.address.toLowerCase(),
+            hash: body.hash.toLowerCase(),
             timestamp: new Date(body.timestamp),
         });
+
+        if (typeof result.rowCount !== 'number' || result.rowCount <= 0) {
+            // Attempts to add the follower because the entry already exists; and may be null
+            result = await getDatabase().update(FollowsTable).set(
+                { removed_at: null, hash: body.hash.toLowerCase() }).where(
+                and(
+                    eq(FollowsTable.follower, body.from.toLowerCase()),
+                    eq(FollowsTable.following, body.address.toLowerCase()),
+                    isNotNull(FollowsTable.removed_at),
+                ),
+            );
+
+            if (typeof result.rowCount !== 'number' || result.rowCount <= 0) {
+                return { status: 400, error: 'failed to add follow, follow already exists' };
+            }
+        }
+        else {
+            // Only allow for notification of a new follower once, forever
+            await notify({
+                owner: body.address,
+                hash: body.hash,
+                type: 'follow',
+                timestamp: new Date(body.timestamp),
+            });
+        }
 
         return { status: 200 };
     }
