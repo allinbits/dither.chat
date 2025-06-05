@@ -35,7 +35,7 @@ router.beforeEach((to, _, next) => {
     const walletState = useWalletStateStore();
 
     // If the route is auth required and the user is not authenticated, redirect to the unauthorized page
-    if (to.meta.authRequired && !(walletState.loggedIn && walletState.isAuthenticated)) {
+    if (to.meta.authRequired && !walletState.loggedIn) {
         next({ name: 'Unauthorized' });
     }
     else {
