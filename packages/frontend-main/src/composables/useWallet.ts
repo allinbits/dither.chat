@@ -180,7 +180,7 @@ const useWalletInstance = () => {
                 address: walletState.address.value,
             };
 
-            if (walletState.isAuthenticated.value) {
+            if (walletState.loggedIn.value) {
                 return;
             }
 
@@ -208,17 +208,17 @@ const useWalletInstance = () => {
                 });
 
                 if (resAuthRaw.status !== 200) {
-                    walletState.isAuthenticated.value = false;
+                    walletState.loggedIn.value = false;
                     return;
                 }
 
                 const resAuth = await resAuthRaw.json();
                 if (resAuth.status !== 200) {
-                    walletState.isAuthenticated.value = false;
+                    walletState.loggedIn.value = false;
                     return;
                 }
 
-                walletState.isAuthenticated.value = true;
+                walletState.loggedIn.value = true;
             }
             catch (e) {
                 signOut();
