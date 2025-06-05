@@ -46,12 +46,7 @@ const useWalletInstance = () => {
         if (signal?.aborted) {
             return Promise.reject(new DOMException('Aborted', 'AbortError'));
         }
-        const abortHandler = () => {
-            walletState.address.value = '';
-            walletState.used.value = null;
-            walletState.loggedIn.value = false;
-        };
-        signal?.addEventListener('abort', abortHandler);
+        signal?.addEventListener('abort', signOut);
         switch (walletType) {
             case Wallets.keplr:
                 try {
@@ -61,11 +56,10 @@ const useWalletInstance = () => {
                         walletState.address.value = (
                             await window.getOfflineSignerOnlyAmino(chainInfo.chainId).getAccounts()
                         )[0].address;
-                        walletState.loggedIn.value = true;
                         walletState.used.value = Wallets.keplr;
                         signer.value = window.getOfflineSignerOnlyAmino(chainInfo.chainId);
                         if (signal?.aborted) {
-                            abortHandler();
+                            signOut();
                         }
                     }
                     else {
@@ -76,7 +70,7 @@ const useWalletInstance = () => {
                     throw new Error('Could not connect to Keplr: ' + e);
                 }
                 finally {
-                    signal?.removeEventListener('abort', abortHandler);
+                    signal?.removeEventListener('abort', signOut);
                 }
                 break;
             case Wallets.leap:
@@ -86,18 +80,17 @@ const useWalletInstance = () => {
                     walletState.address.value = (
                         await window.leap.getOfflineSignerOnlyAmino(chainInfo.chainId).getAccounts()
                     )[0].address;
-                    walletState.loggedIn.value = true;
                     walletState.used.value = Wallets.leap;
                     signer.value = window.leap.getOfflineSignerOnlyAmino(chainInfo.chainId);
                     if (signal?.aborted) {
-                        abortHandler();
+                        signOut();
                     }
                 }
                 catch (e) {
                     throw new Error('Could not connect to Leap Wallet: ' + e);
                 }
                 finally {
-                    signal?.removeEventListener('abort', abortHandler);
+                    signal?.removeEventListener('abort', signOut);
                 }
                 break;
             case Wallets.cosmostation:
@@ -128,7 +121,6 @@ const useWalletInstance = () => {
                             params: { chainName: chainInfo.chainId },
                         })
                     ).address;
-                    walletState.loggedIn.value = true;
                     walletState.used.value = Wallets.cosmostation;
                     const cosmostationSigner = (await getOfflineSigner(chainInfo.chainId)) as OfflineSigner;
                     if ((cosmostationSigner as OfflineDirectSigner).signDirect) {
@@ -139,20 +131,19 @@ const useWalletInstance = () => {
                         signer.value = cosmostationSigner;
                     }
                     if (signal?.aborted) {
-                        abortHandler();
+                        signOut();
                     }
                 }
                 catch (e) {
                     throw new Error('Could not connect to Cosmostation: ' + e);
                 }
                 finally {
-                    signal?.removeEventListener('abort', abortHandler);
+                    signal?.removeEventListener('abort', signOut);
                 }
                 break;
             case Wallets.addressOnly:
                 if (address) {
                     walletState.address.value = address;
-                    walletState.loggedIn.value = true;
                     walletState.used.value = Wallets.addressOnly;
                 }
                 break;
@@ -181,10 +172,10 @@ const useWalletInstance = () => {
                     headers,
                     credentials: 'include',
                 });
-                walletState.isAuthenticated.value = true;
+                walletState.loggedIn.value = true;
             }
             catch (e) {
-                walletState.isAuthenticated.value = false;
+                signOut();
                 throw e;
             }
         }
