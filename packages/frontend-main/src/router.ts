@@ -2,16 +2,20 @@ import { createRouter, createWebHistory } from 'vue-router';
 
 import { useWalletStateStore } from './stores/useWalletStateStore';
 import HomeView from './views/HomeView.vue';
+import ManageFollowsView from './views/ManageFollowsView.vue';
 import NotFoundView from './views/NotFoundView.vue';
 import NotificationsView from './views/NotificationsView.vue';
 import PostView from './views/PostView.vue';
 import ProfileView from './views/ProfileView.vue';
+import SettingsView from './views/SettingsView.vue';
 import UnauthorizedView from './views/UnauthorizedView.vue';
 
 const routes = [
     { path: '/', component: HomeView },
     { path: '/notifications', component: NotificationsView, meta: { authRequired: true } },
     { path: '/profile/:address', component: ProfileView },
+    { path: '/settings', component: SettingsView, meta: { authRequired: true } },
+    { path: '/settings/manage-followers', component: ManageFollowsView, meta: { authRequired: true } },
     { path: '/post/:hash/:postHash?', component: PostView },
     {
         path: '/unauthorized',
