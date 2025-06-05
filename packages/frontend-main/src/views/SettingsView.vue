@@ -12,7 +12,7 @@ import MainLayout from '@/layouts/MainLayout.vue';
         {{ $t(`components.Titles.settings`) }}
       </h1>
       <div class="flex flex-col gap-2">
-        <RouterLink to="/settings/manage-followers" class="border-b border-neutral-200">
+        <RouterLink to="/settings/manage-followers" class="border-b">
           <Button size="sm" class="w-full text-left py-8" variant="ghost">
             <span class="grow pl-2">
               {{ $t('components.Settings.manageFollows') }}
