@@ -1,10 +1,11 @@
 <script lang="ts" setup>
-import { computed, nextTick, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { Loader } from 'lucide-vue-next';
 
 import { useBalanceFetcher } from '@/composables/useBalanceFetcher';
 import { useFollowUser } from '@/composables/useFollowUser';
 import { usePopups } from '@/composables/usePopups';
+import { useTxNotification } from '@/composables/useTxNotification';
 import { useWallet } from '@/composables/useWallet';
 
 import DialogDescription from '../ui/dialog/DialogDescription.vue';
@@ -19,7 +20,6 @@ import {
     DialogTitle,
 } from '@/components/ui/dialog';
 import InputPhoton from '@/components/ui/input/InputPhoton.vue';
-import { useTxNotification } from '@/composables/useTxNotification';
 
 const popups = usePopups();
 const wallet = useWallet();
