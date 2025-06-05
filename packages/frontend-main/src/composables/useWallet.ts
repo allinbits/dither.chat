@@ -11,6 +11,7 @@ import chainInfo from '@/chain-config.json';
 import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
 import { useWalletStateStore } from '@/stores/useWalletStateStore';
 
+const apiRoot = import.meta.env.VITE_API_ROOT ?? 'http://localhost:3000';
 const destinationWallet = import.meta.env.VITE_COMMUNITY_WALLET ?? 'atone1uq6zjslvsa29cy6uu75y8txnl52mw06j6fzlep';
 
 export enum Wallets {
@@ -30,6 +31,28 @@ export const getWalletHelp = (wallet: Wallets) => {
             return 'https://guide.cosmostation.io/web_wallet_en.html';
     }
 };
+
+const isCredentialsValid = async () => {
+    const resVerifyRaw = await fetch(apiRoot + '/auth-verify', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+    });
+
+    if (resVerifyRaw.status !== 200) {
+        return false;
+    }
+
+    const resVerify = await resVerifyRaw.json();
+    if (resVerify.status !== 200) {
+        return false;
+    }
+
+    return true;
+};
+
 const useWalletInstance = () => {
     const walletDialogStore = useWalletDialogStore();
     const walletState = storeToRefs(useWalletStateStore());
@@ -150,7 +173,6 @@ const useWalletInstance = () => {
         }
 
         if (walletState.address.value) {
-            const apiRoot = import.meta.env.VITE_API_ROOT ?? 'http://localhost:3000';
             const headers: Record<string, string> = {
                 'Content-Type': 'application/json',
             };
@@ -158,21 +180,45 @@ const useWalletInstance = () => {
                 address: walletState.address.value,
             };
 
+            if (walletState.isAuthenticated.value) {
+                return;
+            }
+
+            const isValid = await isCredentialsValid();
+            if (isValid) {
+                return;
+            }
+
             try {
+                // Create the authentication request
                 const responseRaw = await fetch(apiRoot + '/auth-create', {
                     body: JSON.stringify(postBody),
                     method: 'POST',
                     headers,
                 });
                 const response = (await responseRaw.json()) as { status: number; id: number; message: string };
+
+                // Sign the authentication request
                 const signedMsg = await signMessage(response.message);
-                await fetch(apiRoot + '/auth', {
+                const resAuthRaw = await fetch(apiRoot + '/auth', {
                     body: JSON.stringify({ ...signedMsg, id: response.id }),
                     method: 'POST',
                     headers,
                     credentials: 'include',
                 });
-                walletState.loggedIn.value = true;
+
+                if (resAuthRaw.status !== 200) {
+                    walletState.isAuthenticated.value = false;
+                    return;
+                }
+
+                const resAuth = await resAuthRaw.json();
+                if (resAuth.status !== 200) {
+                    walletState.isAuthenticated.value = false;
+                    return;
+                }
+
+                walletState.isAuthenticated.value = true;
             }
             catch (e) {
                 signOut();
