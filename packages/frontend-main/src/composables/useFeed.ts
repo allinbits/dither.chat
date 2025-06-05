@@ -1,16 +1,24 @@
 import type { Post } from 'api-main/types/feed';
 
+import { refDebounced } from '@vueuse/core';
 import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/vue-query';
+import { storeToRefs } from 'pinia';
+
+import { useFiltersStore } from '@/stores/useFiltersStore';
 
 const apiRoot = import.meta.env.VITE_API_ROOT ?? 'http://localhost:3000';
 const LIMIT = 15;
 
-export const feed = () =>
-    infiniteQueryOptions({
-        queryKey: ['feed'],
+export const feed = () => {
+    const { minSendAmount } = storeToRefs(useFiltersStore());
+    const debouncedMinSendAmount = refDebounced<number>(minSendAmount, 600);
+    return infiniteQueryOptions({
+        queryKey: ['feed', debouncedMinSendAmount],
         queryFn: async ({ pageParam = 0 }) => {
-            const res = await fetch(`${apiRoot}/feed?offset=${pageParam}&limit=${LIMIT}`);
-            const json = await res.json() as { status: number; rows: Post[] };
+            const res = await fetch(
+                `${apiRoot}/feed?offset=${pageParam}&limit=${LIMIT}&minQuantity=${Math.trunc(debouncedMinSendAmount.value)}`,
+            );
+            const json = (await res.json()) as { status: number; rows: Post[] };
             return json.rows ?? [];
         },
         initialPageParam: 0,
@@ -19,6 +27,7 @@ export const feed = () =>
             return allPages.length * LIMIT;
         },
     });
+};
 
 export function useFeed() {
     return useInfiniteQuery(feed());

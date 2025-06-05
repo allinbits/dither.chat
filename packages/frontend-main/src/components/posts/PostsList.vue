@@ -30,7 +30,7 @@ const flatPosts = computed(() => data.value?.pages.flat() ?? []);
     <div v-if="isFetchingNextPage || hasNextPage" class="flex items-center justify-center my-4 px-4 h-[40px]">
       <Loader v-if="isFetchingNextPage" class="animate-spin " />
       <Button v-if="hasNextPage && !isFetchingNextPage" @click="fetchNextPage" size="sm" class="w-full text-sm"
-              variant="ghost">
+              variant="outline">
         {{ $t('components.Button.showMore') }}
       </Button>
     </div>

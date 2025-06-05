@@ -38,7 +38,7 @@ const useWalletInstance = () => {
         walletState.address.value = '';
         walletState.used.value = null;
         walletState.loggedIn.value = false;
-        walletState.isBroadcasting.value = false;
+        walletState.processState.value = 'idle';
     };
     const signer: Ref<OfflineSigner | null> = ref(null);
 
@@ -167,10 +167,26 @@ const useWalletInstance = () => {
                 address: walletState.address.value,
             };
 
-            const responseRaw = await fetch(apiRoot + '/auth-create', { body: JSON.stringify(postBody), method: 'POST', headers });
-            const response = await responseRaw.json() as { status: number; id: number; message: string };
-            const signedMsg = await signMessage(response.message);
-            await fetch(apiRoot + '/auth', { body: JSON.stringify({ ...signedMsg, id: response.id }), method: 'POST', headers, credentials: 'include' });
+            try {
+                const responseRaw = await fetch(apiRoot + '/auth-create', {
+                    body: JSON.stringify(postBody),
+                    method: 'POST',
+                    headers,
+                });
+                const response = (await responseRaw.json()) as { status: number; id: number; message: string };
+                const signedMsg = await signMessage(response.message);
+                await fetch(apiRoot + '/auth', {
+                    body: JSON.stringify({ ...signedMsg, id: response.id }),
+                    method: 'POST',
+                    headers,
+                    credentials: 'include',
+                });
+                walletState.isAuthenticated.value = true;
+            }
+            catch (e) {
+                walletState.isAuthenticated.value = false;
+                throw e;
+            }
         }
 
         walletDialogStore.hideDialog();
@@ -199,16 +215,19 @@ const useWalletInstance = () => {
 
     const sendBankTx = async (formattedMemo: string, amount: string) => {
         const response: { broadcast: boolean; tx?: DeliverTxResponse; msg?: string } = { broadcast: false };
-        walletState.isBroadcasting.value = true;
+        walletState.processState.value = 'starting';
 
         if (!signer.value) {
-            walletState.isBroadcasting.value = false;
+            walletState.processState.value = 'idle';
             response.msg = 'No valid signer available.';
             return response;
         }
 
         try {
+            walletState.processState.value = 'connecting';
             const client = await SigningStargateClient.connectWithSigner(chainInfo.rpc, signer.value);
+
+            walletState.processState.value = 'simulating';
             const simulate = await client.simulate(
                 walletState.address.value,
                 [
@@ -225,6 +244,8 @@ const useWalletInstance = () => {
             );
 
             const gasLimit = simulate && simulate > 0 ? '' + Math.ceil(simulate * 2.0) : '500000';
+
+            walletState.processState.value = 'broadcasting';
             const result = await client.sendTokens(
                 walletState.address.value, // From
                 destinationWallet, // To
@@ -243,7 +264,7 @@ const useWalletInstance = () => {
             return response;
         }
         finally {
-            walletState.isBroadcasting.value = false;
+            walletState.processState.value = 'idle';
         }
     };
 
@@ -257,7 +278,11 @@ const useWalletInstance = () => {
         }
 
         if (walletState.used.value === Wallets.cosmostation) {
-            return window.cosmostation.providers.keplr.signArbitrary(chainInfo.chainId, walletState.address.value, text);
+            return window.cosmostation.providers.keplr.signArbitrary(
+                chainInfo.chainId,
+                walletState.address.value,
+                text,
+            );
         }
 
         if (walletState.used.value === Wallets.leap) {

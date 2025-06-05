@@ -41,6 +41,9 @@ export const messages = {
                 reply: 'Reply',
                 mintscan: 'See on Mintscan',
                 pingpub: 'See on Ping.pub',
+                showImage: 'Show image',
+                hideImage: 'Hide image',
+                viewOnExplorer: 'View on explorer',
             },
             PopupTitles: {
                 likePost: 'Like Post',
@@ -67,6 +70,10 @@ export const messages = {
                 noResults: 'No results found',
                 failedToSearch: 'Failed to search',
             },
+            Filter: {
+                posts: 'Filter posts by PHOTON',
+                amount: 'Amount',
+            },
             PostsList: {
                 empty: 'No Posts Available',
             },
@@ -75,6 +82,12 @@ export const messages = {
             },
             FollowingList: {
                 empty: 'You are not following anyone yet',
+            },
+            Toast: {
+                broadcasting: 'Broadcasting transaction',
+                wait: 'Please wait a moment...',
+                success: '{txLabel} successfully',
+                fail: '{txLabel} failed',
             },
         },
         feedbacks: {
