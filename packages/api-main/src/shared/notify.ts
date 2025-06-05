@@ -11,6 +11,7 @@ const statementInsertNotification = getDatabase()
         type: sql.placeholder('type'),
         timestamp: sql.placeholder('timestamp'),
         subcontext: sql.placeholder('subcontext'),
+        actor: sql.placeholder('actor'),
     })
     .onConflictDoNothing()
     .prepare('stmnt_insert_notification');
@@ -21,6 +22,7 @@ export const notify = async (data: {
     hash: string;
     type: string;
     timestamp: Date;
+    actor: string;
     subcontext?: string;
     post_hash?: string;
     owner?: string;
@@ -50,5 +52,6 @@ export const notify = async (data: {
         type: data.type,
         timestamp: data.timestamp ?? null,
         subcontext: data.subcontext,
+        actor: data.actor,
     });
 };

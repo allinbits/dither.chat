@@ -3,6 +3,7 @@ import type { Ref } from 'vue';
 
 import { computed, ref } from 'vue';
 import { bech32 } from 'bech32';
+import { Loader } from 'lucide-vue-next';
 import { VisuallyHidden } from 'reka-ui';
 
 import { getWalletHelp, useWallet, Wallets } from '@/composables/useWallet';
@@ -125,7 +126,7 @@ const isValidAddress = computed(() => {
 });
 </script>
 <template>
-  <Dialog v-model:open="walletDialogStore.isOpen">
+  <Dialog v-model:open="walletDialogStore.isOpen" @update:open="cancelConnect">
     <DialogContent>
       <VisuallyHidden>
         <DialogTitle></DialogTitle>
@@ -232,7 +233,12 @@ const isValidAddress = computed(() => {
           <div class="text-xl font-bold text-center">
             {{ $t('components.WalletConnect.connecting') }}
           </div>
-          <div class="text-muted-foreground text-lg">{{ $t('components.WalletConnect.wait') }}</div>
+          <div class="text-muted-foreground">{{ $t('components.WalletConnect.wait') }}</div>
+
+          <div class="flex justify-center">
+            <Loader class="animate-spin" :size="24" />
+          </div>
+
           <div class="buttons">
             <ConnectButton
               @click="

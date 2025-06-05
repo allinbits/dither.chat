@@ -4,13 +4,14 @@ import { type Ref, ref } from 'vue';
 import { type InfiniteData, useMutation, useQueryClient } from '@tanstack/vue-query';
 
 import { feed } from './useFeed';
+import { followingPosts } from './useFollowingPosts';
 import { post } from './usePost';
 import { replies } from './useReplies';
 import { userPosts } from './useUserPosts';
 import { userReplies } from './useUserReplies';
 import { useWallet } from './useWallet';
 
-import { infiniteDataWithNewItem, newPost } from '@/utility/optimisticBuilders';
+import { infiniteDataWithNewItem, infiniteDataWithUpdatedPost, newPost } from '@/utility/optimisticBuilders';
 
 interface CreateReplyRequestMutation {
     parentPost: Ref<Post>;
@@ -49,6 +50,7 @@ export function useCreateReply(
             const repliesOpts = replies({ hash: ref(variables.parentPost.value.hash) });
             const userPostsOpts = userPosts({ userAddress: wallet.address });
             const userRepliesOpts = userReplies({ userAddress: wallet.address });
+            const followingPostsOpts = followingPosts({ userAddress: wallet.address });
 
             await Promise.all([
                 queryClient.cancelQueries(parentPostOpts),
@@ -56,6 +58,7 @@ export function useCreateReply(
                 queryClient.cancelQueries(repliesOpts),
                 queryClient.cancelQueries(userPostsOpts),
                 queryClient.cancelQueries(userRepliesOpts),
+                queryClient.cancelQueries(followingPostsOpts),
             ]);
 
             const previousParentPost = queryClient.getQueryData(
@@ -73,8 +76,11 @@ export function useCreateReply(
             const previousUserReplies = queryClient.getQueryData(
                 userRepliesOpts.queryKey,
             ) as InfiniteData<ReplyWithParent[], unknown> | undefined;
+            const previousFollowingPosts = queryClient.getQueryData(
+                followingPostsOpts.queryKey,
+            ) as InfiniteData<Post[], unknown> | undefined;
 
-            return { previousFeed, previousParentPost, previousReplies, previousUserPosts, previousUserReplies };
+            return { previousFeed, previousParentPost, previousReplies, previousUserPosts, previousUserReplies, previousFollowingPosts };
         },
         onSuccess: (createdHash, variables, context) => {
             if (!createdHash) throw new Error('Error: No hash in TX');
@@ -84,6 +90,7 @@ export function useCreateReply(
             const repliesOpts = replies({ hash: ref(variables.parentPost.value.hash) });
             const userPostsOpts = userPosts({ userAddress: wallet.address });
             const userRepliesOpts = userReplies({ userAddress: wallet.address });
+            const followingPostsOpts = followingPosts({ userAddress: wallet.address });
 
             // Created Post with parent hash as post_hash
             const optimisticNewReply: Post = newPost({ message: variables.message, quantity: variables.photonValue, hash: createdHash, postHash: variables.parentPost.value.hash, author: wallet.address.value });
@@ -103,17 +110,18 @@ export function useCreateReply(
             };
 
             // Whole user posts with updated parent post's replies count
-            const optimisticUserPostsPages = context.previousUserPosts?.pages.map(page =>
-                page.map(post =>
-                    post.hash === variables.parentPost.value.hash
-                        ? { ...post, replies: (post.replies || 0) + 1 }
-                        : post,
-                ),
-            );
-            let optimisticUserPostsData: InfiniteData<Post[]> = {
-                pageParams: context.previousUserPosts?.pageParams || [],
-                pages: optimisticUserPostsPages || [],
-            };
+            let optimisticUserPostsData = infiniteDataWithUpdatedPost({ previousPosts: context.previousUserPosts, updatedPost: optimisticParentPost });
+            // User's posts updated with the new reply and the updated parent post's replies count
+            optimisticUserPostsData = infiniteDataWithNewItem<Post>({ previousItems: optimisticUserPostsData, newItem: optimisticNewReply });
+
+            // Whole feed with updated parent post's replies count
+            const optimisticFeedData = infiniteDataWithUpdatedPost({ previousPosts: context.previousFeed, updatedPost: optimisticParentPost });
+
+            // Whole following posts with updated parent post's replies count
+            const optimisticFollowingPostsData = infiniteDataWithUpdatedPost({ previousPosts: context.previousFollowingPosts, updatedPost: optimisticParentPost });
+
+            // Post's replies updated with the new reply
+            const optimisticRepliesData = infiniteDataWithNewItem<Post>({ previousItems: context.previousReplies, newItem: optimisticNewReply });
 
             // Whole user replies with updated parent post's replies count (The case where the parent post is a reply itselves)
             const optimisticUserRepliesPages = context.previousUserReplies?.pages.map(page =>
@@ -127,24 +135,6 @@ export function useCreateReply(
                 pageParams: context.previousUserReplies?.pageParams || [],
                 pages: optimisticUserRepliesPages || [],
             };
-
-            // Whole feed with updated parent post's replies count
-            const optimisticFeedPages = context.previousFeed?.pages.map(page =>
-                page.map(post =>
-                    post.hash === variables.parentPost.value.hash
-                        ? { ...post, replies: (post.replies || 0) + 1 }
-                        : post,
-                ),
-            );
-            const optimisticFeedData: InfiniteData<Post[]> = {
-                pageParams: context.previousFeed?.pageParams || [],
-                pages: optimisticFeedPages || [],
-            };
-
-            // Post's replies updated with the new reply
-            const optimisticRepliesData = infiniteDataWithNewItem<Post>({ previousItems: context.previousReplies, newItem: optimisticNewReply });
-            // User's posgts updated with the new reply and the updated parent post's replies count
-            optimisticUserPostsData = infiniteDataWithNewItem<Post>({ previousItems: optimisticUserPostsData, newItem: optimisticNewReply });
             // User's replies updated with the new reply and the updated parent post's replies count
             optimisticUserRepliesData = infiniteDataWithNewItem<ReplyWithParent>({ previousItems: optimisticUserRepliesData, newItem: optimisticNewUserReply });
 
@@ -153,6 +143,7 @@ export function useCreateReply(
             queryClient.setQueryData(repliesOpts.queryKey, optimisticRepliesData);
             queryClient.setQueryData(userPostsOpts.queryKey, optimisticUserPostsData);
             queryClient.setQueryData(userRepliesOpts.queryKey, optimisticUserRepliesData);
+            queryClient.setQueryData(followingPostsOpts.queryKey, optimisticFollowingPostsData);
         },
         onError: (_, variables, context) => {
             const feedOpts = feed();
@@ -160,12 +151,14 @@ export function useCreateReply(
             const repliesOpts = replies({ hash: ref(variables.parentPost.value.hash) });
             const userPostsOpts = userPosts({ userAddress: wallet.address });
             const userRepliesOpts = userReplies({ userAddress: wallet.address });
+            const followingPostsOpts = followingPosts({ userAddress: wallet.address });
 
             queryClient.setQueryData(feedOpts.queryKey, context?.previousFeed);
             queryClient.setQueryData(parentPostOpts.queryKey, context?.previousParentPost);
             queryClient.setQueryData(repliesOpts.queryKey, context?.previousReplies);
             queryClient.setQueryData(userPostsOpts.queryKey, context?.previousUserPosts);
             queryClient.setQueryData(userRepliesOpts.queryKey, context?.previousUserReplies);
+            queryClient.setQueryData(followingPostsOpts.queryKey, context?.previousFollowingPosts);
         },
     });
 

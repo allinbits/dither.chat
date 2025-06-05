@@ -14,7 +14,8 @@ export async function Auth(body: typeof Posts.AuthBody.static, auth: Cookie<stri
 
         const result = verifyAndCreate(body.pub_key.value, body.signature, body.id);
         if (result.status === 200) {
-            auth.set({ sameSite: 'strict', httpOnly: false, value: result.bearer, maxAge: 259200 });
+            // TODO - When deployed the samesite should be set to strict for subdomain deployment
+            auth.set({ sameSite: 'lax', httpOnly: true, value: result.bearer, maxAge: 259200, secure: true, path: '/' });
             return { status: 200 };
         }
     }

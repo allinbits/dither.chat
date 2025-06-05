@@ -1,10 +1,11 @@
 import type { InfiniteData } from '@tanstack/vue-query';
 import type { Post } from 'api-main/types/feed';
 
-interface BuildNewPostParams {
+interface NewPostParams {
     message: string; hash: string; postHash: string | null; author: string; quantity: number;
 }
-export const newPost = ({ message, hash, postHash, author, quantity }: BuildNewPostParams): Post => ({
+// Returns a new Post, used for display
+export const newPost = ({ message, hash, postHash, author, quantity }: NewPostParams): Post => ({
     hash: hash.toLowerCase(),
     post_hash: postHash ? postHash.toLocaleLowerCase() : null,
     author,
@@ -23,11 +24,12 @@ export const newPost = ({ message, hash, postHash, author, quantity }: BuildNewP
     removed_by: null,
 });
 
-interface BuildNewInfiniteDataParams<T> {
+interface InfiniteDataWithNewItemParams<T> {
     previousItems: InfiniteData<T[], unknown> | undefined;
     newItem: T;
 }
-export function infiniteDataWithNewItem<T>({ previousItems, newItem }: BuildNewInfiniteDataParams<T>) {
+// Returns an InfiniteData with pages and pageParams after adding a new item to previous items, used for display
+export function infiniteDataWithNewItem<T>({ previousItems, newItem }: InfiniteDataWithNewItemParams<T>) {
     const newPages = previousItems?.pages ? [...previousItems.pages] : [];
     if (newPages.length > 0) {
         newPages[0] = [newItem, ...newPages[0]];
@@ -40,4 +42,24 @@ export function infiniteDataWithNewItem<T>({ previousItems, newItem }: BuildNewI
         pageParams: previousItems?.pageParams ?? [0],
     };
     return newData;
+}
+
+interface InfiniteDataWithUpdatedPostParams {
+    previousPosts: InfiniteData<Post[], unknown> | undefined;
+    updatedPost: Post;
+}
+// Returns an InfiniteData with pages and pageParams after updating a Post, used for display
+export function infiniteDataWithUpdatedPost({ previousPosts, updatedPost }: InfiniteDataWithUpdatedPostParams) {
+    const pages = previousPosts?.pages.map(page =>
+        page.map(post =>
+            post.hash === updatedPost.hash
+                ? updatedPost
+                : post,
+        ),
+    ) || [];
+    const postsData: InfiniteData<Post[]> = {
+        pageParams: previousPosts?.pageParams || [],
+        pages,
+    };
+    return postsData;
 }
