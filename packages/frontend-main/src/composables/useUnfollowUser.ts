@@ -25,9 +25,7 @@ export function useUnfollowUser(
         mutateAsync,
     } = useMutation({
         mutationFn: async ({ userAddress, photonValue }: UnfollowUserRequestMutation) => {
-            console.log('userAddress', userAddress, 'photonValue', photonValue);
             const result = await wallet.dither.unfollow(userAddress.value, BigInt(photonValue).toString());
-            console.log('resultresult', result);
             if (!result.broadcast) {
                 txError.value = result.msg;
                 throw new Error(result.msg);
@@ -49,7 +47,7 @@ export function useUnfollowUser(
                 followingOpts.queryKey,
             ) as InfiniteData<FollowUser[], unknown> | undefined;
             const previousFollowingPosts = queryClient.getQueryData(
-                followingOpts.queryKey,
+                followingPostsOpts.queryKey,
             ) as InfiniteData<Post[], unknown> | undefined;
             const previousIsFollowing = queryClient.getQueryData(
                 isFollowingOpts.queryKey,
@@ -75,21 +73,18 @@ export function useUnfollowUser(
                 pages: newFollowingPages,
                 pageParams: context.previousFollowing?.pageParams ?? [0],
             };
-            console.log('context.previousFollowingcontext.previousFollowing', context.previousFollowing);
-            console.log('newFollowingDatanewFollowingDatanewFollowingData', newFollowingData);
 
-            // const previousFollowingPostsPages = context.previousFollowingPosts?.pages ?? [];
-            // const newFollowingPostsPages = previousFollowingPostsPages.map(page =>
-            //     page.filter(post => post.author !== followUserAddressToRemove),
-            // );
-            // const newFollowingPostsData: InfiniteData<Post[], unknown> = {
-            //     pages: newFollowingPostsPages,
-            //     pageParams: context.previousFollowingPosts?.pageParams ?? [0],
-            // };
+            const previousFollowingPostsPages = context.previousFollowingPosts?.pages ?? [];
+            const newFollowingPostsPages = previousFollowingPostsPages.map(page =>
+                page.filter(post => post.author !== followUserAddressToRemove),
+            );
+            const newFollowingPostsData: InfiniteData<Post[], unknown> = {
+                pages: newFollowingPostsPages,
+                pageParams: context.previousFollowingPosts?.pageParams ?? [0],
+            };
 
             queryClient.setQueryData(followingOpts.queryKey, newFollowingData);
-            // queryClient.setQueryData(followingPostsOpts.queryKey, newFollowingPostsData);
-            queryClient.invalidateQueries(followingPostsOpts);
+            queryClient.setQueryData(followingPostsOpts.queryKey, newFollowingPostsData);
             queryClient.setQueryData(isFollowingOpts.queryKey, false);
         },
         onError: (_, variables, context) => {

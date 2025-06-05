@@ -12,7 +12,7 @@ interface Params {
 
 export const following = (params: Params) =>
     infiniteQueryOptions({
-        queryKey: ['posts', params.userAddress],
+        queryKey: ['following', params.userAddress],
         queryFn: async ({ pageParam = 0 }) => {
             const res = await fetch(`${apiRoot}/following?address=${params.userAddress.value}&offset=${pageParam}&limit=${LIMIT}`);
             const json = await res.json() as { status: number; rows: FollowUser[] };
