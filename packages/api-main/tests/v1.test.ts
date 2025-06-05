@@ -1134,7 +1134,7 @@ describe('filter post depending on send tokens', async () => {
         assert.lengthOf(readResponse.rows, 2);
     });
 
-    it('filtering cheap posts', async () => {
+    it('filtering expensive posts', async () => {
         const readResponse = await get<{
             status: number;
             rows: {
