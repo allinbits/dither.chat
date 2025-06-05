@@ -4,6 +4,9 @@ import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { refDebounced } from '@vueuse/core';
 import { useQuery } from '@tanstack/vue-query';
+import { storeToRefs } from 'pinia';
+
+import { useFiltersStore } from '@/stores/useFiltersStore';
 
 const apiRoot = import.meta.env.VITE_API_ROOT || 'http://localhost:3000';
 
@@ -11,10 +14,12 @@ export function useSearchPosts(minQueryLength: number = 3, debounceMs: number = 
     const { t } = useI18n();
     const query = ref<string>('');
     const debouncedQuery = refDebounced<string>(query, debounceMs);
+    const { minSendAmount } = storeToRefs(useFiltersStore());
+    const debouncedMinSendAmount = refDebounced<number>(minSendAmount, 600);
 
     const searchPosts = async ({ queryKey, signal }: { queryKey: string[]; signal: AbortSignal }) => {
         // FIXME: We should use search endpoint instead
-        const rawResponse = await fetch(`${apiRoot}/search?text=${queryKey[1]}`, { signal });
+        const rawResponse = await fetch(`${apiRoot}/search?text=${queryKey[1]}&minQuantity=${Math.trunc(debouncedMinSendAmount.value)}`, { signal });
         const res = (await rawResponse.json()) as { status: number; rows: Post[] };
 
         if (res.status !== 200) {
@@ -30,7 +35,7 @@ export function useSearchPosts(minQueryLength: number = 3, debounceMs: number = 
         error,
         refetch,
     } = useQuery({
-        queryKey: ['searchPosts', debouncedQuery],
+        queryKey: ['searchPosts', debouncedQuery, debouncedMinSendAmount.value.toString()],
         queryFn: searchPosts,
         enabled: false,
         retry: false,

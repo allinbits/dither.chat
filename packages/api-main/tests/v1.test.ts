@@ -1081,3 +1081,102 @@ describe('update state', () => {
         assert.isOk(state.last_block == '2');
     });
 });
+
+describe('filter post depending on send tokens', async () => {
+    const walletB = await createWallet();
+    const cheapPostMessage = 'cheap post';
+    const expensivePostMessage = 'expensive post';
+    const expensivePostTokens = '20';
+
+    it('EMPTY ALL TABLES', async () => {
+        for (const tableName of tables) {
+            await getDatabase().execute(sql`TRUNCATE TABLE ${sql.raw(tableName)};`);
+        }
+    });
+
+    it('user creates one cheap and one expensive posts', async () => {
+        const body: typeof Posts.PostBody.static = {
+            from: walletB.publicKey,
+            hash: getRandomHash(),
+            msg: cheapPostMessage,
+            quantity: '1',
+            timestamp: '2025-04-16T19:46:42Z',
+        };
+
+        let postResponse = await post(`post`, body);
+
+        const expensiveBody: typeof Posts.PostBody.static = {
+            from: walletB.publicKey,
+            hash: getRandomHash(),
+            msg: expensivePostMessage,
+            quantity: expensivePostTokens,
+            timestamp: '2025-04-16T19:46:42Z',
+        };
+
+        postResponse = await post(`post`, expensiveBody);
+        assert.isOk(postResponse != null);
+        assert.isOk(postResponse && postResponse.status === 200, 'response was not okay');
+    });
+
+    it('get feed without filtering by tokens', async () => {
+        const readResponse = await get<{
+            status: number;
+            rows: {
+                hash: string;
+                author: string;
+                message: string;
+                deleted_at: Date;
+                deleted_reason: string;
+                deleted_hash: string;
+            }[];
+        }>(`feed`);
+        assert.isOk(readResponse?.status === 200, `response was not okay, got ${readResponse?.status}`);
+        assert.lengthOf(readResponse.rows, 2);
+    });
+
+    it('filtering cheap posts', async () => {
+        const readResponse = await get<{
+            status: number;
+            rows: {
+                hash: string;
+                author: string;
+                message: string;
+                deleted_at: Date;
+                deleted_reason: string;
+                deleted_hash: string;
+            }[];
+        }>(`feed?minQuantity=${expensivePostTokens}`);
+        assert.isOk(readResponse?.status === 200, `response was not okay, got ${readResponse?.status}`);
+        assert.lengthOf(readResponse.rows, 1);
+    });
+
+    it('Search: filtering cheap posts', async () => {
+        let readResponse = await get<{
+            status: number;
+            rows: {
+                hash: string;
+                author: string;
+                message: string;
+                deleted_at: Date;
+                deleted_reason: string;
+                deleted_hash: string;
+            }[];
+        }>(`search?text="${cheapPostMessage}"&minQuantity=1`);
+        assert.isOk(readResponse?.status === 200, `response was not okay, got ${readResponse?.status}`);
+        assert.lengthOf(readResponse.rows, 1);
+
+        readResponse = await get<{
+            status: number;
+            rows: {
+                hash: string;
+                author: string;
+                message: string;
+                deleted_at: Date;
+                deleted_reason: string;
+                deleted_hash: string;
+            }[];
+        }>(`search?text="${cheapPostMessage}"&minQuantity=${expensivePostTokens}`);
+        assert.isOk(readResponse?.status === 200, `response was not okay, got ${readResponse?.status}`);
+        assert.lengthOf(readResponse.rows, 0);
+    });
+});

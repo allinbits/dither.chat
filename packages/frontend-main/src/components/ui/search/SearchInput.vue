@@ -18,7 +18,7 @@ const { query, posts, isLoading, error } = useSearchPosts();
 </script>
 
 <template>
-  <div class="w-full max-w-[310px] min-w-[140px]">
+  <div>
     <div class="search-input flex items-center gap-2 relative">
       <Input class="w-full h-[40px] rounded-xs" v-model="query" :placeholder="$t('placeholders.search')"/>
 

@@ -41,6 +41,9 @@ export const messages = {
                 pingpub: 'See on Ping.pub',
                 follow: 'Follow',
                 unfollow: 'Unfollow',
+                showImage: 'Show image',
+                hideImage: 'Hide image',
+                viewOnExplorer: 'View on explorer',
                 tip: 'Tip',
             },
             PopupTitles: {
@@ -67,11 +70,21 @@ export const messages = {
                 noResults: 'No results found',
                 failedToSearch: 'Failed to search',
             },
+            Filter: {
+                posts: 'Filter posts by PHOTON',
+                amount: 'Amount',
+            },
             PostsList: {
                 empty: 'No Posts Available',
             },
             RepliesGroupsList: {
                 empty: 'No Replies Available',
+            },
+            Toast: {
+                broadcasting: 'Broadcasting transaction',
+                wait: 'Please wait a moment...',
+                success: '{txLabel} successfully',
+                fail: '{txLabel} failed',
             },
         },
         feedbacks: {
