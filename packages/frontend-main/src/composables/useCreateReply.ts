@@ -8,7 +8,7 @@ import { replies } from './useReplies';
 import { userReplies } from './useUserReplies';
 import { useWallet } from './useWallet';
 
-import { buildNewInfiniteData, buildNewPost } from '@/utility/optimisticBuilders';
+import { infiniteDataWithNewItem, newPost } from '@/utility/optimisticBuilders';
 
 interface CreateReplyRequestMutation {
     parentPost: Ref<Post>;
@@ -77,17 +77,17 @@ export function useCreateReply(
                     ? { ...context.previousParentPost, replies: (context.previousParentPost.replies || 0) + 1 }
                     : { ...variables.parentPost.value, replies: (variables.parentPost.value.replies || 0) + 1 };
             // Created Post with parent hash as post_hash
-            const optimisticNewReply: Post = buildNewPost({ message: variables.message, quantity: variables.photonValue, hash: createdHash, postHash: variables.parentPost.value.hash, author: wallet.address.value });
+            const optimisticNewReply: Post = newPost({ message: variables.message, quantity: variables.photonValue, hash: createdHash, postHash: variables.parentPost.value.hash, author: wallet.address.value });
             // Created Post in ReplyWithParent
             const optimisticNewUserReply: ReplyWithParent = {
-                reply: buildNewPost(
+                reply: newPost(
                     { message: variables.message, quantity: variables.photonValue, hash: createdHash, postHash: variables.parentPost.value.hash, author: wallet.address.value },
                 ),
                 parent: optimisticParentPost,
             };
 
-            const newRepliesData = buildNewInfiniteData<Post>({ previousItems: context.previousReplies, newItem: optimisticNewReply });
-            const newUserRepliesData = buildNewInfiniteData<ReplyWithParent>({ previousItems: context.previousUserReplies, newItem: optimisticNewUserReply });
+            const newRepliesData = infiniteDataWithNewItem<Post>({ previousItems: context.previousReplies, newItem: optimisticNewReply });
+            const newUserRepliesData = infiniteDataWithNewItem<ReplyWithParent>({ previousItems: context.previousUserReplies, newItem: optimisticNewUserReply });
 
             queryClient.setQueryData(parentPostOpts.queryKey, optimisticParentPost);
             queryClient.setQueryData(repliesOpts.queryKey, newRepliesData);
