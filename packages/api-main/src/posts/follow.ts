@@ -63,6 +63,7 @@ export async function Follow(body: typeof Posts.FollowBody.static) {
                 hash: body.hash,
                 type: 'follow',
                 timestamp: new Date(body.timestamp),
+                actor: body.from,
             });
         }
 

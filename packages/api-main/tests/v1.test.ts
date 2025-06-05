@@ -829,12 +829,14 @@ describe('v1/notifications', async () => {
                 type: 'like' | 'dislike' | 'flag' | 'follow' | 'reply';
                 timestamp: Date | null;
                 was_read: boolean | null;
+                actor: string;
             }[];
         }>(`notifications?address=${walletB.publicKey}`, 'READ', bearerToken);
         // Asert user got a notification and can read it
         assert.isOk(notificationResponse?.status === 200, `response was not okay, got ${notificationResponse?.status}`);
         assert.lengthOf(notificationResponse.rows, 1);
         assert.isFalse(notificationResponse.rows[0].was_read, `notification was not marked as read, got true`);
+        assert.isOk(notificationResponse.rows[0].actor === walletA.publicKey, `unexpected actor, got ${notificationResponse.rows[0].actor}`);
 
         const readResponse = await get<{
             status: number;
@@ -900,12 +902,14 @@ describe('v1/notifications', async () => {
                 type: 'like' | 'dislike' | 'flag' | 'follow' | 'reply';
                 timestamp: Date | null;
                 was_read: boolean | null;
+                actor: string;
             }[];
         }>(`notifications?address=${walletA.publicKey}`, 'READ', bearerToken);
         // Asert user got a notification and can read it
         assert.isOk(notificationResponse?.status === 200, `response was not okay, got ${notificationResponse?.status}`);
         assert.lengthOf(notificationResponse.rows, 1);
         assert.isFalse(notificationResponse.rows[0].was_read, `notification was not marked as read, got true`);
+        assert.isOk(notificationResponse.rows[0].actor === walletB.publicKey, `unexpected actor, got ${notificationResponse.rows[0].actor}`);
 
         const readResponse = await get<{
             status: number;
