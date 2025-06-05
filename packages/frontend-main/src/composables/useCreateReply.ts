@@ -111,7 +111,7 @@ export function useCreateReply(
                 ),
             );
             let optimisticUserPostsData: InfiniteData<Post[]> = {
-                pageParams: context.previousFeed?.pageParams || [],
+                pageParams: context.previousUserPosts?.pageParams || [],
                 pages: optimisticUserPostsPages || [],
             };
 
