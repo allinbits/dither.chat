@@ -113,6 +113,6 @@ async function handleReply() {
     </div>
 
     <!-- Replies posts list -->
-    <PostsList :query="repliesQuery" />
+    <PostsList :query="repliesQuery" hideEmptyText/>
   </MainLayout>
 </template>
