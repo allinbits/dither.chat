@@ -48,7 +48,7 @@ function handleAction(type: keyof PopupState, userAddress: string) {
           {{ $t(`components.Settings.following`) }}
         </h1>
       </div>
-      <div class="flex flex-col gap-4">
+      <div class="flex flex-col">
         <div v-for="(followUser, index) in flatFollowUsers" :key="index"
              class="flex flex-row items-center justify-between p-4 border-b">
           <RouterLink :to="`/profile/${followUser.address}`">
