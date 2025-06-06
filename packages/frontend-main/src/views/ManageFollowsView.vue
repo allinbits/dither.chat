@@ -12,7 +12,7 @@ import MainLayout from '@/layouts/MainLayout.vue';
 import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
 
 const wallet = useWallet();
-const { data, fetchNextPage, isFetchingNextPage, hasNextPage } = useFollowing({
+const { data, fetchNextPage, isFetchingNextPage, hasNextPage, isLoading } = useFollowing({
     userAddress: wallet.address,
 });
 const flatFollowUsers = computed(() => data.value?.pages.flat() ?? []);
