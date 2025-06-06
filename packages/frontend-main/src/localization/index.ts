@@ -44,6 +44,7 @@ export const messages = {
                 showImage: 'Show image',
                 hideImage: 'Hide image',
                 viewOnExplorer: 'View on explorer',
+                tip: 'Tip',
             },
             PopupTitles: {
                 likePost: 'Like Post',
@@ -53,6 +54,7 @@ export const messages = {
                 flagPost: 'Redflag Post',
                 follow: 'Follow User',
                 unfollow: 'Unfollow User',
+                tipUser: 'Tip User',
             },
             Tabs: {
                 feed: 'Global Feed',
