@@ -10,7 +10,7 @@ import { ModeratorTable, ReaderState, tables } from '../drizzle/schema';
 
 import { createWallet, get, getAtomOneAddress, getRandomHash, post, signADR36Document, userLogin } from './shared';
 
-describe('v1', { sequential: true }, () => {
+describe('v1', { sequential: true }, async () => {
     const addressUserA = getAtomOneAddress();
     const addressUserB = getAtomOneAddress();
     const addressUserC = getAtomOneAddress();
@@ -418,7 +418,7 @@ describe('v1', { sequential: true }, () => {
     });
 });
 
-describe('v1 - mod', { sequential: true }, () => {
+describe('v1 - mod', { sequential: true }, async () => {
     const addressUserA = getAtomOneAddress();
     let addressModerator = getAtomOneAddress();
     const genericPostMessage
@@ -1070,7 +1070,7 @@ describe('get post from followed', async () => {
     });
 });
 
-describe('update state', () => {
+describe('update state', async () => {
     it('should update state', async () => {
         let response = await post<{ status: number; error: string }>(`update-state`, { last_block: '1' });
         assert.isOk(response?.status === 200, 'could not post to update state');
@@ -1182,5 +1182,46 @@ describe('filter post depending on send tokens', async () => {
         }>(`search?text="${cheapPostMessage}"&minQuantity=${expensivePostTokens}`);
         assert.isOk(readResponse?.status === 200, `response was not okay, got ${readResponse?.status}`);
         assert.lengthOf(readResponse.rows, 0);
+    });
+});
+
+describe('v1/pubkey-add', { sequential: true }, async () => {
+    const walletA = await createWallet();
+    const randomKey = getAtomOneAddress();
+
+    let authToken: string;
+
+    it('Obtain Bearer Token', async () => {
+        authToken = await userLogin(walletA);
+        assert.isOk(authToken.length >= 1, 'bearer was not passed back');
+    });
+
+    it('should add a public key for a user', async () => {
+        const response = await post<{
+            status: number;
+        }>(`pubkey-add`, { key: randomKey }, 'READ', authToken);
+
+        assert.isOk(response?.status === 200, 'could not add public key to user');
+    });
+
+    it('should contain one public key for a user', async () => {
+        const response = await get<{
+            status: number;
+            rows: { address: string; keys: string[] }[];
+        }>(`pubkey-get`, 'READ', authToken);
+
+        console.log(response);
+
+        assert.isOk(response?.status === 200, 'could not add public key to user');
+        assert.isOk(response.rows.length === 1, 'it added a single row');
+        assert.isOk(response.rows[0].keys[0] === randomKey, 'it added a key');
+    });
+
+    it('should remove a public key for a user', async () => {
+        const response = await post<{
+            status: number;
+        }>(`pubkey-remove`, { key: randomKey }, 'READ', authToken);
+
+        assert.isOk(response?.status === 200, 'could not remove public key to user');
     });
 });

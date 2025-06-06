@@ -57,8 +57,8 @@ const statementReadNotification = getDatabase()
     .prepare('stmnt_read_notification');
 
 export async function ReadNotification(query: typeof Gets.ReadNotificationQuery.static, auth: Cookie<string | undefined>) {
-    const response = await verifyJWT(auth.value);
-    if (typeof response === 'undefined') {
+    const publicKey = await verifyJWT(auth.value);
+    if (typeof publicKey === 'undefined') {
         return { status: 401, error: 'Unauthorized token proivided' };
     }
 
@@ -66,12 +66,12 @@ export async function ReadNotification(query: typeof Gets.ReadNotificationQuery.
         const [notification] = await getDatabase()
             .select()
             .from(NotificationTable)
-            .where(and(eq(NotificationTable.hash, query.hash), eq(NotificationTable.owner, response)))
+            .where(and(eq(NotificationTable.hash, query.hash), eq(NotificationTable.owner, publicKey)))
             .limit(1);
         if (!notification) {
             return { status: 404, error: 'notification not found' };
         }
-        const results = await statementReadNotification.execute({ owner: response, hash: query.hash });
+        const results = await statementReadNotification.execute({ owner: publicKey, hash: query.hash });
         return { status: 200, rows: results };
     }
     catch (error) {

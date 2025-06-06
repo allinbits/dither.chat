@@ -37,10 +37,14 @@ function startReadOnlyServer() {
         json: t.Optional(t.Boolean()),
     }) });
     app.post('/auth-create', ({ body }) => PostRequests.AuthCreate(body), { body: Posts.AuthCreateBody });
-    // Protected route group
+
     app.get('/notifications', ({ query, cookie: { auth } }) => GetRequests.Notifications(query, auth), {
         query: Gets.NotificationsQuery,
     });
+
+    app.post('/pubkey-add', ({ body, cookie: { auth } }) => PostRequests.PubKeyAdd(body, auth), { body: Posts.AddPublicKey });
+    app.post('/pubkey-remove', ({ body, cookie: { auth } }) => PostRequests.PubKeyRemove(body, auth), { body: Posts.RemovePublicKey });
+    app.get('/pubkey-get', ({ cookie: { auth } }) => GetRequests.PubKeyGet(auth));
 
     app.listen(config.READ_ONLY_PORT ?? 3000);
     console.log(`[API Read Only] Running on ${config.READ_ONLY_PORT ?? 3000}`);

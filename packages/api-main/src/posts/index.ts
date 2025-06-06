@@ -7,6 +7,8 @@ export * from './like';
 export * from './mod';
 export * from './post';
 export * from './postRemove';
+export * from './pubKeyAdd';
+export * from './pubKeyRemove';
 export * from './reply';
 export * from './unfollow';
 export * from './updateState';

@@ -10,6 +10,7 @@ export * from './likes';
 export * from './notifications';
 export * from './post';
 export * from './posts';
+export * from './pubKeyGet';
 export * from './replies';
 export * from './search';
 export * from './isFollowing';

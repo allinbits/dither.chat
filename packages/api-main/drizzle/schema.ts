@@ -91,6 +91,14 @@ export const FollowsTable = pgTable(
     ],
 );
 
+export const UsersTable = pgTable(
+    'users',
+    {
+        address: varchar({ length: 44 }).primaryKey(),
+        keys: varchar({ length: 44 }).array().notNull().default([]),
+    },
+);
+
 // Audits are append only
 export const AuditTable = pgTable('audits', {
     id: serial('id').primaryKey(),
@@ -134,4 +142,4 @@ export const ReaderState = pgTable('state', {
     last_block: varchar().notNull(),
 });
 
-export const tables = ['feed', 'likes', 'dislikes', 'flags', 'follows', 'audits', 'moderators', 'notifications', 'state'];
+export const tables = ['feed', 'likes', 'dislikes', 'flags', 'follows', 'audits', 'moderators', 'notifications', 'state', 'users'];
