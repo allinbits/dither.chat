@@ -49,6 +49,12 @@ function handleAction(type: keyof PopupState, userAddress: string) {
         </h1>
       </div>
       <div class="flex flex-col">
+        <Loader v-if="isLoading" class="animate-spin w-full mt-10" />
+
+        <span v-else-if="!flatFollowUsers.length" class="self-center text-md font-semibold text-base mt-10">
+          {{ $t('components.FollowingList.empty') }}
+        </span>
+
         <div v-for="(followUser, index) in flatFollowUsers" :key="index"
              class="flex flex-row items-center justify-between p-4 border-b">
           <RouterLink :to="`/profile/${followUser.address}`">
