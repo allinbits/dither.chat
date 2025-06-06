@@ -1,0 +1,18 @@
+# fly.toml app configuration file generated for dither-testnet-reader-main on 2025-06-05T15:58:33-05:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'dither-testnet-reader-main'
+primary_region = 'iad'
+
+[build]
+
+[env]
+BATCH_SIZE = "500"
+MEMO_PREFIX = "dither."
+
+[[vm]]
+memory = '1gb'
+cpu_kind = 'shared'
+cpus = 1

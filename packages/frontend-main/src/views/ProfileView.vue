@@ -20,6 +20,7 @@ import MainLayout from '@/layouts/MainLayout.vue';
 import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
 
 const wallet = useWallet();
+const popups = usePopups();
 
 const POSTS_TAB = 'post';
 const REPLIES_TAB = 'replies';
@@ -36,7 +37,6 @@ const { data: isFollowing, isFetching: isFetchingIsFollowing } = useIsFollowing(
 const postsQuery = useUserPosts({ userAddress: address });
 const repliesQuery = useUserReplies({ userAddress: address });
 
-const popups = usePopups();
 const walletDialogStore = useWalletDialogStore();
 function handleAction(type: keyof PopupState, userAddress: string) {
     if (wallet.loggedIn.value) {
@@ -61,12 +61,18 @@ function handleAction(type: keyof PopupState, userAddress: string) {
         <UserAvatarUsername :userAddress="address" size="lg" />
         <Loader v-if="isFetchingIsFollowing" class="animate-spin w-[80px]" />
         <template v-else-if="!isMyProfile && wallet.loggedIn.value">
-          <Button v-if="isFollowing" size="sm" @click="handleAction('unfollow', address)">
-            {{ $t('components.Button.unfollow') }}
-          </Button>
-          <Button v-else size="sm" @click="handleAction('follow', address)">
-            {{ $t('components.Button.follow') }}
-          </Button>
+          <div class="flex flex-row gap-2">
+            <Button size="sm" @click="popups.show('tipUser', address)">
+              {{ $t('components.Button.tip') }}
+            </Button>
+
+            <Button v-if="isFollowing" size="sm" @click="handleAction('unfollow', address)">
+              {{ $t('components.Button.unfollow') }}
+            </Button>
+            <Button v-else size="sm" @click="handleAction('follow', address)">
+              {{ $t('components.Button.follow') }}
+            </Button>
+          </div>
         </template>
       </div>
 
