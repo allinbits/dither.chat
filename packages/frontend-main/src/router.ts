@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
 import { useWalletStateStore } from './stores/useWalletStateStore';
+import ExploreView from './views/ExploreView.vue';
 import HomeView from './views/HomeView.vue';
 import NotFoundView from './views/NotFoundView.vue';
 import NotificationsView from './views/NotificationsView.vue';
@@ -10,6 +11,7 @@ import UnauthorizedView from './views/UnauthorizedView.vue';
 
 const routes = [
     { path: '/', component: HomeView },
+    { path: '/explore', name: 'Explore', component: ExploreView },
     { path: '/notifications', component: NotificationsView, meta: { authRequired: true } },
     { path: '/profile/:address', component: ProfileView },
     { path: '/post/:hash/:postHash?', component: PostView },
