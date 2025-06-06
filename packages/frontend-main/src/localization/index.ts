@@ -67,6 +67,7 @@ export const messages = {
             Titles: {
                 profile: 'Profile',
                 myProfile: 'My Profile',
+                settings: 'Settings',
             },
             SearchInput: {
                 noResults: 'No results found',
@@ -90,6 +91,11 @@ export const messages = {
                 wait: 'Please wait a moment...',
                 success: '{txLabel} successfully',
                 fail: '{txLabel} failed',
+            },
+            Settings: {
+                manageFollows: 'Manage Follows',
+                following: 'Following',
+                back: 'Back',
             },
         },
         feedbacks: {

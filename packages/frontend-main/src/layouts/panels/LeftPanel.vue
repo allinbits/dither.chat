@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Bell, Feather, House, Search, User } from 'lucide-vue-next';
+import { Bell, Feather, House, Search, Settings, User } from 'lucide-vue-next';
 
 import { usePopups } from '@/composables/usePopups';
 import { useWallet } from '@/composables/useWallet';
@@ -48,6 +48,16 @@ const popups = usePopups();
               <User class="size-6" />
             </div>
             <span class="hidden xl:inline text-lg font-semibold">My Profile</span>
+          </RouterLink>
+
+          <RouterLink
+            :to="`/settings`"
+            class="flex flex-row items-center gap-3 hover:underline"
+          >
+            <div class="flex items-center justify-center h-[52px]">
+              <Settings class="size-6" />
+            </div>
+            <span class="hidden xl:inline text-lg font-semibold">Settings</span>
           </RouterLink>
         </template>
       </nav>
