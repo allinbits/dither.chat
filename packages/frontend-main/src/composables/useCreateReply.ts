@@ -42,7 +42,7 @@ export function useCreateReply(
             }
         },
         onMutate: async (variables) => {
-            const parentPostOpts = post({ hash: ref(variables.parentPost.value.hash), postHash: ref(variables.parentPost.value.post_hash) });
+            const parentPostOpts = post({ hash: ref(variables.parentPost.value.hash) });
             const repliesOpts = replies({ hash: ref(variables.parentPost.value.hash) });
             const userRepliesOpts = userReplies({ userAddress: wallet.address });
 
@@ -67,7 +67,7 @@ export function useCreateReply(
         onSuccess: (createdHash, variables, context) => {
             if (!createdHash) throw new Error('Error: No hash in TX');
 
-            const parentPostOpts = post({ hash: ref(variables.parentPost.value.hash), postHash: ref(variables.parentPost.value.post_hash) });
+            const parentPostOpts = post({ hash: ref(variables.parentPost.value.hash) });
             const repliesOpts = replies({ hash: ref(variables.parentPost.value.hash) });
             const userRepliesOpts = userReplies({ userAddress: wallet.address });
 
@@ -94,7 +94,7 @@ export function useCreateReply(
             queryClient.setQueryData(userRepliesOpts.queryKey, newUserRepliesData);
         },
         onError: (_, variables, context) => {
-            const parentPostOpts = post({ hash: ref(variables.parentPost.value.hash), postHash: ref(variables.parentPost.value.post_hash) });
+            const parentPostOpts = post({ hash: ref(variables.parentPost.value.hash) });
             const repliesOpts = replies({ hash: ref(variables.parentPost.value.hash) });
             const userRepliesOpts = userReplies({ userAddress: wallet.address });
 

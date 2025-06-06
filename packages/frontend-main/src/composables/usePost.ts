@@ -8,19 +8,13 @@ const apiRoot = import.meta.env.VITE_API_ROOT ?? 'http://localhost:3000';
 
 interface Params {
     hash: Ref<string>;
-    postHash: Ref<string | null>;
 }
 
 export const post = (params: Params) =>
     queryOptions({
-        queryKey: ['post', params.hash, params.postHash],
+        queryKey: ['post', params.hash],
         queryFn: async () => {
-            let url = `${apiRoot}/post?hash=${params.hash.value}`;
-            if (params.postHash.value) {
-                url += `&post_hash=${params.postHash.value}`;
-            }
-
-            const rawResponse = await fetch(url);
+            const rawResponse = await fetch(`${apiRoot}/post?hash=${params.hash.value}`);
             if (!rawResponse.ok) {
                 throw new Error('Failed to fetch post');
             }
@@ -44,6 +38,7 @@ export const post = (params: Params) =>
         },
         enabled: () => !!params.hash.value,
         retry: false,
+        staleTime: Infinity,
     });
 
 export function usePost(params: Params) {

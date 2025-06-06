@@ -24,11 +24,8 @@ const route = useRoute();
 const hash = computed(() =>
     typeof route.params.hash === 'string' ? route.params.hash : '',
 );
-const postHash = computed(() =>
-    typeof route.params.postHash === 'string' && route.params.postHash.length ? route.params.postHash : null,
-);
 const { data: post, isLoading, isError, error } = usePost({
-    hash, postHash,
+    hash,
 });
 const wallet = useWallet();
 const repliesQuery = useReplies({ hash });
