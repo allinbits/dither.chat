@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Bell, Feather, House, User } from 'lucide-vue-next';
+import { Bell, Feather, House, Search, User } from 'lucide-vue-next';
 
 import { usePopups } from '@/composables/usePopups';
 import { useWallet } from '@/composables/useWallet';
@@ -25,6 +25,12 @@ const popups = usePopups();
             <House class="size-6" />
           </div>
           <span class="hidden xl:inline text-lg font-semibold">Home</span>
+        </RouterLink>
+        <RouterLink to="/explore" class="flex flex-row items-center gap-3 hover:underline">
+          <div class="flex items-center justify-center h-[52px]">
+            <Search class="size-6" />
+          </div>
+          <span class="hidden xl:inline text-lg font-semibold">Explore</span>
         </RouterLink>
         <template v-if="wallet.loggedIn.value">
           <RouterLink to="/notifications" class="flex flex-row items-center gap-3 hover:underline">
