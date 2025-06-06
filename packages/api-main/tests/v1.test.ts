@@ -1210,8 +1210,6 @@ describe('v1/pubkey-add', { sequential: true }, async () => {
             rows: { address: string; keys: string[] }[];
         }>(`pubkey-get`, 'READ', authToken);
 
-        console.log(response);
-
         assert.isOk(response?.status === 200, 'could not add public key to user');
         assert.isOk(response.rows.length === 1, 'it added a single row');
         assert.isOk(response.rows[0].keys[0] === randomKey, 'it added a key');
