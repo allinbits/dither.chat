@@ -117,6 +117,7 @@ export const NotificationTable = pgTable(
     {
         hash: varchar({ length: 64 }).notNull(),
         owner: varchar({ length: 44 }).notNull(),
+        actor: varchar({ length: 44 }).notNull(),
         type: notificationTypeEnum().notNull(),
         subcontext: varchar({ length: 64 }),
         timestamp: timestamp({ withTimezone: true }),

@@ -27,7 +27,7 @@ const buttonLabelClass = 'text-sm font-semibold';
     </PopoverTrigger>
 
     <PopoverContent class="p-2">
-      <Button @click="copy" size="sm" :class="cn(buttonClass, 'justify-between')" variant="outline">
+      <Button @click="copy" size="sm" :class="cn(buttonClass, 'justify-between')" variant="ghost">
         <div class="flex flex-row items-center gap-2">
           <Link2 class="size-5" />
           <span :class="buttonLabelClass">{{ $t('components.Button.copyLink') }}</span>
@@ -35,14 +35,14 @@ const buttonLabelClass = 'text-sm font-semibold';
         <span v-if="copied" class="text-xs font-normal">{{ $t('feedbacks.copied') }}</span>
       </Button>
 
-      <Button @click="() => { }" size="sm" :class="buttonClass" variant="outline">
+      <Button @click="() => { }" size="sm" :class="buttonClass" variant="ghost">
         <div class="flex flex-row items-center gap-2">
           <Icon icon="mintscan" :size="1.25" />
           <span :class="buttonLabelClass">{{ $t('components.Button.mintscan') }}</span>
         </div>
       </Button>
 
-      <Button @click="() => { }" size="sm" :class="buttonClass" variant="outline">
+      <Button @click="() => { }" size="sm" :class="buttonClass" variant="ghost">
         <div class="flex flex-row items-center gap-2">
           <Icon icon="pingpub" :size="1.25" />
           <span :class="buttonLabelClass">{{ $t('components.Button.pingpub') }}</span>

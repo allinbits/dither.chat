@@ -35,12 +35,12 @@ export const messages = {
                 close: 'Close',
                 showMore: 'Show more',
                 copyLink: 'Copy link',
+                follow: 'Follow',
+                unfollow: 'Unfollow',
                 newPost: 'New post',
                 reply: 'Reply',
                 mintscan: 'See on Mintscan',
                 pingpub: 'See on Ping.pub',
-                follow: 'Follow',
-                unfollow: 'Unfollow',
                 showImage: 'Show image',
                 hideImage: 'Hide image',
                 viewOnExplorer: 'View on explorer',
@@ -52,6 +52,8 @@ export const messages = {
                 newPost: 'New Post',
                 reply: 'Reply to Post',
                 flagPost: 'Redflag Post',
+                follow: 'Follow User',
+                unfollow: 'Unfollow User',
                 tipUser: 'Tip User',
             },
             Tabs: {
@@ -79,6 +81,9 @@ export const messages = {
             },
             RepliesGroupsList: {
                 empty: 'No Replies Available',
+            },
+            FollowingList: {
+                empty: 'You are not following anyone yet',
             },
             Toast: {
                 broadcasting: 'Broadcasting transaction',

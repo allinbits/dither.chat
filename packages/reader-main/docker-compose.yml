@@ -2,12 +2,12 @@ services:
     chronosync:
         build: .
         restart: always
-        container_name: "chronosync"
+        container_name: 'chronosync'
         environment:
             API_URLS: 'https://atomone-api.allinbits.com,https://atomone-rest.publicnode.com'
             START_BLOCK: '2605764'
             BATCH_SIZE: 50
-            MEMO_PREFIX: "dither."
-            RECEIVER: "atone1uq6zjslvsa29cy6uu75y8txnl52mw06j6fzlep"
+            MEMO_PREFIX: 'dither.'
+            RECEIVER: 'atone1uq6zjslvsa29cy6uu75y8txnl52mw06j6fzlep'
             # LOG: process.env.LOG === 'true' ? true : false,
         command: ['pnpm', 'start']

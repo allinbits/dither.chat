@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
+import { Loader } from 'lucide-vue-next';
 
-import { usePopups } from '@/composables/usePopups';
+import { useIsFollowing } from '@/composables/useIsFollowing';
+import { type PopupState, usePopups } from '@/composables/usePopups';
 import { useTabs } from '@/composables/useTabs';
 import { useUserPosts } from '@/composables/useUserPosts';
 import { useUserReplies } from '@/composables/useUserReplies';
@@ -15,6 +17,7 @@ import Tab from '@/components/ui/tabs/Tab.vue';
 import TabsContainer from '@/components/ui/tabs/TabsContainer.vue';
 import UserAvatarUsername from '@/components/users/UserAvatarUsername.vue';
 import MainLayout from '@/layouts/MainLayout.vue';
+import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
 
 const wallet = useWallet();
 const popups = usePopups();
@@ -30,12 +33,20 @@ const address = computed(() =>
 const isMyProfile = computed(() =>
     address.value === wallet.address.value,
 );
-
-// TODO:
-const isFollowing = false;
-
+const { data: isFollowing, isFetching: isFetchingIsFollowing } = useIsFollowing({ followingAddress: address, followerAddress: wallet.address });
 const postsQuery = useUserPosts({ userAddress: address });
 const repliesQuery = useUserReplies({ userAddress: address });
+
+const walletDialogStore = useWalletDialogStore();
+function handleAction(type: keyof PopupState, userAddress: string) {
+    if (wallet.loggedIn.value) {
+        popups.show(type, userAddress);
+        return;
+    }
+    walletDialogStore.showDialog(null, () => {
+        popups.show(type, userAddress);
+    });
+}
 </script>
 
 <template>
@@ -48,34 +59,34 @@ const repliesQuery = useUserReplies({ userAddress: address });
 
       <div class="flex flex-row justify-between items-center">
         <UserAvatarUsername :userAddress="address" size="lg" />
-        <template v-if="!isMyProfile && wallet.loggedIn.value">
+        <Loader v-if="isFetchingIsFollowing" class="animate-spin w-[80px]" />
+        <template v-else-if="!isMyProfile && wallet.loggedIn.value">
           <div class="flex flex-row gap-2">
             <Button size="sm" @click="popups.show('tipUser', address)">
               {{ $t('components.Button.tip') }}
             </Button>
 
-            <Button v-if="isFollowing" size="sm">
+            <Button v-if="isFollowing" size="sm" @click="handleAction('unfollow', address)">
               {{ $t('components.Button.unfollow') }}
             </Button>
-            <Button v-else size="sm">
+            <Button v-else size="sm" @click="handleAction('follow', address)">
               {{ $t('components.Button.follow') }}
             </Button>
           </div>
         </template>
-
       </div>
 
       <div class="border-b mt-6" />
 
       <TabsContainer>
-        <Tab :label="$t(`components.Tabs.${isMyProfile ? 'myPosts' : 'posts'}`)" :isActive="state.activeTab === POSTS_TAB"
-             :onClick="() => setActiveTab(POSTS_TAB)" />
-        <Tab :label="$t(`components.Tabs.${isMyProfile ? 'myReplies' : 'replies'}`)" :isActive="state.activeTab === REPLIES_TAB"
-             :onClick="() => setActiveTab(REPLIES_TAB)" />
+        <Tab :label="$t(`components.Tabs.${isMyProfile ? 'myPosts' : 'posts'}`)"
+             :isActive="state.activeTab === POSTS_TAB" :onClick="() => setActiveTab(POSTS_TAB)" />
+        <Tab :label="$t(`components.Tabs.${isMyProfile ? 'myReplies' : 'replies'}`)"
+             :isActive="state.activeTab === REPLIES_TAB" :onClick="() => setActiveTab(REPLIES_TAB)" />
       </TabsContainer>
     </div>
 
     <PostsList v-if="state.activeTab === POSTS_TAB" :query="postsQuery"/>
-    <RepliesGroupsList v-if="state.activeTab === REPLIES_TAB" :query="repliesQuery"/>
+    <RepliesGroupsList v-if="state.activeTab === REPLIES_TAB" :query="repliesQuery" />
   </MainLayout>
 </template>
