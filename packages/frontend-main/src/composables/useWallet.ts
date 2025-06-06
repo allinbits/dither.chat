@@ -192,24 +192,45 @@ const useWalletInstance = () => {
         walletDialogStore.hideDialog();
     };
 
-    const sendTx = async (msgs: EncodeObject[]) => {
+    const sendTx = async (msgs: EncodeObject[], formattedMemo?: string) => {
+        const response: { broadcast: boolean; tx?: DeliverTxResponse; msg?: string } = { broadcast: false };
+        walletState.processState.value = 'starting';
+
         if (!signer.value) {
+            walletState.processState.value = 'idle';
             throw new Error('Could not sign messages');
         }
 
         try {
+            walletState.processState.value = 'connecting';
             const client = await SigningStargateClient.connectWithSigner(chainInfo.rpc, signer.value);
-            const simulate = await client.simulate(walletState.address.value, msgs, undefined);
-            const gasLimit = simulate && simulate > 0 ? '' + Math.ceil(simulate * 1.3) : '500000';
-            const result = await client.signAndBroadcast(walletState.address.value, msgs, {
-                amount: [{ amount: '10000', denom: chainInfo.feeCurrencies[0].coinMinimalDenom }],
-                gas: gasLimit,
-            });
-            return result;
+
+            walletState.processState.value = 'simulating';
+            const simulate = await client.simulate(walletState.address.value, msgs, formattedMemo);
+            const gasLimit = simulate && simulate > 0 ? '' + Math.ceil(simulate * 1.5) : '500000';
+
+            walletState.processState.value = 'broadcasting';
+            const result = await client.signAndBroadcast(
+                walletState.address.value,
+                msgs,
+                {
+                    amount: [{ amount: '10000', denom: chainInfo.feeCurrencies[0].coinMinimalDenom }],
+                    gas: gasLimit,
+                },
+                formattedMemo,
+            );
+
+            response.msg = result.code === 0 ? 'successfully broadcast' : 'failed to broadcast transaction';
+            response.broadcast = result.code === 0;
+            response.tx = result;
+            return response;
         }
         catch (err) {
             console.error(err);
             throw new Error('Could not sign messages');
+        }
+        finally {
+            walletState.processState.value = 'idle';
         }
     };
 
@@ -329,8 +350,19 @@ const useWalletInstance = () => {
     };
 
     const ditherTipUser = async (address: string, amount = '1') => {
-        const formattedMemo = `dither.TipUser("${address}")`;
-        return await sendBankTx(formattedMemo, amount);
+        return sendTx(
+            [
+                {
+                    typeUrl: '/cosmos.bank.v1beta1.MsgSend',
+                    value: {
+                        fromAddress: walletState.address.value,
+                        toAddress: address,
+                        amount: coins(amount, chainInfo.feeCurrencies[0].coinMinimalDenom),
+                    },
+                },
+            ],
+            `dither.TipUser("${address}")`,
+        );
     };
 
     const ditherLike = async (postHash: string, amount = '1') => {
