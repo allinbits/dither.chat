@@ -92,14 +92,6 @@ async function handleSumbmit() {
         {{ $t('components.Wallet.popupSign') }}
         <Loader class="animate-spin w-full" />
       </div>
-      <!-- Success Status -->
-      <div class="flex flex-col w-full gap-4 overflow-hidden" v-if="!isProcessing && txSuccess">
-        <span>{{ $t('components.Wallet.broadcastSuccess') }}</span>
-        <span class="flex lowercase overflow-x-scroll py-2">{{ txSuccess }}</span>
-        <Button class="w-full xl:inline hidden" @click="handleClose">
-          {{ $t('components.Button.close') }}
-        </Button>
-      </div>
     </DialogContent>
   </Dialog>
 </template>
