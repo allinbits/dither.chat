@@ -52,11 +52,7 @@ async function handleSumbit() {
             <Username :userAddress="flag.author" />
             <PrettyTimestamp :timestamp="new Date(flag.timestamp)" />
           </div>
-<<<<<<< HEAD
-          <PostMessage :message="popups.state.flag.message" />
-=======
-          <PostMessage :post="flag" />
->>>>>>> a4789d1918cf5dce4baa504aeb7d5dc8ceb1a4b1
+          <PostMessage :message="flag.message" />
         </div>
       </div>
 

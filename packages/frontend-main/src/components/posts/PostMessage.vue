@@ -28,7 +28,7 @@ const imageUrl = computed(() => {
 <template>
   <div class="flex flex-col w-full gap-2">
     <span class="leading-6 text-sm break-all">
-      {{ message }}
+      {{ props.message }}
     </span>
     <div v-if="hasImage" class="flex flex-col gap-2 cursor-default" @click.stop="() => {}">
       <Button class="w-full text-sm" @click.stop="isEmbedToggled = true" v-if="!isEmbedToggled" size="xs" variant="outline">

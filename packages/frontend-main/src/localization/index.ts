@@ -84,7 +84,6 @@ export const messages = {
             RepliesGroupsList: {
                 empty: 'No Replies Available',
             },
-<<<<<<< HEAD
             Notifications: {
                 like: 'Liked your post',
                 dislike: 'Disliked your post',
@@ -92,7 +91,7 @@ export const messages = {
                 follow: 'Followed you',
                 reply: 'Replied to your post',
                 empty: 'Nothing to show',
-=======
+            },
             FollowingList: {
                 empty: 'You are not following anyone yet',
             },
@@ -106,7 +105,6 @@ export const messages = {
                 manageFollows: 'Manage Follows',
                 following: 'Following',
                 back: 'Back',
->>>>>>> a4789d1918cf5dce4baa504aeb7d5dc8ceb1a4b1
             },
         },
         feedbacks: {
