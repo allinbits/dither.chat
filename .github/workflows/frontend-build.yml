@@ -1,4 +1,4 @@
-name: 'Frontend Build Check'
+name: "Frontend Build Check"
 
 on:
   pull_request:
@@ -7,7 +7,24 @@ on:
   workflow_dispatch:
 
 jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.changes.outputs.frontend-main }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Detect api-main changes
+        uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            frontend-main:
+              - 'packages/frontend-main/**'
   frontend-build-check:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.changed == 'true'
     runs-on: ubuntu-latest
 
     steps:
@@ -20,7 +37,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: Install dependencies with pnpm
         run: pnpm install
