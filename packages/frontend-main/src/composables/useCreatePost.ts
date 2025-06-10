@@ -7,7 +7,7 @@ import { feed } from './useFeed';
 import { userPosts } from './useUserPosts';
 import { useWallet } from './useWallet';
 
-import { buildNewInfiniteData, buildNewPost } from '@/utility/optimisticBuilders';
+import { infiniteDataWithNewItem, newPost } from '@/utility/optimisticBuilders';
 
 interface CreatePostRequestMutation {
     message: string;
@@ -59,13 +59,13 @@ export function useCreatePost(
             const userPostsOpts = userPosts({ userAddress: wallet.address });
 
             // Created Post
-            const optimisticNewPost: Post = buildNewPost({ message: variables.message, quantity: variables.photonValue, hash, author: wallet.address.value, postHash: null });
+            const optimisticNewPost: Post = newPost({ message: variables.message, quantity: variables.photonValue, hash, author: wallet.address.value, postHash: null });
 
-            const newFeedData = buildNewInfiniteData<Post>({ previousItems: context.previousFeed, newItem: optimisticNewPost });
-            const newUserPostsData = buildNewInfiniteData<Post>({ previousItems: context.previousUserPosts, newItem: optimisticNewPost });
+            const optimisticFeedData = infiniteDataWithNewItem<Post>({ previousItems: context.previousFeed, newItem: optimisticNewPost });
+            const optimisticUserPostsData = infiniteDataWithNewItem<Post>({ previousItems: context.previousUserPosts, newItem: optimisticNewPost });
 
-            queryClient.setQueryData(feedOpts.queryKey, newFeedData);
-            queryClient.setQueryData(userPostsOpts.queryKey, newUserPostsData);
+            queryClient.setQueryData(feedOpts.queryKey, optimisticFeedData);
+            queryClient.setQueryData(userPostsOpts.queryKey, optimisticUserPostsData);
         },
         onError: (_, __, context) => {
             const feedOpts = feed();

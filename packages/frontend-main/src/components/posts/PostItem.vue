@@ -22,6 +22,7 @@ defineProps<{ post: Post }>();
       <RouterLink :to="`/profile/${post.author}`">
         <UserAvatar :userAddress="post.author" />
       </RouterLink>
+
       <div class="flex flex-col w-full gap-3" @click="navigate">
         <div class="flex flex-row justify-between items-center h-[40px]">
           <div class="flex flex-row gap-3">

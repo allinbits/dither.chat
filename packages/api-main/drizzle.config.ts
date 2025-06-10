@@ -12,4 +12,5 @@ export default defineConfig({
     dbCredentials: {
         url: process.env.PG_URI!,
     },
+    tablesFilter: ['!pg_*', '!information_schema.*'], // Exclude system tables
 });

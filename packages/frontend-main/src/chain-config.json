@@ -1,7 +1,7 @@
 {
-    "rpc": "https://atomone-devnet-1-rpc.allinbits.services/",
-    "rest": "https://atomone-devnet-1-api.allinbits.services/",
-    "chainId": "atomone-devnet-1",
+    "rpc": "https://atomone-testnet-1-rpc.allinbits.services/",
+    "rest": "https://atomone-testnet-1-api.allinbits.services/",
+    "chainId": "atomone-testnet-1",
     "chainName": "AtomOne",
     "bip44": {
       "coinType": 118

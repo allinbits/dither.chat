@@ -56,6 +56,7 @@ export async function Dislike(body: typeof Posts.DislikeBody.static) {
                 hash: body.hash,
                 type: 'dislike',
                 timestamp: new Date(body.timestamp),
+                actor: body.from,
             });
         }
 

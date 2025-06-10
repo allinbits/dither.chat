@@ -3,9 +3,13 @@ import { nextTick, onMounted } from 'vue';
 
 import DislikePostDialog from './components/popups/DislikePostDialog.vue';
 import FlagPostDialog from './components/popups/FlagPostDialog.vue';
+import FollowDialog from './components/popups/FollowUserDialog.vue';
 import LikePostDialog from './components/popups/LikePostDialog.vue';
 import NewPostDialog from './components/popups/NewPostDialog.vue';
 import ReplyDialog from './components/popups/ReplyDialog.vue';
+import TipUserDialog from './components/popups/TipUserDialog.vue';
+import UnfollowDialog from './components/popups/UnfollowUserDialog.vue';
+import Sonner from './components/ui/sonner/Sonner.vue';
 import WalletConnectDialog from './components/wallet/WalletConnectDialog.vue';
 import { useBalanceFetcher } from './composables/useBalanceFetcher';
 import { useWallet } from './composables/useWallet';
@@ -32,6 +36,10 @@ onMounted(() => {
   <LikePostDialog />
   <DislikePostDialog />
   <NewPostDialog />
-  <ReplyDialog/>
+  <ReplyDialog />
   <FlagPostDialog/>
+  <FollowDialog/>
+  <UnfollowDialog/>
+  <Sonner closeButton expand dismissible :visible-toasts="5"  />
+  <TipUserDialog />
 </template>

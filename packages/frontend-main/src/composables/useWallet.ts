@@ -11,6 +11,7 @@ import chainInfo from '@/chain-config.json';
 import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
 import { useWalletStateStore } from '@/stores/useWalletStateStore';
 
+const apiRoot = import.meta.env.VITE_API_ROOT ?? 'http://localhost:3000';
 const destinationWallet = import.meta.env.VITE_COMMUNITY_WALLET ?? 'atone1uq6zjslvsa29cy6uu75y8txnl52mw06j6fzlep';
 
 export enum Wallets {
@@ -30,6 +31,28 @@ export const getWalletHelp = (wallet: Wallets) => {
             return 'https://guide.cosmostation.io/web_wallet_en.html';
     }
 };
+
+const isCredentialsValid = async () => {
+    const resVerifyRaw = await fetch(apiRoot + '/auth-verify', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+    });
+
+    if (resVerifyRaw.status !== 200) {
+        return false;
+    }
+
+    const resVerify = await resVerifyRaw.json();
+    if (resVerify.status !== 200) {
+        return false;
+    }
+
+    return true;
+};
+
 const useWalletInstance = () => {
     const walletDialogStore = useWalletDialogStore();
     const walletState = storeToRefs(useWalletStateStore());
@@ -38,7 +61,7 @@ const useWalletInstance = () => {
         walletState.address.value = '';
         walletState.used.value = null;
         walletState.loggedIn.value = false;
-        walletState.isBroadcasting.value = false;
+        walletState.processState.value = 'idle';
     };
     const signer: Ref<OfflineSigner | null> = ref(null);
 
@@ -46,12 +69,7 @@ const useWalletInstance = () => {
         if (signal?.aborted) {
             return Promise.reject(new DOMException('Aborted', 'AbortError'));
         }
-        const abortHandler = () => {
-            walletState.address.value = '';
-            walletState.used.value = null;
-            walletState.loggedIn.value = false;
-        };
-        signal?.addEventListener('abort', abortHandler);
+        signal?.addEventListener('abort', signOut);
         switch (walletType) {
             case Wallets.keplr:
                 try {
@@ -61,11 +79,10 @@ const useWalletInstance = () => {
                         walletState.address.value = (
                             await window.getOfflineSignerOnlyAmino(chainInfo.chainId).getAccounts()
                         )[0].address;
-                        walletState.loggedIn.value = true;
                         walletState.used.value = Wallets.keplr;
                         signer.value = window.getOfflineSignerOnlyAmino(chainInfo.chainId);
                         if (signal?.aborted) {
-                            abortHandler();
+                            signOut();
                         }
                     }
                     else {
@@ -76,7 +93,7 @@ const useWalletInstance = () => {
                     throw new Error('Could not connect to Keplr: ' + e);
                 }
                 finally {
-                    signal?.removeEventListener('abort', abortHandler);
+                    signal?.removeEventListener('abort', signOut);
                 }
                 break;
             case Wallets.leap:
@@ -86,18 +103,17 @@ const useWalletInstance = () => {
                     walletState.address.value = (
                         await window.leap.getOfflineSignerOnlyAmino(chainInfo.chainId).getAccounts()
                     )[0].address;
-                    walletState.loggedIn.value = true;
                     walletState.used.value = Wallets.leap;
                     signer.value = window.leap.getOfflineSignerOnlyAmino(chainInfo.chainId);
                     if (signal?.aborted) {
-                        abortHandler();
+                        signOut();
                     }
                 }
                 catch (e) {
                     throw new Error('Could not connect to Leap Wallet: ' + e);
                 }
                 finally {
-                    signal?.removeEventListener('abort', abortHandler);
+                    signal?.removeEventListener('abort', signOut);
                 }
                 break;
             case Wallets.cosmostation:
@@ -128,7 +144,6 @@ const useWalletInstance = () => {
                             params: { chainName: chainInfo.chainId },
                         })
                     ).address;
-                    walletState.loggedIn.value = true;
                     walletState.used.value = Wallets.cosmostation;
                     const cosmostationSigner = (await getOfflineSigner(chainInfo.chainId)) as OfflineSigner;
                     if ((cosmostationSigner as OfflineDirectSigner).signDirect) {
@@ -139,27 +154,25 @@ const useWalletInstance = () => {
                         signer.value = cosmostationSigner;
                     }
                     if (signal?.aborted) {
-                        abortHandler();
+                        signOut();
                     }
                 }
                 catch (e) {
                     throw new Error('Could not connect to Cosmostation: ' + e);
                 }
                 finally {
-                    signal?.removeEventListener('abort', abortHandler);
+                    signal?.removeEventListener('abort', signOut);
                 }
                 break;
             case Wallets.addressOnly:
                 if (address) {
                     walletState.address.value = address;
-                    walletState.loggedIn.value = true;
                     walletState.used.value = Wallets.addressOnly;
                 }
                 break;
         }
 
         if (walletState.address.value) {
-            const apiRoot = import.meta.env.VITE_API_ROOT ?? 'http://localhost:3000';
             const headers: Record<string, string> = {
                 'Content-Type': 'application/json',
             };
@@ -167,24 +180,48 @@ const useWalletInstance = () => {
                 address: walletState.address.value,
             };
 
+            if (walletState.loggedIn.value) {
+                return;
+            }
+
+            const isValid = await isCredentialsValid();
+            if (isValid) {
+                return;
+            }
+
             try {
+                // Create the authentication request
                 const responseRaw = await fetch(apiRoot + '/auth-create', {
                     body: JSON.stringify(postBody),
                     method: 'POST',
                     headers,
                 });
                 const response = (await responseRaw.json()) as { status: number; id: number; message: string };
+
+                // Sign the authentication request
                 const signedMsg = await signMessage(response.message);
-                await fetch(apiRoot + '/auth', {
+                const resAuthRaw = await fetch(apiRoot + '/auth', {
                     body: JSON.stringify({ ...signedMsg, id: response.id }),
                     method: 'POST',
                     headers,
                     credentials: 'include',
                 });
-                walletState.isAuthenticated.value = true;
+
+                if (resAuthRaw.status !== 200) {
+                    walletState.loggedIn.value = false;
+                    return;
+                }
+
+                const resAuth = await resAuthRaw.json();
+                if (resAuth.status !== 200) {
+                    walletState.loggedIn.value = false;
+                    return;
+                }
+
+                walletState.loggedIn.value = true;
             }
             catch (e) {
-                walletState.isAuthenticated.value = false;
+                signOut();
                 throw e;
             }
         }
@@ -192,39 +229,63 @@ const useWalletInstance = () => {
         walletDialogStore.hideDialog();
     };
 
-    const sendTx = async (msgs: EncodeObject[]) => {
+    const sendTx = async (msgs: EncodeObject[], formattedMemo?: string) => {
+        const response: { broadcast: boolean; tx?: DeliverTxResponse; msg?: string } = { broadcast: false };
+        walletState.processState.value = 'starting';
+
         if (!signer.value) {
+            walletState.processState.value = 'idle';
             throw new Error('Could not sign messages');
         }
 
         try {
+            walletState.processState.value = 'connecting';
             const client = await SigningStargateClient.connectWithSigner(chainInfo.rpc, signer.value);
-            const simulate = await client.simulate(walletState.address.value, msgs, undefined);
-            const gasLimit = simulate && simulate > 0 ? '' + Math.ceil(simulate * 1.3) : '500000';
-            const result = await client.signAndBroadcast(walletState.address.value, msgs, {
-                amount: [{ amount: '10000', denom: chainInfo.feeCurrencies[0].coinMinimalDenom }],
-                gas: gasLimit,
-            });
-            return result;
+
+            walletState.processState.value = 'simulating';
+            const simulate = await client.simulate(walletState.address.value, msgs, formattedMemo);
+            const gasLimit = simulate && simulate > 0 ? '' + Math.ceil(simulate * 1.5) : '500000';
+
+            walletState.processState.value = 'broadcasting';
+            const result = await client.signAndBroadcast(
+                walletState.address.value,
+                msgs,
+                {
+                    amount: [{ amount: '10000', denom: chainInfo.feeCurrencies[0].coinMinimalDenom }],
+                    gas: gasLimit,
+                },
+                formattedMemo,
+            );
+
+            response.msg = result.code === 0 ? 'successfully broadcast' : 'failed to broadcast transaction';
+            response.broadcast = result.code === 0;
+            response.tx = result;
+            return response;
         }
         catch (err) {
             console.error(err);
             throw new Error('Could not sign messages');
         }
+        finally {
+            walletState.processState.value = 'idle';
+        }
     };
 
     const sendBankTx = async (formattedMemo: string, amount: string) => {
         const response: { broadcast: boolean; tx?: DeliverTxResponse; msg?: string } = { broadcast: false };
-        walletState.isBroadcasting.value = true;
+        walletState.processState.value = 'starting';
 
         if (!signer.value) {
-            walletState.isBroadcasting.value = false;
+            walletState.processState.value = 'idle';
             response.msg = 'No valid signer available.';
             return response;
         }
 
         try {
+            walletState.processState.value = 'connecting';
             const client = await SigningStargateClient.connectWithSigner(chainInfo.rpc, signer.value);
+
+            walletState.processState.value = 'simulating';
             const simulate = await client.simulate(
                 walletState.address.value,
                 [
@@ -241,6 +302,8 @@ const useWalletInstance = () => {
             );
 
             const gasLimit = simulate && simulate > 0 ? '' + Math.ceil(simulate * 2.0) : '500000';
+
+            walletState.processState.value = 'broadcasting';
             const result = await client.sendTokens(
                 walletState.address.value, // From
                 destinationWallet, // To
@@ -259,7 +322,7 @@ const useWalletInstance = () => {
             return response;
         }
         finally {
-            walletState.isBroadcasting.value = false;
+            walletState.processState.value = 'idle';
         }
     };
 
@@ -323,6 +386,22 @@ const useWalletInstance = () => {
         return await sendBankTx(formattedMemo, amount);
     };
 
+    const ditherTipUser = async (address: string, amount = '1') => {
+        return sendTx(
+            [
+                {
+                    typeUrl: '/cosmos.bank.v1beta1.MsgSend',
+                    value: {
+                        fromAddress: walletState.address.value,
+                        toAddress: address,
+                        amount: coins(amount, chainInfo.feeCurrencies[0].coinMinimalDenom),
+                    },
+                },
+            ],
+            `dither.TipUser("${address}")`,
+        );
+    };
+
     const ditherLike = async (postHash: string, amount = '1') => {
         const formattedMemo = `dither.Like("${postHash}")`;
         return await sendBankTx(formattedMemo, amount);
@@ -358,6 +437,7 @@ const useWalletInstance = () => {
             postRemove: ditherPostRemove,
             follow: ditherFollow,
             unfollow: ditherUnfollow,
+            tipUser: ditherTipUser,
         },
     };
 };

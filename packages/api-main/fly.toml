@@ -1,0 +1,23 @@
+# fly.toml app configuration file generated for dither-testnet-api-main on 2025-06-05T14:14:50-05:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'dither-testnet-api-main'
+primary_region = 'iad'
+
+[build]
+
+[http_service]
+internal_port = 3000
+force_https = true
+auto_start_machines = true
+min_machines_running = 1
+processes = ['app']
+
+[[vm]]
+size = 'shared-cpu-1x'
+memory = "1gb"
+
+# The following line is used to attach the app to a specific volume.
+# fly mpg attach k1v53olj8gr8q6p9 --variable-name PG_URI

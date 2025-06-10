@@ -35,14 +35,16 @@ export const messages = {
                 close: 'Close',
                 showMore: 'Show more',
                 copyLink: 'Copy link',
+                follow: 'Follow',
+                unfollow: 'Unfollow',
                 newPost: 'New post',
                 reply: 'Reply',
                 mintscan: 'See on Mintscan',
                 pingpub: 'See on Ping.pub',
-                follow: 'Follow',
-                unfollow: 'Unfollow',
                 showImage: 'Show image',
                 hideImage: 'Hide image',
+                viewOnExplorer: 'View on explorer',
+                tip: 'Tip',
             },
             PopupTitles: {
                 likePost: 'Like Post',
@@ -50,6 +52,9 @@ export const messages = {
                 newPost: 'New Post',
                 reply: 'Reply to Post',
                 flagPost: 'Redflag Post',
+                follow: 'Follow User',
+                unfollow: 'Unfollow User',
+                tipUser: 'Tip User',
             },
             Tabs: {
                 feed: 'Global Feed',
@@ -63,10 +68,15 @@ export const messages = {
                 profile: 'Profile',
                 myProfile: 'My Profile',
                 notifications: 'Notifications',
+                settings: 'Settings',
             },
             SearchInput: {
                 noResults: 'No results found',
                 failedToSearch: 'Failed to search',
+            },
+            Filter: {
+                posts: 'Filter posts by PHOTON',
+                amount: 'Amount',
             },
             PostsList: {
                 empty: 'No Posts Available',
@@ -74,6 +84,7 @@ export const messages = {
             RepliesGroupsList: {
                 empty: 'No Replies Available',
             },
+<<<<<<< HEAD
             Notifications: {
                 like: 'Liked your post',
                 dislike: 'Disliked your post',
@@ -81,6 +92,21 @@ export const messages = {
                 follow: 'Followed you',
                 reply: 'Replied to your post',
                 empty: 'Nothing to show',
+=======
+            FollowingList: {
+                empty: 'You are not following anyone yet',
+            },
+            Toast: {
+                broadcasting: 'Broadcasting transaction',
+                wait: 'Please wait a moment...',
+                success: '{txLabel} successfully',
+                fail: '{txLabel} failed',
+            },
+            Settings: {
+                manageFollows: 'Manage Follows',
+                following: 'Following',
+                back: 'Back',
+>>>>>>> a4789d1918cf5dce4baa504aeb7d5dc8ceb1a4b1
             },
         },
         feedbacks: {

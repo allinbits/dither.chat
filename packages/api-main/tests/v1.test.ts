@@ -771,6 +771,27 @@ describe('v1 - mod', { sequential: true }, () => {
         assert.isOk(results2?.status === 200);
         assert.isOk(results2.rows.length <= 0);
     });
+
+    it('Search - /search post with owner', async () => {
+        const body: typeof Posts.PostBody.static = {
+            from: addressUserA,
+            hash: getRandomHash(),
+            msg: 'content not related at all with owner',
+            quantity: '1',
+            timestamp: '2025-04-16T19:46:42Z',
+        };
+
+        const response = await post(`post`, body);
+        assert.isOk(response?.status === 200, 'response was not okay');
+
+        const results1 = await get<{ status: number; rows: { message: string }[]; users: string[] }>(
+            `search?text=${addressUserA}`,
+        );
+        assert.isOk(results1?.status === 200);
+        assert.isOk(results1.rows.length > 1);
+        assert.isOk(results1.users.length === 1);
+        assert.isOk(results1.users[0] === addressUserA);
+    });
 });
 
 describe('v1/auth', async () => {
@@ -829,12 +850,14 @@ describe('v1/notifications', async () => {
                 type: 'like' | 'dislike' | 'flag' | 'follow' | 'reply';
                 timestamp: Date | null;
                 was_read: boolean | null;
+                actor: string;
             }[];
         }>(`notifications?address=${walletB.publicKey}`, 'READ', bearerToken);
         // Asert user got a notification and can read it
         assert.isOk(notificationResponse?.status === 200, `response was not okay, got ${notificationResponse?.status}`);
         assert.lengthOf(notificationResponse.rows, 1);
         assert.isFalse(notificationResponse.rows[0].was_read, `notification was not marked as read, got true`);
+        assert.isOk(notificationResponse.rows[0].actor === walletA.publicKey, `unexpected actor, got ${notificationResponse.rows[0].actor}`);
 
         const readResponse = await get<{
             status: number;
@@ -900,12 +923,14 @@ describe('v1/notifications', async () => {
                 type: 'like' | 'dislike' | 'flag' | 'follow' | 'reply';
                 timestamp: Date | null;
                 was_read: boolean | null;
+                actor: string;
             }[];
         }>(`notifications?address=${walletA.publicKey}`, 'READ', bearerToken);
         // Asert user got a notification and can read it
         assert.isOk(notificationResponse?.status === 200, `response was not okay, got ${notificationResponse?.status}`);
         assert.lengthOf(notificationResponse.rows, 1);
         assert.isFalse(notificationResponse.rows[0].was_read, `notification was not marked as read, got true`);
+        assert.isOk(notificationResponse.rows[0].actor === walletB.publicKey, `unexpected actor, got ${notificationResponse.rows[0].actor}`);
 
         const readResponse = await get<{
             status: number;
@@ -1079,5 +1104,104 @@ describe('update state', () => {
 
         [state] = await getDatabase().select().from(ReaderState).where(eq(ReaderState.id, 0)).limit(1);
         assert.isOk(state.last_block == '2');
+    });
+});
+
+describe('filter post depending on send tokens', async () => {
+    const walletB = await createWallet();
+    const cheapPostMessage = 'cheap post';
+    const expensivePostMessage = 'expensive post';
+    const expensivePostTokens = '20';
+
+    it('EMPTY ALL TABLES', async () => {
+        for (const tableName of tables) {
+            await getDatabase().execute(sql`TRUNCATE TABLE ${sql.raw(tableName)};`);
+        }
+    });
+
+    it('user creates one cheap and one expensive posts', async () => {
+        const body: typeof Posts.PostBody.static = {
+            from: walletB.publicKey,
+            hash: getRandomHash(),
+            msg: cheapPostMessage,
+            quantity: '1',
+            timestamp: '2025-04-16T19:46:42Z',
+        };
+
+        let postResponse = await post(`post`, body);
+
+        const expensiveBody: typeof Posts.PostBody.static = {
+            from: walletB.publicKey,
+            hash: getRandomHash(),
+            msg: expensivePostMessage,
+            quantity: expensivePostTokens,
+            timestamp: '2025-04-16T19:46:42Z',
+        };
+
+        postResponse = await post(`post`, expensiveBody);
+        assert.isOk(postResponse != null);
+        assert.isOk(postResponse && postResponse.status === 200, 'response was not okay');
+    });
+
+    it('get feed without filtering by tokens', async () => {
+        const readResponse = await get<{
+            status: number;
+            rows: {
+                hash: string;
+                author: string;
+                message: string;
+                deleted_at: Date;
+                deleted_reason: string;
+                deleted_hash: string;
+            }[];
+        }>(`feed`);
+        assert.isOk(readResponse?.status === 200, `response was not okay, got ${readResponse?.status}`);
+        assert.lengthOf(readResponse.rows, 2);
+    });
+
+    it('filtering expensive posts', async () => {
+        const readResponse = await get<{
+            status: number;
+            rows: {
+                hash: string;
+                author: string;
+                message: string;
+                deleted_at: Date;
+                deleted_reason: string;
+                deleted_hash: string;
+            }[];
+        }>(`feed?minQuantity=${expensivePostTokens}`);
+        assert.isOk(readResponse?.status === 200, `response was not okay, got ${readResponse?.status}`);
+        assert.lengthOf(readResponse.rows, 1);
+    });
+
+    it('Search: filtering cheap posts', async () => {
+        let readResponse = await get<{
+            status: number;
+            rows: {
+                hash: string;
+                author: string;
+                message: string;
+                deleted_at: Date;
+                deleted_reason: string;
+                deleted_hash: string;
+            }[];
+        }>(`search?text="${cheapPostMessage}"&minQuantity=1`);
+        assert.isOk(readResponse?.status === 200, `response was not okay, got ${readResponse?.status}`);
+        assert.lengthOf(readResponse.rows, 1);
+
+        readResponse = await get<{
+            status: number;
+            rows: {
+                hash: string;
+                author: string;
+                message: string;
+                deleted_at: Date;
+                deleted_reason: string;
+                deleted_hash: string;
+            }[];
+        }>(`search?text="${cheapPostMessage}"&minQuantity=${expensivePostTokens}`);
+        assert.isOk(readResponse?.status === 200, `response was not okay, got ${readResponse?.status}`);
+        assert.lengthOf(readResponse.rows, 0);
     });
 });

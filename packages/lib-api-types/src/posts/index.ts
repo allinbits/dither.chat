@@ -112,3 +112,13 @@ export const UnfollowBody = t.Object({
     address: t.String(),
     timestamp: t.String(),
 });
+
+export type AddPublicKey = { key: string };
+export const AddPublicKey = t.Object({
+    key: t.String(),
+});
+
+export type RemovePublicKey = { key: string };
+export const RemovePublicKey = t.Object({
+    key: t.String(),
+});

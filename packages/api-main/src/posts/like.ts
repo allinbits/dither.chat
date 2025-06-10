@@ -56,6 +56,7 @@ export async function Like(body: typeof Posts.LikeBody.static) {
                 hash: body.hash,
                 type: 'like',
                 timestamp: new Date(body.timestamp),
+                actor: body.from,
             });
         }
 

@@ -56,6 +56,7 @@ export async function Flag(body: typeof Posts.FlagBody.static) {
                 hash: body.hash,
                 type: 'flag',
                 timestamp: new Date(body.timestamp),
+                actor: body.from,
             });
         }
 
