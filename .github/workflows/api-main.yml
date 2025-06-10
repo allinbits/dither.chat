@@ -6,7 +6,7 @@ on:
       - main
   push:
     branches:
-      - main
+      - fly-ci
   workflow_dispatch:
 
 jobs:
@@ -73,7 +73,7 @@ jobs:
 
   deploy-testnet:
     needs: [detect-changes, test]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.detect-changes.outputs.changed == 'true'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/fly-ci' && needs.detect-changes.outputs.changed == 'true'
     runs-on: ubuntu-latest
     environment: testnet
     steps:
