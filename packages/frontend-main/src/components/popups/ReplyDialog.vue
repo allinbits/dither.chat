@@ -1,12 +1,11 @@
 <script lang="ts" setup>
-import { computed, ref, watch } from 'vue';
+import type { Post } from 'api-main/types/feed';
+
+import { computed, ref } from 'vue';
 import { Loader } from 'lucide-vue-next';
 
-import { useBalanceFetcher } from '@/composables/useBalanceFetcher';
 import { useCreateReply } from '@/composables/useCreateReply';
-import { usePopups } from '@/composables/usePopups';
-import { useTxNotification } from '@/composables/useTxNotification';
-import { useWallet } from '@/composables/useWallet';
+import { useTxDialog } from '@/composables/useTxDialog';
 
 import PostMessage from '@/components/posts/PostMessage.vue';
 import PrettyTimestamp from '@/components/posts/PrettyTimestamp.vue';
@@ -17,11 +16,6 @@ import { Textarea } from '@/components/ui/textarea';
 import UserAvatar from '@/components/users/UserAvatar.vue';
 import Username from '@/components/users/Username.vue';
 
-const popups = usePopups();
-const wallet = useWallet();
-const balanceFetcher = useBalanceFetcher();
-
-const photonValue = ref(1);
 const isBalanceInputValid = ref(false);
 const message = ref('');
 
@@ -30,29 +24,19 @@ const MAX_CHARS = 512 - ('dither.Reply("", "")'.length + POST_HASH_LEN);
 
 const { createReply, txError, txSuccess } = useCreateReply();
 
-const isShown = computed(() => !!popups.state.reply);
-useTxNotification(isShown, 'Reply', txSuccess, txError);
-
-const isProcessing = computed(() => {
-    return wallet.processState.value !== 'idle';
-});
-
-const isBroadcasting = computed(() => {
-    return wallet.processState.value === 'broadcasting';
-});
-
-function handleClose() {
-    popups.state.reply = null;
-    txError.value = undefined;
-    txSuccess.value = undefined;
-    photonValue.value = 1;
-}
+const {
+    isProcessing,
+    isShown,
+    photonValue,
+    popupState: reply,
+    handleClose,
+} = useTxDialog<Post>('reply', 'Reply', txSuccess, txError);
 
 async function handleSumbit() {
-    if (!canSubmit.value || !popups.state.reply) {
+    if (!canSubmit.value || !reply.value) {
         return;
     }
-    await createReply({ parentPost: ref(popups.state.reply), message: message.value, photonValue: photonValue.value });
+    await createReply({ parentPost: reply, message: message.value, photonValue: photonValue.value });
     message.value = '';
     handleClose();
 }
@@ -71,29 +55,22 @@ function capChars(event: { target: HTMLTextAreaElement }) {
     }
 }
 
-watch([wallet.loggedIn, wallet.address], async () => {
-    if (!wallet.loggedIn.value) {
-        return;
-    }
-
-    balanceFetcher.updateAddress(wallet.address.value);
-});
 </script>
 
 <template>
   <div>
-    <Dialog :open="popups.state.reply !== null && !isBroadcasting" @update:open="handleClose" v-if="popups.state.reply !== null && !isBroadcasting">
+    <Dialog v-if="isShown" open @update:open="handleClose" >
       <DialogContent>
         <DialogTitle>{{ $t('components.PopupTitles.reply') }}</DialogTitle>
 
         <div v-if="!isProcessing && !txSuccess" class="flex flex-row gap-3 border-b pb-3">
-          <UserAvatar :userAddress="popups.state.reply.author" />
+          <UserAvatar :userAddress="reply.author" />
           <div class="flex flex-col w-full gap-3">
             <div class="flex flex-row gap-3 pt-2.5">
-              <Username :userAddress="popups.state.reply.author" />
-              <PrettyTimestamp :timestamp="new Date(popups.state.reply.timestamp)" />
+              <Username :userAddress="reply.author" />
+              <PrettyTimestamp :timestamp="new Date(reply.timestamp)" />
             </div>
-            <PostMessage :post="popups.state.reply" />
+            <PostMessage :post="reply" />
           </div>
         </div>
 

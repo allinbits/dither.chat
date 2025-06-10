@@ -1,84 +1,58 @@
 <script lang="ts" setup>
-import { computed, ref, watch } from 'vue';
+import type { Post } from 'api-main/types/feed';
+
+import { computed, ref } from 'vue';
 import { Loader } from 'lucide-vue-next';
 
-import { useBalanceFetcher } from '@/composables/useBalanceFetcher';
 import { useFlagPost } from '@/composables/useFlagPost';
-import { usePopups } from '@/composables/usePopups';
-import { useTxNotification } from '@/composables/useTxNotification';
-import { useWallet } from '@/composables/useWallet';
+import { useTxDialog } from '@/composables/useTxDialog';
 
 import PostMessage from '../posts/PostMessage.vue';
 import PrettyTimestamp from '../posts/PrettyTimestamp.vue';
 import UserAvatar from '../users/UserAvatar.vue';
 import Username from '../users/Username.vue';
 
-import { Button }
-    from '@/components/ui/button';
-import {
-    Dialog,
-    DialogContent,
-    DialogTitle,
-} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import InputPhoton from '@/components/ui/input/InputPhoton.vue';
-const popups = usePopups();
-const wallet = useWallet();
-const balanceFetcher = useBalanceFetcher();
-const photonValue = ref(1);
+
 const isBalanceInputValid = ref(false);
 const { flagPost, txError, txSuccess } = useFlagPost();
 
-const isShown = computed(() => !!popups.state.flag);
-useTxNotification(isShown, 'Flag', txSuccess, txError);
-
-const isProcessing = computed(() => {
-    return wallet.processState.value !== 'idle';
-});
-
-const isBroadcasting = computed(() => {
-    return wallet.processState.value === 'broadcasting';
-});
+const {
+    isProcessing,
+    isShown, photonValue, popupState: flag, handleClose } = useTxDialog<Post>('flag', 'Flag', txSuccess, txError);
 
 const canSubmit = computed(() => {
     return isBalanceInputValid.value;
 });
-function handleClose() {
-    popups.state.flag = null;
-    txError.value = undefined;
-    txSuccess.value = undefined;
-    photonValue.value = 1;
-}
+
 function handleInputValidity(value: boolean) {
     isBalanceInputValid.value = value;
 }
-watch([wallet.loggedIn, wallet.address], async () => {
-    if (!wallet.loggedIn.value) {
-        return;
-    }
-    balanceFetcher.updateAddress(wallet.address.value);
-});
+
 async function handleSumbit() {
-    if (!canSubmit.value || !popups.state.flag) {
+    if (!canSubmit.value || !flag.value) {
         return;
     }
-    await flagPost({ postHash: popups.state.flag.hash, photonValue: photonValue.value });
+    await flagPost({ postHash: flag.value.hash, photonValue: photonValue.value });
     handleClose();
 }
 </script>
 
 <template>
-  <Dialog :open="popups.state.flag != null && !isBroadcasting" @update:open="handleClose" v-if="popups.state.flag && !isBroadcasting">
+  <Dialog v-if="isShown" open @update:open="handleClose">
     <DialogContent>
       <DialogTitle>{{ $t('components.PopupTitles.flagPost') }}</DialogTitle>
 
       <div v-if="!isProcessing && !txSuccess" class="flex flex-row gap-3 border-b pb-3">
-        <UserAvatar :userAddress="popups.state.flag.author" />
+        <UserAvatar :userAddress="flag.author" />
         <div class="flex flex-col w-full gap-3">
           <div class="flex flex-row gap-3 pt-2.5">
-            <Username :userAddress="popups.state.flag.author" />
-            <PrettyTimestamp :timestamp="new Date(popups.state.flag.timestamp)" />
+            <Username :userAddress="flag.author" />
+            <PrettyTimestamp :timestamp="new Date(flag.timestamp)" />
           </div>
-          <PostMessage :post="popups.state.flag" />
+          <PostMessage :post="flag" />
         </div>
       </div>
 

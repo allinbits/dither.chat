@@ -1,12 +1,9 @@
 <script lang="ts" setup>
-import { computed, ref, watch } from 'vue';
+import { computed, ref } from 'vue';
 import { Loader } from 'lucide-vue-next';
 
-import { useBalanceFetcher } from '@/composables/useBalanceFetcher';
 import { useCreatePost } from '@/composables/useCreatePost';
-import { usePopups } from '@/composables/usePopups';
-import { useTxNotification } from '@/composables/useTxNotification';
-import { useWallet } from '@/composables/useWallet';
+import { useTxDialog } from '@/composables/useTxDialog';
 
 import
 { Button }
@@ -19,11 +16,6 @@ import {
 import InputPhoton from '@/components/ui/input/InputPhoton.vue';
 import { Textarea } from '@/components/ui/textarea';
 
-const popups = usePopups();
-const wallet = useWallet();
-const balanceFetcher = useBalanceFetcher();
-
-const photonValue = ref(1);
 const isBalanceInputValid = ref(false);
 const message = ref('');
 
@@ -31,23 +23,7 @@ const MAX_CHARS = 512 - 'dither.Post("")'.length;
 
 const { createPost, txError, txSuccess } = useCreatePost();
 
-const isShown = computed(() => !!popups.state.newPost);
-useTxNotification(isShown, 'Post', txSuccess, txError);
-
-const isProcessing = computed(() => {
-    return wallet.processState.value !== 'idle';
-});
-
-const isBroadcasting = computed(() => {
-    return wallet.processState.value === 'broadcasting';
-});
-
-function handleClose() {
-    popups.state.newPost = null;
-    txError.value = undefined;
-    txSuccess.value = undefined;
-    photonValue.value = 1;
-}
+const { isProcessing, isShown, photonValue, handleClose } = useTxDialog<object>('newPost', 'Post', txSuccess, txError);
 
 function handleInputValidity(value: boolean) {
     isBalanceInputValid.value = value;
@@ -63,14 +39,6 @@ function capChars(event: { target: HTMLTextAreaElement }) {
     }
 }
 
-watch([wallet.loggedIn, wallet.address], async () => {
-    if (!wallet.loggedIn.value) {
-        return;
-    }
-
-    balanceFetcher.updateAddress(wallet.address.value);
-});
-
 async function handleSumbit() {
     if (!canSubmit.value) {
         return;
@@ -83,7 +51,7 @@ async function handleSumbit() {
 
 <template>
   <div>
-    <Dialog :open="popups.state.newPost !== null && !isBroadcasting" @update:open="handleClose" v-if="popups.state.newPost !== null && !isBroadcasting">
+    <Dialog v-if="isShown" open @update:open="handleClose">
       <DialogContent>
         <DialogTitle>{{ $t('components.PopupTitles.newPost') }}</DialogTitle>
 
