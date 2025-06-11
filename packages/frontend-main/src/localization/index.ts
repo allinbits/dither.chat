@@ -68,6 +68,7 @@ export const messages = {
                 profile: 'Profile',
                 myProfile: 'My Profile',
                 settings: 'Settings',
+                config: 'Config',
             },
             SearchInput: {
                 noResults: 'No results found',

@@ -8,11 +8,9 @@ import { getOfflineSigner } from '@cosmostation/cosmos-client';
 import { storeToRefs } from 'pinia';
 
 import chainInfo from '@/chain-config.json';
+import { useConfigStore } from '@/stores/useConfigStore';
 import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
 import { useWalletStateStore } from '@/stores/useWalletStateStore';
-
-const apiRoot = import.meta.env.VITE_API_ROOT ?? 'http://localhost:3000';
-const destinationWallet = import.meta.env.VITE_COMMUNITY_WALLET ?? 'atone1uq6zjslvsa29cy6uu75y8txnl52mw06j6fzlep';
 
 export enum Wallets {
     keplr = 'Keplr',
@@ -33,6 +31,9 @@ export const getWalletHelp = (wallet: Wallets) => {
 };
 
 const isCredentialsValid = async () => {
+    const configStore = useConfigStore();
+    const apiRoot = configStore.config.apiRoot ?? 'http://localhost:3000';
+
     const resVerifyRaw = await fetch(apiRoot + '/auth-verify', {
         method: 'GET',
         headers: {
@@ -54,6 +55,10 @@ const isCredentialsValid = async () => {
 };
 
 const useWalletInstance = () => {
+    const configStore = useConfigStore();
+    const apiRoot = configStore.config.apiRoot ?? 'http://localhost:3000';
+    const destinationWallet = configStore.config.communityWallet ?? 'atone1uq6zjslvsa29cy6uu75y8txnl52mw06j6fzlep';
+
     const walletDialogStore = useWalletDialogStore();
     const walletState = storeToRefs(useWalletStateStore());
 

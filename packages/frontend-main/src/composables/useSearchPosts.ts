@@ -6,11 +6,13 @@ import { refDebounced } from '@vueuse/core';
 import { useQuery } from '@tanstack/vue-query';
 import { storeToRefs } from 'pinia';
 
+import { useConfigStore } from '@/stores/useConfigStore';
 import { useFiltersStore } from '@/stores/useFiltersStore';
 
-const apiRoot = import.meta.env.VITE_API_ROOT || 'http://localhost:3000';
-
 export function useSearchPosts(minQueryLength: number = 3, debounceMs: number = 300) {
+    const configStore = useConfigStore();
+    const apiRoot = configStore.config.apiRoot ?? 'http://localhost:3000';
+
     const { t } = useI18n();
     const query = ref<string>('');
     const debouncedQuery = refDebounced<string>(query, debounceMs);
