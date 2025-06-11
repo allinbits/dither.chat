@@ -180,12 +180,10 @@ const useWalletInstance = () => {
                 address: walletState.address.value,
             };
 
-            if (walletState.loggedIn.value) {
-                return;
-            }
-
             const isValid = await isCredentialsValid();
             if (isValid) {
+                walletState.loggedIn.value = true;
+                walletDialogStore.hideDialog();
                 return;
             }
 

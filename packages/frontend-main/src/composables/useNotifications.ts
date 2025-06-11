@@ -20,6 +20,7 @@ export const notifications = (params: Params) =>
                     credentials: 'include',
                 },
             );
+
             const json = await res.json() as { status: number; rows: Notification[] };
             return json.rows ?? [];
         },

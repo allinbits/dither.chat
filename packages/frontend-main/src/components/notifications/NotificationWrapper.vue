@@ -20,7 +20,7 @@ defineProps<{ notification: Notification }>();
           <RouterLink :to="`/profile/${notification.owner}`">
             <Username :userAddress="notification.owner" />
           </RouterLink>
-          <PrettyTimestamp v-if="notification.timestamp" :timestamp="notification.timestamp" />
+          <PrettyTimestamp v-if="notification.timestamp" :timestamp="new Date(notification.timestamp)" />
         </div>
 
         <span class="leading-6 text-sm font-semibold mt-2">{{ $t(`components.Notifications.${notification.type}`) }}</span>
