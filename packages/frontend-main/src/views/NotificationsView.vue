@@ -15,7 +15,7 @@ import MainLayout from '@/layouts/MainLayout.vue';
 
 const wallet = useWallet();
 
-const { data, fetchNextPage, isLoading, isFetchingNextPage, hasNextPage } = useNotifications({ userAddress: wallet.address });
+const { data, fetchNextPage, isLoading, isFetchingNextPage, hasNextPage, refetch } = useNotifications({ userAddress: wallet.address });
 const flatNotifications = computed(() => data.value?.pages.flat() ?? []);
 </script>
 
@@ -28,8 +28,9 @@ const flatNotifications = computed(() => data.value?.pages.flat() ?? []);
 
       <Loader v-if="isLoading" class="animate-spin w-full mt-10" />
 
-      <span v-else-if="!flatNotifications.length" class="self-center mt-4 text-md font-semibold text-base">{{
-        $t('components.Notifications.empty') }}</span>
+      <span v-else-if="!flatNotifications.length" class="self-center mt-4 text-md font-semibold text-base">
+        {{ $t('components.Notifications.empty') }}
+      </span>
 
       <template v-for="(notification, index) in flatNotifications">
         <LikeNotification :key="index" v-if="notification.type === 'like'" :notification="notification"/>
