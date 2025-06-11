@@ -43,13 +43,13 @@ const readNotification = async () => {
 <template>
   <RouterLink :to="`/post/${notification.hash}`" custom v-slot="{ navigate }">
     <div class="flex flex-row gap-3 cursor-pointer py-2 border-b">
-      <RouterLink :to="`/profile/${notification.owner}`" class="size-[40px]">
-        <UserAvatar :userAddress="notification.owner" />
+      <RouterLink :to="`/profile/${notification.actor}`" class="size-[40px]">
+        <UserAvatar :userAddress="notification.actor" />
       </RouterLink>
       <div class="flex flex-col w-full" @click="navigate">
         <div class="flex flex-row gap-3 pt-2.5">
-          <RouterLink :to="`/profile/${notification.owner}`">
-            <Username :userAddress="notification.owner" />
+          <RouterLink :to="`/profile/${notification.actor}`">
+            <Username :userAddress="notification.actor" />
           </RouterLink>
           <PrettyTimestamp v-if="notification.timestamp" :timestamp="new Date(notification.timestamp)" />
         </div>
