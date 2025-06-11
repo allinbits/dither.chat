@@ -15,7 +15,7 @@ import MainLayout from '@/layouts/MainLayout.vue';
 
 const wallet = useWallet();
 
-const { data, fetchNextPage, isLoading, isFetchingNextPage, hasNextPage, refetch } = useNotifications({ userAddress: wallet.address });
+const { data, fetchNextPage, isLoading, isFetchingNextPage, hasNextPage } = useNotifications({ userAddress: wallet.address });
 const flatNotifications = computed(() => data.value?.pages.flat() ?? []);
 </script>
 
