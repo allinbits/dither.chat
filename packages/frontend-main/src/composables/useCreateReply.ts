@@ -3,11 +3,8 @@ import type { Post, ReplyWithParent } from 'api-main/types/feed';
 import { type Ref, ref } from 'vue';
 import { type InfiniteData, useMutation, useQueryClient } from '@tanstack/vue-query';
 
-import { feed } from './useFeed';
-import { followingPosts } from './useFollowingPosts';
 import { post } from './usePost';
 import { replies } from './useReplies';
-import { userPosts } from './useUserPosts';
 import { userReplies } from './useUserReplies';
 import { useWallet } from './useWallet';
 

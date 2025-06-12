@@ -37,7 +37,6 @@ export const post = (params: Params) =>
             return checkedData;
         },
         enabled: () => !!params.hash.value,
-        retry: false,
         staleTime: Infinity,
     });
 

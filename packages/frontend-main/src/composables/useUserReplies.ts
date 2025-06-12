@@ -41,7 +41,6 @@ export const userReplies = (params: Params) => {
             return allPages.length * LIMIT;
         },
         enabled: () => !!params.userAddress.value,
-        retry: false,
         staleTime: Infinity,
     });
 };
