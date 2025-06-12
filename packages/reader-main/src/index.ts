@@ -55,7 +55,7 @@ async function handleAction(action: Action) {
 }
 
 async function handleLastBlock(block: string) {
-    if (lastActionProcessed + msCheckpointTime < Date.now()) {
+    if (lastActionProcessed + msCheckpointTime < Date.now() && queue.size() <= 0) {
         lastActionProcessed = Date.now();
         const didUpdate = await updateLastBlock(block);
         if (!didUpdate) {

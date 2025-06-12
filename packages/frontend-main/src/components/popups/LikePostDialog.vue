@@ -24,6 +24,7 @@ import { shorten } from '@/utility/text';
 const popups = usePopups();
 const wallet = useWallet();
 const balanceFetcher = useBalanceFetcher();
+
 const photonValue = ref(1);
 const isBalanceInputValid = ref(false);
 const { likePost, txError, txSuccess } = useLikePost();
@@ -86,14 +87,6 @@ async function handleSumbmit() {
       <div class="flex flex-col w-full gap-4" v-if="isProcessing && !txSuccess">
         {{  $t('components.Wallet.popupSign') }}
         <Loader class="animate-spin w-full"/>
-      </div>
-      <!-- Success Status -->
-      <div class="flex flex-col w-full gap-4 overflow-hidden" v-if="!isProcessing && txSuccess">
-        <span>{{ $t('components.Wallet.broadcastSuccess') }}</span>
-        <span class="flex lowercase overflow-x-scroll py-2">{{ txSuccess }}</span>
-        <Button class="w-full" @click="handleClose">
-          {{ $t('components.Button.close') }}
-        </Button>
       </div>
     </DialogContent>
   </Dialog>

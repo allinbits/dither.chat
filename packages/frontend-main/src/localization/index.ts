@@ -44,6 +44,7 @@ export const messages = {
                 showImage: 'Show image',
                 hideImage: 'Hide image',
                 viewOnExplorer: 'View on explorer',
+                tip: 'Tip',
             },
             PopupTitles: {
                 likePost: 'Like Post',
@@ -53,6 +54,7 @@ export const messages = {
                 flagPost: 'Redflag Post',
                 follow: 'Follow User',
                 unfollow: 'Unfollow User',
+                tipUser: 'Tip User',
             },
             Tabs: {
                 feed: 'Global Feed',
@@ -65,6 +67,7 @@ export const messages = {
             Titles: {
                 profile: 'Profile',
                 myProfile: 'My Profile',
+                settings: 'Settings',
             },
             SearchInput: {
                 noResults: 'No results found',
@@ -88,6 +91,11 @@ export const messages = {
                 wait: 'Please wait a moment...',
                 success: '{txLabel} successfully',
                 fail: '{txLabel} failed',
+            },
+            Settings: {
+                manageFollows: 'Manage Follows',
+                following: 'Following',
+                back: 'Back',
             },
         },
         feedbacks: {

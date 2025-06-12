@@ -7,6 +7,7 @@ import FollowDialog from './components/popups/FollowUserDialog.vue';
 import LikePostDialog from './components/popups/LikePostDialog.vue';
 import NewPostDialog from './components/popups/NewPostDialog.vue';
 import ReplyDialog from './components/popups/ReplyDialog.vue';
+import TipUserDialog from './components/popups/TipUserDialog.vue';
 import UnfollowDialog from './components/popups/UnfollowUserDialog.vue';
 import Sonner from './components/ui/sonner/Sonner.vue';
 import WalletConnectDialog from './components/wallet/WalletConnectDialog.vue';
@@ -35,9 +36,10 @@ onMounted(() => {
   <LikePostDialog />
   <DislikePostDialog />
   <NewPostDialog />
-  <ReplyDialog/>
+  <ReplyDialog />
   <FlagPostDialog/>
   <FollowDialog/>
   <UnfollowDialog/>
-  <Sonner closeButton expand dismissible :visible-toasts="5" />
+  <Sonner closeButton expand dismissible :visible-toasts="5"  />
+  <TipUserDialog />
 </template>
