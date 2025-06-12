@@ -13,19 +13,18 @@ const apiRoot = import.meta.env.VITE_API_ROOT ?? 'http://localhost:3000';
 const LIMIT = 15;
 
 export const feed = () => {
-    const queryClient = useQueryClient();
     const { minSendAmount } = storeToRefs(useFiltersStore());
     const debouncedMinSendAmount = refDebounced<number>(minSendAmount, 600);
     return infiniteQueryOptions({
         queryKey: ['feed', debouncedMinSendAmount],
         queryFn: async ({ pageParam = 0 }) => {
+            const queryClient = useQueryClient();
             const res = await fetch(
                 `${apiRoot}/feed?offset=${pageParam}&limit=${LIMIT}&minQuantity=${Math.trunc(debouncedMinSendAmount.value)}`,
             );
             const json = (await res.json()) as { status: number; rows: Post[] };
             const rows = json.rows ?? [];
-            // We update one post when doing an action like/dislike/reply in PostItem, RepliesGroupItem PostReplyItem
-            // We prevent fetching post many times by populating the fetched feed into each post
+            // Update the query cache with the feed posts
             rows.forEach((row) => {
                 const postOpts = post({ hash: ref(row.hash) });
                 queryClient.setQueryData(postOpts.queryKey, row);

@@ -45,7 +45,7 @@ function handleAction(type: keyof PopupState, userAddress: string) {
 
     <!-- Following users -->
     <div v-else class="flex flex-col gap-4 px-4 pt-4">
-      <div v-for="(followUser, index) in flatFollowUsers" :key="index"
+      <div v-for="followUser in flatFollowUsers" :key="followUser.address"
            class="flex flex-row items-center justify-between last:pb-6">
         <RouterLink :to="`/profile/${followUser.address}`">
           <UserAvatarUsername :userAddress="followUser.address" />

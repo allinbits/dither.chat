@@ -25,7 +25,7 @@ const flatPosts = computed(() => data.value?.pages.flat() ?? []);
     <span v-else-if="!flatPosts.length && !hideEmptyText" class="self-center mt-4 text-md font-semibold text-base">{{
       $t('components.PostsList.empty') }}</span>
 
-    <PostItem v-else v-for="(post, index) in flatPosts" :key="index" :post="post" class="p-4" />
+    <PostItem v-else v-for="post in flatPosts" :key="post.hash" :post="post" class="p-4" />
 
     <div v-if="isFetchingNextPage || hasNextPage" class="flex items-center justify-center my-4 px-4 h-[40px]">
       <Loader v-if="isFetchingNextPage" class="animate-spin " />
