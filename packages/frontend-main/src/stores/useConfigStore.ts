@@ -1,28 +1,30 @@
-import { reactive } from 'vue';
+import { computed, reactive } from 'vue';
 import { defineStore } from 'pinia';
 
+import { envConfigs } from '@/env-config';
+
 interface Config {
-    apiRoot: string;
-    explorerUrl: string;
-    communityWallet: string;
+    selectedChain: keyof typeof envConfigs;
+    envConfigs: typeof envConfigs;
 }
 
 const defaultConfig: Config = {
-    apiRoot: import.meta.env.VITE_API_ROOT,
-    explorerUrl: import.meta.env.VITE_EXPLORER_URL,
-    communityWallet: import.meta.env.VITE_COMMUNITY_WALLET,
+    envConfigs: envConfigs,
+    selectedChain: 'testnet',
 };
 
 export const useConfigStore = defineStore(
     'configStateStore',
     () => {
         const config = reactive<Config>({ ...defaultConfig });
+        const chainConfig = computed(() => config.envConfigs[config.selectedChain].chainConfig);
+        const envConfig = computed(() => config.envConfigs[config.selectedChain]);
 
         const resetConfig = () => {
             Object.assign(config, defaultConfig);
         };
 
-        return { config, resetConfig };
+        return { config, chainConfig, envConfig, resetConfig };
     },
     {
         persist: {

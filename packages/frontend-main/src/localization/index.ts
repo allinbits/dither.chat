@@ -20,14 +20,15 @@ export const messages = {
                 failed: 'Connection Failed',
                 failedSub: 'Was not able to connect to your wallet',
                 publicAddressDisclaimer:
-            '* Connecting public address doesn\'t connect to your wallet and is used only for CLI command generation.',
+                    "* Connecting public address doesn't connect to your wallet and is used only for CLI command generation.",
                 recommendedWallet: 'We recommend connecting with address only',
                 otherWallet: 'Make sure you have a wallet browser extension enabled.',
                 enterAddress: 'Enter your wallet address',
                 addressPlaceholder: 'e.g. atone1ad453f23bc2d...',
             },
             Wallet: {
-                popupSign: 'Check your wallet extension to sign the transaction, after submitting the transaction please wait a moment.',
+                popupSign:
+                    'Check your wallet extension to sign the transaction, after submitting the transaction please wait a moment.',
                 broadcastSuccess: 'Successfully Broadcasted',
             },
             Button: {
@@ -95,6 +96,7 @@ export const messages = {
             },
             Settings: {
                 manageFollows: 'Manage Follows',
+                envConfig: 'Environment Config',
                 following: 'Following',
                 back: 'Back',
             },
@@ -104,7 +106,7 @@ export const messages = {
         },
         placeholders: {
             search: 'Type to search',
-            post: 'What\'s up?',
+            post: "What's up?",
             reply: 'Your reply',
         },
     },

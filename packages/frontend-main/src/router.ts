@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
 import { useWalletStateStore } from './stores/useWalletStateStore';
-import ConfigView from './views/ConfigView.vue';
+import EnvConfigView from './views/EnvConfigView.vue';
 import ExploreView from './views/ExploreView.vue';
 import HomeView from './views/HomeView.vue';
 import ManageFollowsView from './views/ManageFollowsView.vue';
@@ -19,7 +19,7 @@ const routes = [
     { path: '/profile/:address', component: ProfileView },
     { path: '/settings', component: SettingsView, meta: { authRequired: true } },
     { path: '/settings/manage-followers', component: ManageFollowsView, meta: { authRequired: true } },
-    { path: '/config', component: ConfigView, meta: { authRequired: true } },
+    { path: '/settings/env-config', component: EnvConfigView, meta: { authRequired: true } },
     { path: '/post/:hash/:postHash?', component: PostView },
     {
         path: '/unauthorized',

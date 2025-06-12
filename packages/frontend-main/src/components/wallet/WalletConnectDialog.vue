@@ -15,11 +15,14 @@ import UserBalance from '../users/UserBalance.vue';
 
 import ConnectButton from './ConnectButton.vue';
 
-import chainConfig from '@/chain-config.json';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { useConfigStore } from '@/stores/useConfigStore';
 import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
 import { shorten } from '@/utility/text';
+
+const configStore = useConfigStore();
+const chainConfig = computed(() => configStore.chainConfig);
 
 const isConnecting = ref(false);
 const isError = ref(false);
@@ -112,7 +115,7 @@ const cancelConnect = () => {
 const isValidAddress = computed(() => {
     try {
         const decoded = bech32.decode(publicAddress.value);
-        if (decoded.prefix == chainConfig.bech32Config.bech32PrefixAccAddr) {
+        if (decoded.prefix == chainConfig.value.bech32Config.bech32PrefixAccAddr) {
             return true;
         }
         else {
