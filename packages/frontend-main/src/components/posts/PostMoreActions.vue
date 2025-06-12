@@ -27,7 +27,7 @@ const buttonLabelClass = 'text-sm font-semibold';
     </PopoverTrigger>
 
     <PopoverContent class="p-2">
-      <Button @click="copy" size="sm" :class="cn(buttonClass, 'justify-between')" variant="ghost">
+      <Button @click="copy(post.hash)" size="sm" :class="cn(buttonClass, 'justify-between')" variant="ghost">
         <div class="flex flex-row items-center gap-2">
           <Link2 class="size-5" />
           <span :class="buttonLabelClass">{{ $t('components.Button.copyLink') }}</span>
