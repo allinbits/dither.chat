@@ -4,5 +4,5 @@ import { useConfigStore } from '@/stores/useConfigStore';
 
 export const getChainConfigLazy = () => {
     const configStore = useConfigStore();
-    return computed(() => configStore.chainConfig);
+    return computed(() => configStore.envConfig.chainConfig);
 };

@@ -14,7 +14,7 @@ export const useTxNotification = (
     txError: Ref<string | undefined>,
 ) => {
     const configStore = useConfigStore();
-    const explorerURL = configStore.config.explorerUrl ?? 'https://testnet.explorer.allinbits.services/atomone-devnet-1/tx';
+    const explorerURL = configStore.envConfig.explorerUrl ?? 'https://testnet.explorer.allinbits.services/atomone-devnet-1/tx';
 
     const wallet = useWallet();
     const { t } = useI18n();

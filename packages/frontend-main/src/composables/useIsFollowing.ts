@@ -10,7 +10,7 @@ interface Params {
 
 export const isFollowing = (params: Params) => {
     const configStore = useConfigStore();
-    const apiRoot = configStore.config.apiRoot ?? 'http://localhost:3000';
+    const apiRoot = configStore.envConfig.apiRoot ?? 'http://localhost:3000';
 
     return queryOptions({
         queryKey: ['is-following', params.followerAddress, params.followingAddress],

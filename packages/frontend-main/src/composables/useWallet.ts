@@ -32,7 +32,7 @@ export const getWalletHelp = (wallet: Wallets) => {
 
 const isCredentialsValid = async () => {
     const configStore = useConfigStore();
-    const apiRoot = configStore.config.apiRoot ?? 'http://localhost:3000';
+    const apiRoot = configStore.envConfig.apiRoot ?? 'http://localhost:3000';
 
     const resVerifyRaw = await fetch(apiRoot + '/auth-verify', {
         method: 'GET',
@@ -58,8 +58,8 @@ const useWalletInstance = () => {
     const chainInfo = getChainConfigLazy();
     const configStore = useConfigStore();
 
-    const apiRoot = configStore.config.apiRoot ?? 'http://localhost:3000';
-    const destinationWallet = configStore.config.communityWallet ?? 'atone1uq6zjslvsa29cy6uu75y8txnl52mw06j6fzlep';
+    const apiRoot = configStore.envConfig.apiRoot ?? 'http://localhost:3000';
+    const destinationWallet = configStore.envConfig.communityWallet ?? 'atone1uq6zjslvsa29cy6uu75y8txnl52mw06j6fzlep';
 
     const walletDialogStore = useWalletDialogStore();
     const walletState = storeToRefs(useWalletStateStore());

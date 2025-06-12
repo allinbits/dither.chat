@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { watch } from 'vue';
+import { toast } from 'vue-sonner';
+import { debouncedWatch } from '@vueuse/core';
 import JsonEditorVue from 'json-editor-vue';
 import { ChevronLeft } from 'lucide-vue-next';
 
@@ -10,17 +12,13 @@ import MainLayout from '@/layouts/MainLayout.vue';
 import { useConfigStore } from '@/stores/useConfigStore';
 
 const configStore = useConfigStore();
-const updatedAt = ref<Date | null>(null);
-let timeout: ReturnType<typeof setTimeout> | null = null;
 
-watch(configStore.config, () => {
-    updatedAt.value = new Date();
-
-    if (timeout) clearTimeout(timeout);
-    timeout = setTimeout(() => {
-        updatedAt.value = null;
-    }, 2_000);
-});
+debouncedWatch(configStore.config, () => {
+    toast.success('Success', {
+        description: 'Config automatically updated',
+        duration: 2000,
+    });
+}, { debounce: 1000 });
 </script>
 
 <template>
@@ -38,16 +36,10 @@ watch(configStore.config, () => {
       </div>
 
       <div class="border-b p-4 flex flex-row justify-between">
-        <NetworkSelector v-model="configStore.config.selectedChain" />
-
-        <div v-if="updatedAt" class="text-sm text-gray-500 mt-2">
-          Updated at {{ updatedAt.toLocaleString() }}
+        <div class="flex flex-row gap-2 items-center justify-evenly w-full">
+          <label class="font-semibold text-sm">Current Chain</label>
+          <NetworkSelector v-model="configStore.config.selectedChain" />
         </div>
-      </div>
-
-      <div class="flex flex-col gap-2 px-4 py-2">
-        <label class="font-semibold text-sm">Current Network</label>
-        <NetworkSelector v-model="configStore.config.selectedChain" />
       </div>
 
       <div class="flex flex-col gap-2 px-4 py-2">
@@ -68,7 +60,7 @@ watch(configStore.config, () => {
       <div class="flex flex-col gap-2 px-4 py-2">
         <label class="font-semibold text-sm">Chain Config</label>
         <JsonEditorVue
-          v-model="configStore.chainConfig"
+          v-model="configStore.envConfig.chainConfig"
           :mainMenuBar="false"
           :navigationBar="false"
           :statusBar="false"

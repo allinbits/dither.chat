@@ -16,7 +16,7 @@ interface Params {
 
 export const userPosts = (params: Params) => {
     const configStore = useConfigStore();
-    const apiRoot = configStore.config.apiRoot ?? 'http://localhost:3000';
+    const apiRoot = configStore.envConfig.apiRoot ?? 'http://localhost:3000';
 
     const { minSendAmount } = storeToRefs(useFiltersStore());
     const debouncedMinSendAmount = refDebounced<number>(minSendAmount, 600);

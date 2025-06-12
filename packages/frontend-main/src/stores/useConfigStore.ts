@@ -13,18 +13,20 @@ const defaultConfig: Config = {
     selectedChain: 'testnet',
 };
 
+// deep clone the default config to avoid mutating the original object
+const initConfig = structuredClone(defaultConfig);
+
 export const useConfigStore = defineStore(
     'configStateStore',
     () => {
-        const config = reactive<Config>({ ...defaultConfig });
-        const chainConfig = computed(() => config.envConfigs[config.selectedChain].chainConfig);
+        const config = reactive<Config>(initConfig);
         const envConfig = computed(() => config.envConfigs[config.selectedChain]);
 
         const resetConfig = () => {
             Object.assign(config, defaultConfig);
         };
 
-        return { config, chainConfig, envConfig, resetConfig };
+        return { config, envConfig, resetConfig };
     },
     {
         persist: {
