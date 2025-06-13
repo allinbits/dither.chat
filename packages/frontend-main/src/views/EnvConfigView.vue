@@ -47,9 +47,6 @@ debouncedWatch(configStore.config, () => {
         </div>
       </div>
 
-      <h1 class="text-lg font-semibold px-4 py-4 text-center">
-        {{ $t(`components.Titles.config`) }}
-      </h1>
 
       <div class="flex flex-col gap-2 px-4 py-2">
         <label class="font-semibold text-sm">Api Root</label>
