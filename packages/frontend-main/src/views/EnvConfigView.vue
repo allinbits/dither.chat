@@ -40,7 +40,7 @@ debouncedWatch(configStore.config, () => {
         </h1>
       </div>
 
-      <div class="border-b p-4 flex flex-row justify-between">
+      <div class="border-b p-4 mb-4 flex flex-row justify-between">
         <div class="flex flex-row gap-2 items-center justify-evenly w-full">
           <label class="font-semibold text-sm">Current Chain</label>
           <NetworkSelector v-model="configStore.config.selectedChain" />
