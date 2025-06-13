@@ -17,12 +17,11 @@ import ConnectButton from './ConnectButton.vue';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { useConfigStore } from '@/stores/useConfigStore';
 import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
+import { getChainConfigLazy } from '@/utility/getChainConfigLazy';
 import { shorten } from '@/utility/text';
 
-const configStore = useConfigStore();
-const chainConfig = computed(() => configStore.chainConfig);
+const chainConfig = getChainConfigLazy();
 
 const isConnecting = ref(false);
 const isError = ref(false);
