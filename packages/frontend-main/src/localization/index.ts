@@ -20,7 +20,7 @@ export const messages = {
                 failed: 'Connection Failed',
                 failedSub: 'Was not able to connect to your wallet',
                 publicAddressDisclaimer:
-                    "* Connecting public address doesn't connect to your wallet and is used only for CLI command generation.",
+                    '* Connecting public address doesn\'t connect to your wallet and is used only for CLI command generation.',
                 recommendedWallet: 'We recommend connecting with address only',
                 otherWallet: 'Make sure you have a wallet browser extension enabled.',
                 enterAddress: 'Enter your wallet address',
@@ -106,7 +106,7 @@ export const messages = {
         },
         placeholders: {
             search: 'Type to search',
-            post: "What's up?",
+            post: 'What\'s up?',
             reply: 'Your reply',
         },
     },

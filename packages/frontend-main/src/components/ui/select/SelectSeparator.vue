@@ -1,12 +1,14 @@
 <script setup lang="ts">
-import type { HTMLAttributes } from 'vue'
-import { reactiveOmit } from '@vueuse/core'
-import { SelectSeparator, type SelectSeparatorProps } from 'reka-ui'
-import { cn } from '@/utility'
+import type { HTMLAttributes } from 'vue';
 
-const props = defineProps<SelectSeparatorProps & { class?: HTMLAttributes['class'] }>()
+import { reactiveOmit } from '@vueuse/core';
+import { SelectSeparator, type SelectSeparatorProps } from 'reka-ui';
 
-const delegatedProps = reactiveOmit(props, 'class')
+import { cn } from '@/utility';
+
+const props = defineProps<SelectSeparatorProps & { class?: HTMLAttributes['class'] }>();
+
+const delegatedProps = reactiveOmit(props, 'class');
 </script>
 
 <template>
