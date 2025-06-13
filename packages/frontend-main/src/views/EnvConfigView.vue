@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import 'vanilla-jsoneditor/themes/jse-theme-dark.css';
+
 import { toast } from 'vue-sonner';
-import { debouncedWatch } from '@vueuse/core';
+import { debouncedWatch, useColorMode } from '@vueuse/core';
 import JsonEditorVue from 'json-editor-vue';
 import { ChevronLeft } from 'lucide-vue-next';
 
@@ -11,6 +13,7 @@ import MainLayout from '@/layouts/MainLayout.vue';
 import { useConfigStore } from '@/stores/useConfigStore';
 
 const configStore = useConfigStore();
+const mode = useColorMode();
 
 debouncedWatch(configStore.config, () => {
     toast.success('Success', {
@@ -67,6 +70,7 @@ debouncedWatch(configStore.config, () => {
         <label class="font-semibold text-sm">Chain Config</label>
         <JsonEditorVue
           v-model="configStore.envConfig.chainConfig"
+          :class="[mode === 'dark' ? 'jse-theme-dark' : 'jse-theme-light']"
           :mainMenuBar="false"
           :navigationBar="false"
           :statusBar="false"
