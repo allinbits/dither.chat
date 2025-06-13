@@ -32,6 +32,9 @@ debouncedWatch(configStore.config, () => {
             </span>
           </Button>
         </RouterLink>
+        <h1 class="font-semibold grow text-right select-none">
+          {{ $t(`components.Titles.config`) }}
+        </h1>
       </div>
 
       <div class="border-b p-4 flex flex-row justify-between">
