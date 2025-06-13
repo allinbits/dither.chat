@@ -5,8 +5,7 @@ import { Check, ExternalLink, Loader, X } from 'lucide-vue-next';
 
 import { useWallet } from './useWallet';
 
-const explorerURL
-    = import.meta.env.VITE_EXPLORER_URL ?? 'https://testnet.explorer.allinbits.services/atomone-devnet-1/tx';
+import { useConfigStore } from '@/stores/useConfigStore';
 
 export const useTxNotification = (
     enabled: Ref<boolean>,
@@ -14,6 +13,9 @@ export const useTxNotification = (
     txSuccess: Ref<string | undefined>,
     txError: Ref<string | undefined>,
 ) => {
+    const configStore = useConfigStore();
+    const explorerURL = configStore.envConfig.explorerUrl ?? 'https://testnet.explorer.allinbits.services/atomone-devnet-1/tx';
+
     const wallet = useWallet();
     const { t } = useI18n();
 
