@@ -11,6 +11,7 @@ import { getWalletHelp, useWallet, Wallets } from '@/composables/useWallet';
 import DialogDescription from '../ui/dialog/DialogDescription.vue';
 import DialogTitle from '../ui/dialog/DialogTitle.vue';
 import Icon from '../ui/icon/Icon.vue';
+import Input from '../ui/input/Input.vue';
 import UserBalance from '../users/UserBalance.vue';
 
 import ConnectButton from './ConnectButton.vue';
@@ -167,9 +168,8 @@ const isValidAddress = computed(() => {
           <div class="flex flex-col text-grey-100 text-200 font-medium text-center leading-5">
             {{ $t('components.WalletConnect.enterAddress') }}
           </div>
-          <input
+          <Input
             v-model="publicAddress"
-            class="flex p-4 items-center self-stretch rounded-lg bg-grey-200 outline-none text-100 leading-4 placeholder-grey-100"
             :placeholder="$t('components.WalletConnect.addressPlaceholder')"
           />
           <div class="flex flex-col gap-4">
