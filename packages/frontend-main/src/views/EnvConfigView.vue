@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { watch } from 'vue';
 import { toast } from 'vue-sonner';
 import { debouncedWatch } from '@vueuse/core';
 import JsonEditorVue from 'json-editor-vue';
