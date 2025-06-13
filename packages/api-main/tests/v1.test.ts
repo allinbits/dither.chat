@@ -14,6 +14,7 @@ describe('v1', { sequential: true }, () => {
     const addressUserA = getAtomOneAddress();
     const addressUserB = getAtomOneAddress();
     const addressUserC = getAtomOneAddress();
+    const replyHash = getRandomHash();
     const genericPostMessage
         = 'hello world, this is a really intereresting post $@!($)@!()@!$21,4214,12,42142,14,12,421,';
 
@@ -58,7 +59,7 @@ describe('v1', { sequential: true }, () => {
 
         const body: typeof Posts.ReplyBody.static = {
             from: addressUserA,
-            hash: getRandomHash(),
+            hash: replyHash,
             post_hash: response.rows[0].hash,
             msg: genericPostMessage,
             quantity: '1',
@@ -97,7 +98,7 @@ describe('v1', { sequential: true }, () => {
     // Likes
     it('POST - /like', async () => {
         const response = await get<{ status: number; rows: { hash: string; author: string; message: string }[] }>(
-            `posts?address=${addressUserA}`,
+            `post?hash=${replyHash}`,
         );
         assert.isOk(response, 'failed to fetch posts data');
         assert.isOk(Array.isArray(response.rows) && response.rows.length >= 1, 'feed result was not an array type');
@@ -109,7 +110,7 @@ describe('v1', { sequential: true }, () => {
             const body: typeof Posts.LikeBody.static = {
                 from: addressUserA,
                 hash: getRandomHash(),
-                post_hash: response.rows[1].hash,
+                post_hash: response.rows[0].hash,
                 quantity: '1',
                 timestamp: '2025-04-16T19:46:42Z',
             };
@@ -122,15 +123,15 @@ describe('v1', { sequential: true }, () => {
 
     it('GET - /likes', async () => {
         const response = await get<{ status: number; rows: { hash: string; likes: number }[] }>(
-            `posts?address=${addressUserA}`,
+            `post?hash=${replyHash}`,
         );
 
         assert.isOk(response, 'failed to fetch posts data');
         assert.isOk(Array.isArray(response.rows) && response.rows.length >= 1, 'feed result was not an array type');
-        assert.isOk(response && response.rows[1].likes >= 50, 'likes were not incremented on post');
+        assert.isOk(response && response.rows[0].likes >= 50, 'likes were not incremented on post');
 
         const getResponse = await get<{ status: number; rows: Array<{ hash: string }> }>(
-            `likes?hash=${response.rows[1].hash}`,
+            `likes?hash=${response.rows[0].hash}`,
         );
         assert.isOk(getResponse, 'failed to fetch posts data');
         assert.isOk(getResponse.status == 200, 'likes result was not valid');
@@ -143,7 +144,7 @@ describe('v1', { sequential: true }, () => {
     // Dislikes
     it('POST - /dislike', async () => {
         const response = await get<{ status: number; rows: { hash: string; author: string; message: string }[] }>(
-            `posts?address=${addressUserA}`,
+            `post?hash=${replyHash}`,
         );
         assert.isOk(response, 'failed to fetch posts data');
         assert.isOk(Array.isArray(response.rows) && response.rows.length >= 1, 'feed result was not an array type');
@@ -152,7 +153,7 @@ describe('v1', { sequential: true }, () => {
             const body: typeof Posts.DislikeBody.static = {
                 from: addressUserA,
                 hash: getRandomHash(),
-                post_hash: response.rows[1].hash,
+                post_hash: response.rows[0].hash,
                 quantity: '1',
                 timestamp: '2025-04-16T19:46:42Z',
             };
@@ -167,13 +168,13 @@ describe('v1', { sequential: true }, () => {
         const response = await get<{
             status: number;
             rows: { hash: string; author: string; message: string; dislikes: number }[];
-        }>(`posts?address=${addressUserA}`);
+        }>(`post?hash=${replyHash}`);
         assert.isOk(response, 'failed to fetch posts data');
         assert.isOk(Array.isArray(response.rows) && response.rows.length >= 1, 'feed result was not an array type');
-        assert.isOk(response && response.rows[1].dislikes >= 50, 'likes were not incremented on post');
+        assert.isOk(response && response.rows[0].dislikes >= 50, 'likes were not incremented on post');
 
         const getResponse = await get<{ status: number; rows: Array<{ hash: string }> }>(
-            `dislikes?hash=${response.rows[1].hash}`,
+            `dislikes?hash=${response.rows[0].hash}`,
         );
         assert.isOk(getResponse, 'failed to fetch posts data');
         assert.isOk(getResponse.status == 200, 'dislikes result was not valid');
@@ -186,7 +187,7 @@ describe('v1', { sequential: true }, () => {
     // Flags
     it('POST - /flag', async () => {
         const response = await get<{ status: number; rows: { hash: string; author: string; message: string }[] }>(
-            `posts?address=${addressUserA}`,
+            `post?hash=${replyHash}`,
         );
         assert.isOk(response, 'failed to fetch posts data');
         assert.isOk(Array.isArray(response.rows) && response.rows.length >= 1, 'feed result was not an array type');
@@ -198,7 +199,7 @@ describe('v1', { sequential: true }, () => {
             const body: typeof Posts.FlagBody.static = {
                 from: addressUserA,
                 hash: getRandomHash(),
-                post_hash: response.rows[1].hash,
+                post_hash: response.rows[0].hash,
                 quantity: '1',
                 timestamp: '2025-04-16T19:46:42Z',
             };
@@ -213,13 +214,13 @@ describe('v1', { sequential: true }, () => {
         const response = await get<{
             status: number;
             rows: { hash: string; author: string; message: string; flags: number }[];
-        }>(`posts?address=${addressUserA}`);
+        }>(`post?hash=${replyHash}`);
         assert.isOk(response, 'failed to fetch posts data');
         assert.isOk(Array.isArray(response.rows) && response.rows.length >= 1, 'feed result was not an array type');
-        assert.isOk(response && response.rows[1].flags >= 50, 'likes were not incremented on post');
+        assert.isOk(response && response.rows[0].flags >= 50, 'likes were not incremented on post');
 
         const getResponse = await get<{ status: number; rows: Array<{ hash: string }> }>(
-            `flags?hash=${response.rows[1].hash}`,
+            `flags?hash=${response.rows[0].hash}`,
         );
         assert.isOk(getResponse, 'failed to fetch posts data');
         assert.isOk(getResponse.status == 200, 'flags result was not valid');
@@ -316,6 +317,17 @@ describe('v1', { sequential: true }, () => {
 
     // PostRemove
     it('POST - /post-remove', async () => {
+        const bodyPost: typeof Posts.PostBody.static = {
+            from: addressUserA,
+            hash: getRandomHash(),
+            msg: genericPostMessage,
+            quantity: '1',
+            timestamp: '2025-04-16T19:46:42Z',
+        };
+
+        const responsePost = await post(`post`, bodyPost);
+        assert.isOk(responsePost?.status === 200, 'response was not okay');
+
         const response = await get<{ status: number; rows: { hash: string; author: string; message: string }[] }>(
             `posts?address=${addressUserA}`,
         );
