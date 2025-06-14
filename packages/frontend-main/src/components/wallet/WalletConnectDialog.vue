@@ -11,15 +11,18 @@ import { getWalletHelp, useWallet, Wallets } from '@/composables/useWallet';
 import DialogDescription from '../ui/dialog/DialogDescription.vue';
 import DialogTitle from '../ui/dialog/DialogTitle.vue';
 import Icon from '../ui/icon/Icon.vue';
+import Input from '../ui/input/Input.vue';
 import UserBalance from '../users/UserBalance.vue';
 
 import ConnectButton from './ConnectButton.vue';
 
-import chainConfig from '@/chain-config.json';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
+import { getChainConfigLazy } from '@/utility/getChainConfigLazy';
 import { shorten } from '@/utility/text';
+
+const chainConfig = getChainConfigLazy();
 
 const isConnecting = ref(false);
 const isError = ref(false);
@@ -112,7 +115,7 @@ const cancelConnect = () => {
 const isValidAddress = computed(() => {
     try {
         const decoded = bech32.decode(publicAddress.value);
-        if (decoded.prefix == chainConfig.bech32Config.bech32PrefixAccAddr) {
+        if (decoded.prefix == chainConfig.value.bech32Config.bech32PrefixAccAddr) {
             return true;
         }
         else {
@@ -167,9 +170,8 @@ const isValidAddress = computed(() => {
           <div class="flex flex-col text-grey-100 text-200 font-medium text-center leading-5">
             {{ $t('components.WalletConnect.enterAddress') }}
           </div>
-          <input
+          <Input
             v-model="publicAddress"
-            class="flex p-4 items-center self-stretch rounded-lg bg-grey-200 outline-none text-100 leading-4 placeholder-grey-100"
             :placeholder="$t('components.WalletConnect.addressPlaceholder')"
           />
           <div class="flex flex-col gap-4">

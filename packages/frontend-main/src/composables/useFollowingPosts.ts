@@ -5,7 +5,8 @@ import { infiniteQueryOptions, useInfiniteQuery, useQueryClient } from '@tanstac
 
 import { post } from './usePost';
 
-const apiRoot = import.meta.env.VITE_API_ROOT ?? 'http://localhost:3000';
+import { useConfigStore } from '@/stores/useConfigStore';
+
 const LIMIT = 15;
 
 interface Params {
@@ -13,12 +14,15 @@ interface Params {
 }
 
 export const followingPosts = (params: Params) => {
+    const configStore = useConfigStore();
+    const apiRoot = configStore.envConfig.apiRoot ?? 'http://localhost:3000';
+
     return infiniteQueryOptions({
         queryKey: ['following-posts', params.userAddress],
         queryFn: async ({ pageParam = 0 }) => {
             const queryClient = useQueryClient();
             const res = await fetch(`${apiRoot}/following-posts?address=${params.userAddress.value}&offset=${pageParam}&limit=${LIMIT}`);
-            const json = await res.json() as { status: number; rows: Post[] };
+            const json = (await res.json()) as { status: number; rows: Post[] };
             const rows = json.rows ?? [];
             // Update the query cache with the following posts
             rows.forEach((row) => {

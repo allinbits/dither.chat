@@ -1,15 +1,18 @@
 import { type Ref } from 'vue';
 import { queryOptions, useQuery } from '@tanstack/vue-query';
 
-const apiRoot = import.meta.env.VITE_API_ROOT ?? 'http://localhost:3000';
+import { useConfigStore } from '@/stores/useConfigStore';
 
 interface Params {
     followerAddress: Ref<string>;
     followingAddress: Ref<string>;
 }
 
-export const isFollowing = (params: Params) =>
-    queryOptions({
+export const isFollowing = (params: Params) => {
+    const configStore = useConfigStore();
+    const apiRoot = configStore.envConfig.apiRoot ?? 'http://localhost:3000';
+
+    return queryOptions({
         queryKey: ['is-following', params.followerAddress, params.followingAddress],
         queryFn: async () => {
             const url = `${apiRoot}/is-following?follower=${params.followerAddress.value}&following=${params.followingAddress.value}`;
@@ -30,6 +33,7 @@ export const isFollowing = (params: Params) =>
         enabled: () => !!params.followerAddress.value && !!params.followingAddress.value,
         retry: false,
     });
+};
 
 export function useIsFollowing(params: Params) {
     return useQuery(isFollowing(params));

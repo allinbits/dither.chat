@@ -7,9 +7,9 @@ import { storeToRefs } from 'pinia';
 
 import { post } from './usePost';
 
+import { useConfigStore } from '@/stores/useConfigStore';
 import { useFiltersStore } from '@/stores/useFiltersStore';
 
-const apiRoot = import.meta.env.VITE_API_ROOT ?? 'http://localhost:3000';
 const LIMIT = 15;
 
 interface Params {
@@ -17,6 +17,9 @@ interface Params {
 }
 
 export const userReplies = (params: Params) => {
+    const configStore = useConfigStore();
+    const apiRoot = configStore.envConfig.apiRoot ?? 'http://localhost:3000';
+
     const { minSendAmount } = storeToRefs(useFiltersStore());
     const debouncedMinSendAmount = refDebounced<number>(minSendAmount, 600);
     return infiniteQueryOptions({
@@ -24,7 +27,7 @@ export const userReplies = (params: Params) => {
         queryFn: async ({ pageParam = 0 }) => {
             const queryClient = useQueryClient();
             const res = await fetch(`${apiRoot}/user-replies?address=${params.userAddress.value}&offset=${pageParam}&limit=${LIMIT}&minQuantity=${Math.trunc(debouncedMinSendAmount.value)}`);
-            const json = await res.json() as { status: number; rows: ReplyWithParent[] };
+            const json = (await res.json()) as { status: number; rows: ReplyWithParent[] };
             const rows = json.rows ?? [];
             // Update the query cache with the parent posts and reply posts
             rows.forEach((row) => {

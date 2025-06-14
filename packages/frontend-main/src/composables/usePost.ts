@@ -2,16 +2,18 @@ import { type Ref } from 'vue';
 import { queryOptions, useQuery } from '@tanstack/vue-query';
 import { postSchema } from 'api-main/types/feed';
 
+import { useConfigStore } from '@/stores/useConfigStore';
 import { checkTypeboxSchema } from '@/utility/sanitize';
-
-const apiRoot = import.meta.env.VITE_API_ROOT ?? 'http://localhost:3000';
 
 interface Params {
     hash: Ref<string>;
 }
 
-export const post = (params: Params) =>
-    queryOptions({
+export const post = (params: Params) => {
+    const configStore = useConfigStore();
+    const apiRoot = configStore.envConfig.apiRoot ?? 'http://localhost:3000';
+
+    return queryOptions({
         queryKey: ['post', params.hash],
         queryFn: async () => {
             const rawResponse = await fetch(`${apiRoot}/post?hash=${params.hash.value}`);
@@ -39,6 +41,7 @@ export const post = (params: Params) =>
         enabled: () => !!params.hash.value,
         staleTime: Infinity,
     });
+};
 
 export function usePost(params: Params) {
     return useQuery(post(params));

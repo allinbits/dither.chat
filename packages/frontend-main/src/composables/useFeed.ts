@@ -7,12 +7,15 @@ import { storeToRefs } from 'pinia';
 
 import { post } from './usePost';
 
+import { useConfigStore } from '@/stores/useConfigStore';
 import { useFiltersStore } from '@/stores/useFiltersStore';
 
-const apiRoot = import.meta.env.VITE_API_ROOT ?? 'http://localhost:3000';
 const LIMIT = 15;
 
 export const feed = () => {
+    const configStore = useConfigStore();
+    const apiRoot = configStore.envConfig.apiRoot ?? 'http://localhost:3000';
+
     const { minSendAmount } = storeToRefs(useFiltersStore());
     const debouncedMinSendAmount = refDebounced<number>(minSendAmount, 600);
     return infiniteQueryOptions({
