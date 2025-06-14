@@ -26,7 +26,7 @@ const gotoExplore = () => {
 <template>
   <div>
     <div class="search-input flex items-center gap-2 relative">
-      <Input @keyup.enter="gotoExplore" class="w-full h-[40px] rounded-xs" v-model="query" :placeholder="$t('placeholders.search')"/>
+      <Input @keyup.enter="gotoExplore" v-model="query" :placeholder="$t('placeholders.search')"/>
 
       <CircleX
         v-if="query"

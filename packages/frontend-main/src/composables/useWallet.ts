@@ -7,12 +7,10 @@ import { coins, type DeliverTxResponse, SigningStargateClient } from '@cosmjs/st
 import { getOfflineSigner } from '@cosmostation/cosmos-client';
 import { storeToRefs } from 'pinia';
 
-import chainInfo from '@/chain-config.json';
+import { useConfigStore } from '@/stores/useConfigStore';
 import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
 import { useWalletStateStore } from '@/stores/useWalletStateStore';
-
-const apiRoot = import.meta.env.VITE_API_ROOT ?? 'http://localhost:3000';
-const destinationWallet = import.meta.env.VITE_COMMUNITY_WALLET ?? 'atone1uq6zjslvsa29cy6uu75y8txnl52mw06j6fzlep';
+import { getChainConfigLazy } from '@/utility/getChainConfigLazy';
 
 export enum Wallets {
     keplr = 'Keplr',
@@ -33,6 +31,9 @@ export const getWalletHelp = (wallet: Wallets) => {
 };
 
 const isCredentialsValid = async () => {
+    const configStore = useConfigStore();
+    const apiRoot = configStore.envConfig.apiRoot ?? 'http://localhost:3000';
+
     const resVerifyRaw = await fetch(apiRoot + '/auth-verify', {
         method: 'GET',
         headers: {
@@ -54,6 +55,12 @@ const isCredentialsValid = async () => {
 };
 
 const useWalletInstance = () => {
+    const chainInfo = getChainConfigLazy();
+    const configStore = useConfigStore();
+
+    const apiRoot = configStore.envConfig.apiRoot ?? 'http://localhost:3000';
+    const destinationWallet = configStore.envConfig.communityWallet ?? 'atone1uq6zjslvsa29cy6uu75y8txnl52mw06j6fzlep';
+
     const walletDialogStore = useWalletDialogStore();
     const walletState = storeToRefs(useWalletStateStore());
 
@@ -73,14 +80,14 @@ const useWalletInstance = () => {
         switch (walletType) {
             case Wallets.keplr:
                 try {
-                    await window.keplr?.experimentalSuggestChain(chainInfo);
-                    await window.keplr?.enable(chainInfo.chainId);
+                    await window.keplr?.experimentalSuggestChain(chainInfo.value);
+                    await window.keplr?.enable(chainInfo.value.chainId);
                     if (window.getOfflineSignerOnlyAmino) {
                         walletState.address.value = (
-                            await window.getOfflineSignerOnlyAmino(chainInfo.chainId).getAccounts()
+                            await window.getOfflineSignerOnlyAmino(chainInfo.value.chainId).getAccounts()
                         )[0].address;
                         walletState.used.value = Wallets.keplr;
-                        signer.value = window.getOfflineSignerOnlyAmino(chainInfo.chainId);
+                        signer.value = window.getOfflineSignerOnlyAmino(chainInfo.value.chainId);
                         if (signal?.aborted) {
                             signOut();
                         }
@@ -98,13 +105,13 @@ const useWalletInstance = () => {
                 break;
             case Wallets.leap:
                 try {
-                    await window.leap?.experimentalSuggestChain(chainInfo);
-                    await window.leap?.enable(chainInfo.chainId);
+                    await window.leap?.experimentalSuggestChain(chainInfo.value);
+                    await window.leap?.enable(chainInfo.value.chainId);
                     walletState.address.value = (
-                        await window.leap.getOfflineSignerOnlyAmino(chainInfo.chainId).getAccounts()
+                        await window.leap.getOfflineSignerOnlyAmino(chainInfo.value.chainId).getAccounts()
                     )[0].address;
                     walletState.used.value = Wallets.leap;
-                    signer.value = window.leap.getOfflineSignerOnlyAmino(chainInfo.chainId);
+                    signer.value = window.leap.getOfflineSignerOnlyAmino(chainInfo.value.chainId);
                     if (signal?.aborted) {
                         signOut();
                     }
@@ -121,14 +128,14 @@ const useWalletInstance = () => {
                     await (window.cosmostation as any).cosmos.request({
                         method: 'cos_addChain',
                         params: {
-                            chainId: chainInfo.chainId,
-                            chainName: chainInfo.chainName,
-                            addressPrefix: chainInfo.bech32Config.bech32PrefixAccAddr,
-                            baseDenom: chainInfo.stakeCurrency.coinMinimalDenom,
-                            displayDenom: chainInfo.stakeCurrency.coinDenom,
-                            restURL: chainInfo.rest,
-                            decimals: chainInfo.stakeCurrency.coinDecimals, // optional
-                            coinType: '' + chainInfo.bip44.coinType, // optional
+                            chainId: chainInfo.value.chainId,
+                            chainName: chainInfo.value.chainName,
+                            addressPrefix: chainInfo.value.bech32Config.bech32PrefixAccAddr,
+                            baseDenom: chainInfo.value.stakeCurrency.coinMinimalDenom,
+                            displayDenom: chainInfo.value.stakeCurrency.coinDenom,
+                            restURL: chainInfo.value.rest,
+                            decimals: chainInfo.value.stakeCurrency.coinDecimals, // optional
+                            coinType: '' + chainInfo.value.bip44.coinType, // optional
                         },
                     });
                 }
@@ -141,11 +148,11 @@ const useWalletInstance = () => {
                     walletState.address.value = (
                         await (window.cosmostation as any).cosmos.request({
                             method: 'cos_requestAccount',
-                            params: { chainName: chainInfo.chainId },
+                            params: { chainName: chainInfo.value.chainId },
                         })
                     ).address;
                     walletState.used.value = Wallets.cosmostation;
-                    const cosmostationSigner = (await getOfflineSigner(chainInfo.chainId)) as OfflineSigner;
+                    const cosmostationSigner = (await getOfflineSigner(chainInfo.value.chainId)) as OfflineSigner;
                     if ((cosmostationSigner as OfflineDirectSigner).signDirect) {
                         const { signDirect: _signDirect, ...aminoSigner } = cosmostationSigner as OfflineDirectSigner;
                         signer.value = aminoSigner as OfflineAminoSigner;
@@ -240,7 +247,7 @@ const useWalletInstance = () => {
 
         try {
             walletState.processState.value = 'connecting';
-            const client = await SigningStargateClient.connectWithSigner(chainInfo.rpc, signer.value);
+            const client = await SigningStargateClient.connectWithSigner(chainInfo.value.rpc, signer.value);
 
             walletState.processState.value = 'simulating';
             const simulate = await client.simulate(walletState.address.value, msgs, formattedMemo);
@@ -251,7 +258,7 @@ const useWalletInstance = () => {
                 walletState.address.value,
                 msgs,
                 {
-                    amount: [{ amount: '10000', denom: chainInfo.feeCurrencies[0].coinMinimalDenom }],
+                    amount: [{ amount: '10000', denom: chainInfo.value.feeCurrencies[0].coinMinimalDenom }],
                     gas: gasLimit,
                 },
                 formattedMemo,
@@ -283,7 +290,7 @@ const useWalletInstance = () => {
 
         try {
             walletState.processState.value = 'connecting';
-            const client = await SigningStargateClient.connectWithSigner(chainInfo.rpc, signer.value);
+            const client = await SigningStargateClient.connectWithSigner(chainInfo.value.rpc, signer.value);
 
             walletState.processState.value = 'simulating';
             const simulate = await client.simulate(
@@ -294,7 +301,7 @@ const useWalletInstance = () => {
                         value: {
                             fromAddress: walletState.address.value,
                             toAddress: destinationWallet,
-                            amount: coins(1, chainInfo.feeCurrencies[0].coinMinimalDenom),
+                            amount: coins(1, chainInfo.value.feeCurrencies[0].coinMinimalDenom),
                         },
                     },
                 ],
@@ -307,8 +314,11 @@ const useWalletInstance = () => {
             const result = await client.sendTokens(
                 walletState.address.value, // From
                 destinationWallet, // To
-                [{ amount: amount, denom: chainInfo.feeCurrencies[0].coinMinimalDenom }], // Amount
-                { amount: [{ amount: '10000', denom: chainInfo.feeCurrencies[0].coinMinimalDenom }], gas: gasLimit }, // Gas
+                [{ amount: amount, denom: chainInfo.value.feeCurrencies[0].coinMinimalDenom }], // Amount
+                {
+                    amount: [{ amount: '10000', denom: chainInfo.value.feeCurrencies[0].coinMinimalDenom }],
+                    gas: gasLimit,
+                }, // Gas
                 formattedMemo,
             );
 
@@ -332,19 +342,19 @@ const useWalletInstance = () => {
         }
 
         if (walletState.used.value === Wallets.keplr) {
-            return window.keplr?.signArbitrary(chainInfo.chainId, walletState.address.value, text);
+            return window.keplr?.signArbitrary(chainInfo.value.chainId, walletState.address.value, text);
         }
 
         if (walletState.used.value === Wallets.cosmostation) {
             return window.cosmostation.providers.keplr.signArbitrary(
-                chainInfo.chainId,
+                chainInfo.value.chainId,
                 walletState.address.value,
                 text,
             );
         }
 
         if (walletState.used.value === Wallets.leap) {
-            return window.leap?.signArbitrary(chainInfo.chainId, walletState.address.value, text);
+            return window.leap?.signArbitrary(chainInfo.value.chainId, walletState.address.value, text);
         }
 
         throw new Error(`No valid wallet connected to sign messages.`);
@@ -394,7 +404,7 @@ const useWalletInstance = () => {
                     value: {
                         fromAddress: walletState.address.value,
                         toAddress: address,
-                        amount: coins(amount, chainInfo.feeCurrencies[0].coinMinimalDenom),
+                        amount: coins(amount, chainInfo.value.feeCurrencies[0].coinMinimalDenom),
                     },
                 },
             ],

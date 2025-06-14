@@ -5,9 +5,9 @@ import { refDebounced } from '@vueuse/core';
 import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/vue-query';
 import { storeToRefs } from 'pinia';
 
+import { useConfigStore } from '@/stores/useConfigStore';
 import { useFiltersStore } from '@/stores/useFiltersStore';
 
-const apiRoot = import.meta.env.VITE_API_ROOT ?? 'http://localhost:3000';
 const LIMIT = 15;
 
 interface Params {
@@ -15,13 +15,18 @@ interface Params {
 }
 
 export const replies = (params: Params) => {
+    const configStore = useConfigStore();
+    const apiRoot = configStore.envConfig.apiRoot ?? 'http://localhost:3000';
+
     const { minSendAmount } = storeToRefs(useFiltersStore());
     const debouncedMinSendAmount = refDebounced<number>(minSendAmount, 600);
     return infiniteQueryOptions({
         queryKey: ['replies', params.hash, debouncedMinSendAmount],
         queryFn: async ({ pageParam = 0 }) => {
-            const res = await fetch(`${apiRoot}/replies?hash=${params.hash.value}&offset=${pageParam}&limit=${LIMIT}&minQuantity=${Math.trunc(debouncedMinSendAmount.value)}`);
-            const json = await res.json() as { status: number; rows: Post[] };
+            const res = await fetch(
+                `${apiRoot}/replies?hash=${params.hash.value}&offset=${pageParam}&limit=${LIMIT}&minQuantity=${Math.trunc(debouncedMinSendAmount.value)}`,
+            );
+            const json = (await res.json()) as { status: number; rows: Post[] };
             return json.rows ?? [];
         },
         initialPageParam: 0,

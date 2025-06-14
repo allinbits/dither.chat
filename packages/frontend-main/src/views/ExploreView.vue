@@ -26,7 +26,7 @@ query.value = route.query.q as string;
 <template>
   <MainLayout>
     <div class="search-input flex items-center gap-2 relative">
-      <Input class="w-full h-[40px] rounded-md m-4 pr-10" v-model="query" :placeholder="$t('placeholders.search')"/>
+      <Input class="m-4" v-model="query" :placeholder="$t('placeholders.search')"/>
 
       <CircleX
         v-if="query"

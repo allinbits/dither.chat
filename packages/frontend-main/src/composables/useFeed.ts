@@ -4,12 +4,15 @@ import { refDebounced } from '@vueuse/core';
 import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/vue-query';
 import { storeToRefs } from 'pinia';
 
+import { useConfigStore } from '@/stores/useConfigStore';
 import { useFiltersStore } from '@/stores/useFiltersStore';
 
-const apiRoot = import.meta.env.VITE_API_ROOT ?? 'http://localhost:3000';
 const LIMIT = 15;
 
 export const feed = () => {
+    const configStore = useConfigStore();
+    const apiRoot = configStore.envConfig.apiRoot ?? 'http://localhost:3000';
+
     const { minSendAmount } = storeToRefs(useFiltersStore());
     const debouncedMinSendAmount = refDebounced<number>(minSendAmount, 600);
     return infiniteQueryOptions({
