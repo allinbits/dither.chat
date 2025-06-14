@@ -4,13 +4,15 @@ import { useQuery } from '@tanstack/vue-query';
 
 import { useWallet } from '@/composables/useWallet';
 
-import chainConfig from '@/chain-config.json';
+import { getChainConfigLazy } from '@/utility/getChainConfigLazy';
 import { formatAmount } from '@/utility/text';
 
 const Wallet = useWallet();
 
+const chainConfig = getChainConfigLazy();
+
 const balancesFetcher = (address: Ref<string>) =>
-    fetch(`${chainConfig.rest}cosmos/bank/v1beta1/balances/${address.value}?pagination.limit=1000`).then(response =>
+    fetch(`${chainConfig.value.rest}cosmos/bank/v1beta1/balances/${address.value}?pagination.limit=1000`).then(response =>
         response.json(),
     );
 const { data: balances } = useQuery({
@@ -21,11 +23,11 @@ const { data: balances } = useQuery({
 const balance = computed(() => {
     if (balances && balances.value) {
         return balances.value.balances.filter(
-            (x: { denom: string }) => x.denom == chainConfig.stakeCurrency.coinMinimalDenom,
+            (x: { denom: string }) => x.denom == chainConfig.value.stakeCurrency.coinMinimalDenom,
         )[0];
     }
     else {
-        return { amount: '0', denom: chainConfig.stakeCurrency.coinMinimalDenom };
+        return { amount: '0', denom: chainConfig.value.stakeCurrency.coinMinimalDenom };
     }
 });
 </script>

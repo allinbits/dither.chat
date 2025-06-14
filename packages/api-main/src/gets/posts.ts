@@ -10,6 +10,7 @@ const statement = getDatabase()
     .where(and(
         eq(FeedTable.author, sql.placeholder('author')),
         isNull(FeedTable.removed_at),
+        isNull(FeedTable.post_hash), // Do not return replies
         gte(FeedTable.quantity, sql.placeholder('minQuantity')),
     ))
     .limit(sql.placeholder('limit'))

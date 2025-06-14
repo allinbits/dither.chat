@@ -4,6 +4,8 @@ import { computed, onMounted, watch } from 'vue';
 import { useBalanceFetcher } from '@/composables/useBalanceFetcher';
 import { useWallet } from '@/composables/useWallet';
 
+import Input from './Input.vue';
+
 import { formatAmount } from '@/utility/text';
 
 const model = defineModel<number>();
@@ -61,15 +63,8 @@ onMounted(() => {
 <template>
   <div class="flex flex-col w-full gap-2">
     <div class="flex flex-row gap-4 items-center w-full">
-      <input
-        class="bg-white inline-flex w-full py-2 appearance-none items-center justify-center px-[10px] text-sm leading-none outline-none dark:text-black border"
-        type="number"
-        v-model="model"
-        autocomplete="off"
-        :step="1"
-        :min="min"
-        :max="max"
-      />
+      <Input v-model="model" :placeholder="$t('placeholders.search')" type="number"         :min="min"
+             :max="max" autocomplete="off"/>
       <span class="dark:text-white">PHOTON</span>
     </div>
     <span class="text-left text-sm" v-if="balance">{{ formatAmount(photonBalanceSubtracted, 6) }} Available</span>

@@ -3,19 +3,25 @@ import type { Post } from 'api-main/types/feed';
 import { type Ref } from 'vue';
 import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/vue-query';
 
-const apiRoot = import.meta.env.VITE_API_ROOT ?? 'http://localhost:3000';
+import { useConfigStore } from '@/stores/useConfigStore';
+
 const LIMIT = 15;
 
 interface Params {
     userAddress: Ref<string>;
 }
 
-export const followingPosts = (params: Params) =>
-    infiniteQueryOptions({
+export const followingPosts = (params: Params) => {
+    const configStore = useConfigStore();
+    const apiRoot = configStore.envConfig.apiRoot ?? 'http://localhost:3000';
+
+    return infiniteQueryOptions({
         queryKey: ['following-posts', params.userAddress],
         queryFn: async ({ pageParam = 0 }) => {
-            const res = await fetch(`${apiRoot}/following-posts?address=${params.userAddress.value}&offset=${pageParam}&limit=${LIMIT}`);
-            const json = await res.json() as { status: number; rows: Post[] };
+            const res = await fetch(
+                `${apiRoot}/following-posts?address=${params.userAddress.value}&offset=${pageParam}&limit=${LIMIT}`,
+            );
+            const json = (await res.json()) as { status: number; rows: Post[] };
             return json.rows ?? [];
         },
         initialPageParam: 0,
@@ -26,6 +32,7 @@ export const followingPosts = (params: Params) =>
         enabled: () => !!params.userAddress.value,
         retry: false,
     });
+};
 
 export function useFollowingPosts(params: Params) {
     return useInfiniteQuery(followingPosts(params));

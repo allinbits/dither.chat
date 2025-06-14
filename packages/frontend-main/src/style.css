@@ -131,11 +131,9 @@
   * {
     @apply border-border outline-ring/50;
   }
-  html {
-    overflow-y: scroll;
-  }
   body {
     @apply bg-background text-foreground;
+    overflow-y: scroll;
     font-family: 'Inter', sans-serif;
     line-height: normal;
   }
