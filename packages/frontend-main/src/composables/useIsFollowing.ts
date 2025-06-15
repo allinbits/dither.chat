@@ -31,7 +31,7 @@ export const isFollowing = (params: Params) => {
             return true;
         },
         enabled: () => !!params.followerAddress.value && !!params.followingAddress.value,
-        retry: false,
+        staleTime: Infinity,
     });
 };
 
