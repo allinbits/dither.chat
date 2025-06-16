@@ -55,7 +55,7 @@ async function handleSumbit() {
       <DialogContent>
         <DialogTitle>{{ $t('components.PopupTitles.newPost') }}</DialogTitle>
 
-        <Textarea :placeholder="$t('placeholders.post')" v-model="message" @input="capChars" v-if="!isProcessing && !txSuccess" />
+        <Textarea :placeholder="$t('placeholders.post')" v-model="message" @input="capChars" :maxlength="MAX_CHARS" v-if="!isProcessing && !txSuccess" />
 
         <!-- Transaction Form -->
         <div class="flex flex-col w-full gap-4" v-if="!isProcessing && !txSuccess">

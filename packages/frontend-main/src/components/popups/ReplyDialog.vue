@@ -74,7 +74,7 @@ function capChars(event: { target: HTMLTextAreaElement }) {
           </div>
         </div>
 
-        <Textarea :placeholder="$t('placeholders.reply')" v-model="message" @input="capChars"
+        <Textarea :placeholder="$t('placeholders.reply')" v-model="message" @input="capChars" :maxlength="MAX_CHARS"
                   v-if="!isProcessing && !txSuccess" />
 
         <!-- Transaction Form -->
