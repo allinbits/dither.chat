@@ -100,8 +100,8 @@ export const messages = {
             Toast: {
                 broadcasting: 'Broadcasting transaction',
                 wait: 'Please wait a moment...',
-                success: '{txLabel} successfully',
-                fail: '{txLabel} failed',
+                success: '{txLabel} Successful',
+                fail: '{txLabel} Failed',
             },
             Settings: {
                 manageFollows: 'Manage Follows',
