@@ -10,7 +10,7 @@ import { verifyJWT } from '../shared/jwt';
 const getNotificationsStatement = getDatabase()
     .select()
     .from(NotificationTable)
-    .where(and(eq(NotificationTable.owner, sql.placeholder('owner'))))
+    .where(and(eq(NotificationTable.owner, sql.placeholder('owner')), eq(NotificationTable.was_read, false)))
     .limit(sql.placeholder('limit'))
     .offset(sql.placeholder('offset'))
     .prepare('stmnt_get_notifications');
