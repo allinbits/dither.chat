@@ -33,12 +33,6 @@ const canSubmit = computed(() => {
     return isBalanceInputValid.value && message.value.length > 0;
 });
 
-function capChars(event: { target: HTMLTextAreaElement }) {
-    if (event.target.value.length > MAX_CHARS) {
-        event.target.value = event.target.value.substring(0, MAX_CHARS);
-    }
-}
-
 async function handleSumbit() {
     if (!canSubmit.value) {
         return;
@@ -55,7 +49,7 @@ async function handleSumbit() {
       <DialogContent>
         <DialogTitle>{{ $t('components.PopupTitles.newPost') }}</DialogTitle>
 
-        <Textarea :placeholder="$t('placeholders.post')" v-model="message" @input="capChars" v-if="!isProcessing && !txSuccess" />
+        <Textarea :placeholder="$t('placeholders.post')" v-model="message" :maxlength="MAX_CHARS" v-if="!isProcessing && !txSuccess" />
 
         <!-- Transaction Form -->
         <div class="flex flex-col w-full gap-4" v-if="!isProcessing && !txSuccess">
