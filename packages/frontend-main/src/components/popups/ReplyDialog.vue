@@ -55,11 +55,15 @@ function capChars(event: { target: HTMLTextAreaElement }) {
     }
 }
 
+function clearOnClose() {
+    message.value = '';
+    handleClose();
+}
 </script>
 
 <template>
   <div>
-    <Dialog v-if="isShown" open @update:open="handleClose" >
+    <Dialog v-if="isShown" open @update:open="clearOnClose" >
       <DialogContent>
         <DialogTitle>{{ $t('components.PopupTitles.reply') }}</DialogTitle>
 
