@@ -7,7 +7,7 @@ import PrettyTimestamp from '../posts/PrettyTimestamp.vue';
 import UserAvatar from '../users/UserAvatar.vue';
 import Username from '../users/Username.vue';
 
-import PostMessage from './PostMessage.vue';
+import PostContent from './PostContent.vue';
 import PostMoreActions from './PostMoreActions.vue';
 
 defineProps<{ post: Post }>();
@@ -31,7 +31,7 @@ defineProps<{ post: Post }>();
           </div>
           <PostMoreActions :post="post" />
         </div>
-        <PostMessage :message="post.message" />
+        <PostContent :message="post.message" />
         <PostActions :post="post" class="mt-4" />
       </div>
     </div>
