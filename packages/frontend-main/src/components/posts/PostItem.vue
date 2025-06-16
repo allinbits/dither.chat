@@ -32,7 +32,7 @@ defineProps<{ post: Post }>();
           <PostMoreActions :post="post" />
         </div>
         <PostMessage :message="post.message" />
-        <PostActions :post="post" />
+        <PostActions :post="post" class="mt-4" />
       </div>
     </div>
   </RouterLink>

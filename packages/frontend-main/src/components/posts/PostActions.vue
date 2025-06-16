@@ -32,7 +32,7 @@ function handleAction(type: keyof PopupState, post: Post) {
 </script>
 
 <template>
-  <div class="flex flex-row items-center justify-between pt-4">
+  <div class="flex flex-row items-center justify-between">
     <button :class="buttonClass" @click.stop="handleAction('reply', post)">
       <MessageCircle class="size-5" color="#A2A2A9" />
       <span :class="buttonLabelClass">{{ formatCompactNumber(post.replies) }}</span>

@@ -11,6 +11,6 @@ defineProps<{ notification: Notification }>();
 
 <template>
   <NotificationWrapper :notification="notification">
-    <PostMessage v-if="notification.subcontext" class="line-clamp-3" :message="notification.subcontext" />
+    <PostMessage v-if="notification.subcontext" class="line-clamp-2" :message="notification.subcontext" />
   </NotificationWrapper>
 </template>

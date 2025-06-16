@@ -10,6 +10,8 @@ import PrettyTimestamp from '../posts/PrettyTimestamp.vue';
 import UserAvatar from '../users/UserAvatar.vue';
 import Username from '../users/Username.vue';
 
+import NotificationType from './NotificationType.vue';
+
 import Button from '@/components/ui/button/Button.vue';
 
 const apiRoot = import.meta.env.VITE_API_ROOT ?? 'http://localhost:3000';
@@ -42,24 +44,29 @@ const readNotification = async () => {
 
 <template>
   <RouterLink :to="`/post/${notification.hash}`" custom v-slot="{ navigate }">
-    <div class="flex flex-row gap-3 cursor-pointer py-2 border-b">
-      <RouterLink :to="`/profile/${notification.actor}`" class="size-[40px]">
+    <div class="flex flex-row gap-3 border-b cursor-pointer p-4" @click="navigate">
+      <RouterLink :to="`/profile/${notification.actor}`">
         <UserAvatar :userAddress="notification.actor" />
       </RouterLink>
-      <div class="flex flex-col w-full" @click="navigate">
-        <div class="flex flex-row gap-3 pt-2.5">
-          <RouterLink :to="`/profile/${notification.actor}`">
-            <Username :userAddress="notification.actor" />
-          </RouterLink>
-          <PrettyTimestamp v-if="notification.timestamp" :timestamp="new Date(notification.timestamp)" />
+
+      <div class="flex flex-col w-full gap-1" >
+        <div class="flex flex-row justify-between items-center h-[40px]">
+          <div class="flex flex-row gap-3">
+            <RouterLink :to="`/profile/${notification.actor}`">
+              <Username :userAddress="notification.actor" />
+            </RouterLink>
+            <PrettyTimestamp v-if="notification.timestamp" :timestamp="new Date(notification.timestamp)" />
+          </div>
+          <Button variant="outline" class="flex flex-col items-center justify-center size-10" v-if="!notification.was_read" custom @click.stop @click="readNotification">
+            <Check class="size-5"/>
+          </Button>
         </div>
 
-        <span class="leading-6 text-sm font-semibold mt-2">{{ $t(`components.Notifications.${notification.type}`) }}</span>
-        <slot/>
+        <div class="flex flex-col gap-2">
+          <NotificationType :notification="notification"/>
+          <slot/>
+        </div>
       </div>
-      <Button variant="outline" class="flex flex-col items-center justify-center w-16" v-if="!notification.was_read" @click="readNotification">
-        <Check />
-      </Button>
     </div>
   </RouterLink>
 </template>

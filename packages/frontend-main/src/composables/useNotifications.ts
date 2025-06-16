@@ -3,15 +3,19 @@ import type { Ref } from 'vue';
 
 import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/vue-query';
 
-const apiRoot = import.meta.env.VITE_API_ROOT ?? 'http://localhost:3000';
+import { useConfigStore } from '@/stores/useConfigStore';
+
 const LIMIT = 15;
 
 interface Params {
     userAddress: Ref<string>;
 }
 
-export const notifications = (params: Params) =>
-    infiniteQueryOptions({
+export const notifications = (params: Params) => {
+    const configStore = useConfigStore();
+    const apiRoot = configStore.envConfig.apiRoot ?? 'http://localhost:3000';
+
+    return infiniteQueryOptions({
         queryKey: ['notifications', params.userAddress],
         queryFn: async ({ pageParam = 0 }) => {
             const res = await fetch(
@@ -21,7 +25,7 @@ export const notifications = (params: Params) =>
                 },
             );
 
-            const json = await res.json() as { status: number; rows: Notification[] };
+            const json = (await res.json()) as { status: number; rows: Notification[] };
             return json.rows ?? [];
         },
         initialPageParam: 0,
@@ -31,6 +35,7 @@ export const notifications = (params: Params) =>
         },
         enabled: () => !!params.userAddress.value,
     });
+};
 
 export function useNotifications(params: Params) {
     return useInfiniteQuery(notifications(params));
