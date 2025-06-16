@@ -58,6 +58,8 @@ export function useUserAuth() {
         signableMessage += `${publicKey},`;
         signableMessage += `${nonce}`;
 
+        console.log(id);
+
         requests[publicKey + id] = signableMessage;
         id++;
 
@@ -85,6 +87,8 @@ export function useUserAuth() {
      * @return {*}
      */
     const verifyAndCreate = (publicKey: string, signature: string, id: number) => {
+        console.log(id);
+
         const publicAddress = getSignerAddressFromPublicKey(publicKey, 'atone');
         const requestIdentifier = publicAddress + id;
 

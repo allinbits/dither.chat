@@ -81,7 +81,7 @@ async function handleReply() {
         </RouterLink>
         <PostMoreActions :post="post" />
       </div>
-      <PostMessage :post="post" class="mt-2" />
+      <PostMessage :message="post.message" class="mt-2" />
       <PrettyTimestamp :timestamp="new Date(post.timestamp)" :isFullDate="true" class="flex mt-4" />
 
       <div class="py-2 mt-4 border-y">

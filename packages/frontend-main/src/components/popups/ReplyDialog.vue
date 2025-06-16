@@ -70,7 +70,7 @@ function capChars(event: { target: HTMLTextAreaElement }) {
               <Username :userAddress="reply.author" />
               <PrettyTimestamp :timestamp="new Date(reply.timestamp)" />
             </div>
-            <PostMessage :post="reply" />
+            <PostMessage :message="reply.message" />
           </div>
         </div>
 

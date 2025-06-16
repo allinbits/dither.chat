@@ -41,6 +41,9 @@ function startReadOnlyServer() {
     app.get('/notifications', ({ query, cookie: { auth } }) => GetRequests.Notifications(query, auth), {
         query: Gets.NotificationsQuery,
     });
+    app.get('/notification-read', ({ query, cookie: { auth } }) => GetRequests.ReadNotification(query, auth), {
+        query: Gets.ReadNotificationQuery,
+    });
 
     app.listen(config.READ_ONLY_PORT ?? 3000);
     console.log(`[API Read Only] Running on ${config.READ_ONLY_PORT ?? 3000}`);

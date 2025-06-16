@@ -1,6 +1,6 @@
 import type { Config } from 'tailwindcss';
 
-import { breakpoints } from './src/lib/breakpoints';
+import { breakpoints } from './src/utility/breakpoints';
 
 export default {
     darkMode: 'class',
