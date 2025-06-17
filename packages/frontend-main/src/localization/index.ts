@@ -54,10 +54,13 @@ export const messages = {
                 dislikePost: 'Dislike Post',
                 newPost: 'New Post',
                 reply: 'Reply to Post',
-                flagPost: 'Redflag Post',
+                flagPost: 'Flag Post',
                 follow: 'Follow User',
                 unfollow: 'Unfollow User',
                 tipUser: 'Tip User',
+            },
+            PopupDescriptions: {
+                flagPost: 'Flagging a post allows our moderation team to take a look and hide it if it violates community guidelines.',
             },
             Tabs: {
                 feed: 'Global Feed',

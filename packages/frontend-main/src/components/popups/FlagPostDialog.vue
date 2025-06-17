@@ -44,7 +44,7 @@ async function handleSumbit() {
   <Dialog v-if="isShown" open @update:open="handleClose">
     <DialogContent>
       <DialogTitle>{{ $t('components.PopupTitles.flagPost') }}</DialogTitle>
-
+      <span>{{ $t('components.PopupDescriptions.flagPost') }}</span>
       <div v-if="!isProcessing && !txSuccess" class="flex flex-row gap-3 border-b pb-3">
         <UserAvatar :userAddress="flag.author" />
         <div class="flex flex-col w-full gap-3">
