@@ -68,6 +68,7 @@ export const messages = {
             Titles: {
                 profile: 'Profile',
                 myProfile: 'My Profile',
+                notifications: 'Notifications',
                 settings: 'Settings',
                 config: 'Config',
             },
@@ -85,14 +86,22 @@ export const messages = {
             RepliesGroupsList: {
                 empty: 'No Replies Available',
             },
+            Notifications: {
+                like: 'Liked your post',
+                dislike: 'Disliked your post',
+                flag: 'Redflagged your post',
+                follow: 'Followed you',
+                reply: 'Replied to your post',
+                empty: 'Nothing to show',
+            },
             FollowingList: {
                 empty: 'You are not following anyone yet',
             },
             Toast: {
                 broadcasting: 'Broadcasting transaction',
                 wait: 'Please wait a moment...',
-                success: '{txLabel} successfully',
-                fail: '{txLabel} failed',
+                success: '{txLabel} Successful',
+                fail: '{txLabel} Failed',
             },
             Settings: {
                 manageFollows: 'Manage Follows',

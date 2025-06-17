@@ -879,7 +879,7 @@ describe('v1/notifications', async () => {
             bearerToken,
         );
         assert.isOk(readResponse?.status === 200, `response was not okay, got ${readResponse?.status}`);
-        // after reading the notification it should be marked as read
+        // after reading the notification it should no longer show
         const lastResponse = await get<{
             status: number;
             rows: {
@@ -891,7 +891,7 @@ describe('v1/notifications', async () => {
             }[];
         }>(`notifications?address=${walletB.publicKey}`, 'READ', bearerToken);
 
-        assert.isTrue(lastResponse?.rows[0].was_read, `notification was not marked as read, got true`);
+        assert.isOk(lastResponse?.rows.findIndex(x => x.hash == notificationResponse.rows[0].hash) === -1, 'notification was still available in array');
     });
 
     // Follows
@@ -964,7 +964,7 @@ describe('v1/notifications', async () => {
             }[];
         }>(`notifications?address=${walletA.publicKey}`, 'READ', bearerToken);
 
-        assert.isTrue(lastResponse?.rows[0].was_read, `notification was not marked as read, got true`);
+        assert.isOk(lastResponse?.rows.findIndex(x => x.hash == notificationResponse.rows[0].hash) === -1, 'notification was still available in array');
     });
 });
 

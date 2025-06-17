@@ -14,7 +14,8 @@ import { cn } from '@/utility';
 
 const { post } = defineProps<{ post: Post }>();
 
-const { copy, copied } = useClipboard({ source: post.hash, copiedDuring: 3000 });
+const postUrl = `${window.location.origin}/post/${post.hash}`;
+const { copy, copied } = useClipboard({ source: postUrl, copiedDuring: 3000 });
 
 const buttonClass = 'flex flex-row items-center justify-start gap-2 w-full';
 const buttonLabelClass = 'text-sm font-semibold';
@@ -27,7 +28,7 @@ const buttonLabelClass = 'text-sm font-semibold';
     </PopoverTrigger>
 
     <PopoverContent class="p-2">
-      <Button @click="copy" size="sm" :class="cn(buttonClass, 'justify-between')" variant="ghost">
+      <Button @click="copy(postUrl)" size="sm" :class="cn(buttonClass, 'justify-between')" variant="ghost">
         <div class="flex flex-row items-center gap-2">
           <Link2 class="size-5" />
           <span :class="buttonLabelClass">{{ $t('components.Button.copyLink') }}</span>

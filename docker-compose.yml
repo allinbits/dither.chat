@@ -56,8 +56,8 @@ services:
       api-main:
         condition: service_healthy
     environment:
-      API_URLS: "https://atomone-devnet-1-api.allinbits.services"
-      START_BLOCK: "2272226"
+      API_URLS: "https://atomone-testnet-1-api.allinbits.services"
+      START_BLOCK: "1979480"
       BATCH_SIZE: 500
       MEMO_PREFIX: "dither."
       RECEIVER: "atone1uq6zjslvsa29cy6uu75y8txnl52mw06j6fzlep"

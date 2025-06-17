@@ -7,7 +7,7 @@ import { type PopupState, usePopups } from '@/composables/usePopups';
 import { useWallet } from '@/composables/useWallet';
 
 import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
-import { formatCompactNumber } from '@/utility/text';
+import { formatAmount, formatCompactNumber } from '@/utility/text';
 
 defineProps<{ post: Post }>();
 
@@ -48,5 +48,6 @@ function handleAction(type: keyof PopupState, post: Post) {
     <button :class="buttonClass" @click.stop="handleAction('flag', post)">
       <Flag class="size-5" color="#A2A2A9" />
     </button>
+    <span class="text-xs text-right text-neutral-400">{{ formatAmount(post.quantity, 6) }} PHOTON</span>
   </div>
 </template>

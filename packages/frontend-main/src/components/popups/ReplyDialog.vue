@@ -49,12 +49,6 @@ const canSubmit = computed(() => {
     return isBalanceInputValid.value && message.value.length > 0;
 });
 
-function capChars(event: { target: HTMLTextAreaElement }) {
-    if (event.target.value.length > MAX_CHARS) {
-        event.target.value = event.target.value.substring(0, MAX_CHARS);
-    }
-}
-
 </script>
 
 <template>
@@ -70,11 +64,11 @@ function capChars(event: { target: HTMLTextAreaElement }) {
               <Username :userAddress="reply.author" />
               <PrettyTimestamp :timestamp="new Date(reply.timestamp)" />
             </div>
-            <PostMessage :post="reply" />
+            <PostMessage :message="reply.message" />
           </div>
         </div>
 
-        <Textarea :placeholder="$t('placeholders.reply')" v-model="message" @input="capChars"
+        <Textarea :placeholder="$t('placeholders.reply')" v-model="message" :maxlength="MAX_CHARS"
                   v-if="!isProcessing && !txSuccess" />
 
         <!-- Transaction Form -->

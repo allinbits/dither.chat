@@ -44,11 +44,7 @@ const isProcessing = computed(() => {
 const canReply = computed(() => {
     return isBalanceInputValid.value && reply.value.length > 0;
 });
-function capChars(event: { target: HTMLTextAreaElement }) {
-    if (event.target.value.length > MAX_CHARS) {
-        event.target.value = event.target.value.substring(0, MAX_CHARS);
-    }
-}
+
 function handleInputValidity(value: boolean) {
     isBalanceInputValid.value = value;
 }
@@ -78,7 +74,7 @@ async function handleReply() {
         </RouterLink>
         <PostMoreActions :post="post" />
       </div>
-      <PostMessage :post="post" class="mt-2" />
+      <PostMessage :message="post.message" class="mt-2" />
       <PrettyTimestamp :timestamp="new Date(post.timestamp)" :isFullDate="true" class="flex mt-4" />
 
       <div class="py-2 mt-4 border-y">
@@ -94,7 +90,7 @@ async function handleReply() {
       <template v-if="wallet.loggedIn.value && !isProcessing">
         <div class="flex flex-row item-center mt-4">
           <UserAvatar :userAddress="wallet.address.value" />
-          <Textarea :placeholder="$t('placeholders.reply')" v-model="reply" @input="capChars" class="mt-1" />
+          <Textarea :placeholder="$t('placeholders.reply')" v-model="reply" :maxlength="MAX_CHARS" class="mt-1" />
         </div>
 
         <div class="flex flex-row mt-4 gap-4">

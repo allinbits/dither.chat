@@ -11,7 +11,7 @@ import PrettyTimestamp from '../posts/PrettyTimestamp.vue';
 import UserAvatar from '../users/UserAvatar.vue';
 import Username from '../users/Username.vue';
 
-import PostMessage from './PostMessage.vue';
+import PostContent from './PostContent.vue';
 import PostMoreActions from './PostMoreActions.vue';
 
 import { cn } from '@/utility';
@@ -44,9 +44,9 @@ const usedPost = computed(() => cachedPost.value || props.post);
           </div>
           <PostMoreActions :post="usedPost" />
         </div>
-        <PostMessage :post="usedPost" />
+        <PostContent :message="usedPost.message" />
         <span class="text-xs w-full text-right text-neutral-400">{{ formatAmount(usedPost.quantity, 6) }} PHOTON</span>
-        <PostActions :post="usedPost" />
+        <PostActions :post="usedPost" class="mt-4"/>
       </div>
     </div>
   </RouterLink>
