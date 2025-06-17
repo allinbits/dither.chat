@@ -47,6 +47,9 @@ export const messages = {
                 viewOnExplorer: 'View on explorer',
                 tip: 'Tip',
             },
+            InputPhoton: {
+                notEnough: 'Not enough balance',
+            },
             PopupTitles: {
                 likePost: 'Like Post',
                 dislikePost: 'Dislike Post',
