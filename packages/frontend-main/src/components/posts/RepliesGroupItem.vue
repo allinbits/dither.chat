@@ -11,7 +11,6 @@ import ReplyItem from './ReplyItem.vue';
 
 const props = defineProps<{ repliesGroup: RepliesGroup }>();
 const { data: cachedParentPost } = usePost({ hash: ref(props.repliesGroup.parent.hash) });
-console.log('replies list:', props.repliesGroup.replies.map(p => p.hash));
 // If the parent post is not found in the cache (Ex: After a reply creation), we can still use the original parent post
 const usedParentPost = computed(() => cachedParentPost.value || props.repliesGroup.parent);
 

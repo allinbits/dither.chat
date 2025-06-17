@@ -18,7 +18,6 @@ export const isFollowing = (params: Params) => {
             const url = `${apiRoot}/is-following?follower=${params.followerAddress.value}&following=${params.followingAddress.value}`;
 
             const rawResponse = await fetch(url);
-            console.log('rawResponserawResponse', rawResponse);
             if (!rawResponse.ok) {
                 throw new Error('Failed to fetch isFollowing');
             }

@@ -11,7 +11,6 @@ import PostItem from './PostItem.vue';
 import { cn } from '@/utility';
 
 const props = defineProps<{ reply: Post; hideBorder?: boolean; showTimeline?: boolean }>();
-console.log('ReplyItem received hash:', props.reply.hash);
 const { data: cachedReply } = usePost({ hash: ref(props.reply.hash) });
 // If the reply post is not found in the cache (Ex: After a reply creation), we can still use the original reply post
 const usedReply = computed(() => cachedReply.value || props.reply);

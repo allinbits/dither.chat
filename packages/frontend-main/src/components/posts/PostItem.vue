@@ -15,7 +15,6 @@ import PostContent from './PostContent.vue';
 import PostMoreActions from './PostMoreActions.vue';
 
 import { cn } from '@/utility';
-import { formatAmount } from '@/utility/text';
 
 const props = defineProps<{ post: Post; hideBorder?: boolean; showTimeline?: boolean }>();
 const { data: cachedPost } = usePost({ hash: ref(props.post.hash) });
@@ -45,7 +44,6 @@ const usedPost = computed(() => cachedPost.value || props.post);
           <PostMoreActions :post="usedPost" />
         </div>
         <PostContent :message="usedPost.message" />
-        <span class="text-xs w-full text-right text-neutral-400">{{ formatAmount(usedPost.quantity, 6) }} PHOTON</span>
         <PostActions :post="usedPost" class="mt-4"/>
       </div>
     </div>
