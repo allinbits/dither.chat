@@ -7,7 +7,6 @@ import { checkTypeboxSchema } from '@/utility/sanitize';
 
 interface Params {
     hash: Ref<string>;
-    postHash: Ref<string | null>;
 }
 
 export const post = (params: Params) => {
@@ -15,14 +14,9 @@ export const post = (params: Params) => {
     const apiRoot = configStore.envConfig.apiRoot ?? 'http://localhost:3000';
 
     return queryOptions({
-        queryKey: ['post', params.hash, params.postHash],
+        queryKey: ['post', params.hash],
         queryFn: async () => {
-            let url = `${apiRoot}/post?hash=${params.hash.value}`;
-            if (params.postHash.value) {
-                url += `&post_hash=${params.postHash.value}`;
-            }
-
-            const rawResponse = await fetch(url);
+            const rawResponse = await fetch(`${apiRoot}/post?hash=${params.hash.value}`);
             if (!rawResponse.ok) {
                 throw new Error('Failed to fetch post');
             }
@@ -45,7 +39,7 @@ export const post = (params: Params) => {
             return checkedData;
         },
         enabled: () => !!params.hash.value,
-        retry: false,
+        staleTime: Infinity,
     });
 };
 

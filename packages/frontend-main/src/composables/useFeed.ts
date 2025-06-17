@@ -1,8 +1,11 @@
 import type { Post } from 'api-main/types/feed';
 
+import { ref } from 'vue';
 import { refDebounced } from '@vueuse/core';
-import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/vue-query';
+import { infiniteQueryOptions, useInfiniteQuery, useQueryClient } from '@tanstack/vue-query';
 import { storeToRefs } from 'pinia';
+
+import { post } from './usePost';
 
 import { useConfigStore } from '@/stores/useConfigStore';
 import { useFiltersStore } from '@/stores/useFiltersStore';
@@ -18,17 +21,25 @@ export const feed = () => {
     return infiniteQueryOptions({
         queryKey: ['feed', debouncedMinSendAmount],
         queryFn: async ({ pageParam = 0 }) => {
+            const queryClient = useQueryClient();
             const res = await fetch(
                 `${apiRoot}/feed?offset=${pageParam}&limit=${LIMIT}&minQuantity=${Math.trunc(debouncedMinSendAmount.value)}`,
             );
             const json = (await res.json()) as { status: number; rows: Post[] };
-            return json.rows ?? [];
+            const rows = json.rows ?? [];
+            // Update the query cache with the feed posts
+            rows.forEach((row) => {
+                const postOpts = post({ hash: ref(row.hash) });
+                queryClient.setQueryData(postOpts.queryKey, row);
+            });
+            return rows;
         },
         initialPageParam: 0,
         getNextPageParam: (lastPage, allPages) => {
             if (lastPage.length < LIMIT) return undefined;
             return allPages.length * LIMIT;
         },
+        staleTime: Infinity,
     });
 };
 

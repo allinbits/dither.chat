@@ -60,12 +60,11 @@ export function useCreatePost(
 
             // Created Post
             const optimisticNewPost: Post = newPost({ message: variables.message, quantity: variables.photonValue, hash, author: wallet.address.value, postHash: null });
+            const newFeedData = infiniteDataWithNewItem<Post>({ previousItems: context.previousFeed, newItem: optimisticNewPost });
+            const newUserPostsData = infiniteDataWithNewItem<Post>({ previousItems: context.previousUserPosts, newItem: optimisticNewPost });
 
-            const optimisticFeedData = infiniteDataWithNewItem<Post>({ previousItems: context.previousFeed, newItem: optimisticNewPost });
-            const optimisticUserPostsData = infiniteDataWithNewItem<Post>({ previousItems: context.previousUserPosts, newItem: optimisticNewPost });
-
-            queryClient.setQueryData(feedOpts.queryKey, optimisticFeedData);
-            queryClient.setQueryData(userPostsOpts.queryKey, optimisticUserPostsData);
+            queryClient.setQueryData(feedOpts.queryKey, newFeedData);
+            queryClient.setQueryData(userPostsOpts.queryKey, newUserPostsData);
         },
         onError: (_, __, context) => {
             const feedOpts = feed();

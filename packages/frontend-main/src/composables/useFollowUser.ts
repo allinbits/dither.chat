@@ -46,7 +46,6 @@ export function useFollowUser(
             const isFollowingOpts = isFollowing({ followerAddress: wallet.address, followingAddress: variables.userAddress });
             queryClient.setQueryData(isFollowingOpts.queryKey, context?.previousIsFollowing);
         },
-        retry: false,
     });
 
     return {

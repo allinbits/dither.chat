@@ -30,7 +30,7 @@ export const following = (params: Params) => {
             return allPages.length * LIMIT;
         },
         enabled: () => !!params.userAddress.value,
-        retry: false,
+        staleTime: Infinity,
     });
 };
 

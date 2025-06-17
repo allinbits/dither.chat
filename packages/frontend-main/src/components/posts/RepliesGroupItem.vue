@@ -2,70 +2,27 @@
 
 import type { RepliesGroup } from './RepliesGroupsList.vue';
 
-import PostActions from '../posts/PostActions.vue';
-import PrettyTimestamp from '../posts/PrettyTimestamp.vue';
-import UserAvatar from '../users/UserAvatar.vue';
-import Username from '../users/Username.vue';
+import { computed, ref } from 'vue';
 
-import PostMessage from './PostMessage.vue';
-import PostMoreActions from './PostMoreActions.vue';
+import { usePost } from '@/composables/usePost';
 
-import { cn } from '@/utility';
+import PostItem from './PostItem.vue';
+import ReplyItem from './ReplyItem.vue';
 
-defineProps<{ repliesGroup: RepliesGroup }>();
+const props = defineProps<{ repliesGroup: RepliesGroup }>();
+const { data: cachedParentPost } = usePost({ hash: ref(props.repliesGroup.parent.hash) });
+// If the parent post is not found in the cache (Ex: After a reply creation), we can still use the original parent post
+const usedParentPost = computed(() => cachedParentPost.value || props.repliesGroup.parent);
 
 </script>
 
 <template>
-  <div class="flex flex-col border-b">
-    <RouterLink :to="`/post/${repliesGroup.parent.hash}`" custom v-slot="{ navigate }">
-      <div class="flex flex-row gap-3 cursor-pointer">
-        <div class="flex flex-col items-center">
-          <RouterLink :to="`/profile/${repliesGroup.parent.author}`" class="size-[40px]">
-            <UserAvatar :userAddress="repliesGroup.parent.author" />
-          </RouterLink>
-          <div class="w-[3px] h-full bg-border" />
-        </div>
+  <div v-if="usedParentPost" class="flex flex-col border-b">
+    <PostItem :post="usedParentPost" showTimeline hideBorder/>
+    <div class="w-[40px] flex flex-col items-center">
+      <div class="w-[3px] bg-border h-4" />
+    </div>
 
-        <div class="flex flex-col w-full gap-3 mb-8" @click="navigate">
-          <div class="flex flex-row justify-between items-center">
-            <div class="flex flex-row gap-3 pt-2.5">
-              <RouterLink :to="`/profile/${repliesGroup.parent.author}`">
-                <Username :userAddress="repliesGroup.parent.author" />
-              </RouterLink>
-              <PrettyTimestamp :timestamp="new Date(repliesGroup.parent.timestamp)" />
-            </div>
-            <PostMoreActions :post="repliesGroup.parent" />
-          </div>
-          <PostMessage :message="repliesGroup.parent.message" />
-          <PostActions :post="repliesGroup.parent" />
-        </div>
-      </div>
-    </RouterLink>
-
-    <RouterLink v-for="(reply, index) in repliesGroup.replies" :key="index"  :to="`/post/${reply.hash}`" custom v-slot="{ navigate }">
-      <div class="flex flex-row gap-3 cursor-pointer">
-        <div class="flex flex-col items-center">
-          <RouterLink :to="`/profile/${reply.author}`" class="size-[40px]">
-            <UserAvatar :userAddress="reply.author" />
-          </RouterLink>
-          <div :class="cn('w-[2px] h-full bg-border', index === repliesGroup.replies.length - 1 && 'hidden')" />
-        </div>
-
-        <div class="flex flex-col w-full gap-3 not-last:mb-8" @click="navigate">
-          <div class="flex flex-row justify-between items-center">
-            <div class="flex flex-row gap-3 pt-2.5">
-              <RouterLink :to="`/profile/${reply.author}`">
-                <Username :userAddress="reply.author" />
-              </RouterLink>
-              <PrettyTimestamp :timestamp="new Date(reply.timestamp)" />
-            </div>
-            <PostMoreActions :post="reply" />
-          </div>
-          <PostMessage :message="reply.message" />
-          <PostActions :post="reply" />
-        </div>
-      </div>
-    </RouterLink>
+    <ReplyItem v-for="(reply, index) in repliesGroup.replies" :key="reply.hash" :reply="reply" :showTimeline="index !== repliesGroup.replies.length - 1"/>
   </div>
 </template>
