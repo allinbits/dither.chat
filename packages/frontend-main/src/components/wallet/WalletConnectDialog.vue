@@ -3,7 +3,7 @@ import type { Ref } from 'vue';
 
 import { computed, ref } from 'vue';
 import { bech32 } from 'bech32';
-import { Loader } from 'lucide-vue-next';
+import { Link2, Loader } from 'lucide-vue-next';
 import { VisuallyHidden } from 'reka-ui';
 
 import { getWalletHelp, useWallet, Wallets } from '@/composables/useWallet';
@@ -103,7 +103,9 @@ const connectWallet = async (walletType: Wallets, address?: string) => {
         }
     }
 };
-
+const openWalletHelp = () => {
+    window.open(getWalletHelp(chosenWallet.value), '_blank');
+};
 const cancelConnect = () => {
     controller.value?.abort();
     isConnecting.value = false;
@@ -141,10 +143,10 @@ const isValidAddress = computed(() => {
             {{ $t('components.WalletConnect.cta') }}
           </div>
           <div class="flex flex-col gap-4">
-            <span class="text-muted-foreground text-center">
+            <span class="text-muted-foreground text-center mb-4">
               {{ $t('components.WalletConnect.otherWallet') }}
             </span>
-            <div class="buttons flex flex-col gap-3">
+            <div class="flex flex-col gap-3">
               <Button :disabled="!keplr" @click="connectWallet(Wallets.keplr)">
                 <Icon icon="keplr" :size="1.25" />
                 <span>Keplr Wallet</span>
@@ -164,10 +166,10 @@ const isValidAddress = computed(() => {
 
       <template v-else-if="addressState">
         <div class="flex flex-col px-8 py-4 pt-12 bg-grey-300 rounded w-80 relative gap-4">
-          <div class="flex flex-col text-[white] text-500 font-semibold text-center">
+          <div class="flex flex-col font-semibold">
             {{ $t('components.WalletConnect.ctaAddress') }}
           </div>
-          <div class="flex flex-col text-grey-100 text-200 font-medium text-center leading-5">
+          <div class="flex flex-col text-muted-foreground font-medium">
             {{ $t('components.WalletConnect.enterAddress') }}
           </div>
           <Input
@@ -186,7 +188,7 @@ const isValidAddress = computed(() => {
               {{ $t('components.WalletConnect.cancel') }}</ConnectButton
             >
           </div>
-          <span class="text-grey-100 text-100 text-center leading-4">
+          <span class="font-semibold">
             {{ $t('components.WalletConnect.publicAddressDisclaimer') }}
           </span>
         </div>
@@ -197,9 +199,9 @@ const isValidAddress = computed(() => {
         <div class="flex align-center items-stretch cursor-pointer">
           <div class="bg-gradient w-10 h-10 rounded-full mr-3"></div>
           <div class="flex flex-col justify-around">
-            <div class="text-light text-200">{{ shorten(address) }}</div>
+            <span>{{ shorten(address) }}</span>
 
-            <div class="text-100 text-grey-100">
+            <div class="text-muted-foreground">
               <UserBalance :address="address" /> {{ chainConfig.stakeCurrency.coinDenom }}
             </div>
           </div>
@@ -213,18 +215,16 @@ const isValidAddress = computed(() => {
             <div class="flex align-center items-stretch">
               <div class="bg-gradient w-10 h-10 rounded-full mr-3"></div>
               <div class="flex flex-col justify-around">
-                <div class="text-light text-300">{{ shorten(address) }}</div>
+                <span>{{ shorten(address) }}</span>
               </div>
             </div>
-            <div class="text-200 text-grey-100 pt-6 pb-2">{{ $t('components.WalletConnect.balance') }}</div>
-            <div class="text-300 text-light">
+            <div class="text-muted-foreground pt-6 pb-2">{{ $t('components.WalletConnect.balance') }}</div>
+            <div class="text-muted-foreground">
               <UserBalance :address="address" /> {{ chainConfig.stakeCurrency.coinDenom }}
             </div>
-            <div class="buttons">
-              <ConnectButton class="my-4 justify-center" @click="signOut()">
-                {{ $t('components.WalletConnect.disconnect') }}</ConnectButton
-              >
-            </div>
+            <ConnectButton class="my-4 justify-center" @click="signOut()">
+              {{ $t('components.WalletConnect.disconnect') }}</ConnectButton
+            >
           </div>
         </div>
       </template>
@@ -232,7 +232,7 @@ const isValidAddress = computed(() => {
       <!-- Connection in progress -->
       <template v-else-if="connectingState">
         <div class="flex flex-col gap-4 items-center">
-          <div class="text-xl font-bold text-center">
+          <div class="text-xl font-bold">
             {{ $t('components.WalletConnect.connecting') }}
           </div>
           <div class="text-muted-foreground">{{ $t('components.WalletConnect.wait') }}</div>
@@ -241,26 +241,26 @@ const isValidAddress = computed(() => {
             <Loader class="animate-spin" :size="24" />
           </div>
 
-          <div class="buttons">
-            <ConnectButton
-              @click="
-                () => {
-                  cancelConnect();
-                }
-              "
-            >
-              {{ $t('components.WalletConnect.cancel') }}</ConnectButton
-            >
-          </div>
+          <ConnectButton
+            @click="
+              () => {
+                cancelConnect();
+              }
+            "
+          >
+            {{ $t('components.WalletConnect.cancel') }}</ConnectButton
+          >
 
-          <div v-if="isSlowConnecting">
-            <a
-              :href="getWalletHelp(chosenWallet)"
-              target="_blank"
-              class="text-100 flex my-2 justify-center items-center"
-            >{{ chosenWallet }} {{ $t('components.WalletConnect.trouble') }}
-              <Icon icon="link" class="ml-2" />
-            </a>
+          <div v-if="isSlowConnecting" class="flex flex-col items-center mt-2">
+            <span class="text-muted-foreground">{{ $t('components.WalletConnect.slow') }}</span>
+            <Button
+
+              variant="link"
+              @click="openWalletHelp"
+            >
+              {{ chosenWallet }} {{ $t('components.WalletConnect.trouble') }}
+              <Link2 class="size-5"/>
+            </Button>
           </div>
         </div>
       </template>
@@ -268,15 +268,16 @@ const isValidAddress = computed(() => {
       <!-- Connection failed -->
       <template v-if="errorState">
         <div class="flex flex-col gap-4 items-center">
-          <div class="flex flex-col text-[white] text-400 font-semibold text-center mt-4">
+          <div class="text-xl font-bold mt-4">
             {{ $t('components.WalletConnect.failed') }}
           </div>
-          <div class="text-200 text-grey-100 my-4 text-center">
+          <div class="text-muted-foreground mb-4">
             {{ $t('components.WalletConnect.failedSub') }}
           </div>
-          <div class="buttons">
+
+          <div class="gap-4 flex flex-col w-full">
             <ConnectButton
-              class="my-4 justify-center"
+              class="justify-center"
               @click="
                 () => {
                   connectWallet(chosenWallet);
@@ -286,26 +287,24 @@ const isValidAddress = computed(() => {
               {{ $t('components.WalletConnect.retry') }}</ConnectButton
             >
             <ConnectButton
-              class="my-4 justify-center"
+              class="justify-center"
               @click="
                 () => {
                   cancelConnect();
                 }
               "
             >
-              {{ $t('ui.actions.done') }}</ConnectButton
+              {{ $t('components.WalletConnect.back') }}</ConnectButton
             >
           </div>
 
-          <div>
-            <a
-              :href="getWalletHelp(chosenWallet)"
-              target="_blank"
-              class="text-100 flex my-2 justify-center items-center"
-            >{{ chosenWallet }} {{ $t('components.WalletConnect.trouble') }}
-              <Icon icon="link" class="ml-2" />
-            </a>
-          </div>
+          <Button
+            variant="link"
+            @click="openWalletHelp"
+          >
+            {{ chosenWallet }} {{ $t('components.WalletConnect.trouble') }}
+            <Link2 class="size-5"/>
+          </Button>
         </div>
       </template>
     </DialogContent>
