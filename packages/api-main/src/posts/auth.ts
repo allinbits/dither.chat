@@ -17,7 +17,7 @@ export async function Auth(body: typeof Posts.AuthBody.static, auth: Cookie<stri
         if (result.status === 200) {
             // TODO - When deployed the samesite should be set to strict for subdomain deployment
             auth.remove();
-            auth.set({ sameSite: 'lax', httpOnly: true, value: result.bearer, maxAge: 259200, secure: true, priority: 'high' });
+            auth.set({ sameSite: 'lax', httpOnly: true, value: result.bearer, maxAge: 259200, priority: 'high' });
             return { status: 200 };
         }
 

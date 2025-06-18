@@ -203,7 +203,6 @@ const useWalletInstance = () => {
                     headers,
                 });
                 const response = (await responseRaw.json()) as { status: number; id: number; message: string };
-                console.log(response);
 
                 // Sign the authentication request
                 const signedMsg = await signMessage(response.message);
@@ -216,7 +215,6 @@ const useWalletInstance = () => {
                 }
 
                 const data = { ...signedMsg, id: response.id };
-                console.log(data);
                 const resAuthRaw = await fetch(apiRoot + '/auth', {
                     body: JSON.stringify(data),
                     method: 'POST',
@@ -233,7 +231,6 @@ const useWalletInstance = () => {
                 }
 
                 const resAuth = await resAuthRaw.json();
-                console.log(resAuth);
                 if (resAuth.status !== 200) {
                     console.error(resAuth);
                     walletState.loggedIn.value = false;
@@ -381,7 +378,6 @@ const useWalletInstance = () => {
                 connect(walletState.used.value, walletState.address.value);
             }
             else {
-                console.log('forcing connection...');
                 connect(walletState.used.value);
             }
         }
