@@ -376,16 +376,15 @@ const useWalletInstance = () => {
     };
 
     const refreshAddress = () => {
-        console.log('refresh disconnected');
-        // if (walletState.used.value) {
-        //     if (walletState.used.value == Wallets.addressOnly) {
-        //         connect(walletState.used.value, walletState.address.value);
-        //     }
-        //     else {
-        //         console.log('forcing connection...');
-        //         connect(walletState.used.value);
-        //     }
-        // }
+        if (walletState.used.value) {
+            if (walletState.used.value == Wallets.addressOnly) {
+                connect(walletState.used.value, walletState.address.value);
+            }
+            else {
+                console.log('forcing connection...');
+                connect(walletState.used.value);
+            }
+        }
     };
 
     const ditherPost = async (msg: string, amount = '1') => {
