@@ -89,7 +89,10 @@ export function useUserAuth() {
      */
     const verifyAndCreate = (publicKey: string, signature: string, id: number) => {
         const publicAddress = getSignerAddressFromPublicKey(publicKey, 'atone');
-        const idx = requests.findIndex(x => x.id === id);
+
+        console.log(requests);
+
+        const idx = requests.findIndex(x => x.id == id);
         if (idx <= -1) {
             cleanupRequests();
             return { status: 401, error: 'no available requests found' };
