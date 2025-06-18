@@ -203,11 +203,8 @@ const useWalletInstance = () => {
                 });
                 const response = (await responseRaw.json()) as { status: number; id: number; message: string };
 
-                console.log(response);
-
                 // Sign the authentication request
                 const signedMsg = await signMessage(response.message);
-                console.log(signedMsg);
                 const resAuthRaw = await fetch(apiRoot + '/auth', {
                     body: JSON.stringify({ ...signedMsg, id: response.id }),
                     method: 'POST',
@@ -221,8 +218,8 @@ const useWalletInstance = () => {
                 }
 
                 const resAuth = await resAuthRaw.json();
-                console.log(resAuth);
                 if (resAuth.status !== 200) {
+                    console.error(resAuth);
                     walletState.loggedIn.value = false;
                     return;
                 }
