@@ -117,6 +117,7 @@ export function useUserAuth() {
             return { status: 401, error: 'request expired' };
         }
 
+        requests[idx].timestamp = Date.now();
         cleanupRequests();
         return { status: 200, bearer: jwt.sign({ data: originalMessage }, secretKey, { expiresIn: '3d' }) };
     };
