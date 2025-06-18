@@ -46,7 +46,7 @@ export const notify = async (data: {
         throw new Error('failed to add owner');
     }
 
-    if (owner == data.actor) {
+    if (owner === data.actor) {
         return;
     }
 
