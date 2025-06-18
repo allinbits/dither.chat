@@ -1,13 +1,19 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { format, formatDistanceToNowStrict } from 'date-fns';
+import { computed } from 'vue';
 
 const props = defineProps<{ timestamp: Date; isFullDate?: boolean }>();
-const isToNow = ref(!props.isFullDate);
+
+const date = computed(() => {
+    if (props.isFullDate) {
+        return new Intl.DateTimeFormat(undefined, { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true }).format(props.timestamp);
+    }
+
+    return new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric' }).format(props.timestamp);
+});
 
 </script>
 <template>
-  <button @click.stop="isToNow = !isToNow">
-    <span class="text-[#B9B9B9] text-sm">{{ isToNow ? formatDistanceToNowStrict(timestamp) : format(timestamp, "Pp") }}</span>
+  <button>
+    <span class="text-[#B9B9B9] text-xs">{{ date }}</span>
   </button>
 </template>
