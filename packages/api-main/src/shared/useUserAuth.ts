@@ -6,7 +6,7 @@ import { verifyADR36Amino } from '@keplr-wallet/cosmos';
 import jwt from 'jsonwebtoken';
 
 const expirationTime = 60_000 * 5;
-const requests: { [publicKey: string]: string } = {};
+const requests: Array<{ id: string; msg: string }> = [];
 export const secretKey = 'temp-key-need-to-config-this';
 
 let id = 0;
@@ -23,17 +23,17 @@ function getTimestamp(msg: string) {
 }
 
 function cleanupRequests() {
-    if (Object.values(requests).length <= 0) {
+    if (requests.length <= 0) {
         return;
     }
 
-    for (const key of Object.keys(requests)) {
-        const timestamp = getTimestamp(requests[key]);
+    for (let i = requests.length - 1; i >= 0; i--) {
+        const timestamp = getTimestamp(requests[i].msg);
         if (Date.now() < timestamp + expirationTime) {
             continue;
         }
 
-        delete requests[key];
+        requests.splice(i, 1);
     }
 }
 
@@ -59,7 +59,7 @@ export function useUserAuth() {
         signableMessage += `${nonce}`;
 
         const reqIdentifier = `${publicKey}-${id}`;
-        requests[reqIdentifier] = signableMessage;
+        requests.push({ id: reqIdentifier, msg: signableMessage });
         id++;
 
         return { id: identifier, message: signableMessage };
@@ -89,12 +89,13 @@ export function useUserAuth() {
         const publicAddress = getSignerAddressFromPublicKey(publicKey, 'atone');
         const requestIdentifier = `${publicAddress}-${id}`;
 
-        if (!requests[requestIdentifier]) {
+        const idx = requests.findIndex(x => x.id === requestIdentifier);
+        if (idx <= -1) {
             cleanupRequests();
             return { status: 401, error: 'no available requests found' };
         }
 
-        const originalMessage = requests[requestIdentifier];
+        const originalMessage = requests[idx].msg;
         const didVerify = verifyADR36Amino(
             'atone',
             publicAddress,
@@ -103,8 +104,6 @@ export function useUserAuth() {
             fromBase64(signature),
             'secp256k1',
         );
-
-        delete requests[requestIdentifier];
 
         if (!didVerify) {
             cleanupRequests();
@@ -117,6 +116,7 @@ export function useUserAuth() {
             return { status: 401, error: 'request expired' };
         }
 
+        cleanupRequests();
         return { status: 200, bearer: jwt.sign({ data: originalMessage }, secretKey, { expiresIn: '3d' }) };
     };
 
