@@ -6,7 +6,8 @@ const { add } = useUserAuth();
 
 export async function AuthCreate(body: typeof Posts.AuthCreateBody.static) {
     try {
-        return { status: 200, ...add(body.address) };
+        const result = await add(body.address);
+        return { status: 200, ...result };
     }
     catch (err) {
         console.error(err);

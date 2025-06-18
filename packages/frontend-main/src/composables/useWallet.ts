@@ -215,8 +215,10 @@ const useWalletInstance = () => {
                     return;
                 }
 
+                const data = { ...signedMsg, id: response.id };
+                console.log(data);
                 const resAuthRaw = await fetch(apiRoot + '/auth', {
-                    body: JSON.stringify({ ...signedMsg, id: response.id }),
+                    body: JSON.stringify(data),
                     method: 'POST',
                     headers,
                     credentials: 'include',
@@ -374,14 +376,16 @@ const useWalletInstance = () => {
     };
 
     const refreshAddress = () => {
-        if (walletState.used.value) {
-            if (walletState.used.value == Wallets.addressOnly) {
-                connect(walletState.used.value, walletState.address.value);
-            }
-            else {
-                connect(walletState.used.value);
-            }
-        }
+        console.log('refresh disconnected');
+        // if (walletState.used.value) {
+        //     if (walletState.used.value == Wallets.addressOnly) {
+        //         connect(walletState.used.value, walletState.address.value);
+        //     }
+        //     else {
+        //         console.log('forcing connection...');
+        //         connect(walletState.used.value);
+        //     }
+        // }
     };
 
     const ditherPost = async (msg: string, amount = '1') => {
