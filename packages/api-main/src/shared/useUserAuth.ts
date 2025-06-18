@@ -6,10 +6,10 @@ import { verifyADR36Amino } from '@keplr-wallet/cosmos';
 import jwt from 'jsonwebtoken';
 
 const expirationTime = 60_000 * 5;
-const requests: Array<{ id: string; msg: string }> = [];
+const requests: Array<{ id: number; msg: string }> = [];
 export const secretKey = 'temp-key-need-to-config-this';
 
-let id = 0;
+let id = 1;
 
 function getSignerAddressFromPublicKey(publicKeyBase64: string, prefix: string = 'atone'): string {
     const publicKeyBytes = fromBase64(publicKeyBase64);
@@ -53,13 +53,12 @@ export function useUserAuth() {
 
         // [msg, id, timestamp, key, nonce]
         signableMessage += 'Login,';
-        signableMessage += `${id},`;
+        signableMessage += `${identifier},`;
         signableMessage += `${Date.now()},`;
         signableMessage += `${publicKey},`;
         signableMessage += `${nonce}`;
 
-        const reqIdentifier = `${publicKey}-${id}`;
-        requests.push({ id: reqIdentifier, msg: signableMessage });
+        requests.push({ id: identifier, msg: signableMessage });
         id++;
 
         return { id: identifier, message: signableMessage };
@@ -87,9 +86,7 @@ export function useUserAuth() {
      */
     const verifyAndCreate = (publicKey: string, signature: string, id: number) => {
         const publicAddress = getSignerAddressFromPublicKey(publicKey, 'atone');
-        const requestIdentifier = `${publicAddress}-${id}`;
-
-        const idx = requests.findIndex(x => x.id === requestIdentifier);
+        const idx = requests.findIndex(x => x.id === id);
         if (idx <= -1) {
             cleanupRequests();
             return { status: 401, error: 'no available requests found' };
