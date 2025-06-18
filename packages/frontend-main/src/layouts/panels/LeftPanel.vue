@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Bell, Feather, House, Search, Settings, User } from 'lucide-vue-next';
 
+import { useNotificationsCount } from '@/composables/useNotificationsCount';
 import { usePopups } from '@/composables/usePopups';
 import { useWallet } from '@/composables/useWallet';
 
@@ -9,6 +10,7 @@ import WalletConnect from '@/components/wallet/WalletConnect.vue';
 
 const wallet = useWallet();
 const popups = usePopups();
+const { data: notificationsCount } = useNotificationsCount({ userAddress: wallet.address });
 </script>
 
 <template>
@@ -33,8 +35,11 @@ const popups = usePopups();
           <span class="hidden xl:inline text-lg font-semibold">Explore</span>
         </RouterLink>
         <template v-if="wallet.loggedIn.value">
-          <RouterLink to="/notifications" class="flex flex-row items-center gap-3 hover:underline">
-            <div class="flex items-center justify-center h-[52px]">
+          <RouterLink to="/notifications" class="flex  flex-row items-center gap-3 hover:underline">
+            <div class="flex items-center relative justify-center h-[52px]">
+              <div v-if="!!notificationsCount" class="flex items-center justify-center absolute top-1 left-3 h-[18px] min-w-[18px] px-1 rounded-full bg-red-500 border-1 border-background text-white text-xs font-medium  ">
+                {{ notificationsCount }}
+              </div>
               <Bell class="size-6" />
             </div>
             <span class="hidden xl:inline text-lg font-semibold">Notifications</span>

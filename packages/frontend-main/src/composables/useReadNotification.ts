@@ -4,6 +4,7 @@ import { ref } from 'vue';
 import { type InfiniteData, useMutation, useQueryClient } from '@tanstack/vue-query';
 
 import { notifications } from './useNotifications';
+import { notificationsCount } from './useNotificationsCount';
 import { useWallet } from './useWallet';
 
 import { useConfigStore } from '@/stores/useConfigStore';
@@ -40,19 +41,28 @@ export function useReadNotification(
         },
         onMutate: async () => {
             const notificationsOpts = notifications({ userAddress: wallet.address });
+            const notificationsCountOpts = notificationsCount({ userAddress: wallet.address });
 
-            await queryClient.cancelQueries(notificationsOpts);
+            await Promise.all([
+                queryClient.cancelQueries(notificationsOpts),
+                queryClient.cancelQueries(notificationsCountOpts),
+            ]);
 
             const previousNotifications = queryClient.getQueryData(
                 notificationsOpts.queryKey,
             ) as InfiniteData<Notification[], unknown> | undefined;
+            const previousNotificationsCount = queryClient.getQueryData(
+                notificationsCountOpts.queryKey,
+            ) as number;
 
             return {
                 previousNotifications,
+                previousNotificationsCount,
             };
         },
         onSuccess: (_, variables, context) => {
             const notificationsOpts = notifications({ userAddress: wallet.address });
+            const notificationsCountOpts = notificationsCount({ userAddress: wallet.address });
 
             const previousNotificationsPages = context.previousNotifications?.pages ?? [];
             const newNotificationsPages = previousNotificationsPages.map(page =>
@@ -64,10 +74,14 @@ export function useReadNotification(
             };
 
             queryClient.setQueryData(notificationsOpts.queryKey, newNotificationsData);
+            queryClient.setQueryData(notificationsCountOpts.queryKey, context?.previousNotificationsCount - 1);
         },
         onError: (_, __, context) => {
             const notificationsOpts = notifications({ userAddress: wallet.address });
+            const notificationsCountOpts = notificationsCount({ userAddress: wallet.address });
+
             queryClient.setQueryData(notificationsOpts.queryKey, context?.previousNotifications);
+            queryClient.setQueryData(notificationsCountOpts.queryKey, context?.previousNotificationsCount);
         },
     });
 

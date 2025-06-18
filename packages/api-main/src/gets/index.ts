@@ -8,6 +8,7 @@ export * from './health';
 export * from './lastBlock';
 export * from './likes';
 export * from './notifications';
+export * from './notificationsCount';
 export * from './post';
 export * from './posts';
 export * from './replies';

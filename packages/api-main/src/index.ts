@@ -41,6 +41,9 @@ function startReadOnlyServer() {
     app.get('/notifications', ({ query, cookie: { auth } }) => GetRequests.Notifications(query, auth), {
         query: Gets.NotificationsQuery,
     });
+    app.get('/notifications-count', ({ query, cookie: { auth } }) => GetRequests.NotificationsCount(query, auth), {
+        query: Gets.NotificationsCountQuery,
+    });
     app.get('/notification-read', ({ query, cookie: { auth } }) => GetRequests.ReadNotification(query, auth), {
         query: Gets.ReadNotificationQuery,
     });
