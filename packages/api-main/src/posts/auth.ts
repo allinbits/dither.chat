@@ -19,7 +19,7 @@ export async function Auth(body: typeof Posts.AuthBody.static, auth: Cookie<stri
             return { status: 200 };
         }
 
-        return { status: 400, error: 'failed to create auth' };
+        return result;
     }
     catch (err) {
         console.error(err);

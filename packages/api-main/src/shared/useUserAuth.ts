@@ -58,9 +58,8 @@ export function useUserAuth() {
         signableMessage += `${publicKey},`;
         signableMessage += `${nonce}`;
 
-        console.log(id);
-
-        requests[publicKey + id] = signableMessage;
+        const reqIdentifier = `${publicKey}-${id}`;
+        requests[reqIdentifier] = signableMessage;
         id++;
 
         return { id: identifier, message: signableMessage };
@@ -87,10 +86,8 @@ export function useUserAuth() {
      * @return {*}
      */
     const verifyAndCreate = (publicKey: string, signature: string, id: number) => {
-        console.log(id);
-
         const publicAddress = getSignerAddressFromPublicKey(publicKey, 'atone');
-        const requestIdentifier = publicAddress + id;
+        const requestIdentifier = `${publicAddress}-${id}`;
 
         if (!requests[requestIdentifier]) {
             cleanupRequests();
@@ -98,7 +95,6 @@ export function useUserAuth() {
         }
 
         const originalMessage = requests[requestIdentifier];
-        delete requests[requestIdentifier];
         const didVerify = verifyADR36Amino(
             'atone',
             publicAddress,
@@ -107,6 +103,8 @@ export function useUserAuth() {
             fromBase64(signature),
             'secp256k1',
         );
+
+        delete requests[requestIdentifier];
 
         if (!didVerify) {
             cleanupRequests();
