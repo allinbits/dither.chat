@@ -9,12 +9,11 @@ const popups = usePopups();
 
 <template>
   <div class="h-full w-full flex flex-row items-center border-t bg-background px-4">
+    <RouterLink to="/" class="flex flex-1 justify-center">
+      <House class="size-7" />
+    </RouterLink>
 
     <nav v-if="wallet.loggedIn.value" class="contents h-full w-full">
-      <RouterLink to="/" class="flex flex-1 justify-center">
-        <House class="size-7" />
-      </RouterLink>
-
       <RouterLink to="/notifications" class="flex flex-1 justify-center">
         <Bell class="size-7" />
       </RouterLink>
@@ -23,16 +22,13 @@ const popups = usePopups();
         <User class="size-7" />
       </RouterLink>
 
+      <button class="flex flex-1 justify-center" @click="popups.show('newPost', {})">
+        <Feather class="size-7" />
+      </button>
       <RouterLink to="/settings" class="flex flex-1 justify-center">
         <Settings class="size-7" />
       </RouterLink>
-
     </nav>
-
-    <button class="flex flex-1 justify-center" @click="popups.show('newPost', {})">
-      <Feather class="size-7" />
-    </button>
-
   </div>
 
 </template>
