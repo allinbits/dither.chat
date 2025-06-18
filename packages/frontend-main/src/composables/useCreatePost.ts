@@ -36,7 +36,7 @@ export function useCreatePost(
             }
         },
         onMutate: async () => {
-            const feedOpts = feed();
+            const feedOpts = feed(queryClient);
             const userPostsOpts = userPosts({ userAddress: wallet.address });
             await Promise.all([
                 queryClient.cancelQueries(feedOpts),
@@ -55,7 +55,7 @@ export function useCreatePost(
         onSuccess: (hash, variables, context) => {
             if (!hash) throw new Error('Error: No hash in TX');
 
-            const feedOpts = feed();
+            const feedOpts = feed(queryClient);
             const userPostsOpts = userPosts({ userAddress: wallet.address });
 
             // Created Post
@@ -67,7 +67,7 @@ export function useCreatePost(
             queryClient.setQueryData(userPostsOpts.queryKey, newUserPostsData);
         },
         onError: (_, __, context) => {
-            const feedOpts = feed();
+            const feedOpts = feed(queryClient);
             const userPostsOpts = userPosts({ userAddress: wallet.address });
             queryClient.setQueryData(feedOpts.queryKey, context?.previousFeed);
             queryClient.setQueryData(userPostsOpts.queryKey, context?.previousUserPosts);

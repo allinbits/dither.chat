@@ -1,3 +1,4 @@
+import type { QueryClient } from '@tanstack/vue-query';
 import type { Post } from 'api-main/types/feed';
 
 import { ref } from 'vue';
@@ -12,8 +13,7 @@ import { useFiltersStore } from '@/stores/useFiltersStore';
 
 const LIMIT = 15;
 
-export const feed = () => {
-    const queryClient = useQueryClient();
+export const feed = (queryClient: QueryClient) => {
     const configStore = useConfigStore();
     const apiRoot = configStore.envConfig.apiRoot ?? 'http://localhost:3000';
 
@@ -45,5 +45,5 @@ export const feed = () => {
 };
 
 export function useFeed() {
-    return useInfiniteQuery(feed());
+    return useInfiniteQuery(feed(useQueryClient()));
 }
