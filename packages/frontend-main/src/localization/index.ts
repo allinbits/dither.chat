@@ -103,7 +103,7 @@ export const messages = {
                 empty: 'You are not following anyone yet',
             },
             Toast: {
-                broadcasting: 'Broadcasting transaction',
+                broadcasting: 'Signing and broadcasting transaction',
                 wait: 'Please wait a moment...',
                 success: '{txLabel} Successful',
                 fail: '{txLabel} Failed',
