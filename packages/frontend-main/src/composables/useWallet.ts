@@ -69,6 +69,7 @@ const useWalletInstance = () => {
         walletState.used.value = null;
         walletState.loggedIn.value = false;
         walletState.processState.value = 'idle';
+        document.cookie = 'auth=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
     };
     const signer: Ref<OfflineSigner | null> = ref(null);
 
@@ -205,8 +206,17 @@ const useWalletInstance = () => {
 
                 // Sign the authentication request
                 const signedMsg = await signMessage(response.message);
+                if (!signedMsg) {
+                    walletState.loggedIn.value = false;
+                    walletDialogStore.hideDialog();
+                    console.error(`Failed to sign response`);
+                    // TODO - Add Better Error Handling
+                    return;
+                }
+
+                const data = { ...signedMsg, id: response.id };
                 const resAuthRaw = await fetch(apiRoot + '/auth', {
-                    body: JSON.stringify({ ...signedMsg, id: response.id }),
+                    body: JSON.stringify(data),
                     method: 'POST',
                     headers,
                     credentials: 'include',
@@ -214,11 +224,15 @@ const useWalletInstance = () => {
 
                 if (resAuthRaw.status !== 200) {
                     walletState.loggedIn.value = false;
+                    walletDialogStore.hideDialog();
+                    console.error(`Failed to authenticate, invalid JSON response`);
+                    // TODO - Add Better Error Handling
                     return;
                 }
 
                 const resAuth = await resAuthRaw.json();
                 if (resAuth.status !== 200) {
+                    console.error(resAuth);
                     walletState.loggedIn.value = false;
                     return;
                 }

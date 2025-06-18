@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Bell, Feather, House, User } from 'lucide-vue-next';
+import { Bell, Feather, House, Settings, User } from 'lucide-vue-next';
 
 import { useNotificationsCount } from '@/composables/useNotificationsCount';
 import { usePopups } from '@/composables/usePopups';
@@ -11,6 +11,9 @@ const { data: notificationsCount } = useNotificationsCount({ userAddress: wallet
 
 <template>
   <div class="h-full w-full flex flex-row items-center border-t bg-background px-4">
+    <RouterLink to="/" class="flex flex-1 justify-center">
+      <House class="size-7" />
+    </RouterLink>
 
     <nav v-if="wallet.loggedIn.value" class="contents h-full w-full">
       <RouterLink to="/" class="flex flex-1 justify-center">
@@ -34,14 +37,18 @@ const { data: notificationsCount } = useNotificationsCount({ userAddress: wallet
         </div>
       </RouterLink>
 
+      <button class="flex flex-1 justify-center" @click="popups.show('newPost', {})">
+        <Feather class="size-7" />
+      </button>
+      <RouterLink to="/settings" class="flex flex-1 justify-center">
+        <Settings class="size-7" />
+      </RouterLink>
     </nav>
-
     <button class="flex flex-1 justify-center" @click="popups.show('newPost', {})">
       <div class="flex items-center  justify-center h-[52px]">
         <Feather class="size-6" />
       </div>
     </button>
-
   </div>
 
 </template>

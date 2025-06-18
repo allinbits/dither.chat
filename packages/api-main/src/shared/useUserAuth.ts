@@ -1,40 +1,25 @@
 import { randomBytes } from 'crypto';
 
 import { encodeSecp256k1Pubkey, pubkeyToAddress } from '@cosmjs/amino';
-import { fromBase64 } from '@cosmjs/encoding';
 import { verifyADR36Amino } from '@keplr-wallet/cosmos';
+import { eq, lt } from 'drizzle-orm';
 import jwt from 'jsonwebtoken';
 
+import { getDatabase } from '../../drizzle/db';
+import { AuthRequests } from '../../drizzle/schema';
+
 const expirationTime = 60_000 * 5;
-const requests: { [publicKey: string]: string } = {};
 export const secretKey = 'temp-key-need-to-config-this';
 
-let id = 0;
-
 function getSignerAddressFromPublicKey(publicKeyBase64: string, prefix: string = 'atone'): string {
-    const publicKeyBytes = fromBase64(publicKeyBase64);
+    const publicKeyBytes = new Uint8Array(Buffer.from(publicKeyBase64, 'base64'));
     const secp256k1Pubkey = encodeSecp256k1Pubkey(publicKeyBytes);
     return pubkeyToAddress(secp256k1Pubkey, prefix);
 }
 
-function getTimestamp(msg: string) {
-    const [_msg, _id, timestamp, _key, _nonce] = msg.split(',');
-    return parseFloat(timestamp);
-}
-
-function cleanupRequests() {
-    if (Object.values(requests).length <= 0) {
-        return;
-    }
-
-    for (const key of Object.keys(requests)) {
-        const timestamp = getTimestamp(requests[key]);
-        if (Date.now() < timestamp + expirationTime) {
-            continue;
-        }
-
-        delete requests[key];
-    }
+async function cleanupRequests() {
+    const epoch = new Date(Date.now());
+    await getDatabase().delete(AuthRequests).where(lt(AuthRequests.timestamp, epoch)).execute();
 }
 
 export function useUserAuth() {
@@ -45,25 +30,20 @@ export function useUserAuth() {
      * @param {string} publicKey
      * @return {*}
      */
-    const add = (publicKey: string) => {
+    const add = async (publicKey: string) => {
         const nonce = randomBytes(16).toString('hex');
-        const identifier = id;
+        const timestamp = Date.now() + expirationTime;
 
         let signableMessage = '';
 
-        // [msg, id, timestamp, key, nonce]
+        // [msg, timestamp, key, nonce]
         signableMessage += 'Login,';
-        signableMessage += `${id},`;
-        signableMessage += `${Date.now()},`;
+        signableMessage += `${timestamp},`;
         signableMessage += `${publicKey},`;
         signableMessage += `${nonce}`;
 
-        console.log(id);
-
-        requests[publicKey + id] = signableMessage;
-        id++;
-
-        return { id: identifier, message: signableMessage };
+        const rows = await getDatabase().insert(AuthRequests).values({ msg: signableMessage, timestamp: new Date(timestamp) }).returning();
+        return { id: rows[0].id, message: signableMessage };
     };
 
     /**
@@ -86,40 +66,38 @@ export function useUserAuth() {
      * @param {number} id
      * @return {*}
      */
-    const verifyAndCreate = (publicKey: string, signature: string, id: number) => {
-        console.log(id);
-
+    const verifyAndCreate = async (publicKey: string, signature: string, id: number) => {
         const publicAddress = getSignerAddressFromPublicKey(publicKey, 'atone');
-        const requestIdentifier = publicAddress + id;
 
-        if (!requests[requestIdentifier]) {
+        const rows = await getDatabase().select().from(AuthRequests).where(eq(AuthRequests.id, id)).limit(1).execute();
+        if (rows.length <= 0) {
             cleanupRequests();
             return { status: 401, error: 'no available requests found' };
         }
 
-        const originalMessage = requests[requestIdentifier];
-        delete requests[requestIdentifier];
-        const didVerify = verifyADR36Amino(
-            'atone',
-            publicAddress,
-            originalMessage,
-            fromBase64(publicKey),
-            fromBase64(signature),
-            'secp256k1',
-        );
-
-        if (!didVerify) {
-            cleanupRequests();
-            return { status: 401, error: 'failed to verify request from public key' };
-        }
-
-        const timestamp = getTimestamp(originalMessage);
-        if (Date.now() > timestamp + expirationTime) {
+        if (Date.now() > new Date(rows[0].timestamp).getTime()) {
             cleanupRequests();
             return { status: 401, error: 'request expired' };
         }
 
-        return { status: 200, bearer: jwt.sign({ data: originalMessage }, secretKey, { expiresIn: '3d' }) };
+        const originalMessage = rows[0].msg;
+        const didVerify = verifyADR36Amino(
+            'atone',
+            publicAddress,
+            originalMessage,
+            new Uint8Array(Buffer.from(publicKey, 'base64')),
+            new Uint8Array(Buffer.from(signature, 'base64')),
+            'secp256k1',
+        );
+
+        if (!didVerify) {
+            console.warn(`Failed to Verify: ${publicAddress}, ${originalMessage}`);
+            cleanupRequests();
+            return { status: 401, error: 'failed to verify request from public key' };
+        }
+
+        await getDatabase().delete(AuthRequests).where(eq(AuthRequests.id, id)).returning();
+        return { status: 200, bearer: jwt.sign({ data: rows[0].msg }, secretKey, { expiresIn: '3d' }) };
     };
 
     return {

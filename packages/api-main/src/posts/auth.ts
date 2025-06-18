@@ -8,16 +8,20 @@ const { verifyAndCreate } = useUserAuth();
 
 export async function Auth(body: typeof Posts.AuthBody.static, auth: Cookie<string | undefined>) {
     try {
-        if (Object.hasOwn(body, 'json')) {
-            return verifyAndCreate(body.pub_key.value, body.signature, body.id);
+        if ('json' in body) {
+            const jwt = await verifyAndCreate(body.pub_key.value, body.signature, body.id);
+            return jwt;
         }
 
-        const result = verifyAndCreate(body.pub_key.value, body.signature, body.id);
+        const result = await verifyAndCreate(body.pub_key.value, body.signature, body.id);
         if (result.status === 200) {
             // TODO - When deployed the samesite should be set to strict for subdomain deployment
-            auth.set({ sameSite: 'lax', httpOnly: true, value: result.bearer, maxAge: 259200, secure: true, path: '/' });
+            auth.remove();
+            auth.set({ sameSite: 'lax', httpOnly: true, value: result.bearer, maxAge: 259200, priority: 'high' });
             return { status: 200 };
         }
+
+        return result;
     }
     catch (err) {
         console.error(err);

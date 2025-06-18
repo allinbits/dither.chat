@@ -91,6 +91,15 @@ export const FollowsTable = pgTable(
     ],
 );
 
+export const AuthRequests = pgTable(
+    'authrequests',
+    {
+        id: serial('id').primaryKey(),
+        msg: varchar().notNull(),
+        timestamp: timestamp({ withTimezone: true }).notNull(),
+    },
+);
+
 // Audits are append only
 export const AuditTable = pgTable('audits', {
     id: serial('id').primaryKey(),
@@ -134,4 +143,4 @@ export const ReaderState = pgTable('state', {
     last_block: varchar().notNull(),
 });
 
-export const tables = ['feed', 'likes', 'dislikes', 'flags', 'follows', 'audits', 'moderators', 'notifications', 'state'];
+export const tables = ['feed', 'likes', 'dislikes', 'flags', 'follows', 'audits', 'moderators', 'notifications', 'state', 'authrequests'];
