@@ -69,6 +69,7 @@ const useWalletInstance = () => {
         walletState.used.value = null;
         walletState.loggedIn.value = false;
         walletState.processState.value = 'idle';
+        document.cookie = 'auth=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
     };
     const signer: Ref<OfflineSigner | null> = ref(null);
 

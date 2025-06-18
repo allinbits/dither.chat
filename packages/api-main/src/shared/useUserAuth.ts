@@ -9,7 +9,7 @@ const expirationTime = 60_000 * 5;
 const requests: Array<{ id: number; msg: string }> = [];
 export const secretKey = 'temp-key-need-to-config-this';
 
-let id = 1;
+let id = 0;
 
 function getSignerAddressFromPublicKey(publicKeyBase64: string, prefix: string = 'atone'): string {
     const publicKeyBytes = fromBase64(publicKeyBase64);
@@ -46,6 +46,12 @@ export function useUserAuth() {
      * @return {*}
      */
     const add = (publicKey: string) => {
+        id++;
+
+        if (id >= Number.MAX_SAFE_INTEGER) {
+            id = 0;
+        }
+
         const nonce = randomBytes(16).toString('hex');
         const identifier = id;
 
@@ -59,8 +65,6 @@ export function useUserAuth() {
         signableMessage += `${nonce}`;
 
         requests.push({ id: identifier, msg: signableMessage });
-        id++;
-
         return { id: identifier, message: signableMessage };
     };
 
@@ -103,6 +107,7 @@ export function useUserAuth() {
         );
 
         if (!didVerify) {
+            console.warn(`Failed to Verify: ${publicAddress}, ${originalMessage}, ${fromBase64(publicKey)}`);
             cleanupRequests();
             return { status: 401, error: 'failed to verify request from public key' };
         }
