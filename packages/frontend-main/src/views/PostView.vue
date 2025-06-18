@@ -69,7 +69,6 @@ async function handleReply() {
         <RouterLink :to="`/profile/${post.author}`">
           <div class="flex flex-row gap-3">
             <UserAvatarUsername :userAddress="post.author" />
-            <PrettyTimestamp :timestamp="new Date(post.timestamp)" />
           </div>
         </RouterLink>
         <PostMoreActions :post="post" />
