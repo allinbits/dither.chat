@@ -48,8 +48,8 @@ importers:
         specifier: ^2.2.1
         version: 2.2.2
       '@atomone/dither-api-types':
-        specifier: ^1.6.0
-        version: 1.6.0(@sinclair/typebox@0.34.33)(openapi-types@12.1.3)(typescript@5.8.3)
+        specifier: ^1.8.0
+        version: 1.8.0(@sinclair/typebox@0.34.33)(openapi-types@12.1.3)(typescript@5.8.3)
       '@cosmjs/crypto':
         specifier: ^0.33.1
         version: 0.33.1
@@ -293,8 +293,8 @@ packages:
   '@atomone/dither-api-types@1.4.0':
     resolution: {integrity: sha512-Oj+gjKSzhRTxTJ54lg/d/lIRIAGAibkzDtu2Gd4259RlYFMosgGoN89VO9K0adhPjAo7CYJFduNT5MtEpmsx0w==}
 
-  '@atomone/dither-api-types@1.6.0':
-    resolution: {integrity: sha512-deQ2xXQbJIMNsAHgw7Id5pI9muJ0CPEIURJ6CFca9Rr3zdtIIe6XXJp5HdpGh68b3EqajiXEOTsLnbT9gJyy4A==}
+  '@atomone/dither-api-types@1.8.0':
+    resolution: {integrity: sha512-6GeeiQvZfAKA4HN/RfJ6LDNsujU4ElprqE04BcslcGRdx8vwWqin1SdB7eEIsg+eHUjlFbPd9AlQan4o3vPeuw==}
 
   '@babel/helper-string-parser@7.27.1':
     resolution: {integrity: sha512-qMlSxKbpRlAridDExk92nSobyDdpPijUq2DW6oDnUqd0iOGxmQjyqhMIihI9+zv4LPyZdRje2cavWPbCbWm3eA==}
@@ -4042,7 +4042,7 @@ snapshots:
       - openapi-types
       - typescript
 
-  '@atomone/dither-api-types@1.6.0(@sinclair/typebox@0.34.33)(openapi-types@12.1.3)(typescript@5.8.3)':
+  '@atomone/dither-api-types@1.8.0(@sinclair/typebox@0.34.33)(openapi-types@12.1.3)(typescript@5.8.3)':
     dependencies:
       elysia: 1.2.25(@sinclair/typebox@0.34.33)(openapi-types@12.1.3)(typescript@5.8.3)
     transitivePeerDependencies:
