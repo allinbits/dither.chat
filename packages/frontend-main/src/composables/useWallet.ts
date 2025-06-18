@@ -203,9 +203,18 @@ const useWalletInstance = () => {
                     headers,
                 });
                 const response = (await responseRaw.json()) as { status: number; id: number; message: string };
+                console.log(response);
 
                 // Sign the authentication request
                 const signedMsg = await signMessage(response.message);
+                if (!signedMsg) {
+                    walletState.loggedIn.value = false;
+                    walletDialogStore.hideDialog();
+                    console.error(`Failed to sign response`);
+                    // TODO - Add Better Error Handling
+                    return;
+                }
+
                 const resAuthRaw = await fetch(apiRoot + '/auth', {
                     body: JSON.stringify({ ...signedMsg, id: response.id }),
                     method: 'POST',
@@ -215,10 +224,14 @@ const useWalletInstance = () => {
 
                 if (resAuthRaw.status !== 200) {
                     walletState.loggedIn.value = false;
+                    walletDialogStore.hideDialog();
+                    console.error(`Failed to authenticate, invalid JSON response`);
+                    // TODO - Add Better Error Handling
                     return;
                 }
 
                 const resAuth = await resAuthRaw.json();
+                console.log(resAuth);
                 if (resAuth.status !== 200) {
                     console.error(resAuth);
                     walletState.loggedIn.value = false;

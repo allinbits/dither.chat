@@ -1,18 +1,17 @@
 import { randomBytes } from 'crypto';
 
 import { encodeSecp256k1Pubkey, pubkeyToAddress } from '@cosmjs/amino';
-import { fromBase64 } from '@cosmjs/encoding';
 import { verifyADR36Amino } from '@keplr-wallet/cosmos';
 import jwt from 'jsonwebtoken';
 
 const expirationTime = 60_000 * 5;
-const requests: Array<{ id: number; msg: string }> = [];
+const requests: Array<{ id: number; msg: string; timestamp: number }> = [];
 export const secretKey = 'temp-key-need-to-config-this';
 
 let id = 0;
 
 function getSignerAddressFromPublicKey(publicKeyBase64: string, prefix: string = 'atone'): string {
-    const publicKeyBytes = fromBase64(publicKeyBase64);
+    const publicKeyBytes = new Uint8Array(Buffer.from(publicKeyBase64, 'base64'));
     const secp256k1Pubkey = encodeSecp256k1Pubkey(publicKeyBytes);
     return pubkeyToAddress(secp256k1Pubkey, prefix);
 }
@@ -28,8 +27,7 @@ function cleanupRequests() {
     }
 
     for (let i = requests.length - 1; i >= 0; i--) {
-        const timestamp = getTimestamp(requests[i].msg);
-        if (Date.now() < timestamp + expirationTime) {
+        if (Date.now() < requests[i].timestamp + expirationTime) {
             continue;
         }
 
@@ -54,17 +52,18 @@ export function useUserAuth() {
 
         const nonce = randomBytes(16).toString('hex');
         const identifier = id;
+        const timestamp = Date.now();
 
         let signableMessage = '';
 
         // [msg, id, timestamp, key, nonce]
         signableMessage += 'Login,';
         signableMessage += `${identifier},`;
-        signableMessage += `${Date.now()},`;
+        signableMessage += `${timestamp},`;
         signableMessage += `${publicKey},`;
         signableMessage += `${nonce}`;
 
-        requests.push({ id: identifier, msg: signableMessage });
+        requests.push({ id: identifier, msg: signableMessage, timestamp });
         return { id: identifier, message: signableMessage };
     };
 
@@ -101,13 +100,13 @@ export function useUserAuth() {
             'atone',
             publicAddress,
             originalMessage,
-            fromBase64(publicKey),
-            fromBase64(signature),
+            new Uint8Array(Buffer.from(publicKey, 'base64')),
+            new Uint8Array(Buffer.from(signature, 'base64')),
             'secp256k1',
         );
 
         if (!didVerify) {
-            console.warn(`Failed to Verify: ${publicAddress}, ${originalMessage}, ${fromBase64(publicKey)}`);
+            console.warn(`Failed to Verify: ${publicAddress}, ${originalMessage}`);
             cleanupRequests();
             return { status: 401, error: 'failed to verify request from public key' };
         }
