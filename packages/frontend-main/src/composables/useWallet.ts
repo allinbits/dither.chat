@@ -219,6 +219,7 @@ const useWalletInstance = () => {
 
                 const resAuth = await resAuthRaw.json();
                 if (resAuth.status !== 200) {
+                    console.error(resAuth);
                     walletState.loggedIn.value = false;
                     return;
                 }

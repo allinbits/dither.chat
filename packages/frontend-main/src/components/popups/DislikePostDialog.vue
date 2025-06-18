@@ -1,78 +1,46 @@
 <script lang="ts" setup>
-import { computed, ref, watch } from 'vue';
+import type { Post } from 'api-main/types/feed';
+
+import { computed, ref } from 'vue';
 import { Loader } from 'lucide-vue-next';
 
-import { useBalanceFetcher } from '@/composables/useBalanceFetcher';
 import { useDislikePost } from '@/composables/useDislikePost';
-import { usePopups } from '@/composables/usePopups';
-import { useTxNotification } from '@/composables/useTxNotification';
-import { useWallet } from '@/composables/useWallet';
+import { useTxDialog } from '@/composables/useTxDialog';
 
 import DialogDescription from '../ui/dialog/DialogDescription.vue';
 
-import
-{ Button }
-    from '@/components/ui/button';
-import {
-    Dialog,
-    DialogContent,
-    DialogTitle,
-} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import InputPhoton from '@/components/ui/input/InputPhoton.vue';
 import { shorten } from '@/utility/text';
 
-const popups = usePopups();
-const wallet = useWallet();
-const balanceFetcher = useBalanceFetcher();
-const photonValue = ref(1);
 const isBalanceInputValid = ref(false);
 const { dislikePost, txError, txSuccess } = useDislikePost();
-const isShown = computed(() => !!popups.state.dislike);
-useTxNotification(isShown, 'Dislike', txSuccess, txError);
 
-const isProcessing = computed(() => {
-    return wallet.processState.value !== 'idle';
-});
-const isBroadcasting = computed(() => {
-    return wallet.processState.value === 'broadcasting';
-});
+const { isProcessing, isShown, photonValue, handleClose, popupState: dislike } = useTxDialog<Post>('dislike', 'Dislike', txSuccess, txError);
+
 const canSubmit = computed(() => {
     return isBalanceInputValid.value;
 });
-
-function handleClose() {
-    popups.state.dislike = null;
-    txError.value = undefined;
-    txSuccess.value = undefined;
-    photonValue.value = 1;
-}
 
 function handleInputValidity(value: boolean) {
     isBalanceInputValid.value = value;
 }
 
-watch([wallet.loggedIn, wallet.address], async () => {
-    if (!wallet.loggedIn.value) {
-        return;
-    }
-
-    balanceFetcher.updateAddress(wallet.address.value);
-});
-
 async function handleSumbmit() {
-    if (!canSubmit.value || !popups.state.dislike) {
+    if (!canSubmit.value || !dislike.value) {
         return;
     }
-    await dislikePost({ post: ref(popups.state.dislike), photonValue: photonValue.value });
+    await dislikePost({ post: ref(dislike.value), photonValue: photonValue.value });
     handleClose();
 }
 </script>
 
 <template>
-  <Dialog :open="!!popups.state.dislike && !isBroadcasting" @update:open="handleClose" v-if="popups.state.dislike && !isBroadcasting">
+  <Dialog :open="isShown" @update:open="handleClose" v-if="isShown">
     <DialogContent>
       <DialogTitle>{{ $t('components.PopupTitles.dislikePost') }}</DialogTitle>
-      <DialogDescription>{{ shorten(popups.state.dislike.hash) }}</DialogDescription>
+      <DialogDescription>{{ shorten(dislike.hash) }}</DialogDescription>
 
       <!-- Transaction Form -->
       <div class="flex flex-col w-full gap-4" v-if="!isProcessing && !txSuccess">

@@ -60,7 +60,7 @@ function handleAction(type: keyof PopupState, userAddress: string) {
           <RouterLink :to="`/profile/${followUser.address}`">
             <UserAvatarUsername :userAddress="followUser.address" />
           </RouterLink>
-          <Button @click="handleAction('unfollow', followUser.address)" size="sm" class="w-[160px]">
+          <Button @click="handleAction('unfollow', followUser.address)" size="sm" class="w-[100px]">
             {{ $t('components.Button.unfollow') }}
           </Button>
         </div>

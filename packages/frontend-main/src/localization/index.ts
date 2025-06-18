@@ -49,6 +49,9 @@ export const messages = {
                 viewOnExplorer: 'View on explorer',
                 tip: 'Tip',
             },
+            InputPhoton: {
+                notEnough: 'Not enough balance',
+            },
             PopupTitles: {
                 likePost: 'Like Post',
                 dislikePost: 'Dislike Post',
@@ -103,7 +106,7 @@ export const messages = {
                 empty: 'You are not following anyone yet',
             },
             Toast: {
-                broadcasting: 'Broadcasting transaction',
+                broadcasting: 'Signing and broadcasting transaction',
                 wait: 'Please wait a moment...',
                 success: '{txLabel} Successful',
                 fail: '{txLabel} Failed',

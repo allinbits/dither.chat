@@ -13,15 +13,16 @@ import { useFiltersStore } from '@/stores/useFiltersStore';
 const LIMIT = 15;
 
 export const feed = () => {
+    const queryClient = useQueryClient();
     const configStore = useConfigStore();
     const apiRoot = configStore.envConfig.apiRoot ?? 'http://localhost:3000';
 
     const { minSendAmount } = storeToRefs(useFiltersStore());
     const debouncedMinSendAmount = refDebounced<number>(minSendAmount, 600);
+
     return infiniteQueryOptions({
         queryKey: ['feed', debouncedMinSendAmount],
         queryFn: async ({ pageParam = 0 }) => {
-            const queryClient = useQueryClient();
             const res = await fetch(
                 `${apiRoot}/feed?offset=${pageParam}&limit=${LIMIT}&minQuantity=${Math.trunc(debouncedMinSendAmount.value)}`,
             );

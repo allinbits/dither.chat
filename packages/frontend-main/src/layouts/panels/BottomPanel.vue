@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Bell, Feather, House, User } from 'lucide-vue-next';
+import { Bell, Feather, House, Settings, User } from 'lucide-vue-next';
 
 import { usePopups } from '@/composables/usePopups';
 import { useWallet } from '@/composables/useWallet';
@@ -25,6 +25,9 @@ const popups = usePopups();
       <button class="flex flex-1 justify-center" @click="popups.show('newPost', {})">
         <Feather class="size-7" />
       </button>
+      <RouterLink to="/settings" class="flex flex-1 justify-center">
+        <Settings class="size-7" />
+      </RouterLink>
     </nav>
   </div>
 

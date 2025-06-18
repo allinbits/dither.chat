@@ -6,10 +6,10 @@ import { verifyADR36Amino } from '@keplr-wallet/cosmos';
 import jwt from 'jsonwebtoken';
 
 const expirationTime = 60_000 * 5;
-const requests: { [publicKey: string]: string } = {};
+const requests: Array<{ id: number; msg: string }> = [];
 export const secretKey = 'temp-key-need-to-config-this';
 
-let id = 0;
+let id = 1;
 
 function getSignerAddressFromPublicKey(publicKeyBase64: string, prefix: string = 'atone'): string {
     const publicKeyBytes = fromBase64(publicKeyBase64);
@@ -23,17 +23,17 @@ function getTimestamp(msg: string) {
 }
 
 function cleanupRequests() {
-    if (Object.values(requests).length <= 0) {
+    if (requests.length <= 0) {
         return;
     }
 
-    for (const key of Object.keys(requests)) {
-        const timestamp = getTimestamp(requests[key]);
+    for (let i = requests.length - 1; i >= 0; i--) {
+        const timestamp = getTimestamp(requests[i].msg);
         if (Date.now() < timestamp + expirationTime) {
             continue;
         }
 
-        delete requests[key];
+        requests.splice(i, 1);
     }
 }
 
@@ -53,14 +53,12 @@ export function useUserAuth() {
 
         // [msg, id, timestamp, key, nonce]
         signableMessage += 'Login,';
-        signableMessage += `${id},`;
+        signableMessage += `${identifier},`;
         signableMessage += `${Date.now()},`;
         signableMessage += `${publicKey},`;
         signableMessage += `${nonce}`;
 
-        console.log(id);
-
-        requests[publicKey + id] = signableMessage;
+        requests.push({ id: identifier, msg: signableMessage });
         id++;
 
         return { id: identifier, message: signableMessage };
@@ -87,18 +85,14 @@ export function useUserAuth() {
      * @return {*}
      */
     const verifyAndCreate = (publicKey: string, signature: string, id: number) => {
-        console.log(id);
-
         const publicAddress = getSignerAddressFromPublicKey(publicKey, 'atone');
-        const requestIdentifier = publicAddress + id;
-
-        if (!requests[requestIdentifier]) {
+        const idx = requests.findIndex(x => x.id === id);
+        if (idx <= -1) {
             cleanupRequests();
             return { status: 401, error: 'no available requests found' };
         }
 
-        const originalMessage = requests[requestIdentifier];
-        delete requests[requestIdentifier];
+        const originalMessage = requests[idx].msg;
         const didVerify = verifyADR36Amino(
             'atone',
             publicAddress,
@@ -119,6 +113,7 @@ export function useUserAuth() {
             return { status: 401, error: 'request expired' };
         }
 
+        cleanupRequests();
         return { status: 200, bearer: jwt.sign({ data: originalMessage }, secretKey, { expiresIn: '3d' }) };
     };
 
