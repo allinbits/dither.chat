@@ -100,3 +100,8 @@ export const IsFollowingQuery = t.Object({
     follower: t.String(),
     following: t.String(),
 });
+
+export type NotificationsCountQuery = { address: string };
+export const NotificationsCountQuery = t.Object({
+    address: t.String(),
+});
