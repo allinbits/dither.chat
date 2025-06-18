@@ -67,8 +67,8 @@ onMounted(() => {
              :max="max" autocomplete="off"/>
       <span class="dark:text-white">PHOTON</span>
     </div>
- <span class="text-left text-sm">{{ Number(photonBalanceSubtracted) >= 0 ? 
-  formatAmount(photonBalanceSubtracted, 6) :  $t('components.InputPhoton.notEnough')}} 
-  </span>
+    <span class="text-left text-sm">{{ Number(photonBalanceSubtracted) >= 0 ?
+      formatAmount(photonBalanceSubtracted, 6) :  $t('components.InputPhoton.notEnough')}}
+    </span>
   </div>
 </template>
