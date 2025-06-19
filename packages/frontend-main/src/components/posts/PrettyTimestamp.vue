@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
+
+const isToggled = ref(false);
 
 const props = defineProps<{ timestamp: Date; isFullDate?: boolean }>();
 
 const date = computed(() => {
-    if (props.isFullDate) {
+    if (props.isFullDate || isToggled.value) {
         return new Intl.DateTimeFormat(undefined, { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true }).format(props.timestamp);
     }
 
@@ -14,6 +16,6 @@ const date = computed(() => {
 </script>
 <template>
   <button>
-    <span class="text-[#B9B9B9] text-xs">{{ date }}</span>
+    <span class="text-[#B9B9B9] text-xs" @click.stop="isToggled = !isToggled">{{ date }}</span>
   </button>
 </template>
