@@ -19,7 +19,7 @@ export function useFollowUser(
     } = useMutation({
         mutationFn: async ({ userAddress, photonValue }: FollowUserRequestMutation) => {
             const result = await wallet.dither.send(
-                'Flag',
+                'Follow',
                 { args: [userAddress.value], amount: BigInt(photonValue).toString() },
             );
 
