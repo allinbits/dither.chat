@@ -26,11 +26,11 @@ export function useCreateReply(
         mutateAsync,
     } = useMutation({
         mutationFn: async ({ parentPost, message, photonValue }: CreateReplyRequestMutation) => {
-            const result = await wallet.dither.reply(
-                parentPost.value.hash,
-                message,
-                BigInt(photonValue).toString(),
+            const result = await wallet.dither.send(
+                'Reply',
+                { args: [parentPost.value.hash, message], amount: BigInt(photonValue).toString() },
             );
+
             if (!result.broadcast) {
                 txError.value = result.msg;
                 throw new Error(result.msg);
