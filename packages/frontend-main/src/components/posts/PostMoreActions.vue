@@ -10,15 +10,23 @@ import Icon from '../ui/icon/Icon.vue';
 import Popover from '@/components/ui/popover/Popover.vue';
 import PopoverContent from '@/components/ui/popover/PopoverContent.vue';
 import PopoverTrigger from '@/components/ui/popover/PopoverTrigger.vue';
+import { useConfigStore } from '@/stores/useConfigStore';
 import { cn } from '@/utility';
 
 const { post } = defineProps<{ post: Post }>();
+const configStore = useConfigStore();
 
 const postUrl = `${window.location.origin}/post/${post.hash}`;
 const { copy, copied } = useClipboard({ source: postUrl, copiedDuring: 3000 });
 
 const buttonClass = 'flex flex-row items-center justify-start gap-2 w-full';
 const buttonLabelClass = 'text-sm font-semibold';
+
+const gotoPingpub = () => {
+    const explorerUrl = configStore.envConfig.explorerUrl;
+    window.open(`${explorerUrl}/${post.hash}`, '_blank');
+};
+
 </script>
 
 <template>
@@ -43,7 +51,7 @@ const buttonLabelClass = 'text-sm font-semibold';
         </div>
       </Button>
 
-      <Button @click="() => { }" size="sm" :class="buttonClass" variant="ghost">
+      <Button @click="gotoPingpub" size="sm" :class="buttonClass" variant="ghost">
         <div class="flex flex-row items-center gap-2">
           <Icon icon="pingpub" :size="1.25" />
           <span :class="buttonLabelClass">{{ $t('components.Button.pingpub') }}</span>
