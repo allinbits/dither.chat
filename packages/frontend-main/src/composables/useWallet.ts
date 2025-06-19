@@ -7,6 +7,8 @@ import { coins, type DeliverTxResponse, SigningStargateClient } from '@cosmjs/st
 import { getOfflineSigner } from '@cosmostation/cosmos-client';
 import { storeToRefs } from 'pinia';
 
+import { useBalanceFetcher } from './useBalanceFetcher';
+
 import { useConfigStore } from '@/stores/useConfigStore';
 import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
 import { useWalletStateStore } from '@/stores/useWalletStateStore';
@@ -57,6 +59,7 @@ const isCredentialsValid = async () => {
 const useWalletInstance = () => {
     const chainInfo = getChainConfigLazy();
     const configStore = useConfigStore();
+    const balanceFetcher = useBalanceFetcher();
 
     const apiRoot = configStore.envConfig.apiRoot ?? 'http://localhost:3000';
     const destinationWallet = configStore.envConfig.communityWallet ?? 'atone1uq6zjslvsa29cy6uu75y8txnl52mw06j6fzlep';
@@ -279,6 +282,12 @@ const useWalletInstance = () => {
             response.msg = result.code === 0 ? 'successfully broadcast' : 'failed to broadcast transaction';
             response.broadcast = result.code === 0;
             response.tx = result;
+
+            // Update balance if tx was successful
+            if (response.broadcast) {
+                balanceFetcher.updateAddress(walletState.address.value);
+            }
+
             return response;
         }
         catch (err) {
@@ -337,6 +346,12 @@ const useWalletInstance = () => {
             response.msg = result.code === 0 ? 'successfully broadcast' : 'failed to broadcast transaction';
             response.broadcast = result.code === 0;
             response.tx = result;
+
+            // Update balance if tx was successful
+            if (response.broadcast) {
+                balanceFetcher.updateAddress(walletState.address.value);
+            }
+
             return response;
         }
         catch (err) {
