@@ -10,6 +10,17 @@ const date = computed(() => {
         return new Intl.DateTimeFormat(undefined, { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true }).format(props.timestamp);
     }
 
+    const msDiff = Date.now() - props.timestamp.getTime();
+    const minuteDiff = msDiff / (1000 * 60);
+    if (minuteDiff < 60) {
+        return `${Math.floor(minuteDiff)}m`;
+    }
+
+    const hoursDiff = msDiff / (1000 * 60 * 60);
+    if (hoursDiff >= 1 && hoursDiff < 24) {
+        return `${Math.floor(hoursDiff)}h`;
+    }
+
     return new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric' }).format(props.timestamp);
 });
 
