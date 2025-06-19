@@ -18,6 +18,9 @@ export function useUnfollowUser(
         mutateAsync,
     } = useMutation({
         mutationFn: async ({ userAddress, photonValue }: UnfollowUserRequestMutation) => {
+            txError.value = undefined;
+            txSuccess.value = undefined;
+
             const result = await wallet.dither.unfollow(userAddress.value, BigInt(photonValue).toString());
             if (!result.broadcast) {
                 txError.value = result.msg;

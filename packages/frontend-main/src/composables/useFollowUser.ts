@@ -18,6 +18,9 @@ export function useFollowUser(
         mutateAsync,
     } = useMutation({
         mutationFn: async ({ userAddress, photonValue }: FollowUserRequestMutation) => {
+            txError.value = undefined;
+            txSuccess.value = undefined;
+
             const result = await wallet.dither.follow(userAddress.value, BigInt(photonValue).toString());
             if (!result.broadcast) {
                 txError.value = result.msg;
