@@ -1,34 +1,18 @@
 export interface DitherTypes {
-    /**
-     * Message
-     */
+    // Message
     Post: [string];
-    /**
-     * PostHash, Message
-     */
+    // PostHash, Message
     Reply: [string, string];
-    /**
-     * PostHash
-     */
+    // PostHash
     Remove: [string];
-    /**
-     * Address
-     */
+    // Address
     Follow: [string];
-    /**
-     * Address
-     */
+    // Address
     Unfollow: [string];
-    /**
-     * PostHash
-     */
+    // PostHash
     Like: [string];
-    /**
-     * PostHash
-     */
+    // PostHash
     Dislike: [string];
-    /**
-     * PostHash
-     */
+    // PostHash
     Flag: [string];
 };
