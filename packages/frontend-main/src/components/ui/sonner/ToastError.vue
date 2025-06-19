@@ -14,8 +14,10 @@ const { t } = useI18n();
 </script>
 
 <template>
-  <ToastWrapper :close="close">
-    <X class="text-red-500" />
+  <ToastWrapper :close="close" class="min-w-[230px]">
+    <div class="size-6">
+      <X class="text-red-500" />
+    </div>
     <div>
       <div class="font-semibold text-sm text-gray-900 dark:text-gray-100">
         {{ t('components.Toast.fail', { txLabel: txLabel }) }}

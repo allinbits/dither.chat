@@ -24,8 +24,7 @@ export const useTxNotification = (
                 }),
             {
                 duration: Infinity,
-            },
-            );
+            });
         }
     });
 
@@ -34,16 +33,15 @@ export const useTxNotification = (
             if (broadcastToastId.value) {
                 toast.dismiss(broadcastToastId.value);
             }
-            toast.custom(() =>
+            const successToastId = toast.custom(() =>
                 h(ToastSuccess, {
                     txLabel,
                     txHash: newValue,
-                    close: () => toast.dismiss(broadcastToastId.value),
+                    close: () => toast.dismiss(successToastId),
                 }),
             {
                 duration: 10000,
-            },
-            );
+            });
         }
     });
 
@@ -52,16 +50,15 @@ export const useTxNotification = (
             if (broadcastToastId.value) {
                 toast.dismiss(broadcastToastId.value);
             }
-            toast.custom(() =>
+            const errorToastId = toast.custom(() =>
                 h(ToastError, {
                     txLabel,
                     errorMessage: newValue,
-                    close: () => toast.dismiss(broadcastToastId.value),
+                    close: () => toast.dismiss(errorToastId),
                 }),
             {
                 duration: 5000,
-            },
-            );
+            });
         }
     });
 };
