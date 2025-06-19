@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { nextTick, onMounted } from 'vue';
 
+import ConfirmDialog from './components/popups/ConfirmDialog.vue';
 import DislikePostDialog from './components/popups/DislikePostDialog.vue';
 import FlagPostDialog from './components/popups/FlagPostDialog.vue';
 import FollowDialog from './components/popups/FollowUserDialog.vue';
@@ -42,4 +43,5 @@ onMounted(() => {
   <UnfollowDialog/>
   <Sonner closeButton expand dismissible :visible-toasts="5"  />
   <TipUserDialog />
+  <ConfirmDialog />
 </template>
