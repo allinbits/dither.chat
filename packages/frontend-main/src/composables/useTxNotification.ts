@@ -1,11 +1,11 @@
 import { h, type Ref, ref, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
 import { toast } from 'vue-sonner';
-import { Check, ExternalLink, Loader, X } from 'lucide-vue-next';
 
 import { useWallet } from './useWallet';
 
-import { useConfigStore } from '@/stores/useConfigStore';
+import ToastBroadcasting from '@/components/ui/sonner/ToastBroadcasting.vue';
+import ToastError from '@/components/ui/sonner/ToastError.vue';
+import ToastSuccess from '@/components/ui/sonner/ToastSuccess.vue';
 
 export const useTxNotification = (
     enabled: Ref<boolean>,
@@ -13,21 +13,17 @@ export const useTxNotification = (
     txSuccess: Ref<string | undefined>,
     txError: Ref<string | undefined>,
 ) => {
-    const configStore = useConfigStore();
-    const explorerURL = configStore.envConfig.explorerUrl ?? 'https://testnet.explorer.allinbits.services/atomone-devnet-1/tx';
-
     const wallet = useWallet();
-    const { t } = useI18n();
-
     const broadcastToastId = ref<string | number | undefined>();
 
     watch(wallet.processState, (newState) => {
         if (newState === 'broadcasting' && enabled.value) {
-            broadcastToastId.value = toast.info(h('span', { class: 'ml-2 font-semibold text-sm' }, t('components.Toast.broadcasting')), {
-                cancelButtonStyle: { width: 100 },
-                description: h('span', { class: 'ml-2 text-sm' }, t('components.Toast.wait')),
-                icon: h(Loader, { class: 'animate-spin' }),
-                duration: Infinity, // stays until dismissed
+            broadcastToastId.value = toast.custom(() =>
+                h(ToastBroadcasting, {
+                    close: () => toast.dismiss(broadcastToastId.value),
+                }),
+            {
+                duration: Infinity,
             });
         }
     });
@@ -37,21 +33,14 @@ export const useTxNotification = (
             if (broadcastToastId.value) {
                 toast.dismiss(broadcastToastId.value);
             }
-
-            toast.success(h('span', { class: 'ml-2 font-semibold text-sm' }, t('components.Toast.success', { txLabel })), {
-                description: h(
-                    'div',
-                    {
-                        class: 'flex items-center gap-2 ml-2 underline cursor-pointer',
-                        onClick: () => window.open(`${explorerURL}/${newValue}`, '_blank'),
-                    },
-                    [
-                        h('span', { class: 'text-sm' }, t('components.Button.viewOnExplorer')),
-                        h(ExternalLink, { class: 'text-green-500 size-4' }),
-                    ],
-                ),
-                icon: h(Check, { class: 'text-green-500' }),
-                duration: 10_000,
+            const successToastId = toast.custom(() =>
+                h(ToastSuccess, {
+                    txLabel,
+                    txHash: newValue,
+                    close: () => toast.dismiss(successToastId),
+                }),
+            {
+                duration: 10000,
             });
         }
     });
@@ -61,11 +50,14 @@ export const useTxNotification = (
             if (broadcastToastId.value) {
                 toast.dismiss(broadcastToastId.value);
             }
-
-            toast.error(h('span', { class: 'ml-2 font-semibold text-sm' }, t('components.Toast.fail', { txLabel })), {
-                description: h('span', { class: 'ml-2 text-sm' }, newValue),
-                icon: h(X, { class: 'text-red-500' }),
-                duration: 5_000,
+            const errorToastId = toast.custom(() =>
+                h(ToastError, {
+                    txLabel,
+                    errorMessage: newValue,
+                    close: () => toast.dismiss(errorToastId),
+                }),
+            {
+                duration: 5000,
             });
         }
     });
