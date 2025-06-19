@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue';
 import { Loader } from 'lucide-vue-next';
 
+import { useConfirmDialog } from '@/composables/useConfirmDialog';
 import { useCreatePost } from '@/composables/useCreatePost';
 import { useTxDialog } from '@/composables/useTxDialog';
 
@@ -22,6 +23,7 @@ const message = ref('');
 const MAX_CHARS = 512 - 'dither.Post("")'.length;
 
 const { createPost, txError, txSuccess } = useCreatePost();
+const { showConfirmDialog } = useConfirmDialog();
 
 const { isProcessing, isShown, photonValue, handleClose } = useTxDialog<object>('newPost', 'Post', txSuccess, txError);
 
@@ -32,6 +34,22 @@ function handleInputValidity(value: boolean) {
 const canSubmit = computed(() => {
     return isBalanceInputValid.value && message.value.length > 0;
 });
+
+const handleCloseWithSaveDraft = () => {
+    handleClose();
+
+    if (!message.value.length) {
+        return;
+    }
+
+    showConfirmDialog({
+        title: 'Save to draft ?',
+        description: 'Your post will be saved to draft and you can continue editing it later.',
+        onCancel: () => {
+            message.value = '';
+        },
+    });
+};
 
 async function handleSumbit() {
     if (!canSubmit.value) {
@@ -45,7 +63,7 @@ async function handleSumbit() {
 
 <template>
   <div>
-    <Dialog v-if="isShown" open @update:open="handleClose">
+    <Dialog v-if="isShown" open @update:open="handleCloseWithSaveDraft">
       <DialogContent>
         <DialogTitle>{{ $t('components.PopupTitles.newPost') }}</DialogTitle>
 

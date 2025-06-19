@@ -21,7 +21,11 @@ export function useFollowUser(
             txError.value = undefined;
             txSuccess.value = undefined;
 
-            const result = await wallet.dither.follow(userAddress.value, BigInt(photonValue).toString());
+            const result = await wallet.dither.send(
+                'Follow',
+                { args: [userAddress.value], amount: BigInt(photonValue).toString() },
+            );
+
             if (!result.broadcast) {
                 txError.value = result.msg;
                 throw new Error(result.msg);

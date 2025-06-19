@@ -29,11 +29,11 @@ export function useCreateReply(
             txError.value = undefined;
             txSuccess.value = undefined;
 
-            const result = await wallet.dither.reply(
-                parentPost.value.hash,
-                message,
-                BigInt(photonValue).toString(),
+            const result = await wallet.dither.send(
+                'Reply',
+                { args: [parentPost.value.hash, message], amount: BigInt(photonValue).toString() },
             );
+
             if (!result.broadcast) {
                 txError.value = result.msg;
                 throw new Error(result.msg);
