@@ -46,6 +46,10 @@ export const notify = async (data: {
         throw new Error('failed to add owner');
     }
 
+    if (owner === data.actor) {
+        return;
+    }
+
     await statementInsertNotification.execute({
         owner: owner.toLowerCase(),
         hash: data.hash.toLowerCase(),
