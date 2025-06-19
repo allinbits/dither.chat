@@ -26,6 +26,9 @@ export function useCreateReply(
         mutateAsync,
     } = useMutation({
         mutationFn: async ({ parentPost, message, photonValue }: CreateReplyRequestMutation) => {
+            txError.value = undefined;
+            txSuccess.value = undefined;
+
             const result = await wallet.dither.send(
                 'Reply',
                 { args: [parentPost.value.hash, message], amount: BigInt(photonValue).toString() },

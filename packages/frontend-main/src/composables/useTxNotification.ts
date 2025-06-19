@@ -61,4 +61,12 @@ export const useTxNotification = (
             });
         }
     });
+
+    watch(broadcastToastId, (newValue, oldValue) => {
+        if (newValue !== oldValue) {
+            if (oldValue) {
+                toast.dismiss(oldValue);
+            }
+        }
+    });
 };

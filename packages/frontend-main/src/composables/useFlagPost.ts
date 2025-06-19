@@ -17,6 +17,9 @@ export function useFlagPost(
         mutateAsync,
     } = useMutation({
         mutationFn: async ({ postHash, photonValue }: FlagPostRequestMutation) => {
+            txError.value = undefined;
+            txSuccess.value = undefined;
+
             const result = await wallet.dither.send(
                 'Flag',
                 { args: [postHash], amount: BigInt(photonValue).toString() },

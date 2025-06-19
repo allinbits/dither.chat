@@ -24,6 +24,9 @@ export function useCreatePost(
         mutateAsync,
     } = useMutation({
         mutationFn: async ({ message, photonValue }: CreatePostRequestMutation) => {
+            txError.value = undefined;
+            txSuccess.value = undefined;
+
             const result = await wallet.dither.send(
                 'Post',
                 { args: [message], amount: BigInt(photonValue).toString() },

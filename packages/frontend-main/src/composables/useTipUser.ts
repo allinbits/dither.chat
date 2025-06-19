@@ -14,6 +14,9 @@ export function useTipUser() {
     const txSuccess = ref<string>();
     const { mutateAsync } = useMutation({
         mutationFn: async ({ userAddress, photonValue }: TipUserRequestMutation) => {
+            txError.value = undefined;
+            txSuccess.value = undefined;
+
             const result = await wallet.dither.tipUser(userAddress.value, BigInt(photonValue).toString());
             if (!result.broadcast) {
                 txError.value = result.msg;
