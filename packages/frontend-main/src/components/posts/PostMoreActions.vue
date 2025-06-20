@@ -27,6 +27,11 @@ const gotoPingpub = () => {
     window.open(`${explorerUrl}/${post.hash}`, '_blank');
 };
 
+const gotoMintscan = () => {
+    const mintScanURL = 'https://www.mintscan.io/atomone/tx/';
+    window.open(`${mintScanURL}${post.hash}`, '_blank');
+};
+
 </script>
 
 <template>
@@ -44,7 +49,7 @@ const gotoPingpub = () => {
         <span v-if="copied" class="text-xs font-normal">{{ $t('feedbacks.copied') }}</span>
       </Button>
 
-      <Button @click="() => { }" size="sm" :class="buttonClass" variant="ghost">
+      <Button @click="gotoMintscan" size="sm" :class="buttonClass" variant="ghost">
         <div class="flex flex-row items-center gap-2">
           <Icon icon="mintscan" :size="1.25" />
           <span :class="buttonLabelClass">{{ $t('components.Button.mintscan') }}</span>
