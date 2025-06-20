@@ -1,11 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { EncodeObject, OfflineDirectSigner, OfflineSigner } from '@cosmjs/proto-signing';
 import type { OfflineAminoSigner } from '@keplr-wallet/types';
+import type { DitherTypes } from '@/types';
 
 import { type Ref, ref } from 'vue';
 import { coins, type DeliverTxResponse, SigningStargateClient } from '@cosmjs/stargate';
 import { getOfflineSigner } from '@cosmostation/cosmos-client';
 import { storeToRefs } from 'pinia';
+
+import { useBalanceFetcher } from './useBalanceFetcher';
 
 import { useConfigStore } from '@/stores/useConfigStore';
 import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
@@ -57,6 +60,7 @@ const isCredentialsValid = async () => {
 const useWalletInstance = () => {
     const chainInfo = getChainConfigLazy();
     const configStore = useConfigStore();
+    const balanceFetcher = useBalanceFetcher();
 
     const apiRoot = configStore.envConfig.apiRoot ?? 'http://localhost:3000';
     const destinationWallet = configStore.envConfig.communityWallet ?? 'atone1uq6zjslvsa29cy6uu75y8txnl52mw06j6fzlep';
@@ -279,6 +283,12 @@ const useWalletInstance = () => {
             response.msg = result.code === 0 ? 'successfully broadcast' : 'failed to broadcast transaction';
             response.broadcast = result.code === 0;
             response.tx = result;
+
+            // Update balance if tx was successful
+            if (response.broadcast) {
+                balanceFetcher.updateAddress(walletState.address.value);
+            }
+
             return response;
         }
         catch (err) {
@@ -337,6 +347,12 @@ const useWalletInstance = () => {
             response.msg = result.code === 0 ? 'successfully broadcast' : 'failed to broadcast transaction';
             response.broadcast = result.code === 0;
             response.tx = result;
+
+            // Update balance if tx was successful
+            if (response.broadcast) {
+                balanceFetcher.updateAddress(walletState.address.value);
+            }
+
             return response;
         }
         catch (err) {
@@ -383,31 +399,6 @@ const useWalletInstance = () => {
         }
     };
 
-    const ditherPost = async (msg: string, amount = '1') => {
-        const formattedMemo = `dither.Post("${msg}")`;
-        return await sendBankTx(formattedMemo, amount);
-    };
-
-    const ditherReply = async (postHash: string, msg: string, amount = '1') => {
-        const formattedMemo = `dither.Reply("${postHash}", "${msg}")`;
-        return await sendBankTx(formattedMemo, amount);
-    };
-
-    const ditherPostRemove = async (postHash: string, amount = '1') => {
-        const formattedMemo = `dither.PostRemove("${postHash}")`;
-        return await sendBankTx(formattedMemo, amount);
-    };
-
-    const ditherFollow = async (address: string, amount = '1') => {
-        const formattedMemo = `dither.Follow("${address}")`;
-        return await sendBankTx(formattedMemo, amount);
-    };
-
-    const ditherUnfollow = async (address: string, amount = '1') => {
-        const formattedMemo = `dither.Unfollow("${address}")`;
-        return await sendBankTx(formattedMemo, amount);
-    };
-
     const ditherTipUser = async (address: string, amount = '1') => {
         return sendTx(
             [
@@ -424,19 +415,10 @@ const useWalletInstance = () => {
         );
     };
 
-    const ditherLike = async (postHash: string, amount = '1') => {
-        const formattedMemo = `dither.Like("${postHash}")`;
-        return await sendBankTx(formattedMemo, amount);
-    };
-
-    const ditherDislike = async (postHash: string, amount = '1') => {
-        const formattedMemo = `dither.Dislike("${postHash}")`;
-        return await sendBankTx(formattedMemo, amount);
-    };
-
-    const ditherFlag = async (postHash: string, amount = '1') => {
-        const formattedMemo = `dither.Flag("${postHash}")`;
-        return await sendBankTx(formattedMemo, amount);
+    const ditherSend = async <K extends keyof DitherTypes>(type: K, data: { args: DitherTypes[K]; amount?: string }) => {
+        data.amount ??= '1';
+        const memo = `dither.${type}("${data.args.join('","')}")`;
+        return await sendBankTx(memo, data.amount);
     };
 
     window.addEventListener('cosmostation_keystorechange', refreshAddress);
@@ -451,14 +433,7 @@ const useWalletInstance = () => {
         refreshAddress,
         signMessage,
         dither: {
-            post: ditherPost,
-            reply: ditherReply,
-            dislike: ditherDislike,
-            like: ditherLike,
-            flag: ditherFlag,
-            postRemove: ditherPostRemove,
-            follow: ditherFollow,
-            unfollow: ditherUnfollow,
+            send: ditherSend,
             tipUser: ditherTipUser,
         },
     };

@@ -21,10 +21,14 @@ export function useLikePost(
         mutateAsync,
     } = useMutation({
         mutationFn: async ({ post, photonValue }: LikePostRequestMutation) => {
-            const result = await wallet.dither.like(
-                post.value.hash,
-                BigInt(photonValue).toString(),
+            txError.value = undefined;
+            txSuccess.value = undefined;
+
+            const result = await wallet.dither.send(
+                'Like',
+                { args: [post.value.hash], amount: BigInt(photonValue).toString() },
             );
+
             if (!result.broadcast) {
                 txError.value = result.msg;
                 throw new Error(result.msg);

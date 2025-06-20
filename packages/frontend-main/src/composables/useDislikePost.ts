@@ -21,9 +21,12 @@ export function useDislikePost(
         mutateAsync,
     } = useMutation({
         mutationFn: async ({ post, photonValue }: DislikePostRequestMutation) => {
-            const result = await wallet.dither.dislike(
-                post.value.hash,
-                BigInt(photonValue).toString(),
+            txError.value = undefined;
+            txSuccess.value = undefined;
+
+            const result = await wallet.dither.send(
+                'Dislike',
+                { args: [post.value.hash], amount: BigInt(photonValue).toString() },
             );
             if (!result.broadcast) {
                 txError.value = result.msg;

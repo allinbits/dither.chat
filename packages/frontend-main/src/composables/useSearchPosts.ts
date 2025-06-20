@@ -20,7 +20,6 @@ export function useSearchPosts(minQueryLength: number = 3, debounceMs: number = 
     const debouncedMinSendAmount = refDebounced<number>(minSendAmount, 600);
 
     const searchPosts = async ({ queryKey, signal }: { queryKey: string[]; signal: AbortSignal }) => {
-        // FIXME: We should use search endpoint instead
         const rawResponse = await fetch(`${apiRoot}/search?text=${queryKey[1]}&minQuantity=${Math.trunc(debouncedMinSendAmount.value)}`, { signal });
         const res = (await rawResponse.json()) as { status: number; rows: Post[] };
 
@@ -44,6 +43,10 @@ export function useSearchPosts(minQueryLength: number = 3, debounceMs: number = 
     });
 
     watch(debouncedQuery, (newVal: string) => {
+        if (!newVal || newVal.length <= 0) {
+            return;
+        }
+
         if (newVal.trim().length >= minQueryLength) {
             refetch();
         }
