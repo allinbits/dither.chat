@@ -35,7 +35,7 @@ async function handleSumbit() {
     if (!canSubmit.value || !flag.value) {
         return;
     }
-    await flagPost({ postHash: flag.value.hash, photonValue: photonValue.value });
+    await flagPost({ post: ref(flag.value), photonValue: photonValue.value });
     handleClose();
 }
 </script>
