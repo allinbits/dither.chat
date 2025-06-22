@@ -1,15 +1,19 @@
-import { ref } from 'vue';
-import { useMutation } from '@tanstack/vue-query';
+import type { Post } from 'api-main/types/feed';
 
+import { type Ref, ref } from 'vue';
+import { useMutation, useQueryClient } from '@tanstack/vue-query';
+
+import { post } from './usePost';
 import { useWallet } from './useWallet';
 
 interface FlagPostRequestMutation {
-    postHash: string;
-    atomicPhotonValue: number;
+    post: Ref<Post>;
+    photonValue: number;
 }
 
 export function useFlagPost(
 ) {
+    const queryClient = useQueryClient();
     const wallet = useWallet();
     const txError = ref<string>();
     const txSuccess = ref<string>();
@@ -34,8 +38,35 @@ export function useFlagPost(
                 return txSuccess.value;
             }
         },
-        // TODO: onMutate, onSuccess, onError
-    });
+        onMutate: async (variables) => {
+            const postOpts = post({ hash: ref(variables.post.value.hash) });
+
+            await Promise.all([
+                queryClient.cancelQueries(postOpts),
+            ]);
+
+            const previousPost = queryClient.getQueryData(
+                postOpts.queryKey,
+            ) as Post | undefined;
+
+            return {
+                previousPost,
+            };
+        },
+        onSuccess: (_, variables, context) => {
+            const postOpts = post({ hash: ref(variables.post.value.hash) });
+            // Post with updated flags_burnt
+            const optimisticPost: Post
+                = context.previousPost
+                    ? { ...context.previousPost, flags_burnt: (context.previousPost.flags_burnt || 0) + variables.photonValue }
+                    : { ...variables.post.value, flags_burnt: (variables.post.value.flags_burnt || 0) + variables.photonValue };
+
+            queryClient.setQueryData(postOpts.queryKey, optimisticPost);
+        },
+        onError: (_, variables, context) => {
+            const postOpts = post({ hash: ref(variables.post.value.hash) });
+            queryClient.setQueryData(postOpts.queryKey, context?.previousPost);
+        } });
 
     return {
         flagPost: mutateAsync,

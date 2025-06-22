@@ -37,7 +37,7 @@ async function handleSumbit() {
     if (!canSubmit.value || !flag.value) {
         return;
     }
-    await flagPost({ postHash: flag.value.hash, atomicPhotonValue: getAtomicCurrencyAmount('PHOTON', photonValue.value) });
+    await flagPost({ post: ref(flag.value), atomicPhotonValue: getAtomicCurrencyAmount('PHOTON', photonValue.value) });
     handleClose();
 }
 </script>
