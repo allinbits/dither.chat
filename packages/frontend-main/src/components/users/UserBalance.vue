@@ -2,14 +2,14 @@
 import { computed, type Ref } from 'vue';
 import { useQuery } from '@tanstack/vue-query';
 
+import { useChain } from '@/composables/useChain';
 import { useWallet } from '@/composables/useWallet';
 
-import { getChainConfigLazy } from '@/utility/getChainConfigLazy';
 import { formatAmount } from '@/utility/text';
 
 const Wallet = useWallet();
 
-const chainConfig = getChainConfigLazy();
+const { chainConfig } = useChain();
 
 const balancesFetcher = (address: Ref<string>) =>
     fetch(`${chainConfig.value.rest}cosmos/bank/v1beta1/balances/${address.value}?pagination.limit=1000`).then(response =>

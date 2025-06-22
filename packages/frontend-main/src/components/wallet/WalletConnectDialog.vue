@@ -6,6 +6,7 @@ import { bech32 } from 'bech32';
 import { Link2, Loader } from 'lucide-vue-next';
 import { VisuallyHidden } from 'reka-ui';
 
+import { useChain } from '@/composables/useChain';
 import { getWalletHelp, useWallet, Wallets } from '@/composables/useWallet';
 
 import DialogDescription from '../ui/dialog/DialogDescription.vue';
@@ -19,10 +20,9 @@ import ConnectButton from './ConnectButton.vue';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
-import { getChainConfigLazy } from '@/utility/getChainConfigLazy';
 import { shorten } from '@/utility/text';
 
-const chainConfig = getChainConfigLazy();
+const { chainConfig } = useChain();
 
 const isConnecting = ref(false);
 const isError = ref(false);

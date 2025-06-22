@@ -2,6 +2,7 @@
 import { computed, onMounted, watch } from 'vue';
 
 import { useBalanceFetcher } from '@/composables/useBalanceFetcher';
+import { useChain } from '@/composables/useChain';
 import { useWallet } from '@/composables/useWallet';
 
 import Input from './Input.vue';
@@ -9,45 +10,41 @@ import Input from './Input.vue';
 import { formatAmount } from '@/utility/text';
 
 const model = defineModel<number>();
+const props = defineProps<{ min?: number; max?: number; step?: number; balance?: boolean }>();
 const emits = defineEmits<{ onValidityChange: [isValid: boolean] }>();
-const props = withDefaults(defineProps<{ min?: number; max?: number; balance?: boolean }>(), { min: 1, max: 5_000_000, balance: true });
+
+const { getMinimalCurrencyAmount, getCurrencyCoinDecimals } = useChain();
+const minimalPhotonValue = getMinimalCurrencyAmount('PHOTON');
+const photonDecimals = getCurrencyCoinDecimals('PHOTON') ?? 6;
+
+const min = computed(() => props.min ?? minimalPhotonValue);
+const max = computed(() => props.max ?? 5_000_000);
+const step = computed(() => props.step ?? minimalPhotonValue);
 
 const wallet = useWallet();
 const balanceFetcher = useBalanceFetcher();
 
 const photonBalance = computed(() => {
-    if (!wallet.loggedIn.value) {
-        return '0';
-    }
-
+    if (!wallet.loggedIn.value) return '0';
     const balances = balanceFetcher.balances.value[wallet.address.value];
-    if (!balances) {
-        return '0';
-    }
-
+    if (!balances) return '0';
     const balance = balances.find(x => x.denom === 'uphoton');
     return balance?.amount ?? '0';
 });
 
 const photonBalanceSubtracted = computed(() => {
-    return String(BigInt(photonBalance.value) - BigInt(model?.value ?? 0));
+    const balance = BigInt(photonBalance.value);
+    const modelAmount = BigInt(Math.floor((model?.value ?? 0) * 10 ** photonDecimals));
+    return String(balance - modelAmount);
 });
 
 function verifyValidity(value: number | undefined) {
-    if (!value || value < 0) {
-        emits('onValidityChange', false);
-        return;
-    }
+    if (value === undefined || value < 0) return emits('onValidityChange', false);
 
-    if (String(value).includes('.')) {
-        emits('onValidityChange', false);
-        return;
-    }
+    const valueInMicro = BigInt(Math.floor(value * 10 ** photonDecimals));
+    const available = BigInt(photonBalance.value);
 
-    if (props.balance && BigInt(photonBalance.value) < BigInt(props.balance)) {
-        emits('onValidityChange', false);
-        return;
-    }
+    if (props.balance && valueInMicro > available) return emits('onValidityChange', false);
 
     emits('onValidityChange', true);
 }
@@ -63,12 +60,14 @@ onMounted(() => {
 <template>
   <div class="flex flex-col w-full gap-2">
     <div class="flex flex-row gap-4 items-center w-full">
-      <Input v-model="model" :placeholder="$t('placeholders.search')" type="number"         :min="min"
-             :max="max" autocomplete="off"/>
+      <Input v-model="model" :placeholder="$t('components.InputPhoton.placeholder')" type="number" :min="min"
+             :step="step" :max="max" autocomplete="off" />
+
       <span class="dark:text-white">PHOTON</span>
     </div>
     <span class="text-left text-sm">{{ Number(photonBalanceSubtracted) >= 0 ?
-      formatAmount(photonBalanceSubtracted, 6) :  $t('components.InputPhoton.notEnough')}}
+      formatAmount(photonBalanceSubtracted, 6) + ' PHOTON ' + $t('components.InputPhoton.available') :
+      $t('components.InputPhoton.notEnough')}}
     </span>
   </div>
 </template>

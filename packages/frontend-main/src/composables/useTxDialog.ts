@@ -1,6 +1,7 @@
 import { computed, type Ref, ref, watch } from 'vue';
 
 import { useBalanceFetcher } from './useBalanceFetcher';
+import { useChain } from './useChain';
 import { type PopupState, usePopups } from './usePopups';
 import { useTxNotification } from './useTxNotification';
 import { useWallet } from './useWallet';
@@ -11,7 +12,9 @@ export const useTxDialog = <T>(
     txSuccess: Ref<string | undefined>,
     txError: Ref<string | undefined>,
 ) => {
-    const photonValue = ref(1);
+    const { getMinimalCurrencyAmount } = useChain();
+    const minimalPhotonValue = getMinimalCurrencyAmount('PHOTON');
+    const photonValue = ref(minimalPhotonValue);
 
     const popups = usePopups();
     const popupState = computed(() => popups.state[dialogType]) as Ref<T>;
@@ -30,7 +33,7 @@ export const useTxDialog = <T>(
         popups.state[dialogType] = null;
         txError.value = undefined;
         txSuccess.value = undefined;
-        photonValue.value = 1;
+        photonValue.value = minimalPhotonValue;
     };
 
     watch([wallet.loggedIn, wallet.address], async () => {
