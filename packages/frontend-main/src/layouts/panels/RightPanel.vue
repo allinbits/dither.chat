@@ -10,7 +10,7 @@ const router = useRouter();
 </script>
 
 <template>
-  <aside class="flex flex-col h-full w-full gap-8 p-6">
+  <aside class="flex flex-col h-full w-full max-w-[358px] gap-8 p-6">
     <!-- TODO: Find a better place for this button -->
     <ToggleThemeButton />
     <SearchInput v-if="router.currentRoute.value.name !== 'Explore'" />

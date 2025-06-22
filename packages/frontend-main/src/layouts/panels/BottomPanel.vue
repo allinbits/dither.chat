@@ -1,54 +1,45 @@
 <script setup lang="ts">
-import { Bell, Feather, House, Settings, User } from 'lucide-vue-next';
+import { Bell, Feather, House, Search, Settings, User } from 'lucide-vue-next';
 
-import { useNotificationsCount } from '@/composables/useNotificationsCount';
 import { usePopups } from '@/composables/usePopups';
 import { useWallet } from '@/composables/useWallet';
+
+import NotificationsCount from './NotificationsCount.vue';
+
+import { cn } from '@/utility';
 const wallet = useWallet();
 const popups = usePopups();
-const { data: notificationsCount } = useNotificationsCount({ userAddress: wallet.address });
+const buttonClass = 'flex justify-center items-center size-[52px] rounded-full active:bg-accent hover:bg-accent';
 </script>
 
 <template>
-  <div class="h-full w-full flex flex-row items-center border-t bg-background px-4">
-    <RouterLink to="/" class="flex flex-1 justify-center">
-      <House class="size-7" />
-    </RouterLink>
-
-    <nav v-if="wallet.loggedIn.value" class="contents h-full w-full">
-      <RouterLink to="/" class="flex flex-1 justify-center">
-        <div class="flex items-center  justify-center h-[52px]">
-          <House class="size-6" />
-        </div>
+  <header class="h-full w-full flex flex-row items-center justify-around border-t bg-background px-4">
+    <nav v-if="wallet.loggedIn.value" class="contents">
+      <RouterLink to="/" :class="buttonClass">
+        <House class="size-6" />
       </RouterLink>
 
-      <RouterLink to="/notifications" class="flex relative flex-1 justify-center">
-        <div class="flex items-center relative justify-center h-[52px]">
-          <div v-if="!!notificationsCount" class="flex items-center justify-center absolute top-1 left-3 h-[18px] min-w-[18px] px-1 rounded-full bg-red-500 border-1 border-background text-white text-xs font-medium  ">
-            {{ notificationsCount }}
-          </div>
-          <Bell class="size-6" />
-        </div>
+      <RouterLink to="/explore" :class="buttonClass">
+        <Search class="size-6" />
       </RouterLink>
 
-      <RouterLink :to="`/profile/${wallet.address.value}`" class="flex flex-1 justify-center">
-        <div class="flex items-center  justify-center h-[52px]">
-          <User class="size-6" />
-        </div>
+      <RouterLink to="/notifications" :class="cn(buttonClass, 'relative')">
+        <NotificationsCount class="absolute top-1 right-2"/>
+        <Bell class="size-6" />
       </RouterLink>
 
-      <button class="flex flex-1 justify-center" @click="popups.show('newPost', {})">
-        <Feather class="size-7" />
-      </button>
-      <RouterLink to="/settings" class="flex flex-1 justify-center">
-        <Settings class="size-7" />
+      <RouterLink :to="`/profile/${wallet.address.value}`" :class="buttonClass">
+        <User class="size-6" />
+      </RouterLink>
+
+      <RouterLink to="/settings" :class="buttonClass">
+        <Settings class="size-6" />
       </RouterLink>
     </nav>
-    <button class="flex flex-1 justify-center" @click="popups.show('newPost', {})">
-      <div class="flex items-center  justify-center h-[52px]">
-        <Feather class="size-6" />
-      </div>
+
+    <button :class="buttonClass" @click="popups.show('newPost', {})">
+      <Feather class="size-6" />
     </button>
-  </div>
+  </header>
 
 </template>
