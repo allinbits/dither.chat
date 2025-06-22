@@ -52,11 +52,11 @@ export function useLikePost(
         },
         onSuccess: (_, variables, context) => {
             const postOpts = post({ hash: ref(variables.post.value.hash) });
-            // Post with updated likes_burnt
+            // Post with updated likes count
             const optimisticPost: Post
                 = context.previousPost
-                    ? { ...context.previousPost, likes_burnt: (context.previousPost.likes_burnt || 0) + variables.atomicPhotonValue }
-                    : { ...variables.post.value, likes_burnt: (variables.post.value.likes_burnt || 0) + variables.atomicPhotonValue };
+                    ? { ...context.previousPost, likes: (context.previousPost.likes || 0) + 1 }
+                    : { ...variables.post.value, likes: (variables.post.value.likes || 0) + 1 };
 
             queryClient.setQueryData(postOpts.queryKey, optimisticPost);
         },

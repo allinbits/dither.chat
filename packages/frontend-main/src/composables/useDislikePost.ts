@@ -51,11 +51,11 @@ export function useDislikePost(
         },
         onSuccess: (_, variables, context) => {
             const postOpts = post({ hash: ref(variables.post.value.hash) });
-            // Post with updated dislikes_burnt
+            // Post with updated dislikes count
             const optimisticPost: Post
                 = context.previousPost
-                    ? { ...context.previousPost, dislikes_burnt: (context.previousPost.dislikes_burnt || 0) + variables.atomicPhotonValue }
-                    : { ...variables.post.value, dislikes_burnt: (variables.post.value.dislikes_burnt || 0) + variables.atomicPhotonValue };
+                    ? { ...context.previousPost, dislikes: (context.previousPost.dislikes || 0) + 1 }
+                    : { ...variables.post.value, dislikes: (variables.post.value.dislikes || 0) + 1 };
 
             queryClient.setQueryData(postOpts.queryKey, optimisticPost);
         },
