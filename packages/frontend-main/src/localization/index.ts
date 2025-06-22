@@ -87,7 +87,7 @@ export const messages = {
                 failedToSearch: 'Failed to search',
             },
             Filter: {
-                posts: 'Filter posts by PHOTON',
+                posts: 'Filter posts by microPHOTON',
                 amount: 'Amount',
             },
             PostsList: {
