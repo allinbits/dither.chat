@@ -54,8 +54,8 @@ export function useDislikePost(
             // Post with updated dislikes_burnt
             const optimisticPost: Post
                 = context.previousPost
-                    ? { ...context.previousPost, dislikes_burnt: (context.previousPost.dislikes_burnt || 0) + variables.photonValue }
-                    : { ...variables.post.value, dislikes_burnt: (variables.post.value.dislikes_burnt || 0) + variables.photonValue };
+                    ? { ...context.previousPost, dislikes_burnt: (context.previousPost.dislikes_burnt || 0) + variables.atomicPhotonValue }
+                    : { ...variables.post.value, dislikes_burnt: (variables.post.value.dislikes_burnt || 0) + variables.atomicPhotonValue };
 
             queryClient.setQueryData(postOpts.queryKey, optimisticPost);
         },

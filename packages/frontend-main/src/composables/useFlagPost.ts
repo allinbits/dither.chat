@@ -8,7 +8,7 @@ import { useWallet } from './useWallet';
 
 interface FlagPostRequestMutation {
     post: Ref<Post>;
-    photonValue: number;
+    atomicPhotonValue: number;
 }
 
 export function useFlagPost(
@@ -20,13 +20,13 @@ export function useFlagPost(
     const {
         mutateAsync,
     } = useMutation({
-        mutationFn: async ({ postHash, atomicPhotonValue }: FlagPostRequestMutation) => {
+        mutationFn: async ({ post, atomicPhotonValue }: FlagPostRequestMutation) => {
             txError.value = undefined;
             txSuccess.value = undefined;
 
             const result = await wallet.dither.send(
                 'Flag',
-                { args: [postHash], amount: BigInt(atomicPhotonValue).toString() },
+                { args: [post.value.hash], amount: BigInt(atomicPhotonValue).toString() },
             );
 
             if (!result.broadcast) {
@@ -58,8 +58,8 @@ export function useFlagPost(
             // Post with updated flags_burnt
             const optimisticPost: Post
                 = context.previousPost
-                    ? { ...context.previousPost, flags_burnt: (context.previousPost.flags_burnt || 0) + variables.photonValue }
-                    : { ...variables.post.value, flags_burnt: (variables.post.value.flags_burnt || 0) + variables.photonValue };
+                    ? { ...context.previousPost, flags_burnt: (context.previousPost.flags_burnt || 0) + variables.atomicPhotonValue }
+                    : { ...variables.post.value, flags_burnt: (variables.post.value.flags_burnt || 0) + variables.atomicPhotonValue };
 
             queryClient.setQueryData(postOpts.queryKey, optimisticPost);
         },
