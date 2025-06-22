@@ -8,7 +8,7 @@ import { useWallet } from './useWallet';
 
 interface LikePostRequestMutation {
     post: Ref<Post>;
-    photonValue: number;
+    atomicPhotonValue: number;
 }
 
 export function useLikePost(
@@ -20,13 +20,13 @@ export function useLikePost(
     const {
         mutateAsync,
     } = useMutation({
-        mutationFn: async ({ post, photonValue }: LikePostRequestMutation) => {
+        mutationFn: async ({ post, atomicPhotonValue }: LikePostRequestMutation) => {
             txError.value = undefined;
             txSuccess.value = undefined;
 
             const result = await wallet.dither.send(
                 'Like',
-                { args: [post.value.hash], amount: BigInt(photonValue).toString() },
+                { args: [post.value.hash], amount: BigInt(atomicPhotonValue).toString() },
             );
 
             if (!result.broadcast) {
@@ -52,11 +52,11 @@ export function useLikePost(
         },
         onSuccess: (_, variables, context) => {
             const postOpts = post({ hash: ref(variables.post.value.hash) });
-            // Post with updated likes count
+            // Post with updated likes_burnt
             const optimisticPost: Post
                 = context.previousPost
-                    ? { ...context.previousPost, likes: (context.previousPost.likes || 0) + 1 }
-                    : { ...variables.post.value, likes: (variables.post.value.likes || 0) + 1 };
+                    ? { ...context.previousPost, likes_burnt: (context.previousPost.likes_burnt || 0) + variables.atomicPhotonValue }
+                    : { ...variables.post.value, likes_burnt: (variables.post.value.likes_burnt || 0) + variables.atomicPhotonValue };
 
             queryClient.setQueryData(postOpts.queryKey, optimisticPost);
         },

@@ -17,5 +17,10 @@ export const useChain = () => {
         return 10 ** -coinDecimals;
     };
 
-    return { chainConfig, getCurrencyCoinDecimals, getMinimalCurrencyAmount };
+    const getAtomicCurrencyAmount = (coinDenom: string, amount: number) => {
+        const coinDecimals = getCurrencyCoinDecimals(coinDenom) ?? 6;
+        return Math.floor(amount * 10 ** coinDecimals);
+    };
+
+    return { chainConfig, getCurrencyCoinDecimals, getMinimalCurrencyAmount, getAtomicCurrencyAmount };
 };

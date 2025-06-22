@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue';
 import { Loader } from 'lucide-vue-next';
 
+import { useChain } from '@/composables/useChain';
 import { useFollowUser } from '@/composables/useFollowUser';
 import { useTxDialog } from '@/composables/useTxDialog';
 
@@ -24,6 +25,7 @@ const {
     popupState: follow,
     handleClose,
 } = useTxDialog<string>('follow', 'Follow', txSuccess, txError);
+const { getAtomicCurrencyAmount } = useChain();
 
 const canSubmit = computed(() => {
     return isBalanceInputValid.value;
@@ -37,7 +39,7 @@ async function handleSumbmit() {
     if (!canSubmit.value || !follow.value) {
         return;
     }
-    await followUser({ userAddress: follow, photonValue: photonValue.value });
+    await followUser({ userAddress: follow, atomicPhotonValue: getAtomicCurrencyAmount('PHOTON', photonValue.value) });
     handleClose();
 }
 

@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue';
 import { Loader } from 'lucide-vue-next';
 
+import { useChain } from '@/composables/useChain';
 import { useConfirmDialog } from '@/composables/useConfirmDialog';
 import { useCreatePost } from '@/composables/useCreatePost';
 import { useTxDialog } from '@/composables/useTxDialog';
@@ -26,6 +27,7 @@ const { createPost, txError, txSuccess } = useCreatePost();
 const { showConfirmDialog } = useConfirmDialog();
 
 const { isProcessing, isShown, photonValue, handleClose } = useTxDialog<object>('newPost', 'Post', txSuccess, txError);
+const { getAtomicCurrencyAmount } = useChain();
 
 function handleInputValidity(value: boolean) {
     isBalanceInputValid.value = value;
@@ -55,7 +57,7 @@ async function handleSumbit() {
     if (!canSubmit.value) {
         return;
     }
-    await createPost({ message: message.value, photonValue: photonValue.value });
+    await createPost({ message: message.value, atomicPhotonValue: getAtomicCurrencyAmount('PHOTON', photonValue.value) });
     message.value = '';
     handleClose();
 }

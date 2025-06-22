@@ -11,7 +11,7 @@ import { infiniteDataWithNewItem, newPost } from '@/utility/optimisticBuilders';
 
 interface CreatePostRequestMutation {
     message: string;
-    photonValue: number;
+    atomicPhotonValue: number;
 }
 
 export function useCreatePost(
@@ -23,13 +23,13 @@ export function useCreatePost(
     const {
         mutateAsync,
     } = useMutation({
-        mutationFn: async ({ message, photonValue }: CreatePostRequestMutation) => {
+        mutationFn: async ({ message, atomicPhotonValue }: CreatePostRequestMutation) => {
             txError.value = undefined;
             txSuccess.value = undefined;
 
             const result = await wallet.dither.send(
                 'Post',
-                { args: [message], amount: BigInt(photonValue).toString() },
+                { args: [message], amount: BigInt(atomicPhotonValue).toString() },
             );
 
             if (!result.broadcast) {
@@ -66,7 +66,7 @@ export function useCreatePost(
             const userPostsOpts = userPosts({ userAddress: wallet.address });
 
             // Created Post
-            const optimisticNewPost: Post = newPost({ message: variables.message, quantity: variables.photonValue, hash, author: wallet.address.value, postHash: null });
+            const optimisticNewPost: Post = newPost({ message: variables.message, quantity: variables.atomicPhotonValue, hash, author: wallet.address.value, postHash: null });
             const newFeedData = infiniteDataWithNewItem<Post>({ previousItems: context.previousFeed, newItem: optimisticNewPost });
             const newUserPostsData = infiniteDataWithNewItem<Post>({ previousItems: context.previousUserPosts, newItem: optimisticNewPost });
 

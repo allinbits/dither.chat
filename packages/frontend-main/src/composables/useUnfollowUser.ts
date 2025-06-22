@@ -5,7 +5,7 @@ import { isFollowing } from './useIsFollowing';
 import { useWallet } from './useWallet';
 interface UnfollowUserRequestMutation {
     userAddress: Ref<string>;
-    photonValue: number;
+    atomicPhotonValue: number;
 }
 
 export function useUnfollowUser(
@@ -17,13 +17,13 @@ export function useUnfollowUser(
     const {
         mutateAsync,
     } = useMutation({
-        mutationFn: async ({ userAddress, photonValue }: UnfollowUserRequestMutation) => {
+        mutationFn: async ({ userAddress, atomicPhotonValue }: UnfollowUserRequestMutation) => {
             txError.value = undefined;
             txSuccess.value = undefined;
 
             const result = await wallet.dither.send(
                 'Unfollow',
-                { args: [userAddress.value], amount: BigInt(photonValue).toString() },
+                { args: [userAddress.value], amount: BigInt(atomicPhotonValue).toString() },
             );
 
             if (!result.broadcast) {

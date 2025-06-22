@@ -13,9 +13,8 @@ const model = defineModel<number>();
 const props = defineProps<{ min?: number; max?: number; step?: number; balance?: boolean }>();
 const emits = defineEmits<{ onValidityChange: [isValid: boolean] }>();
 
-const { getMinimalCurrencyAmount, getCurrencyCoinDecimals } = useChain();
+const { getMinimalCurrencyAmount, getAtomicCurrencyAmount } = useChain();
 const minimalPhotonValue = getMinimalCurrencyAmount('PHOTON');
-const photonDecimals = getCurrencyCoinDecimals('PHOTON') ?? 6;
 
 const min = computed(() => props.min ?? minimalPhotonValue);
 const max = computed(() => props.max ?? 5_000_000);
@@ -34,17 +33,17 @@ const photonBalance = computed(() => {
 
 const photonBalanceSubtracted = computed(() => {
     const balance = BigInt(photonBalance.value);
-    const modelAmount = BigInt(Math.floor((model?.value ?? 0) * 10 ** photonDecimals));
-    return String(balance - modelAmount);
+    const atomicInputValue = BigInt(getAtomicCurrencyAmount('PHOTON', model?.value ?? 0));
+    return String(balance - atomicInputValue);
 });
 
 function verifyValidity(value: number | undefined) {
     if (value === undefined || value < 0) return emits('onValidityChange', false);
 
-    const valueInMicro = BigInt(Math.floor(value * 10 ** photonDecimals));
+    const atomicValue = BigInt(getAtomicCurrencyAmount('PHOTON', value));
     const available = BigInt(photonBalance.value);
 
-    if (props.balance && valueInMicro > available) return emits('onValidityChange', false);
+    if (props.balance && atomicValue > available) return emits('onValidityChange', false);
 
     emits('onValidityChange', true);
 }

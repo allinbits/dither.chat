@@ -5,7 +5,7 @@ import { useWallet } from './useWallet';
 
 interface FlagPostRequestMutation {
     postHash: string;
-    photonValue: number;
+    atomicPhotonValue: number;
 }
 
 export function useFlagPost(
@@ -16,13 +16,13 @@ export function useFlagPost(
     const {
         mutateAsync,
     } = useMutation({
-        mutationFn: async ({ postHash, photonValue }: FlagPostRequestMutation) => {
+        mutationFn: async ({ postHash, atomicPhotonValue }: FlagPostRequestMutation) => {
             txError.value = undefined;
             txSuccess.value = undefined;
 
             const result = await wallet.dither.send(
                 'Flag',
-                { args: [postHash], amount: BigInt(photonValue).toString() },
+                { args: [postHash], amount: BigInt(atomicPhotonValue).toString() },
             );
 
             if (!result.broadcast) {

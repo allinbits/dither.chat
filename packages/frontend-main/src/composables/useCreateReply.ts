@@ -13,7 +13,7 @@ import { infiniteDataWithNewItem, newPost } from '@/utility/optimisticBuilders';
 interface CreateReplyRequestMutation {
     parentPost: Ref<Post>;
     message: string;
-    photonValue: number;
+    atomicPhotonValue: number;
 }
 
 export function useCreateReply(
@@ -25,13 +25,13 @@ export function useCreateReply(
     const {
         mutateAsync,
     } = useMutation({
-        mutationFn: async ({ parentPost, message, photonValue }: CreateReplyRequestMutation) => {
+        mutationFn: async ({ parentPost, message, atomicPhotonValue }: CreateReplyRequestMutation) => {
             txError.value = undefined;
             txSuccess.value = undefined;
 
             const result = await wallet.dither.send(
                 'Reply',
-                { args: [parentPost.value.hash, message], amount: BigInt(photonValue).toString() },
+                { args: [parentPost.value.hash, message], amount: BigInt(atomicPhotonValue).toString() },
             );
 
             if (!result.broadcast) {
@@ -80,11 +80,11 @@ export function useCreateReply(
                     ? { ...context.previousParentPost, replies: (context.previousParentPost.replies || 0) + 1 }
                     : { ...variables.parentPost.value, replies: (variables.parentPost.value.replies || 0) + 1 };
             // Created Post with parent hash as post_hash
-            const optimisticNewReply: Post = newPost({ message: variables.message, quantity: variables.photonValue, hash: createdHash, postHash: variables.parentPost.value.hash, author: wallet.address.value });
+            const optimisticNewReply: Post = newPost({ message: variables.message, quantity: variables.atomicPhotonValue, hash: createdHash, postHash: variables.parentPost.value.hash, author: wallet.address.value });
             // Created Post in ReplyWithParent
             const optimisticNewUserReply: ReplyWithParent = {
                 reply: newPost(
-                    { message: variables.message, quantity: variables.photonValue, hash: createdHash, postHash: variables.parentPost.value.hash, author: wallet.address.value },
+                    { message: variables.message, quantity: variables.atomicPhotonValue, hash: createdHash, postHash: variables.parentPost.value.hash, author: wallet.address.value },
                 ),
                 parent: optimisticParentPost,
             };

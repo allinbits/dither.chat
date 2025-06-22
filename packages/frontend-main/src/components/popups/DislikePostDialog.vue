@@ -4,6 +4,7 @@ import type { Post } from 'api-main/types/feed';
 import { computed, ref } from 'vue';
 import { Loader } from 'lucide-vue-next';
 
+import { useChain } from '@/composables/useChain';
 import { useDislikePost } from '@/composables/useDislikePost';
 import { useTxDialog } from '@/composables/useTxDialog';
 
@@ -18,6 +19,7 @@ const isBalanceInputValid = ref(false);
 const { dislikePost, txError, txSuccess } = useDislikePost();
 
 const { isProcessing, isShown, photonValue, handleClose, popupState: dislike } = useTxDialog<Post>('dislike', 'Dislike', txSuccess, txError);
+const { getAtomicCurrencyAmount } = useChain();
 
 const canSubmit = computed(() => {
     return isBalanceInputValid.value;
@@ -31,7 +33,7 @@ async function handleSumbmit() {
     if (!canSubmit.value || !dislike.value) {
         return;
     }
-    await dislikePost({ post: ref(dislike.value), photonValue: photonValue.value });
+    await dislikePost({ post: ref(dislike.value), atomicPhotonValue: getAtomicCurrencyAmount('PHOTON', photonValue.value) });
     handleClose();
 }
 </script>

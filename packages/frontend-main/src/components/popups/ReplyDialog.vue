@@ -4,6 +4,7 @@ import type { Post } from 'api-main/types/feed';
 import { computed, ref } from 'vue';
 import { Loader } from 'lucide-vue-next';
 
+import { useChain } from '@/composables/useChain';
 import { useCreateReply } from '@/composables/useCreateReply';
 import { useTxDialog } from '@/composables/useTxDialog';
 
@@ -31,12 +32,13 @@ const {
     popupState: reply,
     handleClose,
 } = useTxDialog<Post>('reply', 'Reply', txSuccess, txError);
+const { getAtomicCurrencyAmount } = useChain();
 
 async function handleSumbit() {
     if (!canSubmit.value || !reply.value) {
         return;
     }
-    await createReply({ parentPost: reply, message: message.value, photonValue: photonValue.value });
+    await createReply({ parentPost: reply, message: message.value, atomicPhotonValue: getAtomicCurrencyAmount('PHOTON', photonValue.value) });
     message.value = '';
     handleClose();
 }
