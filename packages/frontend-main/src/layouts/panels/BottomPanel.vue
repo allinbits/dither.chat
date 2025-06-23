@@ -14,7 +14,7 @@ const buttonClass = 'flex justify-center items-center size-[52px] rounded-full a
 
 <template>
   <header class="h-full w-full flex flex-row items-center justify-around border-t bg-background px-4">
-    <nav v-if="wallet.loggedIn.value" class="contents">
+    <nav class="contents">
       <RouterLink to="/" :class="buttonClass">
         <House class="size-6" />
       </RouterLink>
@@ -23,21 +23,21 @@ const buttonClass = 'flex justify-center items-center size-[52px] rounded-full a
         <Search class="size-6" />
       </RouterLink>
 
-      <RouterLink to="/notifications" :class="cn(buttonClass, 'relative')">
+      <RouterLink v-if="wallet.loggedIn.value" to="/notifications" :class="cn(buttonClass, 'relative')">
         <NotificationsCount class="absolute top-1 right-2"/>
         <Bell class="size-6" />
       </RouterLink>
 
-      <RouterLink :to="`/profile/${wallet.address.value}`" :class="buttonClass">
+      <RouterLink v-if="wallet.loggedIn.value" :to="`/profile/${wallet.address.value}`" :class="buttonClass">
         <User class="size-6" />
       </RouterLink>
 
-      <RouterLink to="/settings" :class="buttonClass">
+      <RouterLink v-if="wallet.loggedIn.value" to="/settings" :class="buttonClass">
         <Settings class="size-6" />
       </RouterLink>
     </nav>
 
-    <button :class="buttonClass" @click="popups.show('newPost', {})">
+    <button v-if="wallet.loggedIn.value" :class="buttonClass" @click="popups.show('newPost', {})">
       <Feather class="size-6" />
     </button>
   </header>

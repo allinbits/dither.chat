@@ -57,7 +57,7 @@ const connectedState = computed(() => !isConnecting.value && loggedIn.value && !
         {{ $t('components.WalletConnect.button') }}
       </Button>
       <button @click="walletDialogStore.showDialog"  class="flex items-center justify-center flex-row xl:hidden h-[52px]">
-        <Wallet class="size-7" />
+        <Wallet class="size-6" />
       </button>
     </template>
   </div>
