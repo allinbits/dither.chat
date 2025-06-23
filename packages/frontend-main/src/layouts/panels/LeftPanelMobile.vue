@@ -4,8 +4,7 @@ import { Bell, Feather, House, Search, Settings, User } from 'lucide-vue-next';
 import { usePopups } from '@/composables/usePopups';
 import { useWallet } from '@/composables/useWallet';
 
-import NotificationsCount from './NotificationsCount.vue';
-
+import NotificationsCount from '@/components/notifications/NotificationsCount.vue';
 import WalletConnect from '@/components/wallet/WalletConnect.vue';
 import { cn } from '@/utility';
 const wallet = useWallet();
@@ -26,7 +25,7 @@ const buttonClass = 'flex justify-center items-center size-[52px] rounded-full a
         </RouterLink>
 
         <RouterLink v-if="wallet.loggedIn.value"  to="/notifications" :class="cn(buttonClass, 'relative')">
-          <NotificationsCount class="absolute top-1 right-2"/>
+          <NotificationsCount class="absolute top-1 left-6"/>
           <Bell class="size-6" />
         </RouterLink>
 
