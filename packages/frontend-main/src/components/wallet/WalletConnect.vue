@@ -29,36 +29,39 @@ const connectedState = computed(() => !isConnecting.value && loggedIn.value && !
 </script>
 
 <template>
-  <div>
-    <!-- Normal signed in account display -->
-    <template v-if="connectedState">
-      <Popover>
-        <PopoverTrigger>
-          <UserAvatar v-if="isXl" :userAddress="address"/>
-          <UserAvatarUsername v-else :userAddress="address"/>
-        </PopoverTrigger>
-        <PopoverContent>
-          <div class="flex flex-col gap-4">
-            <Button
-              class="my-4 justify-center"
-              @click="
-                signOut();
-              "
-            >
-              {{ $t('components.WalletConnect.disconnect') }}
-            </Button>
-          </div>
-        </PopoverContent>
-      </Popover>
-    </template>
+  <Button variant="ghost">
 
-    <template v-else>
-      <Button @click="walletDialogStore.showDialog" class="w-[207px] xl:inline hidden">
-        {{ $t('components.WalletConnect.button') }}
-      </Button>
-      <button @click="walletDialogStore.showDialog"  class="flex items-center justify-center flex-row xl:hidden h-[52px]">
-        <Wallet class="size-7" />
-      </button>
-    </template>
-  </div>
+    <div>
+      <!-- Normal signed in account display -->
+      <template v-if="connectedState">
+        <Popover>
+          <PopoverTrigger>
+            <UserAvatar v-if="isXl" :userAddress="address"/>
+            <UserAvatarUsername v-else :userAddress="address"/>
+          </PopoverTrigger>
+          <PopoverContent>
+            <div class="flex flex-col gap-4">
+              <Button
+                class="my-4 justify-center"
+                @click="
+                  signOut();
+                "
+              >
+                {{ $t('components.WalletConnect.disconnect') }}
+              </Button>
+            </div>
+          </PopoverContent>
+        </Popover>
+      </template>
+
+      <template v-else>
+        <Button @click="walletDialogStore.showDialog" class="w-[207px] xl:inline hidden">
+          {{ $t('components.WalletConnect.button') }}
+        </Button>
+        <button @click="walletDialogStore.showDialog"  class="flex items-center justify-center flex-row xl:hidden h-[52px]">
+          <Wallet class="size-7" />
+        </button>
+      </template>
+    </div>
+  </Button>
 </template>

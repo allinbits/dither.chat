@@ -7,7 +7,6 @@ import { computed, ref } from 'vue';
 import { usePost } from '@/composables/usePost';
 
 import PostItem from './PostItem.vue';
-import ReplyItem from './ReplyItem.vue';
 
 const props = defineProps<{ repliesGroup: RepliesGroup }>();
 const { data: cachedParentPost } = usePost({ hash: ref(props.repliesGroup.parent.hash) });
@@ -17,12 +16,8 @@ const usedParentPost = computed(() => cachedParentPost.value || props.repliesGro
 </script>
 
 <template>
-  <div v-if="usedParentPost" class="flex flex-col border-b">
-    <PostItem :post="usedParentPost" showTimeline hideBorder/>
-    <div class="w-[40px] flex flex-col items-center">
-      <div class="w-[3px] bg-border h-4" />
-    </div>
-
-    <ReplyItem v-for="(reply, index) in repliesGroup.replies" :key="reply.hash" :reply="reply" :showTimeline="index !== repliesGroup.replies.length - 1"/>
+  <div v-if="usedParentPost" class="flex flex-col">
+    <PostItem :post="usedParentPost" showTimeline class="pb-2 pt-4 pl-4 pr-2"/>
+    <PostItem v-for="(reply, index) in repliesGroup.replies" :key="reply.hash" :post="reply" :showTimeline="index !== repliesGroup.replies.length - 1"/>
   </div>
 </template>

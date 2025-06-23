@@ -5,7 +5,6 @@ import { useWallet } from '@/composables/useWallet';
 
 import PostsList from '@/components/posts/PostsList.vue';
 import Tab from '@/components/ui/tabs/Tab.vue';
-import TabsContainer from '@/components/ui/tabs/TabsContainer.vue';
 import UserFollowing from '@/components/users/UserFollowing.vue';
 import MainLayout from '@/layouts/MainLayout.vue';
 
@@ -19,10 +18,10 @@ const query = useFeed();
 
 <template>
   <MainLayout>
-    <TabsContainer v-if="wallet.loggedIn.value">
+    <div v-if="wallet.loggedIn.value" class='flex flex-row'>
       <Tab :label="$t('components.Tabs.feed')" :isActive="state.activeTab === FEED_TAB" :onClick="() => setActiveTab(FEED_TAB)"/>
       <Tab :label="$t('components.Tabs.following')" :isActive="state.activeTab === FOLLOWING_TAB" :onClick="() => setActiveTab(FOLLOWING_TAB)"/>
-    </TabsContainer>
+    </div>
 
     <PostsList v-if="state.activeTab === FEED_TAB" :query="query"/>
     <UserFollowing v-if="wallet.loggedIn.value && state.activeTab === FOLLOWING_TAB"/>
