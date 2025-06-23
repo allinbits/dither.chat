@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/popover';
 import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
 import { breakpoints } from '@/utility/breakpoints';
-const isXl = useMediaQuery(`(max-width: ${breakpoints.xl - 1}px)`);
+const isXl = useMediaQuery(`(min-width: ${breakpoints.xl}px)`);
 
 const isConnecting = ref(false);
 const isError = ref(false);
@@ -34,8 +34,8 @@ const connectedState = computed(() => !isConnecting.value && loggedIn.value && !
     <template v-if="connectedState">
       <Popover>
         <PopoverTrigger>
-          <UserAvatar v-if="isXl" :userAddress="address"/>
-          <UserAvatarUsername v-else :userAddress="address"/>
+          <UserAvatarUsername v-if="isXl" :userAddress="address"/>
+          <UserAvatar v-else :userAddress="address"/>
         </PopoverTrigger>
         <PopoverContent>
           <div class="flex flex-col gap-4">
@@ -57,7 +57,7 @@ const connectedState = computed(() => !isConnecting.value && loggedIn.value && !
         {{ $t('components.WalletConnect.button') }}
       </Button>
       <button @click="walletDialogStore.showDialog"  class="flex items-center justify-center flex-row xl:hidden h-[52px]">
-        <Wallet class="size-7" />
+        <Wallet class="size-6" />
       </button>
     </template>
   </div>
