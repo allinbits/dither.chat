@@ -9,8 +9,8 @@ defineProps<UserAvatarProps>();
 </script>
 
 <template>
-  <div :class="cn('flex flex-row items-center', size === 'lg' ? 'gap-4' : 'gap-3')">
+  <div :class="cn('flex flex-row items-center', size === 'lg' ? 'gap-4' :size === 'sm' ? 'gap-2': 'gap-3')">
     <UserAvatar :userAddress="userAddress" :size="size"/>
-    <Username :userAddress="userAddress" :class="size === 'lg' && 'text-lg'" />
+    <Username :userAddress="userAddress" :class="size === 'lg' ? 'text-lg' :size === 'sm' ? 'text-sm' : ''" />
   </div>
 </template>

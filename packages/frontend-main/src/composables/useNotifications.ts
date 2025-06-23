@@ -34,6 +34,7 @@ export const notifications = (params: Params) => {
             return allPages.length * LIMIT;
         },
         enabled: () => !!params.userAddress.value,
+        staleTime: Infinity,
     });
 };
 
