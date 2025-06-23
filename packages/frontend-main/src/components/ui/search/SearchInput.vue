@@ -6,6 +6,7 @@ import { useSearchPosts } from '@/composables/useSearchPosts';
 
 import Input from '../input/Input.vue';
 
+import PostMessage from '@/components/posts/PostMessage.vue';
 import UserAvatarUsername from '@/components/users/UserAvatarUsername.vue';
 
 const router = useRouter();
@@ -24,8 +25,8 @@ const gotoExplore = () => {
 </script>
 
 <template>
-  <div>
-    <div class="search-input flex items-center gap-2 relative">
+  <div class="relative">
+    <div class="flex items-center gap-2 relative z-10">
       <Input @keyup.enter="gotoExplore" v-model="query" :placeholder="$t('placeholders.search')"/>
 
       <CircleX
@@ -35,34 +36,37 @@ const gotoExplore = () => {
       />
     </div>
 
-    <div v-if="isLoading" class="flex items-center justify-center mt-2 mb-2">
-      <Loader class="animate-spin" />
-    </div>
+    <div v-if="isLoading || error || query && posts?.length === 0 || posts?.length && posts?.length > 0"
+         class="absolute w-full bg-background border-x border-b rounded-b-xs overflow-y-auto overflow-x-hidden shadow">
+      <div v-if="isLoading" class="flex items-center justify-center">
+        <Loader class="animate-spin" />
+      </div>
 
-    <div v-else-if="error" class="flex items-center justify-center mt-2 mb-2">
-      <p class="text-red-500">
-        {{ error.message }}
-      </p>
-    </div>
+      <div v-else-if="error" class="flex items-center justify-center p-3">
+        <p class="text-red-500">
+          {{ error.message }}
+        </p>
+      </div>
 
-    <div v-else-if="query && posts?.length === 0" class="flex items-center justify-center mt-2 mb-2">
-      <p class="text-neutral-500">
-        {{ $t('components.SearchInput.noResults') }}
-      </p>
-    </div>
+      <div v-else-if="query && posts?.length === 0" class="flex items-center justify-center p-3">
+        <p class="text-neutral-500">
+          {{ $t('components.SearchInput.noResults') }}
+        </p>
+      </div>
 
-    <div v-else-if="posts?.length && posts?.length > 0"
-         class="search-results border-neutral-200 bg-background border-1 max-h-[60vh] pl-2 pr-2 rounded-b-md overflow-y-auto overflow-x-hidden"
-    >
-      <RouterLink
-        v-for="(post, index) in posts"
-        :key="index"
-        :to="`/post/${post.hash}`"
-        class="pt-3 pb-2 border-b border-neutral-200 last:border-b-0 cursor-pointer flex flex-col gap-1"
+      <div v-else-if="posts?.length && posts?.length > 0"
       >
-        <span class="truncate ">{{ post.message }}</span>
-        <UserAvatarUsername :userAddress="post.author" size="sm" />
-      </RouterLink>
+        <RouterLink
+          v-for="(post, index) in posts"
+          :key="index"
+          :to="`/post/${post.hash}`"
+          @click="clearSearch"
+          class="p-3 not-last:border-b cursor-pointer flex flex-col gap-1"
+        >
+          <PostMessage :message="post.message" class="line-clamp-2"/>
+          <UserAvatarUsername :userAddress="post.author" size="sm" />
+        </RouterLink>
+      </div>
     </div>
 
   </div>

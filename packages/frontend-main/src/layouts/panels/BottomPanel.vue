@@ -4,8 +4,7 @@ import { Bell, Feather, House, Search, Settings, User } from 'lucide-vue-next';
 import { usePopups } from '@/composables/usePopups';
 import { useWallet } from '@/composables/useWallet';
 
-import NotificationsCount from './NotificationsCount.vue';
-
+import NotificationsCount from '@/components/notifications/NotificationsCount.vue';
 import { cn } from '@/utility';
 const wallet = useWallet();
 const popups = usePopups();

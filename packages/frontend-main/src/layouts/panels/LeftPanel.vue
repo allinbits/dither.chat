@@ -4,8 +4,7 @@ import { Bell, House, Search, Settings, User } from 'lucide-vue-next';
 import { usePopups } from '@/composables/usePopups';
 import { useWallet } from '@/composables/useWallet';
 
-import NotificationsCount from './NotificationsCount.vue';
-
+import NotificationsCount from '@/components/notifications/NotificationsCount.vue';
 import { Button } from '@/components/ui/button';
 import WalletConnect from '@/components/wallet/WalletConnect.vue';
 import { cn } from '@/utility';

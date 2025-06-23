@@ -2,7 +2,7 @@
 </script>
 
 <template>
-  <div class='flex flex-row justify-evenly my-6 px-4'>
+  <div class='flex flex-row justify-evenly py-6 px-4'>
     <slot />
   </div>
 </template>
