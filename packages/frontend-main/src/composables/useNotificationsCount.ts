@@ -26,6 +26,7 @@ export const notificationsCount = (params: Params) => {
             return json.count ?? 0;
         },
         enabled: () => !!params.userAddress.value,
+        staleTime: Infinity,
     });
 };
 
