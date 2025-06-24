@@ -8,16 +8,15 @@ import { VisuallyHidden } from 'reka-ui';
 
 import { getWalletHelp, useWallet, Wallets } from '@/composables/useWallet';
 
-import DialogDescription from '../ui/dialog/DialogDescription.vue';
-import DialogTitle from '../ui/dialog/DialogTitle.vue';
-import Icon from '../ui/icon/Icon.vue';
-import Input from '../ui/input/Input.vue';
-import UserBalance from '../users/UserBalance.vue';
-
-import ConnectButton from './ConnectButton.vue';
+import ConnectButton from './WalletExtensionButton.vue';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
+import DialogDescription from '@/components/ui/dialog/DialogDescription.vue';
+import DialogTitle from '@/components/ui/dialog/DialogTitle.vue';
+import Icon from '@/components/ui/icon/Icon.vue';
+import Input from '@/components/ui/input/Input.vue';
+import UserBalance from '@/components/users/UserBalance.vue';
 import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
 import { getChainConfigLazy } from '@/utility/getChainConfigLazy';
 import { shorten } from '@/utility/text';

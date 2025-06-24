@@ -15,16 +15,16 @@ import SettingsView from './views/SettingsView.vue';
 import UnauthorizedView from './views/UnauthorizedView.vue';
 
 const routes = [
-    { path: '/', component: HomeFeedView },
-    { path: '/following', component: HomeFollowingView },
+    { path: '/', name: 'Home', component: HomeFeedView },
+    { path: '/following', name: 'Home Following', component: HomeFollowingView },
     { path: '/explore', name: 'Explore', component: ExploreView },
-    { path: '/notifications', component: NotificationsView, meta: { authRequired: true } },
-    { path: '/profile/:address', component: ProfilePostsView },
-    { path: '/profile/:address/replies', component: ProfileRepliesView },
-    { path: '/settings', component: SettingsView, meta: { authRequired: true } },
-    { path: '/settings/manage-followers', component: ManageFollowsView, meta: { authRequired: true } },
-    { path: '/settings/env-config', component: EnvConfigView, meta: { authRequired: true } },
-    { path: '/post/:hash/:postHash?', component: PostView },
+    { path: '/notifications', name: 'Notifications', component: NotificationsView, meta: { authRequired: true } },
+    { path: '/profile/:address', name: 'Profile', component: ProfilePostsView },
+    { path: '/profile/:address/replies', name: 'Profile Replies', component: ProfileRepliesView },
+    { path: '/settings', name: 'Settings', component: SettingsView, meta: { authRequired: true } },
+    { path: '/settings/manage-followers', name: 'Settings Manage Followers', component: ManageFollowsView, meta: { authRequired: true } },
+    { path: '/settings/env-config', name: 'Settings Config', component: EnvConfigView, meta: { authRequired: true } },
+    { path: '/post/:hash/:postHash?', name: 'Post', component: PostView },
     {
         path: '/unauthorized',
         name: 'Unauthorized',

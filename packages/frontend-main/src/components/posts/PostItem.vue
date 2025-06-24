@@ -16,7 +16,7 @@ import PostMoreActions from './PostMoreActions.vue';
 
 import { cn } from '@/utility';
 
-const props = defineProps<{ post: Post; hideBorder?: boolean; showTimeline?: boolean }>();
+const props = defineProps<{ post: Post; showTimeline?: boolean }>();
 const { data: cachedPost } = usePost({ hash: ref(props.post.hash) });
 // If the post is not found in the cache (Ex: After a reply creation), we can still use the original post
 const usedPost = computed(() => cachedPost.value || props.post);
@@ -25,15 +25,18 @@ const usedPost = computed(() => cachedPost.value || props.post);
 
 <template>
   <RouterLink v-if="usedPost" :to="`/post/${usedPost.hash}`" custom v-slot="{ navigate }">
-    <div :class="cn('flex flex-row gap-3 cursor-pointer', !hideBorder && 'border-b' )">
-      <div class="flex flex-col items-center">
+    <div @click="navigate" :class="cn('flex flex-row gap-3 cursor-pointer pb-2 pt-4 pl-4 pr-2 relative hover:bg-accent/30 active:bg-accent/30 transition-colors', !showTimeline && 'border-b' )">
+      <div class="flex flex-col items-center ">
         <RouterLink :to="`/profile/${usedPost.author}`">
           <UserAvatar :userAddress="usedPost.author" />
         </RouterLink>
-        <div :class="cn('w-[3px] h-full bg-border', !showTimeline && 'hidden')" />
       </div>
 
-      <div class="flex flex-col w-full gap-3" @click="navigate">
+      <div :class="cn('w-[40px] h-full flex flex-col items-center absolute', !showTimeline && 'hidden')">
+        <div class="w-[3px] bg-border h-full" />
+      </div>
+
+      <div class="flex flex-col w-full gap-3" >
         <div class="flex flex-row justify-between items-center h-[40px]">
           <div class="flex flex-row gap-3">
             <RouterLink :to="`/profile/${usedPost.author}`">
@@ -44,7 +47,7 @@ const usedPost = computed(() => cachedPost.value || props.post);
           <PostMoreActions :post="usedPost" />
         </div>
         <PostContent :message="usedPost.message" />
-        <PostActions :post="usedPost" class="mt-4"/>
+        <PostActions :post="usedPost" class="-ml-2 mt-2"/>
       </div>
     </div>
   </RouterLink>

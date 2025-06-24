@@ -9,7 +9,6 @@ import { useWallet } from '@/composables/useWallet';
 
 import Button from '@/components/ui/button/Button.vue';
 import RouterLinkTab from '@/components/ui/tabs/RouterLinkTab.vue';
-import TabsContainer from '@/components/ui/tabs/TabsContainer.vue';
 import UserAvatarUsername from '@/components/users/UserAvatarUsername.vue';
 import MainLayout from '@/layouts/MainLayout.vue';
 import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
@@ -40,14 +39,14 @@ function handleAction(type: keyof PopupState, userAddress: string) {
 
 <template>
   <MainLayout>
-    <div class="mt-6 px-4 flex flex-col">
+    <div class="mt-6  flex flex-col">
 
-      <h1 class="hidden xl:inline text-lg font-semibold mb-6 ml-3">
+      <h1 class="hidden xl:inline text-lg font-semibold mb-6 ml-3 px-4">
         {{ $t(`components.Titles.${isMyProfile ? 'myProfile' : 'profile'}`) }}
       </h1>
 
-      <div class="flex flex-row justify-between items-center">
-        <UserAvatarUsername :userAddress="address" size="lg" />
+      <div class="flex flex-row justify-between items-center px-4">
+        <UserAvatarUsername :userAddress="address" size="lg" disabled/>
         <Loader v-if="isFetchingIsFollowing" class="animate-spin w-[80px]" />
         <template v-else-if="!isMyProfile && wallet.loggedIn.value">
           <div class="flex flex-row gap-2">
@@ -67,7 +66,7 @@ function handleAction(type: keyof PopupState, userAddress: string) {
 
       <div class="border-b mt-6" />
 
-      <TabsContainer>
+      <div v-if="wallet.loggedIn.value" class='flex flex-row'>
         <RouterLinkTab :label="$t(`components.Tabs.${isMyProfile ? 'myPosts' : 'posts'}`)"
                        :isActive="route.path === `/profile/${address}`"
                        :to="`/profile/${address}`"
@@ -76,7 +75,7 @@ function handleAction(type: keyof PopupState, userAddress: string) {
                        :isActive="route.path === `/profile/${address}/replies`"
                        :to="`/profile/${address}/replies`"
         />
-      </TabsContainer>
+      </div>
     </div>
 
     <slot/>

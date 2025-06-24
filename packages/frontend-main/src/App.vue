@@ -11,7 +11,7 @@ import ReplyDialog from './components/popups/ReplyDialog.vue';
 import TipUserDialog from './components/popups/TipUserDialog.vue';
 import UnfollowDialog from './components/popups/UnfollowUserDialog.vue';
 import Sonner from './components/ui/sonner/Sonner.vue';
-import WalletConnectDialog from './components/wallet/WalletConnectDialog.vue';
+import WalletConnectDialog from './components/wallet/WalletConnectDialog/WalletConnectDialog.vue';
 import { useBalanceFetcher } from './composables/useBalanceFetcher';
 import { useWallet } from './composables/useWallet';
 

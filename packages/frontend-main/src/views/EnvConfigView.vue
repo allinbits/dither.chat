@@ -28,7 +28,7 @@ debouncedWatch(configStore.config, () => {
     <div class="flex flex-col mb-2">
       <div class="flex flex-row items-center border-b py-2 pr-4">
         <RouterLink to="/settings" class="w-32">
-          <Button size="sm" class="w-full text-left" variant="link">
+          <Button size="sm" class="w-full text-left decoration-2" variant="link">
             <ChevronLeft class="size-4" />
             <span class="grow">
               {{ $t('components.Settings.back') }}

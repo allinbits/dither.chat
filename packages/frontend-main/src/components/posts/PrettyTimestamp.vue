@@ -50,7 +50,7 @@ const date = computed(() => {
 </script>
 <template>
   <button>
-    <span class="text-[#B9B9B9] text-xs" @click.stop="isToggled = !isToggled">
+    <span class="text-[#B9B9B9] text-xs hover:underline" @click.stop="isToggled = !isToggled">
       {{ date }}
     </span>
   </button>

@@ -9,19 +9,19 @@ import {
     PopoverTrigger,
 } from '@/components/ui/popover';
 import SearchInput from '@/components/ui/search/SearchInput.vue';
-import WalletConnect from '@/components/wallet/WalletConnect.vue';
+import WalletConnectButtonMobile from '@/components/wallet/WalletConnectButton/WalletConnectButtonMobile.vue';
 
 </script>
 
 <template>
   <header class="h-full w-full flex flex-row items-center justify-between border-b bg-background px-4 gap-2">
-    <WalletConnect class="w-[40px] h-full flex justify-center items-center" />
+    <WalletConnectButtonMobile class="w-[40px] h-full flex justify-center items-center" />
 
     <div class="flex flex-row items-center gap-2">
       <SearchInput class="self-start" />
       <Popover>
         <PopoverTrigger>
-          <div class="flex flex-row items-center justify-center size-[40px]">
+          <div class="flex flex-row items-center justify-center size-[40px] rounded-xs hover:bg-accent active:bg-accent transition-colors">
             <SlidersHorizontal class="size-6" />
           </div>
         </PopoverTrigger>
