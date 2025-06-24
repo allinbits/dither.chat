@@ -74,7 +74,7 @@ async function handleReply() {
         <PostMoreActions :post="post" />
       </div>
       <PostMessage :message="post.message" class="mt-2" />
-      <PrettyTimestamp :timestamp="new Date(post.timestamp)" :isFullDate="true" class="flex mt-4" />
+      <PrettyTimestamp :timestamp="new Date(post.timestamp)" isFullDate class="self-start mt-4" />
 
       <div class="pr-2">
 
@@ -90,8 +90,8 @@ async function handleReply() {
         <!-- Transaction Form -->
         <template v-if="wallet.loggedIn.value && !isProcessing">
           <div class="flex flex-row item-center mt-4">
-            <UserAvatar :userAddress="wallet.address.value" />
-            <Textarea :placeholder="$t('placeholders.reply')" v-model="reply" :maxlength="MAX_CHARS" class="mt-1" />
+            <UserAvatar :userAddress="wallet.address.value" disabled/>
+            <Textarea :placeholder="$t('placeholders.reply')" v-model="reply" :maxlength="MAX_CHARS" class="ml-1 mt-1" />
           </div>
 
           <div class="flex flex-row mt-4 gap-4">

@@ -2,7 +2,7 @@
 import { useMediaQuery } from '@vueuse/core';
 
 import LeftPanel from './panels/LeftPanel.vue';
-import LeftPanelMobile from './panels/LeftPanelMobile.vue';
+import LeftPanelTablet from './panels/LeftPanelTablet.vue';
 import RightPanel from './panels/RightPanel.vue';
 import MainLayoutMobile from './MainLayoutMobile.vue';
 
@@ -23,7 +23,7 @@ const isXl = useMediaQuery(`(min-width: ${breakpoints.xl}px)`);
   >
     <div class="w-full h-[100vh] flex-1 xl:flex-auto overflow-y-auto sticky top-0">
       <LeftPanel v-if="isXl"/>
-      <LeftPanelMobile v-else/>
+      <LeftPanelTablet v-else/>
     </div>
 
     <main class="sm:w-[var(--main-min-width-desktop)] min-w-[var(--main-min-width-desktop)] md:border-x">

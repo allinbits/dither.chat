@@ -14,7 +14,7 @@ import { formatAmount, formatCompactNumber } from '@/utility/text';
 defineProps<{ post: Post }>();
 const isXs = useMediaQuery('(max-width: 414px)');
 const buttonWrapperClass = 'flex-1 min-w-[68px]';
-const buttonClass = 'flex flex-row items-center gap-1 p-2 rounded-full hover:bg-accent active:bg-accent';
+const buttonClass = 'flex flex-row items-center gap-1 p-2 rounded-full hover:bg-accent active:bg-accent transition-colors';
 const buttonLabelClass = 'text-[#A2A2A9] text-xs font-medium';
 
 const wallet = useWallet();

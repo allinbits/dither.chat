@@ -8,7 +8,7 @@ defineProps<{ label: string; isActive: boolean; to: string }>();
 </script>
 
 <template>
-  <RouterLink class="flex-1 h-[40x] py-6 hover:bg-accent active:bg-accent" :to="to">
+  <RouterLink class="flex-1 h-[40x] py-6 px-4 hover:bg-accent active:bg-accent transition-colors" :to="to">
     <div :class="cn('mx-auto w-full max-w-[180px] h-full pb-2 text-center', isActive && 'border-b-4 border-primary')">
       <h2 class="text-lg font-semibold">{{ label }}</h2>
     </div>
