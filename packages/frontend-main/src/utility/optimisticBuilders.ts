@@ -1,9 +1,15 @@
 import type { InfiniteData } from '@tanstack/vue-query';
 import type { Post } from 'api-main/types/feed';
+import type { FollowUser } from 'api-main/types/follows';
 
 interface NewPostParams {
     message: string; hash: string; postHash: string | null; author: string; quantity: number;
 }
+
+interface NewFollowUserParams {
+    address: string;
+}
+
 // Returns a new Post, used for display
 export const newPost = ({ message, hash, postHash, author, quantity }: NewPostParams): Post => ({
     hash: hash.toLowerCase(),
@@ -22,6 +28,11 @@ export const newPost = ({ message, hash, postHash, author, quantity }: NewPostPa
     removed_hash: null,
     removed_at: null,
     removed_by: null,
+});
+
+// Returns a new FollowUser, used for display
+export const newFollowUser = ({ address }: NewFollowUserParams): FollowUser => ({
+    address,
 });
 
 interface InfiniteDataWithNewItemParams<T> {
@@ -44,22 +55,17 @@ export function infiniteDataWithNewItem<T>({ previousItems, newItem }: InfiniteD
     return newData;
 }
 
-interface InfiniteDataWithUpdatedPostParams {
-    previousPosts: InfiniteData<Post[], unknown> | undefined;
-    updatedPost: Post;
+interface InfiniteDataWitoutItemParams<T> {
+    previousItems: InfiniteData<T[], unknown> | undefined;
+    predicate: (item: T) => boolean;
 }
-// Returns an InfiniteData with pages and pageParams after updating a Post, used for display
-export function infiniteDataWithUpdatedPost({ previousPosts, updatedPost }: InfiniteDataWithUpdatedPostParams) {
-    const pages = previousPosts?.pages.map(page =>
-        page.map(post =>
-            post.hash === updatedPost.hash
-                ? updatedPost
-                : post,
-        ),
-    ) || [];
-    const postsData: InfiniteData<Post[]> = {
-        pageParams: previousPosts?.pageParams || [],
-        pages,
+// Returns an InfiniteData with pages and pageParams after removing an item, used for display
+export function infiniteDataWithoutItem<T>({ previousItems, predicate }: InfiniteDataWitoutItemParams<T>) {
+    let newPages = previousItems?.pages ? [...previousItems.pages] : [];
+    newPages = newPages.map(page => page.filter(item => !predicate(item))) ?? [];
+
+    return {
+        pages: newPages,
+        pageParams: previousItems?.pageParams ?? [0],
     };
-    return postsData;
 }
