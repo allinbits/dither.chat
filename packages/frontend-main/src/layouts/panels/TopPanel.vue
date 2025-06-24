@@ -22,7 +22,7 @@ import WalletConnect from '@/components/wallet/WalletConnect.vue';
       <Popover>
         <PopoverTrigger>
           <div class="flex flex-row items-center justify-center size-[40px]">
-            <SlidersHorizontal />
+            <SlidersHorizontal class="size-6" />
           </div>
         </PopoverTrigger>
         <PopoverContent>

@@ -46,7 +46,7 @@ function handleAction(type: keyof PopupState, userAddress: string) {
       </h1>
 
       <div class="flex flex-row justify-between items-center px-4">
-        <UserAvatarUsername :userAddress="address" size="lg" />
+        <UserAvatarUsername :userAddress="address" size="lg" disabled/>
         <Loader v-if="isFetchingIsFollowing" class="animate-spin w-[80px]" />
         <template v-else-if="!isMyProfile && wallet.loggedIn.value">
           <div class="flex flex-row gap-2">
