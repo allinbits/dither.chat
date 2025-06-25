@@ -1,9 +1,16 @@
-import { type Ref, ref } from 'vue';
-import { useMutation, useQueryClient } from '@tanstack/vue-query';
+import type { FollowUser } from 'api-main/types/follows';
 
+import { type Ref, ref } from 'vue';
+import { type InfiniteData, useMutation, useQueryClient } from '@tanstack/vue-query';
+
+import { following } from './useFollowing';
+import { followingPosts } from './useFollowingPosts';
 import { useChain } from './useChain';
 import { isFollowing } from './useIsFollowing';
 import { useWallet } from './useWallet';
+
+import { infiniteDataWithoutItem } from '@/utility/optimisticBuilders';
+
 interface UnfollowUserRequestMutation {
     userAddress: Ref<string>;
     photonValue: number;
@@ -36,24 +43,45 @@ export function useUnfollowUser(
         },
         onMutate: async (variables) => {
             const isFollowingOpts = isFollowing({ followerAddress: wallet.address, followingAddress: variables.userAddress });
+            const followingOpts = following({ userAddress: wallet.address });
 
-            await queryClient.cancelQueries(isFollowingOpts);
+            await Promise.all([
+                await queryClient.cancelQueries(isFollowingOpts),
+                await queryClient.cancelQueries(followingOpts),
+            ]);
 
             const previousIsFollowing = queryClient.getQueryData(
                 isFollowingOpts.queryKey,
             ) as boolean | undefined;
+            const previousFollowing = queryClient.getQueryData(
+                followingOpts.queryKey,
+            ) as InfiniteData<FollowUser[], unknown> | undefined;
 
             return {
                 previousIsFollowing,
+                previousFollowing,
             };
         },
-        onSuccess: (_, variables) => {
+        onSuccess: (_, variables, context) => {
             const isFollowingOpts = isFollowing({ followerAddress: wallet.address, followingAddress: variables.userAddress });
+            const followingOpts = following({ userAddress: wallet.address });
+            const followingPostsOpts = followingPosts({ userAddress: wallet.address });
+
+            const newFollowingData = infiniteDataWithoutItem<FollowUser>({
+                previousItems: context.previousFollowing,
+                predicate: followUser => followUser.address === variables.userAddress.value,
+            });
+
             queryClient.setQueryData(isFollowingOpts.queryKey, false);
+            queryClient.setQueryData(followingOpts.queryKey, newFollowingData);
+            queryClient.invalidateQueries(followingPostsOpts);
         },
         onError: (_, variables, context) => {
             const isFollowingOpts = isFollowing({ followerAddress: wallet.address, followingAddress: variables.userAddress });
+            const followingOpts = following({ userAddress: wallet.address });
+
             queryClient.setQueryData(isFollowingOpts.queryKey, context?.previousIsFollowing);
+            queryClient.setQueryData(followingOpts.queryKey, context?.previousFollowing);
         },
     });
 
