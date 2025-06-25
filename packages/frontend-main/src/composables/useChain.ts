@@ -10,7 +10,6 @@ export const useChain = () => {
 
     const defaultCoinDecimals = chainConfig.value.stakeCurrency.coinDecimals;
     const getCoinDecimals = (coinMinimalDenom?: string): number => {
-        console.log('defaultCoinDecimals', defaultCoinDecimals);
         return (
             chainConfig.value.currencies.find(c => c.coinMinimalDenom === coinMinimalDenom)?.coinDecimals
             ?? defaultCoinDecimals

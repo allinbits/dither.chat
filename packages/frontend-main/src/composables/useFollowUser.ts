@@ -3,9 +3,9 @@ import type { FollowUser } from 'api-main/types/follows';
 import { type Ref, ref } from 'vue';
 import { type InfiniteData, useMutation, useQueryClient } from '@tanstack/vue-query';
 
+import { useChain } from './useChain';
 import { following } from './useFollowing';
 import { followingPosts } from './useFollowingPosts';
-import { useChain } from './useChain';
 import { isFollowing } from './useIsFollowing';
 import { useWallet } from './useWallet';
 
