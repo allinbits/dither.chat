@@ -2,7 +2,6 @@
 import { computed, ref } from 'vue';
 import { Loader } from 'lucide-vue-next';
 
-import { useChain } from '@/composables/useChain';
 import { useTipUser } from '@/composables/useTipUser';
 import { useTxDialog } from '@/composables/useTxDialog';
 
@@ -23,7 +22,6 @@ const {
     popupState: tip,
     handleClose,
 } = useTxDialog<string>('tipUser', 'Tip', txSuccess, txError);
-const { getAtomicCurrencyAmount } = useChain();
 
 const canSubmit = computed(() => {
     return isBalanceInputValid.value;
@@ -37,7 +35,7 @@ async function handleSumbit() {
     if (!canSubmit.value || !tip.value) {
         return;
     }
-    await tipUser({ userAddress: tip, atomicPhotonValue: getAtomicCurrencyAmount('PHOTON', photonValue.value) });
+    await tipUser({ userAddress: tip, photonValue: photonValue.value });
     handleClose();
 }
 

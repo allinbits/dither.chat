@@ -4,7 +4,6 @@ import type { Post } from 'api-main/types/feed';
 import { computed, ref } from 'vue';
 import { Loader } from 'lucide-vue-next';
 
-import { useChain } from '@/composables/useChain';
 import { useLikePost } from '@/composables/useLikePost';
 import { useTxDialog } from '@/composables/useTxDialog';
 
@@ -18,7 +17,6 @@ import { shorten } from '@/utility/text';
 const isBalanceInputValid = ref(false);
 const { likePost, txError, txSuccess } = useLikePost();
 const { isProcessing, isShown, photonValue, handleClose, popupState: like } = useTxDialog<Post>('like', 'Like', txSuccess, txError);
-const { getAtomicCurrencyAmount } = useChain();
 
 const canSubmit = computed(() => {
     return isBalanceInputValid.value;
@@ -32,7 +30,7 @@ async function handleSumbmit() {
     if (!canSubmit.value || !like.value) {
         return;
     }
-    await likePost({ post: ref(like.value), atomicPhotonValue: getAtomicCurrencyAmount('PHOTON', photonValue.value) });
+    await likePost({ post: ref(like.value), photonValue: photonValue.value });
     handleClose();
 }
 </script>

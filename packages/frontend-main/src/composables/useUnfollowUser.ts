@@ -1,15 +1,17 @@
 import { type Ref, ref } from 'vue';
 import { useMutation, useQueryClient } from '@tanstack/vue-query';
 
+import { useChain } from './useChain';
 import { isFollowing } from './useIsFollowing';
 import { useWallet } from './useWallet';
 interface UnfollowUserRequestMutation {
     userAddress: Ref<string>;
-    atomicPhotonValue: number;
+    photonValue: number;
 }
 
 export function useUnfollowUser(
 ) {
+    const { getAtomicsCurrenyAmount } = useChain();
     const queryClient = useQueryClient();
     const wallet = useWallet();
     const txError = ref<string>();
@@ -17,13 +19,13 @@ export function useUnfollowUser(
     const {
         mutateAsync,
     } = useMutation({
-        mutationFn: async ({ userAddress, atomicPhotonValue }: UnfollowUserRequestMutation) => {
+        mutationFn: async ({ userAddress, photonValue }: UnfollowUserRequestMutation) => {
             txError.value = undefined;
             txSuccess.value = undefined;
 
             const result = await wallet.dither.send(
                 'Unfollow',
-                { args: [userAddress.value], amount: BigInt(atomicPhotonValue).toString() },
+                { args: [userAddress.value], amount: getAtomicsCurrenyAmount('uphoton', photonValue) },
             );
 
             if (!result.broadcast) {

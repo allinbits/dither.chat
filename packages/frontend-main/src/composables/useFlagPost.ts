@@ -1,28 +1,30 @@
 import { ref } from 'vue';
 import { useMutation } from '@tanstack/vue-query';
 
+import { useChain } from './useChain';
 import { useWallet } from './useWallet';
 
 interface FlagPostRequestMutation {
     postHash: string;
-    atomicPhotonValue: number;
+    photonValue: number;
 }
 
 export function useFlagPost(
 ) {
+    const { getAtomicsCurrenyAmount } = useChain();
     const wallet = useWallet();
     const txError = ref<string>();
     const txSuccess = ref<string>();
     const {
         mutateAsync,
     } = useMutation({
-        mutationFn: async ({ postHash, atomicPhotonValue }: FlagPostRequestMutation) => {
+        mutationFn: async ({ postHash, photonValue }: FlagPostRequestMutation) => {
             txError.value = undefined;
             txSuccess.value = undefined;
 
             const result = await wallet.dither.send(
                 'Flag',
-                { args: [postHash], amount: BigInt(atomicPhotonValue).toString() },
+                { args: [postHash], amount: getAtomicsCurrenyAmount('uphoton', photonValue) },
             );
 
             if (!result.broadcast) {

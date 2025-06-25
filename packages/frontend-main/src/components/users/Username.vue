@@ -4,8 +4,7 @@ import type { UserAvatarUsernameProps } from './UserAvatarUsername.vue';
 import { cn } from '@/utility';
 import { shorten } from '@/utility/text';
 
-const props = defineProps<UserAvatarUsernameProps>();
-console.log('propsprops', props.size);
+defineProps<UserAvatarUsernameProps>();
 </script>
 
 <template>

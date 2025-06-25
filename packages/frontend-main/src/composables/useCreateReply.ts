@@ -3,6 +3,7 @@ import type { Post, ReplyWithParent } from 'api-main/types/feed';
 import { type Ref, ref } from 'vue';
 import { type InfiniteData, useMutation, useQueryClient } from '@tanstack/vue-query';
 
+import { useChain } from './useChain';
 import { post } from './usePost';
 import { replies } from './useReplies';
 import { userReplies } from './useUserReplies';
@@ -13,11 +14,12 @@ import { infiniteDataWithNewItem, newPost } from '@/utility/optimisticBuilders';
 interface CreateReplyRequestMutation {
     parentPost: Ref<Post>;
     message: string;
-    atomicPhotonValue: number;
+    photonValue: number;
 }
 
 export function useCreateReply(
 ) {
+    const { getAtomicsCurrenyAmount } = useChain();
     const queryClient = useQueryClient();
     const wallet = useWallet();
     const txError = ref<string>();
@@ -25,13 +27,13 @@ export function useCreateReply(
     const {
         mutateAsync,
     } = useMutation({
-        mutationFn: async ({ parentPost, message, atomicPhotonValue }: CreateReplyRequestMutation) => {
+        mutationFn: async ({ parentPost, message, photonValue }: CreateReplyRequestMutation) => {
             txError.value = undefined;
             txSuccess.value = undefined;
 
             const result = await wallet.dither.send(
                 'Reply',
-                { args: [parentPost.value.hash, message], amount: BigInt(atomicPhotonValue).toString() },
+                { args: [parentPost.value.hash, message], amount: getAtomicsCurrenyAmount('uphoton', photonValue) },
             );
 
             if (!result.broadcast) {
@@ -80,11 +82,11 @@ export function useCreateReply(
                     ? { ...context.previousParentPost, replies: (context.previousParentPost.replies || 0) + 1 }
                     : { ...variables.parentPost.value, replies: (variables.parentPost.value.replies || 0) + 1 };
             // Created Post with parent hash as post_hash
-            const optimisticNewReply: Post = newPost({ message: variables.message, quantity: variables.atomicPhotonValue, hash: createdHash, postHash: variables.parentPost.value.hash, author: wallet.address.value });
+            const optimisticNewReply: Post = newPost({ message: variables.message, quantity: variables.photonValue, hash: createdHash, postHash: variables.parentPost.value.hash, author: wallet.address.value });
             // Created Post in ReplyWithParent
             const optimisticNewUserReply: ReplyWithParent = {
                 reply: newPost(
-                    { message: variables.message, quantity: variables.atomicPhotonValue, hash: createdHash, postHash: variables.parentPost.value.hash, author: wallet.address.value },
+                    { message: variables.message, quantity: variables.photonValue, hash: createdHash, postHash: variables.parentPost.value.hash, author: wallet.address.value },
                 ),
                 parent: optimisticParentPost,
             };

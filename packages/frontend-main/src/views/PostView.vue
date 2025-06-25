@@ -3,7 +3,6 @@ import { computed, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { Loader } from 'lucide-vue-next';
 
-import { useChain } from '@/composables/useChain';
 import { useCreateReply } from '@/composables/useCreateReply';
 import { usePost } from '@/composables/usePost';
 import { useReplies } from '@/composables/useReplies';
@@ -38,7 +37,6 @@ const photonValue = ref(1);
 
 const { createReply,
     txError } = useCreateReply();
-const { getAtomicCurrencyAmount } = useChain();
 
 const isProcessing = computed(() => {
     return wallet.processState.value !== 'idle';
@@ -54,7 +52,7 @@ async function handleReply() {
     if (!canReply.value || !post.value) {
         return;
     }
-    await createReply({ parentPost: post, message: reply.value, atomicPhotonValue: getAtomicCurrencyAmount('PHOTON', photonValue.value) });
+    await createReply({ parentPost: post, message: reply.value, photonValue: photonValue.value });
     reply.value = '';
 }
 </script>

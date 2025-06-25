@@ -9,6 +9,7 @@
         "preview": "vite preview"
     },
     "dependencies": {
+        "@cosmjs/math": "^0.33.1",
         "@cosmjs/proto-signing": "^0.32.2",
         "@cosmjs/stargate": "^0.32.4",
         "@cosmostation/cosmos-client": "^0.0.5",

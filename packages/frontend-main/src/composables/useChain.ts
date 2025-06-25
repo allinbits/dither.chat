@@ -1,26 +1,35 @@
 import { computed } from 'vue';
+import { Decimal } from '@cosmjs/math';
 
 import { useConfigStore } from '@/stores/useConfigStore';
 
 export const useChain = () => {
+    const defaultDecimals = 6;
     const configStore = useConfigStore();
+
     const chainConfig = computed(() => configStore.envConfig.chainConfig);
 
-    const getCurrencyCoinDecimals = (coinDenom: string) => {
-        const currency = chainConfig.value.currencies.find(c => c.coinDenom === coinDenom);
-        if (!currency) return;
-        return currency.coinDecimals;
+    const getCurrencyCoinDecimals = (coinMinimalDenom: string): number => {
+        return (
+            chainConfig.value.currencies.find(c => c.coinMinimalDenom === coinMinimalDenom)?.coinDecimals
+            ?? defaultDecimals
+        );
     };
 
-    const getMinimalCurrencyAmount = (coinDenom: string) => {
-        const coinDecimals = getCurrencyCoinDecimals(coinDenom) ?? 6;
-        return 10 ** -coinDecimals;
+    const getMinimalCurrencyAmount = (coinMinimalDenom: string): number => {
+        const decimals = getCurrencyCoinDecimals(coinMinimalDenom);
+        return Decimal.fromUserInput('1', decimals).toFloatApproximation();
     };
 
-    const getAtomicCurrencyAmount = (coinDenom: string, amount: number) => {
-        const coinDecimals = getCurrencyCoinDecimals(coinDenom) ?? 6;
-        return Math.floor(amount * 10 ** coinDecimals);
+    const getAtomicsCurrenyAmount = (coinMinimalDenom: string, photonValue: number): string => {
+        const decimals = getCurrencyCoinDecimals(coinMinimalDenom);
+        return Decimal.fromUserInput(photonValue.toString(), decimals).atomics;
     };
 
-    return { chainConfig, getCurrencyCoinDecimals, getMinimalCurrencyAmount, getAtomicCurrencyAmount };
+    return {
+        chainConfig,
+        getCurrencyCoinDecimals,
+        getMinimalCurrencyAmount,
+        getAtomicsCurrenyAmount,
+    };
 };

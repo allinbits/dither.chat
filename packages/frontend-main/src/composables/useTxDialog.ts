@@ -13,7 +13,7 @@ export const useTxDialog = <T>(
     txError: Ref<string | undefined>,
 ) => {
     const { getMinimalCurrencyAmount } = useChain();
-    const minimalPhotonValue = getMinimalCurrencyAmount('PHOTON');
+    const minimalPhotonValue = getMinimalCurrencyAmount('uphoton');
     const photonValue = ref(minimalPhotonValue);
 
     const popups = usePopups();

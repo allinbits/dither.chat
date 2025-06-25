@@ -4,7 +4,6 @@ import type { Post } from 'api-main/types/feed';
 import { computed, ref } from 'vue';
 import { Loader } from 'lucide-vue-next';
 
-import { useChain } from '@/composables/useChain';
 import { useFlagPost } from '@/composables/useFlagPost';
 import { useTxDialog } from '@/composables/useTxDialog';
 
@@ -23,7 +22,6 @@ const { flagPost, txError, txSuccess } = useFlagPost();
 const {
     isProcessing,
     isShown, photonValue, popupState: flag, handleClose } = useTxDialog<Post>('flag', 'Flag', txSuccess, txError);
-const { getAtomicCurrencyAmount } = useChain();
 
 const canSubmit = computed(() => {
     return isBalanceInputValid.value;
@@ -37,7 +35,7 @@ async function handleSumbit() {
     if (!canSubmit.value || !flag.value) {
         return;
     }
-    await flagPost({ postHash: flag.value.hash, atomicPhotonValue: getAtomicCurrencyAmount('PHOTON', photonValue.value) });
+    await flagPost({ postHash: flag.value.hash, photonValue: photonValue.value });
     handleClose();
 }
 </script>

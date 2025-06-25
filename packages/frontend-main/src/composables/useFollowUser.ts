@@ -1,15 +1,17 @@
 import { type Ref, ref } from 'vue';
 import { useMutation, useQueryClient } from '@tanstack/vue-query';
 
+import { useChain } from './useChain';
 import { isFollowing } from './useIsFollowing';
 import { useWallet } from './useWallet';
 interface FollowUserRequestMutation {
     userAddress: Ref<string>;
-    atomicPhotonValue: number;
+    photonValue: number;
 }
 
 export function useFollowUser(
 ) {
+    const { getAtomicsCurrenyAmount } = useChain();
     const queryClient = useQueryClient();
     const wallet = useWallet();
     const txError = ref<string>();
@@ -17,13 +19,13 @@ export function useFollowUser(
     const {
         mutateAsync,
     } = useMutation({
-        mutationFn: async ({ userAddress, atomicPhotonValue }: FollowUserRequestMutation) => {
+        mutationFn: async ({ userAddress, photonValue }: FollowUserRequestMutation) => {
             txError.value = undefined;
             txSuccess.value = undefined;
 
             const result = await wallet.dither.send(
                 'Follow',
-                { args: [userAddress.value], amount: BigInt(atomicPhotonValue).toString() },
+                { args: [userAddress.value], amount: getAtomicsCurrenyAmount('uphoton', photonValue) },
             );
 
             if (!result.broadcast) {

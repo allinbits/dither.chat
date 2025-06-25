@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { computed, onMounted, watch } from 'vue';
+import { computed, watchEffect } from 'vue';
+import { Decimal } from '@cosmjs/math';
 
 import { useBalanceFetcher } from '@/composables/useBalanceFetcher';
 import { useChain } from '@/composables/useChain';
@@ -7,66 +8,68 @@ import { useWallet } from '@/composables/useWallet';
 
 import Input from './Input.vue';
 
-import { formatAmount } from '@/utility/text';
-
 const model = defineModel<number>();
-const props = defineProps<{ min?: number; max?: number; step?: number; balance?: boolean }>();
 const emits = defineEmits<{ onValidityChange: [isValid: boolean] }>();
 
-const { getMinimalCurrencyAmount, getAtomicCurrencyAmount } = useChain();
-const minimalPhotonValue = getMinimalCurrencyAmount('PHOTON');
-
-const min = computed(() => props.min ?? minimalPhotonValue);
-const max = computed(() => props.max ?? 5_000_000);
-const step = computed(() => props.step ?? minimalPhotonValue);
-
+const { getCurrencyCoinDecimals } = useChain();
 const wallet = useWallet();
 const balanceFetcher = useBalanceFetcher();
 
-const photonBalance = computed(() => {
+const decimals = getCurrencyCoinDecimals('c') ?? 6;
+const minimalAmount = 10 ** -decimals;
+
+const min = minimalAmount;
+const step = minimalAmount;
+const max = 5_000_000;
+
+const rawBalance = computed(() => {
     if (!wallet.loggedIn.value) return '0';
     const balances = balanceFetcher.balances.value[wallet.address.value];
-    if (!balances) return '0';
-    const balance = balances.find(x => x.denom === 'uphoton');
-    return balance?.amount ?? '0';
+    return balances?.find(x => x.denom === 'uphoton')?.amount ?? '0';
 });
+const balance = computed(() => Decimal.fromAtomics(rawBalance.value, decimals));
+const balanceDiff = computed(() => balance.value.minus(inputDecimal.value).toString());
 
-const photonBalanceSubtracted = computed(() => {
-    const balance = BigInt(photonBalance.value);
-    const atomicInputValue = BigInt(getAtomicCurrencyAmount('PHOTON', model?.value ?? 0));
-    return String(balance - atomicInputValue);
-});
+const inputDecimal = computed(() =>
+    Decimal.fromUserInput((model.value ?? 0).toString(), decimals),
+);
 
-function verifyValidity(value: number | undefined) {
+watchEffect(() => {
+    console.log('balancebalancebalance', balance.value);
+    console.log('balanceDiffbalanceDiffbalanceDiff', balanceDiff.value);
+    const value = model.value;
     if (value === undefined || value < 0) return emits('onValidityChange', false);
 
-    const atomicValue = BigInt(getAtomicCurrencyAmount('PHOTON', value));
-    const available = BigInt(photonBalance.value);
-
-    if (props.balance && atomicValue > available) return emits('onValidityChange', false);
-
-    emits('onValidityChange', true);
-}
-
-watch([model, photonBalance], () => {
-    verifyValidity(model.value);
-});
-onMounted(() => {
-    verifyValidity(model.value);
+    try {
+        const enoughBalance = balance.value.isGreaterThanOrEqual(inputDecimal.value);
+        emits('onValidityChange', enoughBalance);
+    }
+    catch {
+        emits('onValidityChange', false);
+    }
 });
 </script>
 
 <template>
   <div class="flex flex-col w-full gap-2">
     <div class="flex flex-row gap-4 items-center w-full">
-      <Input v-model="model" :placeholder="$t('components.InputPhoton.placeholder')" type="number" :min="min"
-             :step="step" :max="max" autocomplete="off" />
-
+      <Input
+        v-model="model"
+        :placeholder="$t('components.InputPhoton.placeholder')"
+        type="number"
+        :min="min"
+        :step="step"
+        :max="max"
+        autocomplete="off"
+      />
       <span class="dark:text-white">PHOTON</span>
     </div>
-    <span class="text-left text-sm">{{ Number(photonBalanceSubtracted) >= 0 ?
-      formatAmount(photonBalanceSubtracted, 6) + ' PHOTON ' + $t('components.InputPhoton.available') :
-      $t('components.InputPhoton.notEnough')}}
+    <span class="text-left text-sm">
+      {{
+        Number(balanceDiff) >= 0
+          ? balanceDiff + ' PHOTON ' + $t('components.InputPhoton.available')
+          : $t('components.InputPhoton.notEnough')
+      }}
     </span>
   </div>
 </template>

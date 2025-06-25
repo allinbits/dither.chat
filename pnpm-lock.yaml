@@ -117,6 +117,9 @@ importers:
 
   packages/frontend-main:
     dependencies:
+      '@cosmjs/math':
+        specifier: ^0.33.1
+        version: 0.33.1
       '@cosmjs/proto-signing':
         specifier: ^0.32.2
         version: 0.32.4

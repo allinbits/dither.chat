@@ -3,16 +3,18 @@ import type { Post } from 'api-main/types/feed';
 import { type Ref, ref } from 'vue';
 import { useMutation, useQueryClient } from '@tanstack/vue-query';
 
+import { useChain } from './useChain';
 import { post } from './usePost';
 import { useWallet } from './useWallet';
 
 interface DislikePostRequestMutation {
     post: Ref<Post>;
-    atomicPhotonValue: number;
+    photonValue: number;
 }
 
 export function useDislikePost(
 ) {
+    const { getAtomicsCurrenyAmount } = useChain();
     const queryClient = useQueryClient();
     const wallet = useWallet();
     const txError = ref<string>();
@@ -20,13 +22,13 @@ export function useDislikePost(
     const {
         mutateAsync,
     } = useMutation({
-        mutationFn: async ({ post, atomicPhotonValue }: DislikePostRequestMutation) => {
+        mutationFn: async ({ post, photonValue }: DislikePostRequestMutation) => {
             txError.value = undefined;
             txSuccess.value = undefined;
 
             const result = await wallet.dither.send(
                 'Dislike',
-                { args: [post.value.hash], amount: BigInt(atomicPhotonValue).toString() },
+                { args: [post.value.hash], amount: getAtomicsCurrenyAmount('uphoton', photonValue) },
             );
             if (!result.broadcast) {
                 txError.value = result.msg;
