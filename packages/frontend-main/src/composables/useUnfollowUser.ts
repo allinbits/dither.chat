@@ -11,7 +11,7 @@ interface UnfollowUserRequestMutation {
 
 export function useUnfollowUser(
 ) {
-    const { getAtomicsCurrenyAmount } = useChain();
+    const { getAtomicsAmount } = useChain();
     const queryClient = useQueryClient();
     const wallet = useWallet();
     const txError = ref<string>();
@@ -25,7 +25,7 @@ export function useUnfollowUser(
 
             const result = await wallet.dither.send(
                 'Unfollow',
-                { args: [userAddress.value], amount: getAtomicsCurrenyAmount('uphoton', photonValue) },
+                { args: [userAddress.value], amount: getAtomicsAmount(photonValue) },
             );
 
             if (!result.broadcast) {

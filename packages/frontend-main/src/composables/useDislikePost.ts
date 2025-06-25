@@ -14,7 +14,7 @@ interface DislikePostRequestMutation {
 
 export function useDislikePost(
 ) {
-    const { getAtomicsCurrenyAmount } = useChain();
+    const { getAtomicsAmount } = useChain();
     const queryClient = useQueryClient();
     const wallet = useWallet();
     const txError = ref<string>();
@@ -28,7 +28,7 @@ export function useDislikePost(
 
             const result = await wallet.dither.send(
                 'Dislike',
-                { args: [post.value.hash], amount: getAtomicsCurrenyAmount('uphoton', photonValue) },
+                { args: [post.value.hash], amount: getAtomicsAmount(photonValue) },
             );
             if (!result.broadcast) {
                 txError.value = result.msg;

@@ -11,7 +11,7 @@ interface FollowUserRequestMutation {
 
 export function useFollowUser(
 ) {
-    const { getAtomicsCurrenyAmount } = useChain();
+    const { getAtomicsAmount } = useChain();
     const queryClient = useQueryClient();
     const wallet = useWallet();
     const txError = ref<string>();
@@ -25,7 +25,7 @@ export function useFollowUser(
 
             const result = await wallet.dither.send(
                 'Follow',
-                { args: [userAddress.value], amount: getAtomicsCurrenyAmount('uphoton', photonValue) },
+                { args: [userAddress.value], amount: getAtomicsAmount(photonValue) },
             );
 
             if (!result.broadcast) {

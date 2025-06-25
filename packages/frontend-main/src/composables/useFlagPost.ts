@@ -11,7 +11,7 @@ interface FlagPostRequestMutation {
 
 export function useFlagPost(
 ) {
-    const { getAtomicsCurrenyAmount } = useChain();
+    const { getAtomicsAmount } = useChain();
     const wallet = useWallet();
     const txError = ref<string>();
     const txSuccess = ref<string>();
@@ -24,7 +24,7 @@ export function useFlagPost(
 
             const result = await wallet.dither.send(
                 'Flag',
-                { args: [postHash], amount: getAtomicsCurrenyAmount('uphoton', photonValue) },
+                { args: [postHash], amount: getAtomicsAmount(photonValue) },
             );
 
             if (!result.broadcast) {

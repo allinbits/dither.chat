@@ -19,7 +19,7 @@ interface CreateReplyRequestMutation {
 
 export function useCreateReply(
 ) {
-    const { getAtomicsCurrenyAmount } = useChain();
+    const { getAtomicsAmount } = useChain();
     const queryClient = useQueryClient();
     const wallet = useWallet();
     const txError = ref<string>();
@@ -33,7 +33,7 @@ export function useCreateReply(
 
             const result = await wallet.dither.send(
                 'Reply',
-                { args: [parentPost.value.hash, message], amount: getAtomicsCurrenyAmount('uphoton', photonValue) },
+                { args: [parentPost.value.hash, message], amount: getAtomicsAmount(photonValue) },
             );
 
             if (!result.broadcast) {

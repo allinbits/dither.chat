@@ -16,11 +16,11 @@ export function useSearchPosts(minQueryLength: number = 3, debounceMs: number = 
     const { t } = useI18n();
     const query = ref<string>('');
     const debouncedQuery = refDebounced<string>(query, debounceMs);
-    const { minSendAmount } = storeToRefs(useFiltersStore());
-    const debouncedMinSendAmount = refDebounced<number>(minSendAmount, 600);
+    const { filterAmount } = storeToRefs(useFiltersStore());
+    const debouncedFilterAmount = refDebounced<number>(filterAmount, 600);
 
     const searchPosts = async ({ queryKey, signal }: { queryKey: string[]; signal: AbortSignal }) => {
-        const rawResponse = await fetch(`${apiRoot}/search?text=${queryKey[1]}&minQuantity=${Math.trunc(debouncedMinSendAmount.value)}`, { signal });
+        const rawResponse = await fetch(`${apiRoot}/search?text=${queryKey[1]}&minQuantity=${Math.trunc(debouncedFilterAmount.value)}`, { signal });
         const res = (await rawResponse.json()) as { status: number; rows: Post[] };
 
         if (res.status !== 200) {
@@ -36,7 +36,7 @@ export function useSearchPosts(minQueryLength: number = 3, debounceMs: number = 
         error,
         refetch,
     } = useQuery({
-        queryKey: ['searchPosts', debouncedQuery, debouncedMinSendAmount.value.toString()],
+        queryKey: ['searchPosts', debouncedQuery, debouncedFilterAmount.value.toString()],
         queryFn: searchPosts,
         enabled: false,
         retry: false,

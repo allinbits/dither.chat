@@ -4,12 +4,13 @@ import type { Post } from 'api-main/types/feed';
 import { useMediaQuery } from '@vueuse/core';
 import { Flag, MessageCircle, ThumbsDown, ThumbsUp } from 'lucide-vue-next';
 
+import { useChain } from '@/composables/useChain';
 import { type PopupState, usePopups } from '@/composables/usePopups';
 import { useWallet } from '@/composables/useWallet';
 
 import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
 import { cn } from '@/utility';
-import { formatAmount, formatCompactNumber } from '@/utility/text';
+import { formatCompactNumber } from '@/utility/text';
 
 defineProps<{ post: Post }>();
 const isXs = useMediaQuery('(max-width: 414px)');
@@ -20,6 +21,7 @@ const buttonLabelClass = 'text-[#A2A2A9] text-xs font-medium';
 const wallet = useWallet();
 const popups = usePopups();
 const walletDialogStore = useWalletDialogStore();
+const { getAtomicsAmount } = useChain();
 
 function handleAction(type: keyof PopupState, post: Post) {
     if (wallet.loggedIn.value) {
@@ -64,7 +66,7 @@ function handleAction(type: keyof PopupState, post: Post) {
     </div>
 
     <div class="ml-auto text-xs text-right  text-neutral-400">
-      <span class="w-[64px]">{{ formatAmount(post.quantity, 6) + ' ' }}</span>
+      <span class="w-[64px]">{{ getAtomicsAmount(post.quantity) + ' ' }}</span>
       <span>PHOTON</span>
     </div>
   </div>

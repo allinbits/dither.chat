@@ -6,6 +6,7 @@ import { refDebounced } from '@vueuse/core';
 import { infiniteQueryOptions, useInfiniteQuery, useQueryClient } from '@tanstack/vue-query';
 import { storeToRefs } from 'pinia';
 
+import { useChain } from './useChain';
 import { post } from './usePost';
 
 import { useConfigStore } from '@/stores/useConfigStore';
@@ -14,17 +15,18 @@ import { useFiltersStore } from '@/stores/useFiltersStore';
 const LIMIT = 15;
 
 export const feed = (queryClient: QueryClient) => {
+    const { getAtomicsAmount } = useChain();
     const configStore = useConfigStore();
     const apiRoot = configStore.envConfig.apiRoot ?? 'http://localhost:3000';
 
-    const { minSendAmount } = storeToRefs(useFiltersStore());
-    const debouncedMinSendAmount = refDebounced<number>(minSendAmount, 600);
+    const { filterAmount } = storeToRefs(useFiltersStore());
+    const debouncedFilterAmount = refDebounced<number>(filterAmount, 600);
 
     return infiniteQueryOptions({
-        queryKey: ['feed', debouncedMinSendAmount],
+        queryKey: ['feed', debouncedFilterAmount],
         queryFn: async ({ pageParam = 0 }) => {
             const res = await fetch(
-                `${apiRoot}/feed?offset=${pageParam}&limit=${LIMIT}&minQuantity=${Math.trunc(debouncedMinSendAmount.value)}`,
+                `${apiRoot}/feed?offset=${pageParam}&limit=${LIMIT}&minQuantity=${getAtomicsAmount(debouncedFilterAmount.value)}`,
             );
             const json = (await res.json()) as { status: number; rows: Post[] };
             const rows = json.rows ?? [];

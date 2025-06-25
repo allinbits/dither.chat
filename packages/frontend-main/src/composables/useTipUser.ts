@@ -10,7 +10,7 @@ interface TipUserRequestMutation {
 }
 
 export function useTipUser() {
-    const { getAtomicsCurrenyAmount } = useChain();
+    const { getAtomicsAmount } = useChain();
     const wallet = useWallet();
     const txError = ref<string>();
     const txSuccess = ref<string>();
@@ -19,7 +19,7 @@ export function useTipUser() {
             txError.value = undefined;
             txSuccess.value = undefined;
 
-            const result = await wallet.dither.tipUser(userAddress.value, getAtomicsCurrenyAmount('uphoton', photonValue));
+            const result = await wallet.dither.tipUser(userAddress.value, getAtomicsAmount(photonValue));
             if (!result.broadcast) {
                 txError.value = result.msg;
                 throw new Error(result.msg);

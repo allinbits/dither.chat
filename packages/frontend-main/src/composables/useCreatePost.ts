@@ -17,7 +17,7 @@ interface CreatePostRequestMutation {
 
 export function useCreatePost(
 ) {
-    const { getAtomicsCurrenyAmount } = useChain();
+    const { getAtomicsAmount } = useChain();
     const queryClient = useQueryClient();
     const wallet = useWallet();
     const txError = ref<string>();
@@ -32,7 +32,7 @@ export function useCreatePost(
 
             const result = await wallet.dither.send(
                 'Post',
-                { args: [message], amount: getAtomicsCurrenyAmount('uphoton', photonValue) },
+                { args: [message], amount: getAtomicsAmount(photonValue) },
             );
 
             if (!result.broadcast) {

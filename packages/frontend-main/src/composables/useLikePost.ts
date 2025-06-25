@@ -14,7 +14,7 @@ interface LikePostRequestMutation {
 
 export function useLikePost(
 ) {
-    const { getAtomicsCurrenyAmount } = useChain();
+    const { getAtomicsAmount } = useChain();
     const queryClient = useQueryClient();
     const wallet = useWallet();
     const txError = ref<string>();
@@ -28,7 +28,7 @@ export function useLikePost(
 
             const result = await wallet.dither.send(
                 'Like',
-                { args: [post.value.hash], amount: getAtomicsCurrenyAmount('uphoton', photonValue) },
+                { args: [post.value.hash], amount: getAtomicsAmount(photonValue) },
             );
 
             if (!result.broadcast) {

@@ -4,32 +4,32 @@ import { Decimal } from '@cosmjs/math';
 import { useConfigStore } from '@/stores/useConfigStore';
 
 export const useChain = () => {
-    const defaultDecimals = 6;
     const configStore = useConfigStore();
 
     const chainConfig = computed(() => configStore.envConfig.chainConfig);
 
-    const getCurrencyCoinDecimals = (coinMinimalDenom: string): number => {
+    const defaultCoinDecimals = chainConfig.value.stakeCurrency.coinDecimals;
+    const getCoinDecimals = (coinMinimalDenom?: string): number => {
         return (
             chainConfig.value.currencies.find(c => c.coinMinimalDenom === coinMinimalDenom)?.coinDecimals
-            ?? defaultDecimals
+            ?? defaultCoinDecimals
         );
     };
 
-    const getMinimalCurrencyAmount = (coinMinimalDenom: string): number => {
-        const decimals = getCurrencyCoinDecimals(coinMinimalDenom);
-        return Decimal.fromUserInput('1', decimals).toFloatApproximation();
+    const getMinimalAmount = (coinMinimalDenom?: string): number => {
+        const decimals = getCoinDecimals(coinMinimalDenom);
+        return Decimal.fromAtomics('1', decimals).toFloatApproximation();
     };
 
-    const getAtomicsCurrenyAmount = (coinMinimalDenom: string, photonValue: number): string => {
-        const decimals = getCurrencyCoinDecimals(coinMinimalDenom);
+    const getAtomicsAmount = (photonValue: number, coinMinimalDenom?: string): string => {
+        const decimals = getCoinDecimals(coinMinimalDenom);
         return Decimal.fromUserInput(photonValue.toString(), decimals).atomics;
     };
 
     return {
         chainConfig,
-        getCurrencyCoinDecimals,
-        getMinimalCurrencyAmount,
-        getAtomicsCurrenyAmount,
+        getCoinDecimals,
+        getMinimalAmount,
+        getAtomicsAmount,
     };
 };

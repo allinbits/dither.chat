@@ -4,18 +4,18 @@ import { defineStore } from 'pinia';
 export const useFiltersStore = defineStore(
     'filtersStateStore',
     () => {
-        const minSendAmount = ref(0);
+        const filterAmount = ref(0);
 
-        const setMinSendAmount = (sendAmount: number) => {
-            minSendAmount.value = sendAmount;
+        const setFilterAmount = (newAmount: number) => {
+            filterAmount.value = newAmount;
         };
 
-        return { setMinSendAmount, minSendAmount };
+        return { setFilterAmount, filterAmount };
     },
     {
         persist: {
             storage: sessionStorage,
-            pick: ['minSendAmount'],
+            pick: ['filterAmount'],
         },
     },
 );
