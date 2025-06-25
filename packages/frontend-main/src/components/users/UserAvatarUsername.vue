@@ -1,16 +1,23 @@
 <script lang="ts" setup>
-import UserAvatar, { type UserAvatarProps } from './UserAvatar.vue';
+import UserAvatar from './UserAvatar.vue';
 import Username from './Username.vue';
 
 import { cn } from '@/utility';
 
-defineProps<UserAvatarProps>();
+export interface UserAvatarUsernameProps {
+    userAddress?: string;
+    size?: 'lg' | 'md' | 'sm';
+    disabled?: boolean;
+}
+
+const props = defineProps<UserAvatarUsernameProps>();
+console.log('aa  prsssopsprops', props.size);
 
 </script>
 
 <template>
-  <div :class="cn('flex flex-row items-center', size === 'lg' ? 'gap-4' : 'gap-3')">
-    <UserAvatar :userAddress="userAddress" :size="size"/>
-    <Username :userAddress="userAddress" :class="size === 'lg' && 'text-lg'" />
+  <div :class="cn('flex flex-row items-center', size === 'lg' ? 'gap-4' :size === 'sm' ? 'gap-2': 'gap-3')">
+    <UserAvatar v-bind="props"/>
+    <Username v-bind="props"  />
   </div>
 </template>

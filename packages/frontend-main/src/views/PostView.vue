@@ -66,45 +66,47 @@ async function handleReply() {
       <span v-else-if="isError && error" class="text-center text-red-500">{{ error.message }}</span>
     </div>
 
-    <div v-if="post" class="flex flex-col p-4 w-full">
+    <div v-if="post" class="flex flex-col py-4 pl-4 pr-2 w-full">
       <div class="flex flex-row justify-between items-center h-[40px]">
         <RouterLink :to="`/profile/${post.author}`">
           <div class="flex flex-row gap-3">
             <UserAvatarUsername :userAddress="post.author" />
-            <PrettyTimestamp :timestamp="new Date(post.timestamp)" />
           </div>
         </RouterLink>
         <PostMoreActions :post="post" />
       </div>
       <PostMessage :message="post.message" class="mt-2" />
-      <PrettyTimestamp :timestamp="new Date(post.timestamp)" :isFullDate="true" class="flex mt-4" />
+      <PrettyTimestamp :timestamp="new Date(post.timestamp)" isFullDate class="self-start mt-4" />
 
-      <div class="py-2 mt-4 border-y">
-        <PostActions :post="post" class="px-2" />
-      </div>
+      <div class="pr-2">
 
-      <!-- Broadcast Status -->
-      <div class="flex flex-col w-full gap-2 mt-4" v-if="isProcessing">
-        {{  $t('components.Wallet.popupSign') }}
-        <Loader class="animate-spin w-full"/>
-      </div>
-      <!-- Transaction Form -->
-      <template v-if="wallet.loggedIn.value && !isProcessing">
-        <div class="flex flex-row item-center mt-4">
-          <UserAvatar :userAddress="wallet.address.value" />
-          <Textarea :placeholder="$t('placeholders.reply')" v-model="reply" :maxlength="MAX_CHARS" class="mt-1" />
+        <div class="mt-4 border-y">
+          <PostActions :post="post" />
         </div>
 
-        <div class="flex flex-row mt-4 gap-4">
-          <InputPhoton v-model="photonValue" @on-validity-change="handleInputValidity" />
-          <Button size="sm" :disabled="!canReply" @click="handleReply">
-            {{ $t('components.Button.reply') }}
-          </Button>
+        <!-- Broadcast Status -->
+        <div class="flex flex-col w-full gap-2 mt-4" v-if="isProcessing">
+          {{  $t('components.Wallet.popupSign') }}
+          <Loader class="animate-spin w-full"/>
         </div>
+        <!-- Transaction Form -->
+        <template v-if="wallet.loggedIn.value && !isProcessing">
+          <div class="flex flex-row item-center mt-4">
+            <UserAvatar :userAddress="wallet.address.value" disabled/>
+            <Textarea :placeholder="$t('placeholders.reply')" v-model="reply" :maxlength="MAX_CHARS" class="ml-1 mt-1" />
+          </div>
 
-        <!-- TX error -->
-        <span v-if="txError" class="text-red-500 text-left text-xs mt-2">{{ txError }}</span>
-      </template>
+          <div class="flex flex-row mt-4 gap-4">
+            <InputPhoton v-model="photonValue" @on-validity-change="handleInputValidity" />
+            <Button size="sm" :disabled="!canReply" @click="handleReply">
+              {{ $t('components.Button.reply') }}
+            </Button>
+          </div>
+
+          <!-- TX error -->
+          <span v-if="txError" class="text-red-500 text-left text-xs mt-2">{{ txError }}</span>
+        </template>
+      </div>
     </div>
 
     <!-- Replies posts list -->
