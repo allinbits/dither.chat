@@ -7,7 +7,7 @@ import { useWallet } from '@/composables/useWallet';
 
 const Wallet = useWallet();
 
-const { chainConfig, getAtomicsAmount } = useChain();
+const { chainConfig, getAmountFromAtomic } = useChain();
 
 const balancesFetcher = (address: Ref<string>) =>
     fetch(`${chainConfig.value.rest}cosmos/bank/v1beta1/balances/${address.value}?pagination.limit=1000`).then(response =>
@@ -30,5 +30,5 @@ const balance = computed(() => {
 });
 </script>
 <template>
-  <span>{{ getAtomicsAmount( balance.amount) }}</span>
+  <span>{{ getAmountFromAtomic( balance.amount) }}</span>
 </template>

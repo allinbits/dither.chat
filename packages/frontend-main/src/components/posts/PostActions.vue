@@ -21,7 +21,7 @@ const buttonLabelClass = 'text-[#A2A2A9] text-xs font-medium';
 const wallet = useWallet();
 const popups = usePopups();
 const walletDialogStore = useWalletDialogStore();
-const { getAtomicsAmount } = useChain();
+const { getAmountFromAtomic } = useChain();
 
 function handleAction(type: keyof PopupState, post: Post) {
     if (wallet.loggedIn.value) {
@@ -66,7 +66,7 @@ function handleAction(type: keyof PopupState, post: Post) {
     </div>
 
     <div class="ml-auto text-xs text-right  text-neutral-400">
-      <span class="w-[64px]">{{ getAtomicsAmount(post.quantity) + ' ' }}</span>
+      <span class="w-[64px]">{{ getAmountFromAtomic(post.quantity) + ' ' }}</span>
       <span>PHOTON</span>
     </div>
   </div>

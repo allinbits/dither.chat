@@ -10,6 +10,7 @@ export const useChain = () => {
 
     const defaultCoinDecimals = chainConfig.value.stakeCurrency.coinDecimals;
     const getCoinDecimals = (coinMinimalDenom?: string): number => {
+        console.log('defaultCoinDecimals', defaultCoinDecimals);
         return (
             chainConfig.value.currencies.find(c => c.coinMinimalDenom === coinMinimalDenom)?.coinDecimals
             ?? defaultCoinDecimals
@@ -26,10 +27,16 @@ export const useChain = () => {
         return Decimal.fromUserInput(photonValue.toString(), decimals).atomics;
     };
 
+    const getAmountFromAtomic = (photonValue: number, coinMinimalDenom?: string): string => {
+        const decimals = getCoinDecimals(coinMinimalDenom);
+        return Decimal.fromAtomics(photonValue.toString(), decimals).toString();
+    };
+
     return {
         chainConfig,
         getCoinDecimals,
         getMinimalAmount,
         getAtomicsAmount,
+        getAmountFromAtomic,
     };
 };
