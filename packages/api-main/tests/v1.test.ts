@@ -299,6 +299,14 @@ describe('v1', { sequential: true }, () => {
         assert.isOk(response?.status === 200, 'response was not okay');
     });
 
+    it('GET - /is-following (Not Following)', async () => {
+        const response = await get<{ status: number; rows: { hash: string; address: string }[] }>(
+            `is-following?follower=${addressUserA}&following=${addressUserB}`,
+        );
+
+        assert.isOk(response?.status === 404, 'follower was found, should not have follower');
+    });
+
     it('GET - /followers', async () => {
         const response = await get<{ status: number; rows: { hash: string; address: string }[] }>(
             `followers?address=${addressUserB}`,
