@@ -927,6 +927,12 @@ describe('v1/notifications', async () => {
         bearerToken = await userLogin(walletA);
         assert.isOk(bearerToken.length >= 1, 'bearer was not passed back');
 
+        const notificationCount = await get<{
+            status: number;
+            count: number;
+        }>(`notifications-count?address=${walletA.publicKey}`, 'READ', bearerToken);
+        assert.isOk(notificationCount?.count === 1, 'notification count was not at least one');
+
         const notificationResponse = await get<{
             status: number;
             rows: {
