@@ -24,11 +24,8 @@ export async function NotificationsCount(_query: typeof Gets.NotificationsCountQ
         return { status: 401, error: 'Unauthorized token proivided' };
     }
 
-    console.log(response);
-
     try {
         const [result] = await getNotificationsCountStatement.execute({ owner: response });
-        console.log(result);
         return { status: 200, count: result?.count ?? 0 };
     }
     catch (error) {
