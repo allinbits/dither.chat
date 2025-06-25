@@ -11,7 +11,6 @@ export interface UserAvatarUsernameProps {
 }
 
 const props = defineProps<UserAvatarUsernameProps>();
-console.log('aa  prsssopsprops', props.size);
 
 </script>
 

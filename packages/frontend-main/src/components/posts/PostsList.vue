@@ -13,7 +13,7 @@ import PostItem from './PostItem.vue';
 import { cn } from '@/utility';
 
 type PostsInfiniteQueryReturnType = UseInfiniteQueryReturnType<InfiniteData<Post[], unknown>, Error>;
-const props = defineProps<{ query: PostsInfiniteQueryReturnType; hideEmptyText?: boolean }>();
+const props = defineProps<{ query: PostsInfiniteQueryReturnType; emptyText?: string }>();
 const { data, fetchNextPage, isLoading, isFetchingNextPage, hasNextPage } = props.query;
 const flatPosts = computed(() => data.value?.pages.flat() ?? []);
 </script>
@@ -22,8 +22,8 @@ const flatPosts = computed(() => data.value?.pages.flat() ?? []);
   <div :class="cn('flex flex-col w-full', flatPosts.length && 'border-t')">
     <Loader v-if="isLoading" class="animate-spin w-full mt-10" />
 
-    <span v-else-if="!flatPosts.length && !hideEmptyText" class="self-center mt-4 text-md font-semibold text-base">{{
-      $t('components.PostsList.empty') }}</span>
+    <span v-else-if="!flatPosts.length" class="self-center mt-4 text-md font-semibold text-base">{{
+      emptyText || $t('components.PostsList.empty') }}</span>
 
     <PostItem v-else v-for="post in flatPosts" :key="post.hash" :post="post" />
 
