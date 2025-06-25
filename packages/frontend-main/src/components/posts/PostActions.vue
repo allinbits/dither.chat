@@ -37,7 +37,7 @@ function handleAction(type: keyof PopupState, post: Post) {
 </script>
 
 <template>
-  <div :class="cn('flex flex-row items-center justify-between gap-y-1 pr-2', isXs && 'flex-wrap pb-2')">
+  <div :class="cn('flex flex-row items-center justify-between pr-2', isXs && 'flex-wrap pb-2')">
     <div :class="buttonWrapperClass">
       <button :class="buttonClass" @click.stop="handleAction('reply', post)">
         <MessageCircle class="size-5" color="#A2A2A9" />
@@ -65,7 +65,7 @@ function handleAction(type: keyof PopupState, post: Post) {
       </button>
     </div>
 
-    <div class="ml-auto text-xs text-right  text-neutral-400">
+    <div class="flex flex-wrap justify-end gap-x-1 ml-auto text-xs text-right  text-neutral-400">
       <span class="w-[64px]">{{ getAmountFromAtomic(post.quantity) + ' ' }}</span>
       <span>PHOTON</span>
     </div>
