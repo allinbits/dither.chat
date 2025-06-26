@@ -16,8 +16,8 @@ const { getCoinDecimals, getMinimalAmount } = useChain();
 const wallet = useWallet();
 const balanceFetcher = useBalanceFetcher();
 
-const minimalAmount = getMinimalAmount();
-const decimals = getCoinDecimals();
+const minimalAmount = getMinimalAmount('uphoton');
+const decimals = getCoinDecimals('uphoton');
 const min = computed(() => minimalAmount);
 const max = computed(() => 5_000_000);
 const step = computed(() => minimalAmount);
@@ -27,9 +27,9 @@ const balanceAtomics = computed(() => {
     const balances = balanceFetcher.balances.value[wallet.address.value];
     return balances?.find(x => x.denom === 'uphoton')?.amount ?? '0';
 });
-const balance = computed(() => Decimal.fromAtomics(balanceAtomics.value, decimals));
+const balance = computed(() => !decimals ? Decimal.zero(0) : Decimal.fromAtomics(balanceAtomics.value, decimals));
 const inputValue = computed(() =>
-    Decimal.fromUserInput((model.value ?? min.value).toString(), decimals),
+    !decimals ? Decimal.zero(0) : Decimal.fromUserInput(model.value?.toString() ?? min.value, decimals),
 );
 const balanceDiff = computed(() => balance.value.isGreaterThan(inputValue.value) ? balance.value.minus(inputValue.value) : 0);
 

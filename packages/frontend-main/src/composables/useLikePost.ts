@@ -9,7 +9,7 @@ import { useWallet } from './useWallet';
 
 interface LikePostRequestMutation {
     post: Ref<Post>;
-    photonValue: number;
+    photonValue: string;
 }
 
 export function useLikePost(
@@ -28,7 +28,7 @@ export function useLikePost(
 
             const result = await wallet.dither.send(
                 'Like',
-                { args: [post.value.hash], amount: getAtomicsAmount(photonValue) },
+                { args: [post.value.hash], amount: getAtomicsAmount(photonValue, 'uphoton') },
             );
 
             if (!result.broadcast) {

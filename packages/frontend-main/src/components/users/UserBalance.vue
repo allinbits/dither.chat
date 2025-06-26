@@ -30,5 +30,5 @@ const balance = computed(() => {
 });
 </script>
 <template>
-  <span>{{ getAmountFromAtomic( balance.amount) }}</span>
+  <span>{{ getAmountFromAtomic( balance.amount, 'uphoton') }}</span>
 </template>

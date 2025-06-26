@@ -8,27 +8,25 @@ export const useChain = () => {
 
     const chainConfig = computed(() => configStore.envConfig.chainConfig);
 
-    const defaultCoinDecimals = chainConfig.value.stakeCurrency.coinDecimals;
-    const getCoinDecimals = (coinMinimalDenom?: string): number => {
+    const getCoinDecimals = (coinMinimalDenom: string) => {
         return (
             chainConfig.value.currencies.find(c => c.coinMinimalDenom === coinMinimalDenom)?.coinDecimals
-            ?? defaultCoinDecimals
         );
     };
 
-    const getMinimalAmount = (coinMinimalDenom?: string): number => {
+    const getMinimalAmount = (coinMinimalDenom: string) => {
         const decimals = getCoinDecimals(coinMinimalDenom);
-        return Decimal.fromAtomics('1', decimals).toFloatApproximation();
+        return !decimals ? '0' : Decimal.fromAtomics('1', decimals).toString();
     };
 
-    const getAtomicsAmount = (photonValue: number, coinMinimalDenom?: string): string => {
+    const getAtomicsAmount = (amount: string, coinMinimalDenom: string) => {
         const decimals = getCoinDecimals(coinMinimalDenom);
-        return Decimal.fromUserInput(photonValue.toString(), decimals).atomics;
+        return !decimals ? '0' : Decimal.fromUserInput(amount, decimals).atomics;
     };
 
-    const getAmountFromAtomic = (photonValue: number, coinMinimalDenom?: string): string => {
+    const getAmountFromAtomic = (amount: string, coinMinimalDenom: string) => {
         const decimals = getCoinDecimals(coinMinimalDenom);
-        return Decimal.fromAtomics(photonValue.toString(), decimals).toString();
+        return !decimals ? '0' : Decimal.fromAtomics(amount, decimals).toString();
     };
 
     return {

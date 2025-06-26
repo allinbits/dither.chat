@@ -9,8 +9,8 @@ import { useFiltersStore } from '@/stores/useFiltersStore';
 const store = useFiltersStore();
 const { getMinimalAmount, getCoinDecimals } = useChain();
 
-const minimalAmount = getMinimalAmount();
-const decimals = getCoinDecimals();
+const minimalAmount = Number(getMinimalAmount('uphoton'));
+const decimals = getCoinDecimals('uphoton');
 const min = computed(() => minimalAmount);
 const step = computed(() => minimalAmount);
 const maxExponent = 2; // maxExponent represents the maximum exponent for the slider: 10^maxExponent tokens

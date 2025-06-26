@@ -12,7 +12,7 @@ import { infiniteDataWithNewItem, newPost } from '@/utility/optimisticBuilders';
 
 interface CreatePostRequestMutation {
     message: string;
-    photonValue: number;
+    photonValue: string;
 }
 
 export function useCreatePost(
@@ -32,7 +32,7 @@ export function useCreatePost(
 
             const result = await wallet.dither.send(
                 'Post',
-                { args: [message], amount: getAtomicsAmount(photonValue) },
+                { args: [message], amount: getAtomicsAmount(photonValue, 'uphoton') },
             );
 
             if (!result.broadcast) {
@@ -69,7 +69,7 @@ export function useCreatePost(
             const userPostsOpts = userPosts({ userAddress: wallet.address });
 
             // Created Post
-            const optimisticNewPost: Post = newPost({ message: variables.message, quantity: variables.photonValue, hash, author: wallet.address.value, postHash: null });
+            const optimisticNewPost: Post = newPost({ message: variables.message, quantity: Number(variables.photonValue), hash, author: wallet.address.value, postHash: null });
             const newFeedData = infiniteDataWithNewItem<Post>({ previousItems: context.previousFeed, newItem: optimisticNewPost });
             const newUserPostsData = infiniteDataWithNewItem<Post>({ previousItems: context.previousUserPosts, newItem: optimisticNewPost });
 

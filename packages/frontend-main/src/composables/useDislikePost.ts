@@ -9,7 +9,7 @@ import { useWallet } from './useWallet';
 
 interface DislikePostRequestMutation {
     post: Ref<Post>;
-    photonValue: number;
+    photonValue: string;
 }
 
 export function useDislikePost(
@@ -28,7 +28,7 @@ export function useDislikePost(
 
             const result = await wallet.dither.send(
                 'Dislike',
-                { args: [post.value.hash], amount: getAtomicsAmount(photonValue) },
+                { args: [post.value.hash], amount: getAtomicsAmount(photonValue, 'uphoton') },
             );
             if (!result.broadcast) {
                 txError.value = result.msg;

@@ -3,6 +3,7 @@ import { computed, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { Loader } from 'lucide-vue-next';
 
+import { useChain } from '@/composables/useChain';
 import { useCreateReply } from '@/composables/useCreateReply';
 import { usePost } from '@/composables/usePost';
 import { useReplies } from '@/composables/useReplies';
@@ -21,6 +22,8 @@ import UserAvatarUsername from '@/components/users/UserAvatarUsername.vue';
 import MainLayout from '@/layouts/MainLayout.vue';
 
 const route = useRoute();
+const { getMinimalAmount } = useChain();
+const minimalPhotonValue = getMinimalAmount('uphoton');
 const hash = computed(() =>
     typeof route.params.hash === 'string' ? route.params.hash : '',
 );
@@ -33,7 +36,7 @@ const POST_HASH_LEN = 64;
 const MAX_CHARS = 512 - ('dither.Reply("", "")'.length + POST_HASH_LEN);
 const reply = ref('');
 const isBalanceInputValid = ref(false);
-const photonValue = ref(1);
+const photonValue = ref(minimalPhotonValue);
 
 const { createReply,
     txError } = useCreateReply();

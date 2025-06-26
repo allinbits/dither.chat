@@ -66,7 +66,7 @@ function handleAction(type: keyof PopupState, post: Post) {
     </div>
 
     <div class="flex flex-wrap justify-end gap-x-1 ml-auto text-xs text-right  text-neutral-400">
-      <span class="w-[64px]">{{ getAmountFromAtomic(post.quantity) + ' ' }}</span>
+      <span class="w-[64px]">{{ getAmountFromAtomic(post.quantity.toString(), 'uphoton') + ' ' }}</span>
       <span>PHOTON</span>
     </div>
   </div>

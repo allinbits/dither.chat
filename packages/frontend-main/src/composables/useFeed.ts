@@ -26,7 +26,7 @@ export const feed = (queryClient: QueryClient) => {
         queryKey: ['feed', debouncedFilterAmount],
         queryFn: async ({ pageParam = 0 }) => {
             const res = await fetch(
-                `${apiRoot}/feed?offset=${pageParam}&limit=${LIMIT}&minQuantity=${getAtomicsAmount(debouncedFilterAmount.value)}`,
+                `${apiRoot}/feed?offset=${pageParam}&limit=${LIMIT}&minQuantity=${getAtomicsAmount(debouncedFilterAmount.value.toString(), 'uphoton')}`,
             );
             const json = (await res.json()) as { status: number; rows: Post[] };
             const rows = json.rows ?? [];
