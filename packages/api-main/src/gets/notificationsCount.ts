@@ -1,16 +1,21 @@
 import type { Cookie } from 'elysia';
 
 import { type Gets } from '@atomone/dither-api-types';
-import { and, eq, sql } from 'drizzle-orm';
+import { and, count, eq, sql } from 'drizzle-orm';
 
 import { getDatabase } from '../../drizzle/db';
 import { NotificationTable } from '../../drizzle/schema';
 import { verifyJWT } from '../shared/jwt';
 
 const getNotificationsCountStatement = getDatabase()
-    .select({ count: sql<number>`count(*)` })
+    .select({ count: count() })
     .from(NotificationTable)
-    .where(and(eq(NotificationTable.owner, sql.placeholder('owner')), eq(NotificationTable.was_read, false)))
+    .where(
+        and(
+            eq(NotificationTable.owner, sql.placeholder('owner')),
+            eq(NotificationTable.was_read, false),
+        ),
+    )
     .prepare('stmnt_get_notifications_count');
 
 export async function NotificationsCount(_query: typeof Gets.NotificationsCountQuery.static, auth: Cookie<string | undefined>) {
