@@ -41,7 +41,7 @@ const repliesGroups = computed(() => {
     <span v-else-if="!repliesGroups.length" class="self-center mt-4 text-md font-semibold text-base">{{
       $t('components.RepliesGroupsList.empty') }}</span>
 
-    <RepliesGroupItem v-else v-for="repliesGroup in repliesGroups" :key="repliesGroup.parent.hash"  :repliesGroup="repliesGroup" class="p-4" />
+    <RepliesGroupItem v-else v-for="repliesGroup in repliesGroups" :key="repliesGroup.parent.hash"  :repliesGroup="repliesGroup"/>
 
     <div v-if="isFetchingNextPage || hasNextPage" class="flex items-center justify-center my-4 px-4 h-[40px]">
       <Loader v-if="isFetchingNextPage" class="animate-spin " />

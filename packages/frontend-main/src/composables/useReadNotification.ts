@@ -8,6 +8,7 @@ import { notificationsCount } from './useNotificationsCount';
 import { useWallet } from './useWallet';
 
 import { useConfigStore } from '@/stores/useConfigStore';
+import { infiniteDataWithoutItem } from '@/utility/optimisticBuilders';
 interface FollowUserRequestMutation {
     notification: Notification;
 }
@@ -64,14 +65,10 @@ export function useReadNotification(
             const notificationsOpts = notifications({ userAddress: wallet.address });
             const notificationsCountOpts = notificationsCount({ userAddress: wallet.address });
 
-            const previousNotificationsPages = context.previousNotifications?.pages ?? [];
-            const newNotificationsPages = previousNotificationsPages.map(page =>
-                page.filter(notification => notification.hash !== variables.notification.hash),
-            );
-            const newNotificationsData: InfiniteData<Notification[], unknown> = {
-                pages: newNotificationsPages,
-                pageParams: context.previousNotifications?.pageParams ?? [0],
-            };
+            const newNotificationsData = infiniteDataWithoutItem<Notification>({
+                previousItems: context.previousNotifications,
+                predicate: notification => notification.hash === variables.notification.hash,
+            });
 
             queryClient.setQueryData(notificationsOpts.queryKey, newNotificationsData);
             queryClient.setQueryData(notificationsCountOpts.queryKey, context?.previousNotificationsCount - 1);

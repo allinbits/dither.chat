@@ -1,80 +1,75 @@
 <script setup lang="ts">
-import { Bell, Feather, House, Search, Settings, User } from 'lucide-vue-next';
+import { type RouteRecordNameGeneric, useRouter } from 'vue-router';
+import { Bell, House, Search, Settings, User } from 'lucide-vue-next';
 
-import { useNotificationsCount } from '@/composables/useNotificationsCount';
 import { usePopups } from '@/composables/usePopups';
 import { useWallet } from '@/composables/useWallet';
 
+import NotificationsCount from '@/components/notifications/NotificationsCount.vue';
 import { Button } from '@/components/ui/button';
-import WalletConnect from '@/components/wallet/WalletConnect.vue';
+import WalletConnectButton from '@/components/wallet/WalletConnectButton/WalletConnectButton.vue';
+import { cn } from '@/utility';
 
 const wallet = useWallet();
 const popups = usePopups();
-const { data: notificationsCount } = useNotificationsCount({ userAddress: wallet.address });
+const router = useRouter();
+const buttonClass = (routeName?: RouteRecordNameGeneric) => `flex items-center flex-row h-[52px] px-4 gap-3 rounded-sm hover:bg-accent active:bg-accent transition-colors ${!!routeName && router.currentRoute.value.name?.toString().startsWith(routeName.toString()) && 'bg-accent/60'}`;
+const buttonLabelClass = 'text-lg font-semibold';
 </script>
 
 <template>
-  <!-- TODO: Adjust style, buttons, etc -->
-  <header class="flex flex-col justify-between h-full w-full py-6 pl-6 pr-4">
-    <div class="flex flex-col justify-between gap-3 xl:gap-22 w-full xl:items-start items-end">
-      <span class="hidden xl:inline text-2xl font-semibold hover:underline">
-        <RouterLink to="/">Dither</RouterLink></span
-      >
+  <header class="flex flex-col justify-between h-full max-w-[270px] ml-auto pt-5 pb-6 pr-6">
+    <div class="flex flex-col gap-22">
 
-      <nav class="contents xl:flex flex-col gap-3">
-        <RouterLink to="/" class="flex flex-row items-center gap-3 hover:underline">
-          <div class="flex items-center justify-center h-[52px]">
-            <House class="size-6" />
-          </div>
-          <span class="hidden xl:inline text-lg font-semibold">Home</span>
+      <nav class="contents">
+        <RouterLink to="/" :class="buttonClass()">
+          <span class="text-2xl font-semibold">
+            Dither
+          </span>
         </RouterLink>
-        <RouterLink to="/explore" class="flex flex-row items-center gap-3 hover:underline">
-          <div class="flex items-center justify-center h-[52px]">
+
+        <div class="flex flex-col gap-3">
+          <RouterLink to="/" :class="buttonClass('Home')">
+            <House class="size-6"  />
+            <span :class="buttonLabelClass">Home</span>
+          </RouterLink>
+
+          <RouterLink to="/explore" :class="buttonClass('Explore')">
             <Search class="size-6" />
-          </div>
-          <span class="hidden xl:inline text-lg font-semibold">Explore</span>
-        </RouterLink>
-        <template v-if="wallet.loggedIn.value">
-          <RouterLink to="/notifications" class="flex  flex-row items-center gap-3 hover:underline">
-            <div class="flex items-center relative justify-center h-[52px]">
-              <div v-if="!!notificationsCount" class="flex items-center justify-center absolute top-1 left-3 h-[18px] min-w-[18px] px-1 rounded-full bg-red-500 border-1 border-background text-white text-xs font-medium  ">
-                {{ notificationsCount }}
-              </div>
-              <Bell class="size-6" />
-            </div>
-            <span class="hidden xl:inline text-lg font-semibold">Notifications</span>
+            <span :class="buttonLabelClass">Explore</span>
+          </RouterLink>
+
+          <RouterLink v-if="wallet.loggedIn.value" to="/notifications" :class="cn(buttonClass('Notifications'), 'relative')">
+            <NotificationsCount class="absolute top-1 left-3"/>
+            <Bell class="size-6" />
+            <span :class="buttonLabelClass">Notifications</span>
           </RouterLink>
 
           <RouterLink
+            v-if="wallet.loggedIn.value"
             :to="`/profile/${wallet.address.value}`"
-            class="flex flex-row items-center gap-3 hover:underline"
+            :class="buttonClass('Profile')"
           >
-            <div class="flex items-center justify-center h-[52px]">
-              <User class="size-6" />
-            </div>
-            <span class="hidden xl:inline text-lg font-semibold">My Profile</span>
+            <User class="size-6" />
+            <span :class="buttonLabelClass">My Profile</span>
           </RouterLink>
 
           <RouterLink
+            v-if="wallet.loggedIn.value"
             :to="`/settings`"
-            class="flex flex-row items-center gap-3 hover:underline"
+            :class="buttonClass('Settings')"
           >
-            <div class="flex items-center justify-center h-[52px]">
-              <Settings class="size-6" />
-            </div>
-            <span class="hidden xl:inline text-lg font-semibold">Settings</span>
+            <Settings class="size-6" />
+            <span :class="buttonLabelClass">Settings</span>
           </RouterLink>
-        </template>
+        </div>
       </nav>
 
-      <Button class="w-[207px] xl:inline hidden" @click="popups.show('newPost', {})" v-if="wallet.loggedIn.value">
+      <Button class="ml-4 w-[208px]" @click="popups.show('newPost', {})" v-if="wallet.loggedIn.value">
         {{ $t('components.Button.newPost') }}
       </Button>
-      <button class="h-[52px] xl:hidden inline" @click="popups.show('newPost', {})" v-if="wallet.loggedIn.value">
-        <Feather class="size-7" />
-      </button>
     </div>
 
-    <WalletConnect class="self-end xl:self-start" />
+    <WalletConnectButton/>
   </header>
 </template>
