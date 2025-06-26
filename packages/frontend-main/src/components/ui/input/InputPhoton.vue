@@ -27,17 +27,19 @@ const balanceAtomics = computed(() => {
     const balances = balanceFetcher.balances.value[wallet.address.value];
     return balances?.find(x => x.denom === 'uphoton')?.amount ?? '0';
 });
-const balance = computed(() => !decimals ? Decimal.zero(0) : Decimal.fromAtomics(balanceAtomics.value, decimals));
-const inputValue = computed(() =>
+const balanceDecimal = computed(() =>
+    !decimals ? Decimal.zero(0) : Decimal.fromAtomics(balanceAtomics.value, decimals),
+);
+const inputValueDecimal = computed(() =>
     !decimals ? Decimal.zero(0) : Decimal.fromUserInput(model.value?.toString() ?? min.value, decimals),
 );
-const balanceDiff = computed(() => balance.value.isGreaterThan(inputValue.value) ? balance.value.minus(inputValue.value) : 0);
+const balanceDiffDecimal = computed(() => balanceDecimal.value.isGreaterThan(inputValueDecimal.value) ? balanceDecimal.value.minus(inputValueDecimal.value) : Decimal.zero(0));
 
 watchEffect(() => {
     const value = model.value;
     if (!value) return emits('onValidityChange', false);
     try {
-        const enoughBalance = balance.value.isGreaterThanOrEqual(inputValue.value);
+        const enoughBalance = balanceDecimal.value.isGreaterThanOrEqual(inputValueDecimal.value);
         emits('onValidityChange', enoughBalance);
     }
     catch {
@@ -55,8 +57,8 @@ watchEffect(() => {
     </div>
     <span class="text-left text-sm">
       {{
-        Number(balanceDiff) >= 0
-          ? balanceDiff + ' PHOTON ' + $t('components.InputPhoton.available')
+        balanceDiffDecimal.isGreaterThanOrEqual(Decimal.zero(0))
+          ? balanceDiffDecimal + ' PHOTON ' + $t('components.InputPhoton.available')
           : $t('components.InputPhoton.notEnough')
       }}
     </span>

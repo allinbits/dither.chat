@@ -24,9 +24,9 @@ export const useChain = () => {
         return !decimals ? '0' : Decimal.fromUserInput(amount, decimals).atomics;
     };
 
-    const getAmountFromAtomic = (amount: string, coinMinimalDenom: string) => {
+    const getAmountFromAtomics = (atomicsAmount: string, coinMinimalDenom: string) => {
         const decimals = getCoinDecimals(coinMinimalDenom);
-        return !decimals ? '0' : Decimal.fromAtomics(amount, decimals).toString();
+        return !decimals ? '0' : Decimal.fromAtomics(atomicsAmount, decimals).toString();
     };
 
     return {
@@ -34,6 +34,6 @@ export const useChain = () => {
         getCoinDecimals,
         getMinimalAmount,
         getAtomicsAmount,
-        getAmountFromAtomic,
+        getAmountFromAtomics,
     };
 };

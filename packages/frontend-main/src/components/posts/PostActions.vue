@@ -13,15 +13,15 @@ import { cn } from '@/utility';
 import { formatCompactNumber } from '@/utility/text';
 
 defineProps<{ post: Post }>();
-const isXs = useMediaQuery('(max-width: 414px)');
-const buttonWrapperClass = 'flex-1 min-w-[68px]';
+const isXs = useMediaQuery('(max-width: 422px)');
+const buttonWrapperClass = 'flex-1 min-w-[70px]';
 const buttonClass = 'flex flex-row items-center gap-1 p-2 rounded-full hover:bg-accent active:bg-accent transition-colors';
 const buttonLabelClass = 'text-[#A2A2A9] text-xs font-medium';
 
 const wallet = useWallet();
 const popups = usePopups();
 const walletDialogStore = useWalletDialogStore();
-const { getAmountFromAtomic } = useChain();
+const { getAmountFromAtomics } = useChain();
 
 function handleAction(type: keyof PopupState, post: Post) {
     if (wallet.loggedIn.value) {
@@ -48,25 +48,26 @@ function handleAction(type: keyof PopupState, post: Post) {
     <div :class="buttonWrapperClass">
       <button :class="buttonClass" @click.stop="handleAction('like', post)">
         <ThumbsUp class="size-5" color="#A2A2A9" />
-        <span :class="buttonLabelClass">{{ formatCompactNumber(post.likes) }}</span>
+        <span :class="buttonLabelClass">{{ formatCompactNumber(post.likes_burnt) }}</span>
       </button>
     </div>
 
     <div :class="buttonWrapperClass">
       <button :class="buttonClass" @click.stop="handleAction('dislike', post)">
         <ThumbsDown class="size-5 scale-x-[-1]" color="#A2A2A9" />
-        <span :class="buttonLabelClass">{{ formatCompactNumber(post.dislikes) }}</span>
+        <span :class="buttonLabelClass">{{ formatCompactNumber(post.dislikes_burnt) }}</span>
       </button>
     </div>
 
     <div :class="buttonWrapperClass">
       <button :class="buttonClass" @click.stop="handleAction('flag', post)">
         <Flag class="size-5" color="#A2A2A9" />
+        <span :class="buttonLabelClass">{{ formatCompactNumber(post.flags_burnt) }}</span>
       </button>
     </div>
 
     <div class="flex flex-wrap justify-end gap-x-1 ml-auto text-xs text-right  text-neutral-400">
-      <span class="w-[64px]">{{ getAmountFromAtomic(post.quantity.toString(), 'uphoton') + ' ' }}</span>
+      <span class="w-[64px]">{{ getAmountFromAtomics(post.quantity.toString(), 'uphoton') + ' ' }}</span>
       <span>PHOTON</span>
     </div>
   </div>

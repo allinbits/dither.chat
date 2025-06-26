@@ -5,27 +5,24 @@ import { useChain } from '@/composables/useChain';
 
 import { Slider } from '@/components/ui/slider';
 import { useFiltersStore } from '@/stores/useFiltersStore';
+import { atomicsStringToNumber } from '@/utility/atomics';
 
 const store = useFiltersStore();
-const { getMinimalAmount, getCoinDecimals } = useChain();
+const { getMinimalAmount, getAmountFromAtomics } = useChain();
 
-const minimalAmount = Number(getMinimalAmount('uphoton'));
-const decimals = getCoinDecimals('uphoton');
+const minimalAmount = atomicsStringToNumber(getMinimalAmount('uphoton'));
 const min = computed(() => minimalAmount);
 const step = computed(() => minimalAmount);
 const maxExponent = 2; // maxExponent represents the maximum exponent for the slider: 10^maxExponent tokens
 const max = computed(() => Math.pow(10, maxExponent));
 
-const displayValue = computed(() => {
-    const amount = store.filterAmount;
-    return Number(amount.toFixed(decimals));
-});
+const displayValue = computed(() => getAmountFromAtomics(store.filterAmount.toString(), 'uphoton'));
 const sliderValue = computed({
     get: () => [inverseExponentialScale(store.filterAmount)],
     set: val => store.setFilterAmount(exponentialScale(val[0])),
 });
 
-function exponentialScale(value: number): number {
+function exponentialScale(value: number) {
     const t = value / max.value;
     const logMin = Math.log10(min.value);
     const logOne = 0;
@@ -39,7 +36,7 @@ function exponentialScale(value: number): number {
     return Math.round(result / min.value) * min.value;
 }
 
-function inverseExponentialScale(amount: number): number {
+function inverseExponentialScale(amount: number) {
     if (amount <= 0) return 0;
     const logAmount = Math.log10(amount);
     const logMin = Math.log10(min.value);

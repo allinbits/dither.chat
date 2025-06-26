@@ -7,6 +7,8 @@ import { useChain } from './useChain';
 import { post } from './usePost';
 import { useWallet } from './useWallet';
 
+import { addAtomics } from '@/utility/atomics';
+
 interface LikePostRequestMutation {
     post: Ref<Post>;
     photonValue: string;
@@ -54,11 +56,11 @@ export function useLikePost(
         },
         onSuccess: (_, variables, context) => {
             const postOpts = post({ hash: ref(variables.post.value.hash) });
-            // Post with updated likes count
+            // Post with updated likes_burnt
             const optimisticPost: Post
                 = context.previousPost
-                    ? { ...context.previousPost, likes: (context.previousPost.likes || 0) + 1 }
-                    : { ...variables.post.value, likes: (variables.post.value.likes || 0) + 1 };
+                    ? { ...context.previousPost, likes_burnt: addAtomics((context.previousPost.likes_burnt ?? 0).toString(), variables.photonValue) }
+                    : { ...variables.post.value, likes_burnt: addAtomics((variables.post.value.likes_burnt ?? 0).toString(), variables.photonValue) };
 
             queryClient.setQueryData(postOpts.queryKey, optimisticPost);
         },
