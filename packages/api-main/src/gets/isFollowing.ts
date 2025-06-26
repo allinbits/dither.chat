@@ -1,5 +1,5 @@
 import { type Gets } from '@atomone/dither-api-types';
-import { and, eq, sql } from 'drizzle-orm';
+import { and, eq, isNull, sql } from 'drizzle-orm';
 
 import { getDatabase } from '../../drizzle/db';
 import { FollowsTable } from '../../drizzle/schema';
@@ -7,7 +7,13 @@ import { FollowsTable } from '../../drizzle/schema';
 const statementIsFollowing = getDatabase()
     .select()
     .from(FollowsTable)
-    .where(and(eq(FollowsTable.following, sql.placeholder('following')), eq(FollowsTable.follower, sql.placeholder('follower'))))
+    .where(
+        and(
+            eq(FollowsTable.following, sql.placeholder('following')),
+            eq(FollowsTable.follower, sql.placeholder('follower')),
+            isNull(FollowsTable.removed_at),
+        ),
+    )
     .limit(1)
     .prepare('stmnt_is_following');
 

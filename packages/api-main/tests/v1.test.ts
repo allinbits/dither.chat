@@ -299,6 +299,14 @@ describe('v1', { sequential: true }, () => {
         assert.isOk(response?.status === 200, 'response was not okay');
     });
 
+    it('GET - /is-following (Not Following)', async () => {
+        const response = await get<{ status: number; rows: { hash: string; address: string }[] }>(
+            `is-following?follower=${addressUserA}&following=${addressUserB}`,
+        );
+
+        assert.isOk(response?.status === 404, 'follower was found, should not have follower');
+    });
+
     it('GET - /followers', async () => {
         const response = await get<{ status: number; rows: { hash: string; address: string }[] }>(
             `followers?address=${addressUserB}`,
@@ -926,6 +934,12 @@ describe('v1/notifications', async () => {
         // Login as userA
         bearerToken = await userLogin(walletA);
         assert.isOk(bearerToken.length >= 1, 'bearer was not passed back');
+
+        const notificationCount = await get<{
+            status: number;
+            count: number;
+        }>(`notifications-count?address=${walletA.publicKey}`, 'READ', bearerToken);
+        assert.isOk(notificationCount?.count === 1, 'notification count was not at least one');
 
         const notificationResponse = await get<{
             status: number;
