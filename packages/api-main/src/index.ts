@@ -51,15 +51,15 @@ export function startServer() {
         json: t.Optional(t.Boolean()),
     }) });
 
-    app.post('/post', ({ body }) => PostRequests.Post(body), { body: Posts.PostBody });
-    app.post('/reply', ({ body }) => PostRequests.Reply(body), { body: Posts.ReplyBody });
-    app.post('/follow', ({ body }) => PostRequests.Follow(body), { body: Posts.FollowBody });
-    app.post('/unfollow', ({ body }) => PostRequests.Unfollow(body), { body: Posts.UnfollowBody });
-    app.post('/like', ({ body }) => PostRequests.Like(body), { body: Posts.LikeBody });
-    app.post('/dislike', ({ body }) => PostRequests.Dislike(body), { body: Posts.DislikeBody });
-    app.post('/flag', ({ body }) => PostRequests.Flag(body), { body: Posts.FlagBody });
-    app.post('/post-remove', ({ body }) => PostRequests.PostRemove(body), { body: Posts.PostRemoveBody });
-    app.post('/update-state', ({ body }) => PostRequests.UpdateState(body), { body: t.Object({ last_block: t.String() }) });
+    app.post('/post', ({ body, headers }) => PostRequests.Post(body, headers), { body: Posts.PostBody });
+    app.post('/reply', ({ body, headers }) => PostRequests.Reply(body, headers), { body: Posts.ReplyBody });
+    app.post('/follow', ({ body, headers }) => PostRequests.Follow(body, headers), { body: Posts.FollowBody });
+    app.post('/unfollow', ({ body, headers }) => PostRequests.Unfollow(body, headers), { body: Posts.UnfollowBody });
+    app.post('/like', ({ body, headers }) => PostRequests.Like(body, headers), { body: Posts.LikeBody });
+    app.post('/dislike', ({ body, headers }) => PostRequests.Dislike(body, headers), { body: Posts.DislikeBody });
+    app.post('/flag', ({ body, headers }) => PostRequests.Flag(body, headers), { body: Posts.FlagBody });
+    app.post('/post-remove', ({ body, headers }) => PostRequests.PostRemove(body, headers), { body: Posts.PostRemoveBody });
+    app.post('/update-state', ({ body, headers }) => PostRequests.UpdateState(body, headers), { body: t.Object({ last_block: t.String() }) });
     app.post('/mod/post-remove', ({ body, cookie: { auth } }) => PostRequests.ModRemovePost(body, auth), {
         body: Posts.ModRemovePostBody,
     });

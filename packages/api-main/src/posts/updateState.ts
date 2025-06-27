@@ -1,7 +1,12 @@
 import { getDatabase } from '../../drizzle/db';
 import { ReaderState } from '../../drizzle/schema';
+import { isReaderAuthorizationValid } from '../utility';
 
-export async function UpdateState(body: { last_block: string }) {
+export async function UpdateState(body: { last_block: string }, headers: Record<string, string | undefined>) {
+    if (!isReaderAuthorizationValid(headers)) {
+        return { status: 401, error: 'Unauthorized to make write request' };
+    }
+
     try {
         await getDatabase()
             .insert(ReaderState)

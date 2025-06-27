@@ -3,6 +3,9 @@ import type * as T from '../types/index';
 import { sql } from 'drizzle-orm';
 
 import { getDatabase } from '../../drizzle/db';
+import { useConfig } from '../config';
+
+const { AUTH } = useConfig();
 
 export function getTransferMessage(messages: Array<T.MsgGeneric>) {
     const msgTransfer = messages.find(msg => msg['@type'] === '/cosmos.bank.v1beta1.MsgSend');
@@ -28,6 +31,14 @@ export function getTransferQuantities(messages: Array<T.MsgGeneric>, denom = 'ua
     }
 
     return amount.toString();
+}
+
+export function isReaderAuthorizationValid(headers: Record<string, string | undefined>) {
+    if (!headers['Authorization']) {
+        return false;
+    }
+
+    return headers['Authorization'] === AUTH;
 }
 
 export async function getJsonbArrayCount(hash: string, tableName: string) {
