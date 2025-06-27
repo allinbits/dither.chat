@@ -3,7 +3,6 @@ import type { Post } from 'api-main/types/feed';
 import { type Ref, ref } from 'vue';
 import { useMutation, useQueryClient } from '@tanstack/vue-query';
 
-import { useChain } from './useChain';
 import { post } from './usePost';
 import { useWallet } from './useWallet';
 
@@ -11,12 +10,11 @@ import { addAtomics } from '@/utility/atomics';
 
 interface DislikePostRequestMutation {
     post: Ref<Post>;
-    photonValue: string;
+    amountAtomics: string;
 }
 
 export function useDislikePost(
 ) {
-    const { getAtomicsAmount } = useChain();
     const queryClient = useQueryClient();
     const wallet = useWallet();
     const txError = ref<string>();
@@ -24,13 +22,13 @@ export function useDislikePost(
     const {
         mutateAsync,
     } = useMutation({
-        mutationFn: async ({ post, photonValue }: DislikePostRequestMutation) => {
+        mutationFn: async ({ post, amountAtomics }: DislikePostRequestMutation) => {
             txError.value = undefined;
             txSuccess.value = undefined;
 
             const result = await wallet.dither.send(
                 'Dislike',
-                { args: [post.value.hash], amount: getAtomicsAmount(photonValue, 'uphoton') },
+                { args: [post.value.hash], amount: amountAtomics },
             );
             if (!result.broadcast) {
                 txError.value = result.msg;
@@ -58,8 +56,8 @@ export function useDislikePost(
             // Post with updated dislikes_burnt
             const optimisticPost: Post
                 = context.previousPost
-                    ? { ...context.previousPost, dislikes_burnt: addAtomics((context.previousPost.dislikes_burnt ?? 0).toString(), variables.photonValue) }
-                    : { ...variables.post.value, dislikes_burnt: addAtomics((variables.post.value.dislikes_burnt ?? 0).toString(), variables.photonValue) };
+                    ? { ...context.previousPost, dislikes_burnt: addAtomics((context.previousPost.dislikes_burnt ?? 0).toString(), variables.amountAtomics) }
+                    : { ...variables.post.value, dislikes_burnt: addAtomics((variables.post.value.dislikes_burnt ?? 0).toString(), variables.amountAtomics) };
 
             queryClient.setQueryData(postOpts.queryKey, optimisticPost);
         },

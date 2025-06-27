@@ -3,7 +3,6 @@ import type { FollowUser } from 'api-main/types/follows';
 import { type Ref, ref } from 'vue';
 import { type InfiniteData, useMutation, useQueryClient } from '@tanstack/vue-query';
 
-import { useChain } from './useChain';
 import { following } from './useFollowing';
 import { followingPosts } from './useFollowingPosts';
 import { isFollowing } from './useIsFollowing';
@@ -13,12 +12,11 @@ import { infiniteDataWithoutItem } from '@/utility/optimisticBuilders';
 
 interface UnfollowUserRequestMutation {
     userAddress: Ref<string>;
-    photonValue: string;
+    amountAtomics: string;
 }
 
 export function useUnfollowUser(
 ) {
-    const { getAtomicsAmount } = useChain();
     const queryClient = useQueryClient();
     const wallet = useWallet();
     const txError = ref<string>();
@@ -26,13 +24,13 @@ export function useUnfollowUser(
     const {
         mutateAsync,
     } = useMutation({
-        mutationFn: async ({ userAddress, photonValue }: UnfollowUserRequestMutation) => {
+        mutationFn: async ({ userAddress, amountAtomics }: UnfollowUserRequestMutation) => {
             txError.value = undefined;
             txSuccess.value = undefined;
 
             const result = await wallet.dither.send(
                 'Unfollow',
-                { args: [userAddress.value], amount: getAtomicsAmount(photonValue, 'uphoton') },
+                { args: [userAddress.value], amount: amountAtomics },
             );
 
             if (!result.broadcast) {

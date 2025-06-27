@@ -9,7 +9,6 @@ import { post } from './usePost';
 
 import { useConfigStore } from '@/stores/useConfigStore';
 import { useFiltersStore } from '@/stores/useFiltersStore';
-
 const LIMIT = 15;
 
 interface Params {
@@ -20,13 +19,13 @@ export const replies = (params: Params) => {
     const configStore = useConfigStore();
     const apiRoot = configStore.envConfig.apiRoot ?? 'http://localhost:3000';
 
-    const { filterAmount } = storeToRefs(useFiltersStore());
-    const debouncedFilterAmount = refDebounced<number>(filterAmount, 600);
+    const { filterAmountAtomics } = storeToRefs(useFiltersStore());
+    const debouncedFilterAmount = refDebounced<string>(filterAmountAtomics, 600);
     return infiniteQueryOptions({
         queryKey: ['replies', params.hash, debouncedFilterAmount],
         queryFn: async ({ pageParam = 0 }) => {
             const queryClient = useQueryClient();
-            const res = await fetch(`${apiRoot}/replies?hash=${params.hash.value}&offset=${pageParam}&limit=${LIMIT}&minQuantity=${Math.trunc(debouncedFilterAmount.value)}`);
+            const res = await fetch(`${apiRoot}/replies?hash=${params.hash.value}&offset=${pageParam}&limit=${LIMIT}&minQuantity=${debouncedFilterAmount.value}`);
             const json = (await res.json()) as { status: number; rows: Post[] };
             const rows = json.rows ?? [];
             // Update the query cache with the reply posts

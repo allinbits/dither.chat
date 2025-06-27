@@ -16,11 +16,11 @@ export function useSearchPosts(minQueryLength: number = 3, debounceMs: number = 
     const { t } = useI18n();
     const query = ref<string>('');
     const debouncedQuery = refDebounced<string>(query, debounceMs);
-    const { filterAmount } = storeToRefs(useFiltersStore());
-    const debouncedFilterAmount = refDebounced<number>(filterAmount, 600);
+    const { filterAmountAtomics } = storeToRefs(useFiltersStore());
+    const debouncedFilterAmount = refDebounced<string>(filterAmountAtomics, 600);
 
     const searchPosts = async ({ queryKey, signal }: { queryKey: string[]; signal: AbortSignal }) => {
-        const rawResponse = await fetch(`${apiRoot}/search?text=${queryKey[1]}&minQuantity=${Math.trunc(debouncedFilterAmount.value)}`, { signal });
+        const rawResponse = await fetch(`${apiRoot}/search?text=${queryKey[1]}&minQuantity=${debouncedFilterAmount.value}`, { signal });
         const res = (await rawResponse.json()) as { status: number; rows: Post[] };
 
         if (res.status !== 200) {

@@ -1,21 +1,24 @@
 import { ref } from 'vue';
+import { Decimal } from '@cosmjs/math';
 import { defineStore } from 'pinia';
+
+import { fractionalDigits } from '@/utility/atomics';
 
 export const useFiltersStore = defineStore(
     'filtersStateStore',
     () => {
-        const filterAmount = ref(0);
+        const filterAmountAtomics = ref(Decimal.fromAtomics('1', fractionalDigits).atomics);
 
-        const setFilterAmount = (newAmount: number) => {
-            filterAmount.value = newAmount;
+        const setFilterAmountAtomics = (newAmount: string) => {
+            filterAmountAtomics.value = newAmount;
         };
 
-        return { setFilterAmount, filterAmount };
+        return { setFilterAmountAtomics, filterAmountAtomics };
     },
     {
         persist: {
             storage: sessionStorage,
-            pick: ['filterAmount'],
+            pick: ['filterAmountAtomics'],
         },
     },
 );

@@ -1,10 +1,12 @@
 import { computed, type Ref, ref, watch } from 'vue';
+import { Decimal } from '@cosmjs/math';
 
 import { useBalanceFetcher } from './useBalanceFetcher';
-import { useChain } from './useChain';
 import { type PopupState, usePopups } from './usePopups';
 import { useTxNotification } from './useTxNotification';
 import { useWallet } from './useWallet';
+
+import { fractionalDigits } from '@/utility/atomics';
 
 export const useTxDialog = <T>(
     dialogType: keyof PopupState,
@@ -12,9 +14,7 @@ export const useTxDialog = <T>(
     txSuccess: Ref<string | undefined>,
     txError: Ref<string | undefined>,
 ) => {
-    const { getMinimalAmount } = useChain();
-    const minimalPhotonValue = getMinimalAmount('uphoton');
-    const photonValue = ref(minimalPhotonValue);
+    const inputPhotonModel = ref(Decimal.fromAtomics('1', fractionalDigits).toFloatApproximation());
 
     const popups = usePopups();
     const popupState = computed(() => popups.state[dialogType]) as Ref<T>;
@@ -33,7 +33,7 @@ export const useTxDialog = <T>(
         popups.state[dialogType] = null;
         txError.value = undefined;
         txSuccess.value = undefined;
-        photonValue.value = minimalPhotonValue;
+        inputPhotonModel.value = Decimal.fromAtomics('1', fractionalDigits).toFloatApproximation();
     };
 
     watch([wallet.loggedIn, wallet.address], async () => {
@@ -44,11 +44,15 @@ export const useTxDialog = <T>(
         balanceFetcher.updateAddress(wallet.address.value);
     });
 
+    watch([inputPhotonModel], () => {
+        console.log(inputPhotonModel.value);
+    });
+
     return {
         isProcessing,
         isShown,
         popupState,
-        photonValue,
+        inputPhotonModel,
         handleClose,
     };
 };

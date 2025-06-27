@@ -3,47 +3,44 @@ import { computed, watchEffect } from 'vue';
 import { Decimal } from '@cosmjs/math';
 
 import { useBalanceFetcher } from '@/composables/useBalanceFetcher';
-import { useChain } from '@/composables/useChain';
 import { useWallet } from '@/composables/useWallet';
 
 import Input from './Input.vue';
 
-defineProps<{ modelValue: string | number | undefined }>();
-const emits = defineEmits<{ onValidityChange: [isValid: boolean] }>();
-const model = defineModel<string | number | undefined>();
+import { fractionalDigits } from '@/utility/atomics';
+import { formatCompactNumber } from '@/utility/text';
 
-const { getCoinDecimals, getMinimalAmount } = useChain();
+const emit = defineEmits(['update:modelValue', 'onValidityChange']);
+
+const min = computed(() => Decimal.fromAtomics('1', fractionalDigits).toFloatApproximation());
+const step = computed(() => Decimal.fromAtomics('1', fractionalDigits).toFloatApproximation());
+const max = computed(() => Decimal.fromUserInput('5000000', fractionalDigits).toFloatApproximation());
+const model = defineModel<number>({ default: Decimal.fromAtomics('1', fractionalDigits).toFloatApproximation() });
+
 const wallet = useWallet();
 const balanceFetcher = useBalanceFetcher();
-
-const minimalAmount = getMinimalAmount('uphoton');
-const decimals = getCoinDecimals('uphoton');
-const min = computed(() => minimalAmount);
-const max = computed(() => 5_000_000);
-const step = computed(() => minimalAmount);
 
 const balanceAtomics = computed(() => {
     if (!wallet.loggedIn.value) return '0';
     const balances = balanceFetcher.balances.value[wallet.address.value];
     return balances?.find(x => x.denom === 'uphoton')?.amount ?? '0';
 });
-const balanceDecimal = computed(() =>
-    !decimals ? Decimal.zero(0) : Decimal.fromAtomics(balanceAtomics.value, decimals),
+const balanceDecimal = computed(() => Decimal.fromAtomics(balanceAtomics.value, fractionalDigits));
+const hasEnoughBalance = computed(() =>
+    balanceDecimal.value.isGreaterThanOrEqual(
+        Decimal.fromUserInput(model.value.toString(), fractionalDigits),
+    ),
 );
-const inputValueDecimal = computed(() =>
-    !decimals ? Decimal.zero(0) : Decimal.fromUserInput(model.value?.toString() ?? min.value, decimals),
-);
-const balanceDiffDecimal = computed(() => balanceDecimal.value.isGreaterThan(inputValueDecimal.value) ? balanceDecimal.value.minus(inputValueDecimal.value) : Decimal.zero(0));
+const balanceDiffDisplay = computed(() => formatCompactNumber(balanceDecimal.value.minus(Decimal.fromUserInput(model.value.toString(), fractionalDigits)).toFloatApproximation()));
 
 watchEffect(() => {
     const value = model.value;
-    if (!value) return emits('onValidityChange', false);
+    if (!value) return emit('onValidityChange', false);
     try {
-        const enoughBalance = balanceDecimal.value.isGreaterThanOrEqual(inputValueDecimal.value);
-        emits('onValidityChange', enoughBalance);
+        emit('onValidityChange', hasEnoughBalance.value);
     }
     catch {
-        emits('onValidityChange', false);
+        emit('onValidityChange', false);
     }
 });
 </script>
@@ -51,14 +48,21 @@ watchEffect(() => {
 <template>
   <div class="flex flex-col w-full gap-2">
     <div class="flex flex-row gap-4 items-center w-full">
-      <Input v-model="model" :placeholder="$t('components.InputPhoton.placeholder')" type="number" :min="min"
-             :step="step" :max="max" autocomplete="off" />
+      <Input
+        v-model="model"
+        type="number"
+        :min="min"
+        :step="step"
+        :max="max"
+        autocomplete="off"
+        :placeholder="$t('components.InputPhoton.placeholder')"
+      />
       <span class="dark:text-white">PHOTON</span>
     </div>
     <span class="text-left text-sm">
       {{
-        balanceDiffDecimal.isGreaterThanOrEqual(Decimal.zero(0))
-          ? balanceDiffDecimal + ' PHOTON ' + $t('components.InputPhoton.available')
+        hasEnoughBalance
+          ? balanceDiffDisplay + ' PHOTON ' + $t('components.InputPhoton.available')
           : $t('components.InputPhoton.notEnough')
       }}
     </span>

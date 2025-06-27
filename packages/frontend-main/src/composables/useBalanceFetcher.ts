@@ -1,13 +1,13 @@
 import { ref } from 'vue';
 
-import { useChain } from './useChain';
+import { getChainConfigLazy } from '@/utility/getChainConfigLazy';
 
 type BalanceData = { [address: string]: Array<{ amount: string; denom: string }> };
 
 const balances = ref<BalanceData>({});
 
 export function useBalanceFetcher() {
-    const { chainConfig } = useChain();
+    const chainConfig = getChainConfigLazy();
 
     const updateAddress = async (address: string) => {
         const results = await fetch(

@@ -9,11 +9,11 @@ import { getOfflineSigner } from '@cosmostation/cosmos-client';
 import { storeToRefs } from 'pinia';
 
 import { useBalanceFetcher } from './useBalanceFetcher';
-import { useChain } from './useChain';
 
 import { useConfigStore } from '@/stores/useConfigStore';
 import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
 import { useWalletStateStore } from '@/stores/useWalletStateStore';
+import { getChainConfigLazy } from '@/utility/getChainConfigLazy';
 
 export enum Wallets {
     keplr = 'Keplr',
@@ -58,7 +58,7 @@ const isCredentialsValid = async () => {
 };
 
 const useWalletInstance = () => {
-    const { chainConfig: chainInfo } = useChain();
+    const chainInfo = getChainConfigLazy();
     const configStore = useConfigStore();
     const balanceFetcher = useBalanceFetcher();
 

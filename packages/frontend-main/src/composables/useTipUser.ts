@@ -1,25 +1,23 @@
 import { type Ref, ref } from 'vue';
 import { useMutation } from '@tanstack/vue-query';
 
-import { useChain } from './useChain';
 import { useWallet } from './useWallet';
 
 interface TipUserRequestMutation {
     userAddress: Ref<string>;
-    photonValue: string;
+    amountAtomics: string;
 }
 
 export function useTipUser() {
-    const { getAtomicsAmount } = useChain();
     const wallet = useWallet();
     const txError = ref<string>();
     const txSuccess = ref<string>();
     const { mutateAsync } = useMutation({
-        mutationFn: async ({ userAddress, photonValue }: TipUserRequestMutation) => {
+        mutationFn: async ({ userAddress, amountAtomics }: TipUserRequestMutation) => {
             txError.value = undefined;
             txSuccess.value = undefined;
 
-            const result = await wallet.dither.tipUser(userAddress.value, getAtomicsAmount(photonValue, 'uphoton'));
+            const result = await wallet.dither.tipUser(userAddress.value, amountAtomics);
             if (!result.broadcast) {
                 txError.value = result.msg;
                 throw new Error(result.msg);

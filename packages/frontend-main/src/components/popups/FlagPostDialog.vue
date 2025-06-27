@@ -2,6 +2,7 @@
 import type { Post } from 'api-main/types/feed';
 
 import { computed, ref } from 'vue';
+import { Decimal } from '@cosmjs/math';
 import { Loader } from 'lucide-vue-next';
 
 import { useFlagPost } from '@/composables/useFlagPost';
@@ -15,13 +16,14 @@ import Username from '../users/Username.vue';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import InputPhoton from '@/components/ui/input/InputPhoton.vue';
+import { fractionalDigits } from '@/utility/atomics';
 
 const isBalanceInputValid = ref(false);
 const { flagPost, txError, txSuccess } = useFlagPost();
 
 const {
     isProcessing,
-    isShown, photonValue, popupState: flag, handleClose } = useTxDialog<Post>('flag', 'Flag', txSuccess, txError);
+    isShown, inputPhotonModel, popupState: flag, handleClose } = useTxDialog<Post>('flag', 'Flag', txSuccess, txError);
 
 const canSubmit = computed(() => {
     return isBalanceInputValid.value;
@@ -35,7 +37,7 @@ async function handleSumbit() {
     if (!canSubmit.value || !flag.value) {
         return;
     }
-    await flagPost({ post: ref(flag.value), photonValue: photonValue.value });
+    await flagPost({ post: ref(flag.value), amountAtomics: Decimal.fromUserInput(inputPhotonModel.value.toString(), fractionalDigits).atomics });
     handleClose();
 }
 </script>
@@ -58,7 +60,7 @@ async function handleSumbit() {
 
       <!-- Transaction Form -->
       <div class="flex flex-col w-full gap-4" v-if="!isProcessing && !txSuccess">
-        <InputPhoton v-model="photonValue" @on-validity-change="handleInputValidity" />
+        <InputPhoton v-model="inputPhotonModel" @on-validity-change="handleInputValidity" />
         <span v-if="txError" class="text-red-500 text-left text-xs">{{ txError }}</span>
         <Button class="w-full" :disabled="!isBalanceInputValid" @click="handleSumbit">
           {{ $t('components.Button.submit') }}

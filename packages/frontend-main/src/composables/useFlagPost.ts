@@ -3,7 +3,6 @@ import type { Post } from 'api-main/types/feed';
 import { type Ref, ref } from 'vue';
 import { useMutation, useQueryClient } from '@tanstack/vue-query';
 
-import { useChain } from './useChain';
 import { post } from './usePost';
 import { useWallet } from './useWallet';
 
@@ -11,26 +10,25 @@ import { addAtomics } from '@/utility/atomics';
 
 interface FlagPostRequestMutation {
     post: Ref<Post>;
-    photonValue: string;
+    amountAtomics: string;
 }
 
 export function useFlagPost(
 ) {
     const queryClient = useQueryClient();
-    const { getAtomicsAmount } = useChain();
     const wallet = useWallet();
     const txError = ref<string>();
     const txSuccess = ref<string>();
     const {
         mutateAsync,
     } = useMutation({
-        mutationFn: async ({ post, photonValue }: FlagPostRequestMutation) => {
+        mutationFn: async ({ post, amountAtomics }: FlagPostRequestMutation) => {
             txError.value = undefined;
             txSuccess.value = undefined;
 
             const result = await wallet.dither.send(
                 'Flag',
-                { args: [post.value.hash], amount: getAtomicsAmount(photonValue, 'uphoton') },
+                { args: [post.value.hash], amount: amountAtomics },
             );
 
             if (!result.broadcast) {
@@ -62,8 +60,8 @@ export function useFlagPost(
             // Post with updated flags_burnt
             const optimisticPost: Post
                 = context.previousPost
-                    ? { ...context.previousPost, flags_burnt: addAtomics((context.previousPost.flags_burnt ?? 0).toString(), variables.photonValue) }
-                    : { ...variables.post.value, flags_burnt: addAtomics((variables.post.value.flags_burnt ?? 0).toString(), variables.photonValue) };
+                    ? { ...context.previousPost, flags_burnt: addAtomics((context.previousPost.flags_burnt ?? 0).toString(), variables.amountAtomics) }
+                    : { ...variables.post.value, flags_burnt: addAtomics((variables.post.value.flags_burnt ?? 0).toString(), variables.amountAtomics) };
 
             queryClient.setQueryData(postOpts.queryKey, optimisticPost);
         },

@@ -1,3 +1,5 @@
+import { Decimal } from '@cosmjs/math';
+
 export function shorten(text: string, start = 8, end = 8) {
     if (text.length <= 20) {
         return text;
@@ -13,4 +15,9 @@ export function formatCompactNumber(num: number | null) {
     if (num >= 1e6) return (num / 1e6).toFixed(1).replace(/\.0$/, '') + 'M';
     if (num >= 1e3) return (num / 1e3).toFixed(1).replace(/\.0$/, '') + 'K';
     return num.toString();
+}
+
+export function formatCompactAtomics(amountAtomics: string | number | null, fractionalDigits: number) {
+    if (!amountAtomics) return '0';
+    return formatCompactNumber(Decimal.fromAtomics(amountAtomics.toString(), fractionalDigits).toFloatApproximation());
 }
