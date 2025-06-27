@@ -4,6 +4,8 @@ import type { ActionWithData, ResponseStatus } from '../types/index';
 
 import { extractMemoContent } from '@atomone/chronostate';
 
+import { useConfig } from '../config/index';
+
 declare module '@atomone/chronostate' {
     export namespace MemoExtractor {
         export interface TypeMap {
@@ -12,6 +14,7 @@ declare module '@atomone/chronostate' {
     }
 }
 
+const { AUTH } = useConfig();
 const apiRoot = process.env.API_ROOT ?? 'http://localhost:3000';
 
 export async function Unfollow(action: ActionWithData): Promise<ResponseStatus> {
@@ -29,6 +32,7 @@ export async function Unfollow(action: ActionWithData): Promise<ResponseStatus> 
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
+                'Authorization': AUTH,
             },
             body: JSON.stringify(postBody),
         });

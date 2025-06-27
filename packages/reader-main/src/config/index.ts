@@ -2,7 +2,7 @@ import type { Config } from '@atomone/chronostate/dist/types';
 
 let config: Config & { AUTH: string };
 
-export function useConfig(): Config {
+export function useConfig(): typeof config {
     if (typeof config !== 'undefined') {
         return config;
     }
