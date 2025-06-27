@@ -34,11 +34,11 @@ export function getTransferQuantities(messages: Array<T.MsgGeneric>, denom = 'ua
 }
 
 export function isReaderAuthorizationValid(headers: Record<string, string | undefined>) {
-    if (!headers['Authorization']) {
+    if (!headers['authorization']) {
         return false;
     }
 
-    return headers['Authorization'] === AUTH;
+    return headers['authorization'] === AUTH;
 }
 
 export async function getJsonbArrayCount(hash: string, tableName: string) {
