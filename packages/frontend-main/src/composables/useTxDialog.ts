@@ -44,10 +44,6 @@ export const useTxDialog = <T>(
         balanceFetcher.updateAddress(wallet.address.value);
     });
 
-    watch([inputPhotonModel], () => {
-        console.log(inputPhotonModel.value);
-    });
-
     return {
         isProcessing,
         isShown,

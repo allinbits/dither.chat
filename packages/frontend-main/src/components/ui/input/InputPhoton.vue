@@ -14,8 +14,7 @@ const emit = defineEmits(['update:modelValue', 'onValidityChange']);
 
 const min = computed(() => Decimal.fromAtomics('1', fractionalDigits).toFloatApproximation());
 const step = computed(() => Decimal.fromAtomics('1', fractionalDigits).toFloatApproximation());
-const max = computed(() => Decimal.fromUserInput('5000000', fractionalDigits).toFloatApproximation());
-const model = defineModel<number>({ default: Decimal.fromAtomics('1', fractionalDigits).toFloatApproximation() });
+const model = defineModel<number | string>({ default: Decimal.fromAtomics('1', fractionalDigits).toFloatApproximation() });
 
 const wallet = useWallet();
 const balanceFetcher = useBalanceFetcher();
@@ -33,6 +32,25 @@ const hasEnoughBalance = computed(() =>
 );
 const balanceDiffDisplay = computed(() => formatCompactNumber(balanceDecimal.value.minus(Decimal.fromUserInput(model.value.toString(), fractionalDigits)).toFloatApproximation()));
 
+// Truncate the input value to respect fractionalDigits
+function sanitizeDecimals(value: number | string) {
+    const num = typeof value === 'string' ? parseFloat(value) : value;
+    if (isNaN(num)) return NaN;
+    const factor = Math.pow(10, fractionalDigits);
+    return Math.floor(num * factor) / factor;
+}
+function onInput(val: string | number) {
+    const sanitized = sanitizeDecimals(val);
+    if (isNaN(sanitized)) return;
+    model.value = sanitized;
+}
+// Prevent non-numeric
+function onKeydown(e: KeyboardEvent) {
+    if (['e', 'E', '+', '-'].includes(e.key)) {
+        e.preventDefault();
+    }
+}
+
 watchEffect(() => {
     const value = model.value;
     if (!value) return emit('onValidityChange', false);
@@ -49,13 +67,14 @@ watchEffect(() => {
   <div class="flex flex-col w-full gap-2">
     <div class="flex flex-row gap-4 items-center w-full">
       <Input
-        v-model="model"
         type="number"
-        :min="min"
-        :step="step"
-        :max="max"
         autocomplete="off"
         :placeholder="$t('components.InputPhoton.placeholder')"
+        :modelValue="model"
+        :min="min"
+        :step="step"
+        @update:modelValue="onInput"
+        @keydown="onKeydown"
       />
       <span class="dark:text-white">PHOTON</span>
     </div>

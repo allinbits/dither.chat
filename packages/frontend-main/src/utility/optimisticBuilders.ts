@@ -3,7 +3,7 @@ import type { Post } from 'api-main/types/feed';
 import type { FollowUser } from 'api-main/types/follows';
 
 interface NewPostParams {
-    message: string; hash: string; postHash: string | null; author: string; quantity: number;
+    message: string; hash: string; postHash: string | null; author: string; quantity: bigint;
 }
 
 interface NewFollowUserParams {

@@ -60,8 +60,8 @@ export function useFlagPost(
             // Post with updated flags_burnt
             const optimisticPost: Post
                 = context.previousPost
-                    ? { ...context.previousPost, flags_burnt: addAtomics((context.previousPost.flags_burnt ?? 0).toString(), variables.amountAtomics) }
-                    : { ...variables.post.value, flags_burnt: addAtomics((variables.post.value.flags_burnt ?? 0).toString(), variables.amountAtomics) };
+                    ? { ...context.previousPost, flags_burnt: BigInt(addAtomics((context.previousPost.flags_burnt ?? 0).toString(), variables.amountAtomics)) }
+                    : { ...variables.post.value, flags_burnt: BigInt(addAtomics((variables.post.value.flags_burnt ?? 0).toString(), variables.amountAtomics)) };
 
             queryClient.setQueryData(postOpts.queryKey, optimisticPost);
         },

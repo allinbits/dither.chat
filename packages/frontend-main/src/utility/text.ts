@@ -17,7 +17,7 @@ export function formatCompactNumber(num: number | null) {
     return num.toString();
 }
 
-export function formatCompactAtomics(amountAtomics: string | number | null, fractionalDigits: number) {
+export function formatCompactAtomics(amountAtomics: string | bigint | null, fractionalDigits: number) {
     if (!amountAtomics) return '0';
     return formatCompactNumber(Decimal.fromAtomics(amountAtomics.toString(), fractionalDigits).toFloatApproximation());
 }

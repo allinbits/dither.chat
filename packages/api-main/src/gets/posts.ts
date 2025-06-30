@@ -21,7 +21,7 @@ const statement = getDatabase()
 export async function Posts(query: typeof Gets.PostsQuery.static) {
     let limit = typeof query.limit !== 'undefined' ? Number(query.limit) : 100;
     const offset = typeof query.offset !== 'undefined' ? Number(query.offset) : 0;
-    const minQuantity = typeof query.minQuantity !== 'undefined' ? query.minQuantity : BigInt(0);
+    const minQuantity = typeof query.minQuantity !== 'undefined' ? BigInt(query.minQuantity) : BigInt(0);
 
     if (limit > 100) {
         limit = 100;
@@ -67,7 +67,7 @@ const followingPostsStatement = getDatabase()
 export async function FollowingPosts(query: typeof Gets.PostsQuery.static) {
     let limit = typeof query.limit !== 'undefined' ? Number(query.limit) : 100;
     const offset = typeof query.offset !== 'undefined' ? Number(query.offset) : 0;
-    const minQuantity = typeof query.minQuantity !== 'undefined' ? query.minQuantity : BigInt(0);
+    const minQuantity = typeof query.minQuantity !== 'undefined' ? BigInt(query.minQuantity) : BigInt(0);
 
     if (limit > 100) {
         limit = 100;
