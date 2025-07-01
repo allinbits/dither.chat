@@ -19,7 +19,7 @@ const flatPosts = computed(() => data.value?.pages.flat() ?? []);
 </script>
 
 <template>
-  <div :class="cn('flex flex-col w-full', flatPosts.length && 'border-t')">
+  <div :class="cn('flex flex-col w-full !transition-[border-color]', flatPosts.length && 'border-t')">
     <Loader v-if="isLoading" class="animate-spin w-full mt-10" />
 
     <span v-else-if="!flatPosts.length" class="self-center mt-4 text-md font-semibold text-base">{{

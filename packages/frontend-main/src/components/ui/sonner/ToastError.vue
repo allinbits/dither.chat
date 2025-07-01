@@ -19,10 +19,10 @@ const { t } = useI18n();
       <X class="text-red-500" />
     </div>
     <div>
-      <div class="font-semibold text-sm text-gray-900 dark:text-gray-100">
+      <div class="font-semibold text-sm text-gray-900 dark:text-gray-100 !transition-[color]">
         {{ t('components.Toast.fail', { txLabel: txLabel }) }}
       </div>
-      <div class="text-sm text-gray-700 dark:text-gray-300 mt-1">
+      <div class="text-sm text-gray-700 dark:text-gray-300 mt-1 !transition-[color]">
         {{ errorMessage }}
       </div>
     </div>

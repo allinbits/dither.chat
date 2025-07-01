@@ -64,7 +64,7 @@ function handleAction(type: keyof PopupState, userAddress: string) {
         </template>
       </div>
 
-      <div class="border-b mt-6" />
+      <div class="border-b mt-6 !transition-[border-color]" />
 
       <div v-if="wallet.loggedIn.value" class='flex flex-row'>
         <RouterLinkTab :label="$t(`components.Tabs.${isMyProfile ? 'myPosts' : 'posts'}`)"

@@ -65,7 +65,7 @@ onMounted(() => {
     <div class="flex flex-row gap-4 items-center w-full">
       <Input v-model="model" :placeholder="$t('placeholders.search')" type="number"         :min="min"
              :max="max" autocomplete="off"/>
-      <span class="dark:text-white">PHOTON</span>
+      <span>PHOTON</span>
     </div>
     <span class="text-left text-sm">{{ Number(photonBalanceSubtracted) >= 0 ?
       formatAmount(photonBalanceSubtracted, 6) :  $t('components.InputPhoton.notEnough')}}

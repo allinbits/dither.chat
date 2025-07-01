@@ -26,7 +26,7 @@ const isXl = useMediaQuery(`(min-width: ${breakpoints.xl}px)`);
       <LeftPanelTablet v-else/>
     </div>
 
-    <main class="sm:w-[var(--main-min-width-desktop)] min-w-[var(--main-min-width-desktop)] md:border-x">
+    <main class="sm:w-[var(--main-min-width-desktop)] min-w-[var(--main-min-width-desktop)] md:border-x !transition-[border-color]">
       <slot />
     </main>
 

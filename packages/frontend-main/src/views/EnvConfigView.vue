@@ -26,7 +26,7 @@ debouncedWatch(configStore.config, () => {
 <template>
   <MainLayout>
     <div class="flex flex-col mb-2">
-      <div class="flex flex-row items-center border-b py-2 pr-4">
+      <div class="flex flex-row items-center border-b !transition-[border-color] py-2 pr-4">
         <RouterLink to="/settings" class="w-32">
           <Button size="sm" class="w-full text-left decoration-2" variant="link">
             <ChevronLeft class="size-4" />
@@ -40,7 +40,7 @@ debouncedWatch(configStore.config, () => {
         </h1>
       </div>
 
-      <div class="border-b p-4 mb-4 flex flex-row justify-between">
+      <div class="border-b !transition-[border-color] p-4 mb-4 flex flex-row justify-between">
         <div class="flex flex-row gap-2 items-center justify-evenly w-full">
           <label class="font-semibold text-sm">Current Chain</label>
           <NetworkSelector v-model="configStore.config.selectedChain" />

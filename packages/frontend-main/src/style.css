@@ -132,7 +132,7 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground !transition-colors ;
     overflow-y: scroll;
     font-family: 'Inter', sans-serif;
     line-height: normal;

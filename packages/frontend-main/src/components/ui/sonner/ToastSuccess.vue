@@ -28,11 +28,11 @@ const openExplorer = (event: MouseEvent) => {
       <Check class="text-green-500" />
     </div>
     <div>
-      <div class="font-semibold text-sm text-gray-900 dark:text-gray-100">
+      <div class="font-semibold text-sm text-gray-900 dark:text-gray-100 !transition-[color]">
         {{ t('components.Toast.success', { txLabel: props.txLabel }) }}
       </div>
       <button
-        class="flex items-center gap-2 mt-1 text-sm underline cursor-pointer text-gray-800 dark:text-gray-300"
+        class="flex items-center gap-2 mt-1 text-sm underline cursor-pointer text-gray-800 dark:text-gray-300 !transition-[color]"
         @click="openExplorer"
       >
         <span>{{ t('components.Button.viewOnExplorer') }}</span>

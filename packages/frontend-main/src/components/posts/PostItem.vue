@@ -25,7 +25,7 @@ const usedPost = computed(() => cachedPost.value || props.post);
 
 <template>
   <RouterLink v-if="usedPost" :to="`/post/${usedPost.hash}`" custom v-slot="{ navigate }">
-    <div @click="navigate" :class="cn('flex flex-row gap-3 cursor-pointer pb-2 pt-4 pl-4 pr-2 relative hover:bg-accent/30 active:bg-accent/30 transition-colors', !showTimeline && 'border-b' )">
+    <div @click="navigate" :class="cn('flex flex-row gap-3 cursor-pointer pb-2 pt-4 pl-4 pr-2 relative hover:bg-accent/30 active:bg-accent/30 !transition-[background-color,border-color] ', !showTimeline && 'border-b' )">
       <div class="flex flex-col items-center ">
         <RouterLink :to="`/profile/${usedPost.author}`">
           <UserAvatar :userAddress="usedPost.author" />

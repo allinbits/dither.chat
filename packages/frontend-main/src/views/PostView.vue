@@ -78,7 +78,7 @@ async function handleReply() {
 
       <div class="pr-2">
 
-        <div class="mt-4 border-y">
+        <div class="mt-4 border-y !transition-[border-color]">
           <PostActions :post="post" />
         </div>
 
