@@ -8,7 +8,7 @@ import { makeADR36AminoSignDoc } from '@keplr-wallet/cosmos';
 
 let lastHeight = 1_000_000;
 
-export async function get<T>(endpoint: string, port: 'WRITE' | 'READ' = 'READ', token?: string) {
+export async function get<T>(endpoint: string, token?: string) {
     const headers: Record<string, string> = {
         'Content-Type': 'application/json',
     };
@@ -17,7 +17,7 @@ export async function get<T>(endpoint: string, port: 'WRITE' | 'READ' = 'READ', 
         headers['Cookie'] = `auth=${token}`;
     }
 
-    const response = await fetch(`http://localhost:${port === 'WRITE' ? 3001 : 3000}/v1/${endpoint}`, {
+    const response = await fetch(`http://localhost:3000/v1/${endpoint}`, {
         method: 'GET',
         headers,
     }).catch((err) => {
@@ -36,18 +36,18 @@ export async function get<T>(endpoint: string, port: 'WRITE' | 'READ' = 'READ', 
 export async function post<T = { status: number }>(
     endpoint: string,
     body: object,
-    port: 'WRITE' | 'READ' = 'WRITE',
     token?: string,
 ): Promise<T | null> {
     const headers: Record<string, string> = {
         'Content-Type': 'application/json',
+        'authorization': 'default',
     };
 
     if (token) {
         headers['Cookie'] = `auth=${token}`;
     }
 
-    const response = await fetch(`http://localhost:${port === 'WRITE' ? 3001 : 3000}/v1/${endpoint}`, {
+    const response = await fetch(`http://localhost:3000/v1/${endpoint}`, {
         method: 'POST',
         headers,
         body: JSON.stringify({ ...body }),
