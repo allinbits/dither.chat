@@ -61,7 +61,7 @@ const gotoExplore = () => {
           :key="index"
           :to="`/post/${post.hash}`"
           @click="clearSearch"
-          class="p-3 not-last:border-b cursor-pointer flex flex-col gap-1 hover:bg-accent/30 active:bg-accent/30 transition-colors"
+          class="p-3 not-last:border-b cursor-pointer flex flex-col gap-1 hover:bg-accent/30 active:bg-accent/30 transition-[background-color]"
         >
           <PostMessage :message="post.message" class="line-clamp-2"/>
           <UserAvatarUsername :userAddress="post.author" size="sm" />

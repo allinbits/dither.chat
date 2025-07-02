@@ -11,7 +11,7 @@ const { signOut } = useWallet();
 </script>
 
 <template>
-  <PopoverContent>
+  <PopoverContent class="!transition-[background-color,border-color]">
     <div class="flex flex-col gap-4">
       <Button
         class="my-4 justify-center"

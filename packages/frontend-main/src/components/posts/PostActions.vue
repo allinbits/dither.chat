@@ -12,9 +12,9 @@ import { cn } from '@/utility';
 import { formatAmount, formatCompactNumber } from '@/utility/text';
 
 defineProps<{ post: Post }>();
-const isXs = useMediaQuery('(max-width: 422px)');
+const isSmallScreen = useMediaQuery('(max-width: 422px)');
 const buttonWrapperClass = 'flex-1 min-w-[70px]';
-const buttonClass = 'flex flex-row items-center gap-1 p-2 rounded-full hover:bg-accent active:bg-accent transition-colors';
+const buttonClass = 'flex flex-row items-center gap-1 p-2 rounded-full hover:bg-accent active:bg-accent transition-[background-color]';
 const buttonLabelClass = 'text-[#A2A2A9] text-xs font-medium';
 
 const wallet = useWallet();
@@ -35,7 +35,7 @@ function handleAction(type: keyof PopupState, post: Post) {
 </script>
 
 <template>
-  <div :class="cn('flex flex-row items-center justify-between pr-2', isXs && 'flex-wrap pb-2')">
+  <div :class="cn('flex flex-row items-center justify-between pr-2', isSmallScreen && 'flex-wrap pb-2')">
     <div :class="buttonWrapperClass">
       <button :class="buttonClass" @click.stop="handleAction('reply', post)">
         <MessageCircle class="size-5" color="#A2A2A9" />

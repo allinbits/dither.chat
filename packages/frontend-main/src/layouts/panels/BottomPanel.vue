@@ -10,12 +10,12 @@ import { cn } from '@/utility';
 const wallet = useWallet();
 const popups = usePopups();
 const router = useRouter();
-const buttonClass = (routeName?: RouteRecordNameGeneric) => `flex justify-center items-center size-[52px] rounded-full active:bg-accent hover:bg-accent ${!!routeName && router.currentRoute.value.name?.toString().startsWith(routeName.toString()) && 'bg-accent/80'}`;
+const buttonClass = (routeName?: RouteRecordNameGeneric) => `flex justify-center items-center size-[52px] rounded-full active:bg-accent hover:bg-accent !transition-[background-color] ${!!routeName && router.currentRoute.value.name?.toString().startsWith(routeName.toString()) && 'bg-accent/80'}`;
 
 </script>
 
 <template>
-  <header class="h-full w-full flex flex-row items-center justify-around border-t bg-background px-4">
+  <header class="h-full w-full flex flex-row items-center justify-around px-4 border-t bg-background !transition-[background-color,border-color]">
     <nav class="contents">
       <RouterLink to="/" :class="buttonClass('Home')">
         <House class="size-6" />

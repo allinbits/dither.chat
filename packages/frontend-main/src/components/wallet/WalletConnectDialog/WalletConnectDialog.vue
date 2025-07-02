@@ -131,7 +131,7 @@ const isValidAddress = computed(() => {
 </script>
 <template>
   <Dialog v-model:open="walletDialogStore.isOpen" @update:open="cancelConnect">
-    <DialogContent>
+    <DialogContent >
       <VisuallyHidden>
         <DialogTitle></DialogTitle>
         <DialogDescription></DialogDescription>
@@ -164,7 +164,7 @@ const isValidAddress = computed(() => {
       </template>
 
       <template v-else-if="addressState">
-        <div class="flex flex-col px-8 py-4 pt-12 bg-grey-300 rounded w-80 relative gap-4">
+        <div class="flex flex-col px-8 py-4 pt-12 bg-grey-300 rounded w-80 relative gap-4 ">
           <div class="flex flex-col font-semibold">
             {{ $t('components.WalletConnect.ctaAddress') }}
           </div>

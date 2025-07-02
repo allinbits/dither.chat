@@ -38,7 +38,7 @@ const connectedState = computed(() => !isConnecting.value && loggedIn.value && !
     </template>
 
     <template v-else>
-      <button @click="walletDialogStore.showDialog" class="flex items-center justify-center flex-row size-[52px] rounded-full hover:bg-accent active:bg-accent transition-colors">
+      <button @click="walletDialogStore.showDialog" class="flex items-center justify-center flex-row size-[52px] rounded-full hover:bg-accent active:bg-accent transition-[background-color]">
         <Wallet class="size-6" />
       </button>
     </template>

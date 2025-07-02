@@ -36,7 +36,7 @@ const gotoMintscan = () => {
 
 <template>
   <Popover>
-    <PopoverTrigger @click.stop class="p-2 rounded-full hover:bg-accent active:bg-accent transition-colors">
+    <PopoverTrigger @click.stop class="p-2 rounded-full hover:bg-accent active:bg-accent transition-[background-color]">
       <Ellipsis class="size-5" color="#A2A2A9" />
     </PopoverTrigger>
 

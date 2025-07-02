@@ -30,7 +30,7 @@ const connectedState = computed(() => !isConnecting.value && loggedIn.value && !
     <template v-if="connectedState">
       <Popover>
         <PopoverTrigger class="w-full">
-          <UserAvatarUsername :userAddress="address" disabled class="h-[52px] px-4 gap-3 rounded-sm hover:bg-accent active:bg-accent transition-colors"/>
+          <UserAvatarUsername :userAddress="address" disabled class="h-[52px] px-4 gap-3 rounded-sm hover:bg-accent active:bg-accent transition-[background-color]"/>
         </PopoverTrigger>
 
         <WalletConnectPopoverContent/>
