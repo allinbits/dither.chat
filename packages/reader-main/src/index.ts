@@ -100,6 +100,7 @@ async function updateLastBlock(height: string, attempt = 0) {
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
+            'Authorization': config.AUTH,
         },
         body: JSON.stringify({ last_block: height }),
     });
