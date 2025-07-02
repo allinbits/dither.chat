@@ -73,7 +73,7 @@ export function startServer() {
         body: Posts.ModBanBody,
     });
 
-    app.listen(config.READ_ONLY_PORT ?? 3000);
+    app.listen(config.PORT);
 }
 
 startServer();

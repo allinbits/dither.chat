@@ -3,8 +3,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 type Config = {
-    READ_ONLY_PORT: number;
-    WRITE_ONLY_PORT: number;
+    PORT: number;
     PG_URI: string;
     AUTH: string;
 };
@@ -26,8 +25,7 @@ export function useConfig(): Config {
     }
 
     config = {
-        READ_ONLY_PORT: process.env.READ_ONLY_PORT ? parseInt(process.env.READ_ONLY_PORT) : 3000,
-        WRITE_ONLY_PORT: process.env.WRITE_ONLY_PORT ? parseInt(process.env.WRITE_ONLY_PORT) : 3001,
+        PORT: process.env.PORT ? parseInt(process.env.PORT) : 3000,
         PG_URI: process.env.PG_URI,
         AUTH: process.env.AUTH ?? 'default',
     };
