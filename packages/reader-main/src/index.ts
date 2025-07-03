@@ -117,6 +117,7 @@ async function updateLastBlock(height: string, attempt = 0) {
         }
 
         if (rawResponse.status !== 200) {
+            console.info(rawResponse);
             console.error('Error posting to API:', rawResponse);
             await new Promise(resolve => setTimeout(resolve, attempt * 5_000));
             return updateLastBlock(height, attempt + 1);
@@ -124,6 +125,7 @@ async function updateLastBlock(height: string, attempt = 0) {
 
         const response = await rawResponse.json() as { status: number; error?: string };
         if (response.status === 500) {
+            console.info(rawResponse);
             console.error('Error posting to API:', rawResponse);
             await new Promise(resolve => setTimeout(resolve, attempt * 5_000));
             return updateLastBlock(height, attempt + 1);
