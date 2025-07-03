@@ -95,35 +95,47 @@ async function processAction(action: Action): Promise<ResponseStatus> {
 }
 
 async function updateLastBlock(height: string, attempt = 0) {
-    const rawResponse = await fetch(apiRoot + '/update-state', {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Authorization': config.AUTH,
-        },
-        body: JSON.stringify({ last_block: height }),
-    });
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000);
 
-    if (attempt >= 3) {
+    try {
+        const rawResponse = await fetch(apiRoot + '/update-state', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': config.AUTH,
+            },
+            body: JSON.stringify({ last_block: height }),
+            signal: controller.signal,
+        });
+
+        clearTimeout(timeout);
+
+        if (attempt >= 3) {
+            return false;
+        }
+
+        if (rawResponse.status !== 200) {
+            console.error('Error posting to API:', rawResponse);
+            await new Promise(resolve => setTimeout(resolve, attempt * 5_000));
+            return updateLastBlock(height, attempt + 1);
+        }
+
+        const response = await rawResponse.json() as { status: number; error?: string };
+        if (response.status === 500) {
+            console.error('Error posting to API:', rawResponse);
+            await new Promise(resolve => setTimeout(resolve, attempt * 5_000));
+            return updateLastBlock(height, attempt + 1);
+        }
+
+        console.log(`Updated Block Checkpoint | ${height}`);
+        return true;
+    }
+    catch (err) {
+        console.error(err);
         return false;
     }
-
-    if (rawResponse.status !== 200) {
-        console.error('Error posting to API:', rawResponse);
-        await new Promise(resolve => setTimeout(resolve, attempt * 5_000));
-        return updateLastBlock(height, attempt + 1);
-    }
-
-    const response = await rawResponse.json() as { status: number; error?: string };
-    if (response.status === 500) {
-        console.error('Error posting to API:', rawResponse);
-        await new Promise(resolve => setTimeout(resolve, attempt * 5_000));
-        return updateLastBlock(height, attempt + 1);
-    }
-
-    console.log(`Updated Block Checkpoint | ${height}`);
-    return true;
 }
 
 async function handleQueue() {
