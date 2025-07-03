@@ -13,7 +13,7 @@ primary_region = 'iad'
 [env]
 BATCH_SIZE = "500"
 MEMO_PREFIX = "dither."
-START_BLOCK = "2605764"
+START_BLOCK = "1979480"
 RECEIVER = "atone1uq6zjslvsa29cy6uu75y8txnl52mw06j6fzlep"
 API_ROOT = "http://dither-testnet-api-main.internal:3000/v1"
 API_URLS = "https://atomone-testnet-1-api.allinbits.services"
