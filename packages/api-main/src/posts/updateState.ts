@@ -18,6 +18,7 @@ export async function UpdateState(body: { last_block: string }, headers: Record<
                 },
             }).execute();
 
+        console.info(`Last Block Updated: ${body.last_block}`);
         return { status: 200 };
     }
     catch (err) {
