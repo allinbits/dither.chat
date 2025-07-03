@@ -8,9 +8,15 @@ primary_region = 'iad'
 
 [build]
 
+# non-secret environment variables
+# AUTH is also required but is set in the secrets on fly.io
 [env]
 BATCH_SIZE = "500"
 MEMO_PREFIX = "dither."
+START_BLOCK = "2605764"
+RECEIVER = "atone1uq6zjslvsa29cy6uu75y8txnl52mw06j6fzlep"
+API_ROOT = "http://dither-testnet-api-main.internal:3000/v1"
+API_URLS = "https://atomone-api.allinbits.com,https://atomone-rest.publicnode.com"
 
 [[vm]]
 memory = '1gb'
