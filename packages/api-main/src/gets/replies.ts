@@ -21,7 +21,7 @@ const statement = getDatabase()
 export async function Replies(query: typeof Gets.RepliesQuery.static) {
     let limit = typeof query.limit !== 'undefined' ? Number(query.limit) : 100;
     const offset = typeof query.offset !== 'undefined' ? Number(query.offset) : 0;
-    const minQuantity = typeof query.minQuantity !== 'undefined' ? BigInt(query.minQuantity) : BigInt(0);
+    const minQuantity = typeof query.minQuantity !== 'undefined' ? query.minQuantity : '0';
 
     if (limit > 100) {
         limit = 100;
@@ -68,7 +68,7 @@ const getUserRepliesWithParent = getDatabase()
 export async function UserReplies(query: typeof Gets.UserRepliesQuery.static) {
     let limit = typeof query.limit !== 'undefined' ? Number(query.limit) : 100;
     const offset = typeof query.offset !== 'undefined' ? Number(query.offset) : 0;
-    const minQuantity = typeof query.minQuantity !== 'undefined' ? BigInt(query.minQuantity) : BigInt(0);
+    const minQuantity = typeof query.minQuantity !== 'undefined' ? query.minQuantity : '0';
 
     if (limit > 100) {
         limit = 100;

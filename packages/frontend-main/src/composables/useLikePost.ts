@@ -57,8 +57,8 @@ export function useLikePost(
             // Post with updated likes_burnt
             const optimisticPost: Post
                 = context.previousPost
-                    ? { ...context.previousPost, likes_burnt: BigInt(addAtomics((context.previousPost.likes_burnt ?? 0).toString(), variables.amountAtomics)) }
-                    : { ...variables.post.value, likes_burnt: BigInt(addAtomics((variables.post.value.likes_burnt ?? 0).toString(), variables.amountAtomics)) };
+                    ? { ...context.previousPost, likes_burnt: addAtomics((context.previousPost.likes_burnt ?? 0).toString(), variables.amountAtomics) }
+                    : { ...variables.post.value, likes_burnt: addAtomics((variables.post.value.likes_burnt ?? 0).toString(), variables.amountAtomics) };
 
             queryClient.setQueryData(postOpts.queryKey, optimisticPost);
         },

@@ -82,11 +82,11 @@ export function useCreateReply(
                     ? { ...context.previousParentPost, replies: (context.previousParentPost.replies || 0) + 1 }
                     : { ...variables.parentPost.value, replies: (variables.parentPost.value.replies || 0) + 1 };
             // Created Post with parent hash as post_hash
-            const optimisticNewReply: Post = newPost({ message: variables.message, quantity: BigInt(Decimal.fromAtomics(variables.amountAtomics, fractionalDigits).toString()), hash: createdHash, postHash: variables.parentPost.value.hash, author: wallet.address.value });
+            const optimisticNewReply: Post = newPost({ message: variables.message, quantity: Decimal.fromAtomics(variables.amountAtomics, fractionalDigits).toString(), hash: createdHash, postHash: variables.parentPost.value.hash, author: wallet.address.value });
             // Created Post in ReplyWithParent
             const optimisticNewUserReply: ReplyWithParent = {
                 reply: newPost(
-                    { message: variables.message, quantity: BigInt(Decimal.fromAtomics(variables.amountAtomics, fractionalDigits).toString()), hash: createdHash, postHash: variables.parentPost.value.hash, author: wallet.address.value },
+                    { message: variables.message, quantity: Decimal.fromAtomics(variables.amountAtomics, fractionalDigits).toString(), hash: createdHash, postHash: variables.parentPost.value.hash, author: wallet.address.value },
                 ),
                 parent: optimisticParentPost,
             };

@@ -17,7 +17,7 @@ export async function Search(query: typeof Gets.SearchQuery.static) {
             return [];
         }
 
-        const minQuantity = typeof query.minQuantity !== 'undefined' ? BigInt(query.minQuantity) : BigInt(0);
+        const minQuantity = typeof query.minQuantity !== 'undefined' ? query.minQuantity : '0';
         const matchedAuthors = await getDatabase()
             .selectDistinct({ author: FeedTable.author })
             .from(FeedTable)

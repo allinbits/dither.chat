@@ -69,7 +69,7 @@ export function useCreatePost(
             const userPostsOpts = userPosts({ userAddress: wallet.address });
 
             // Created Post
-            const optimisticNewPost: Post = newPost({ message: variables.message, quantity: BigInt(Decimal.fromAtomics(variables.amountAtomics, fractionalDigits).toString()), hash, author: wallet.address.value, postHash: null });
+            const optimisticNewPost: Post = newPost({ message: variables.message, quantity: Decimal.fromAtomics(variables.amountAtomics, fractionalDigits).toString(), hash, author: wallet.address.value, postHash: null });
             const newFeedData = infiniteDataWithNewItem<Post>({ previousItems: context.previousFeed, newItem: optimisticNewPost });
             const newUserPostsData = infiniteDataWithNewItem<Post>({ previousItems: context.previousUserPosts, newItem: optimisticNewPost });
 
