@@ -24,10 +24,12 @@ const statementAddLikeToPost = getDatabase()
     .update(FeedTable)
     .set({
         likes: sql`${FeedTable.likes} + 1`,
-        likes_burnt: sql`${FeedTable.likes_burnt} + ${sql.placeholder('quantity')}`,
+        likes_burnt: sql`(${FeedTable.likes_burnt})::int + ${sql.placeholder('quantity')}`,
     })
     .where(eq(FeedTable.hash, sql.placeholder('post_hash')))
     .prepare('stmnt_add_like_count_to_post');
+
+// console.log('statementAddLikeToPoststatementAddLikeToPost', statementAddLikeToPost);
 
 export async function Like(body: typeof Posts.LikeBody.static) {
     if (body.post_hash.length !== 64) {
@@ -39,6 +41,8 @@ export async function Like(body: typeof Posts.LikeBody.static) {
         if (result.status !== 200) {
             return { status: result.status, error: 'provided post_hash does not exist' };
         }
+
+        console.log('body.quantitybody.quantity', body.quantity);
 
         const resultChanges = await statement.execute({
             post_hash: body.post_hash.toLowerCase(),

@@ -24,7 +24,7 @@ const statementAddDislikeToPost = getDatabase()
     .update(FeedTable)
     .set({
         dislikes: sql`${FeedTable.dislikes} + 1`,
-        dislikes_burnt: sql`${FeedTable.dislikes_burnt} + ${sql.placeholder('quantity')}`,
+        dislikes_burnt: sql`(${FeedTable.dislikes_burnt})::int + ${sql.placeholder('quantity')}`,
     })
     .where(eq(FeedTable.hash, sql.placeholder('post_hash')))
     .prepare('stmnt_add_dislike_count_to_post');
