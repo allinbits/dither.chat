@@ -11,7 +11,7 @@
         "test": "vitest"
     },
     "dependencies": {
-        "@atomone/chronostate": "^2.2.2",
+        "@atomone/chronostate": "^2.2.3",
         "@atomone/dither-api-types": "^1.4.0",
         "tsx": "^4.19.3"
     },

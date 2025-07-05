@@ -34,9 +34,8 @@ services:
       PG_URI: "postgresql://default:password@postgres:5432/postgres"
     ports:
       - 3000:3000
-      - 3001:3001
     healthcheck:
-      test: "curl http://localhost:3001/v1/health && curl http://localhost:3000/v1/health  || exit 1"
+      test: "curl http://localhost:3000/v1/health  || exit 1"
       interval: 5s
       timeout: 3s
       retries: 30
@@ -61,7 +60,7 @@ services:
       BATCH_SIZE: 500
       MEMO_PREFIX: "dither."
       RECEIVER: "atone1uq6zjslvsa29cy6uu75y8txnl52mw06j6fzlep"
-      API_ROOT: "http://api-main:3001/v1"
+      API_ROOT: "http://api-main:3000/v1"
       # PG_URI: postgres://username:password@postgres-feed:5432/feed
       # LOG: process.env.LOG === 'true' ? true : false,
 

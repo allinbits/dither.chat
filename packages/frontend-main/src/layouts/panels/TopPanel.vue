@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { SlidersHorizontal } from 'lucide-vue-next';
 
-import ToggleThemeButton from '@/components/ToggleThemeButton.vue';
 import FilterPhoton from '@/components/ui/filter/FilterPhoton.vue';
 import {
     Popover,
@@ -9,6 +8,7 @@ import {
     PopoverTrigger,
 } from '@/components/ui/popover';
 import SearchInput from '@/components/ui/search/SearchInput.vue';
+import ColorModeSwitch from '@/components/ui/switch/ColorModeSwitch.vue';
 import WalletConnectButtonMobile from '@/components/wallet/WalletConnectButton/WalletConnectButtonMobile.vue';
 
 </script>
@@ -31,6 +31,6 @@ import WalletConnectButtonMobile from '@/components/wallet/WalletConnectButton/W
       </Popover>
     </div>
 
-    <ToggleThemeButton />
+    <ColorModeSwitch />
   </header>
 </template>

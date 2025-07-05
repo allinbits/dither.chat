@@ -18,6 +18,7 @@ let state: ChronoState;
 let lastHash: string;
 let isProcessing = false;
 let lastActionProcessed = Date.now();
+let isUpdating = false;
 
 export function getTransferMessage(messages: Array<MsgGeneric>) {
     const msgTransfer = messages.find(msg => msg['@type'] === '/cosmos.bank.v1beta1.MsgSend');
@@ -55,17 +56,27 @@ async function handleAction(action: Action) {
 }
 
 async function handleLastBlock(block: string) {
+    if (isUpdating) {
+        return;
+    }
+
+    isUpdating = true;
+
     if (lastActionProcessed + msCheckpointTime < Date.now() && queue.size() <= 0) {
         lastActionProcessed = Date.now();
         const didUpdate = await updateLastBlock(block);
         if (!didUpdate) {
-            throw new Error(`Failed to update last block: ${block}`);
+            console.warn(`Failed to update last block: ${block}`);
+            isUpdating = false;
+            return;
         }
     }
 
     if (queue.size() >= 1) {
         console.log(`Updated | Block: ${block} | Queue Size: ${queue.size()} | Retry Count: ${queue.getRetryCount()}`);
     }
+
+    isUpdating = false;
 }
 
 async function processAction(action: Action): Promise<ResponseStatus> {
@@ -100,24 +111,28 @@ async function updateLastBlock(height: string, attempt = 0) {
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
+            'Authorization': config.AUTH,
         },
         body: JSON.stringify({ last_block: height }),
     });
 
     if (attempt >= 3) {
+        console.warn(`Failed to update state 3 times for ${attempt}`);
         return false;
     }
 
     if (rawResponse.status !== 200) {
-        console.error('Error posting to API:', rawResponse);
-        await new Promise(resolve => setTimeout(resolve, attempt * 5_000));
+        console.warn(`Update state failed, trying again.`);
+        console.info(rawResponse);
+        await new Promise(resolve => setTimeout(resolve, attempt * 1_000));
         return updateLastBlock(height, attempt + 1);
     }
 
     const response = await rawResponse.json() as { status: number; error?: string };
     if (response.status === 500) {
-        console.error('Error posting to API:', rawResponse);
-        await new Promise(resolve => setTimeout(resolve, attempt * 5_000));
+        console.warn(`Update state failed, trying again.`);
+        console.info(rawResponse);
+        await new Promise(resolve => setTimeout(resolve, attempt * 1_000));
         return updateLastBlock(height, attempt + 1);
     }
 
@@ -183,13 +198,16 @@ async function getLastBlock() {
 }
 
 export async function start() {
+    console.info('Starting Application');
     let lastBlock = await getLastBlock();
     lastBlock ??= config.START_BLOCK;
-    state = new ChronoState({ ...config, START_BLOCK: lastBlock });
+    console.info(`Last Block: ${lastBlock}`);
+    state = new ChronoState({ ...config, START_BLOCK: lastBlock, LOG: true });
     state.onLastBlock(handleLastBlock);
     state.onAction(handleAction);
     state.start();
-    setInterval(handleQueue, process.env.QUEUE_CHECK_MS ? parseInt(process.env.QUEUE_CHECK_MS) : 1);
+    console.info(`ChronoState Started`);
+    setInterval(handleQueue, process.env.QUEUE_CHECK_MS ? parseInt(process.env.QUEUE_CHECK_MS) : 10);
 }
 
 start();

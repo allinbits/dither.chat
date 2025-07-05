@@ -460,7 +460,7 @@ describe('v1 - mod', { sequential: true }, () => {
             address: walletA.publicKey,
         };
 
-        const response = (await post(`auth-create`, body, 'READ')) as { status: 200; id: number; message: string };
+        const response = (await post(`auth-create`, body)) as { status: 200; id: number; message: string };
         assert.isOk(response?.status === 200, 'response was not okay');
 
         const signData = await signADR36Document(walletA.mnemonic, response.message);
@@ -470,7 +470,7 @@ describe('v1 - mod', { sequential: true }, () => {
             json: true,
         };
 
-        const responseVerify = (await post(`auth`, verifyBody, 'READ')) as { status: 200; bearer: string };
+        const responseVerify = (await post(`auth`, verifyBody)) as { status: 200; bearer: string };
         assert.isOk(responseVerify?.status === 200, 'response was not verified and confirmed okay');
         assert.isOk(responseVerify.bearer.length >= 1, 'bearer was not passed back');
         bearerToken = responseVerify.bearer;
@@ -515,7 +515,7 @@ describe('v1 - mod', { sequential: true }, () => {
             reason: 'spam',
         };
 
-        const replyResponse = await post(`mod/post-remove`, body, 'WRITE', bearerToken);
+        const replyResponse = await post(`mod/post-remove`, body, bearerToken);
         assert.isOk(replyResponse?.status === 404, `expected moderator was not found`);
 
         const postsResponse = await get<{
@@ -556,7 +556,7 @@ describe('v1 - mod', { sequential: true }, () => {
             reason: 'spam',
         };
 
-        const replyResponse = await post(`mod/post-remove`, body, 'WRITE', bearerToken);
+        const replyResponse = await post(`mod/post-remove`, body, bearerToken);
         assert.isOk(replyResponse?.status === 200, `response was not okay, got ${JSON.stringify(replyResponse)}`);
 
         const postsResponse = await get<{
@@ -584,7 +584,7 @@ describe('v1 - mod', { sequential: true }, () => {
             reason: 'spam',
         };
 
-        const replyResponse = await post(`mod/post-restore`, body, 'WRITE', bearerToken);
+        const replyResponse = await post(`mod/post-restore`, body, bearerToken);
         assert.isOk(replyResponse?.status === 200, `response was not okay, got ${JSON.stringify(replyResponse)}`);
 
         const postsResponse = await get<{
@@ -613,7 +613,7 @@ describe('v1 - mod', { sequential: true }, () => {
             post_hash: postHash,
         };
 
-        const userRemoveResponse = await post(`post-remove`, body, 'WRITE', bearerToken);
+        const userRemoveResponse = await post(`post-remove`, body, bearerToken);
         assert.isOk(userRemoveResponse?.status === 200, 'response was not okay');
 
         // MOD tries to restore post
@@ -650,7 +650,7 @@ describe('v1 - mod', { sequential: true }, () => {
             reason: 'user too political',
         };
 
-        const userBanResponse = await post(`mod/ban`, body, 'WRITE', bearerToken);
+        const userBanResponse = await post(`mod/ban`, body, bearerToken);
         assert.isOk(userBanResponse?.status === 200, `response was not okay ${JSON.stringify(userBanResponse)}`);
 
         // post from user should be all hidden
@@ -682,7 +682,7 @@ describe('v1 - mod', { sequential: true }, () => {
             timestamp: '2025-04-16T19:46:42Z',
         };
 
-        const response = await post(`post`, body, 'WRITE', bearerToken);
+        const response = await post(`post`, body, bearerToken);
         assert.isOk(response?.status === 200, 'response was not okay');
 
         // Even new post should be hidden
@@ -713,7 +713,7 @@ describe('v1 - mod', { sequential: true }, () => {
             reason: 'user too political',
         };
 
-        const userBanResponse = await post(`mod/unban`, body, 'WRITE', bearerToken);
+        const userBanResponse = await post(`mod/unban`, body, bearerToken);
         assert.isOk(userBanResponse?.status === 200, `response was not okay ${JSON.stringify(userBanResponse)}`);
 
         // Totally user should have 2 post as one was deleted by itself (including the one posted while banned)
@@ -746,7 +746,7 @@ describe('v1 - mod', { sequential: true }, () => {
             timestamp: '2025-04-16T19:46:42Z',
         };
 
-        const response = await post(`post`, body, 'WRITE', bearerToken);
+        const response = await post(`post`, body, bearerToken);
         assert.isOk(response?.status === 200, 'response was not okay');
 
         // Even new post should be hidden
@@ -822,7 +822,7 @@ describe('v1/auth', async () => {
             address: walletA.publicKey,
         };
 
-        const response = (await post(`auth-create`, body, 'READ')) as { status: 200; id: number; message: string };
+        const response = (await post(`auth-create`, body)) as { status: 200; id: number; message: string };
         assert.isOk(response?.status === 200, 'response was not okay');
 
         const signData = await signADR36Document(walletA.mnemonic, response.message);
@@ -832,11 +832,11 @@ describe('v1/auth', async () => {
             json: true,
         };
 
-        const responseVerifyCreated = (await post(`auth`, verifyBody, 'READ')) as { status: 200; bearer: string };
+        const responseVerifyCreated = (await post(`auth`, verifyBody)) as { status: 200; bearer: string };
         assert.isOk(responseVerifyCreated?.status === 200, 'response was not verified and confirmed okay');
         assert.isOk(responseVerifyCreated.bearer.length >= 1, 'bearer was not passed back');
 
-        const responseVerify = await get('auth-verify', 'READ', responseVerifyCreated.bearer) as { status: number };
+        const responseVerify = await get('auth-verify', responseVerifyCreated.bearer) as { status: number };
         assert.isOk(responseVerify.status === 200, 'could not verify through auth-verify endpoint, invalid cookie?');
     });
 });
@@ -872,7 +872,7 @@ describe('v1/notifications', async () => {
                 was_read: boolean | null;
                 actor: string;
             }[];
-        }>(`notifications?address=${walletB.publicKey}`, 'READ', bearerToken);
+        }>(`notifications?address=${walletB.publicKey}`, bearerToken);
         // Asert user got a notification and can read it
         assert.isOk(notificationResponse?.status === 200, `response was not okay, got ${notificationResponse?.status}`);
         assert.lengthOf(notificationResponse.rows, 1);
@@ -883,7 +883,6 @@ describe('v1/notifications', async () => {
             status: number;
         }>(
             `notification-read?address=${walletB.publicKey}&hash=${notificationResponse.rows[0].hash}`,
-            'WRITE',
             bearerToken,
         );
         assert.isOk(readResponse?.status === 200, `response was not okay, got ${readResponse?.status}`);
@@ -897,7 +896,7 @@ describe('v1/notifications', async () => {
                 timestamp: Date | null;
                 was_read: boolean | null;
             }[];
-        }>(`notifications?address=${walletB.publicKey}`, 'READ', bearerToken);
+        }>(`notifications?address=${walletB.publicKey}`, bearerToken);
 
         assert.isOk(lastResponse?.rows.findIndex(x => x.hash == notificationResponse.rows[0].hash) === -1, 'notification was still available in array');
     });
@@ -938,7 +937,7 @@ describe('v1/notifications', async () => {
         const notificationCount = await get<{
             status: number;
             count: number;
-        }>(`notifications-count?address=${walletA.publicKey}`, 'READ', bearerToken);
+        }>(`notifications-count?address=${walletA.publicKey}`, bearerToken);
         assert.isOk(notificationCount?.count === 1, 'notification count was not at least one');
 
         const notificationResponse = await get<{
@@ -951,7 +950,7 @@ describe('v1/notifications', async () => {
                 was_read: boolean | null;
                 actor: string;
             }[];
-        }>(`notifications?address=${walletA.publicKey}`, 'READ', bearerToken);
+        }>(`notifications?address=${walletA.publicKey}`, bearerToken);
         // Asert user got a notification and can read it
         assert.isOk(notificationResponse?.status === 200, `response was not okay, got ${notificationResponse?.status}`);
         assert.lengthOf(notificationResponse.rows, 1);
@@ -962,7 +961,6 @@ describe('v1/notifications', async () => {
             status: number;
         }>(
             `notification-read?address=${walletA.publicKey}&hash=${notificationResponse.rows[0].hash}`,
-            'WRITE',
             bearerToken,
         );
         assert.isOk(readResponse?.status === 200, `response was not okay, got ${readResponse?.status}`);
@@ -976,7 +974,7 @@ describe('v1/notifications', async () => {
                 timestamp: Date | null;
                 was_read: boolean | null;
             }[];
-        }>(`notifications?address=${walletA.publicKey}`, 'READ', bearerToken);
+        }>(`notifications?address=${walletA.publicKey}`, bearerToken);
 
         assert.isOk(lastResponse?.rows.findIndex(x => x.hash == notificationResponse.rows[0].hash) === -1, 'notification was still available in array');
     });
@@ -1024,7 +1022,7 @@ describe('user replies with parent', async () => {
                 parent: { hash: string; author: string; message: string };
                 reply: { hash: string; author: string; message: string };
             }[];
-        }>(`user-replies?address=${walletB.publicKey}`, 'READ');
+        }>(`user-replies?address=${walletB.publicKey}`);
         assert.isOk(userRepliesResponse?.status === 200, `response was not okay, got ${userRepliesResponse?.status}`);
         assert.lengthOf(userRepliesResponse.rows, 1);
         assert.equal(userRepliesResponse.rows[0].reply.hash, replyPost);
@@ -1051,7 +1049,7 @@ describe('get post from followed', async () => {
                 deleted_hash: string;
                 quantity: string;
             }[];
-        }>(`following-posts?address=${walletA.publicKey}`, 'READ');
+        }>(`following-posts?address=${walletA.publicKey}`);
         assert.isOk(readResponse?.status === 200, `response was not okay, got ${readResponse?.status}`);
         assert.lengthOf(readResponse.rows, 0);
     });
@@ -1081,7 +1079,7 @@ describe('get post from followed', async () => {
                 deleted_reason: string;
                 deleted_hash: string;
             }[];
-        }>(`following-posts?address=${walletA.publicKey}`, 'READ');
+        }>(`following-posts?address=${walletA.publicKey}`);
         assert.isOk(readResponse?.status === 200, `response was not okay, got ${readResponse?.status}`);
         assert.lengthOf(readResponse.rows, 0);
     });
@@ -1108,7 +1106,7 @@ describe('get post from followed', async () => {
                 deleted_hash: string;
                 quantity: string;
             }[];
-        }>(`following-posts?address=${walletA.publicKey}`, 'READ');
+        }>(`following-posts?address=${walletA.publicKey}`);
         assert.isOk(readResponse?.status === 200, `response was not okay, got ${readResponse?.status}`);
         assert.lengthOf(readResponse.rows, 1);
         assert.isOk(readResponse.rows[0].author, 'Author was not included');
