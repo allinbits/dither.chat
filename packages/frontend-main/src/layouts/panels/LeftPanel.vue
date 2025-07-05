@@ -40,7 +40,7 @@ const buttonLabelClass = 'text-lg font-semibold';
           </RouterLink>
 
           <RouterLink v-if="wallet.loggedIn.value" to="/notifications" :class="cn(buttonClass('Notifications'), 'relative')">
-            <NotificationsCount class="absolute top-1 left-3"/>
+            <NotificationsCount class="absolute top-1 left-6"/>
             <Bell class="size-6" />
             <span :class="buttonLabelClass">Notifications</span>
           </RouterLink>
