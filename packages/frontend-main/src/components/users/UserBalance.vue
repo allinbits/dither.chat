@@ -1,36 +1,23 @@
 <script setup lang="ts">
-import { computed, type Ref } from 'vue';
-import { useQuery } from '@tanstack/vue-query';
+import { computed } from 'vue';
 
+import { useBalanceFetcher } from '@/composables/useBalanceFetcher';
 import { useWallet } from '@/composables/useWallet';
 
-import { getChainConfigLazy } from '@/utility/getChainConfigLazy';
-import { formatAmount } from '@/utility/text';
+import { fractionalDigits } from '@/utility/atomics';
+import { formatCompactAtomics } from '@/utility/text';
 
-const Wallet = useWallet();
+const wallet = useWallet();
 
-const chainConfig = getChainConfigLazy();
+const balanceFetcher = useBalanceFetcher();
 
-const balancesFetcher = (address: Ref<string>) =>
-    fetch(`${chainConfig.value.rest}cosmos/bank/v1beta1/balances/${address.value}?pagination.limit=1000`).then(response =>
-        response.json(),
-    );
-const { data: balances } = useQuery({
-    queryKey: ['balances'],
-    queryFn: () => balancesFetcher(Wallet.address),
-    enabled: Wallet.loggedIn,
+const balanceAtomics = computed(() => {
+    if (!wallet.loggedIn.value) return '0';
+    const balances = balanceFetcher.balances.value[wallet.address.value];
+    return balances?.find(x => x.denom === 'uphoton')?.amount ?? '0';
 });
-const balance = computed(() => {
-    if (balances && balances.value) {
-        return balances.value.balances.filter(
-            (x: { denom: string }) => x.denom == chainConfig.value.stakeCurrency.coinMinimalDenom,
-        )[0];
-    }
-    else {
-        return { amount: '0', denom: chainConfig.value.stakeCurrency.coinMinimalDenom };
-    }
-});
+
 </script>
 <template>
-  <span>{{ formatAmount(balance.amount, chainConfig.stakeCurrency.coinDecimals) }}</span>
+  <span>{{ formatCompactAtomics(balanceAtomics, fractionalDigits) }}</span>
 </template>

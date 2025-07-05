@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { useRoute } from 'vue-router';
+import { Decimal } from '@cosmjs/math';
 import { Loader } from 'lucide-vue-next';
 
 import { useCreateReply } from '@/composables/useCreateReply';
@@ -19,6 +20,7 @@ import Textarea from '@/components/ui/textarea/Textarea.vue';
 import UserAvatar from '@/components/users/UserAvatar.vue';
 import UserAvatarUsername from '@/components/users/UserAvatarUsername.vue';
 import MainLayout from '@/layouts/MainLayout.vue';
+import { fractionalDigits } from '@/utility/atomics';
 
 const route = useRoute();
 const hash = computed(() =>
@@ -33,7 +35,7 @@ const POST_HASH_LEN = 64;
 const MAX_CHARS = 512 - ('dither.Reply("", "")'.length + POST_HASH_LEN);
 const reply = ref('');
 const isBalanceInputValid = ref(false);
-const photonValue = ref(1);
+const inputPhotonModel = ref(Decimal.fromAtomics('1', fractionalDigits).toFloatApproximation());
 
 const { createReply,
     txError } = useCreateReply();
@@ -52,7 +54,7 @@ async function handleReply() {
     if (!canReply.value || !post.value) {
         return;
     }
-    await createReply({ parentPost: post, message: reply.value, photonValue: photonValue.value });
+    await createReply({ parentPost: post, message: reply.value, amountAtomics: Decimal.fromUserInput(inputPhotonModel.value.toString(), fractionalDigits).atomics });
     reply.value = '';
 }
 </script>
@@ -95,7 +97,7 @@ async function handleReply() {
           </div>
 
           <div class="flex flex-row mt-4 gap-4">
-            <InputPhoton v-model="photonValue" @on-validity-change="handleInputValidity" />
+            <InputPhoton v-model="inputPhotonModel" @on-validity-change="handleInputValidity" />
             <Button size="sm" :disabled="!canReply" @click="handleReply">
               {{ $t('components.Button.reply') }}
             </Button>

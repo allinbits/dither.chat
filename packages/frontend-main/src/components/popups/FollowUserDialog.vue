@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
+import { Decimal } from '@cosmjs/math';
 import { Loader } from 'lucide-vue-next';
 
 import { useFollowUser } from '@/composables/useFollowUser';
@@ -11,6 +12,7 @@ import UserAvatarUsername from '../users/UserAvatarUsername.vue';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import InputPhoton from '@/components/ui/input/InputPhoton.vue';
+import { fractionalDigits } from '@/utility/atomics';
 
 const isBalanceInputValid = ref(false);
 const { followUser,
@@ -20,7 +22,7 @@ const { followUser,
 const {
     isProcessing,
     isShown,
-    photonValue,
+    inputPhotonModel,
     popupState: follow,
     handleClose,
 } = useTxDialog<string>('follow', 'Follow', txSuccess, txError);
@@ -37,7 +39,7 @@ async function handleSumbmit() {
     if (!canSubmit.value || !follow.value) {
         return;
     }
-    await followUser({ userAddress: follow, photonValue: photonValue.value });
+    await followUser({ userAddress: follow, amountAtomics: Decimal.fromUserInput(inputPhotonModel.value.toString(), fractionalDigits).atomics });
     handleClose();
 }
 
@@ -53,7 +55,7 @@ async function handleSumbmit() {
 
       <!-- Transaction Form -->
       <div class="flex flex-col w-full gap-4" v-if="!isProcessing && !txSuccess">
-        <InputPhoton v-model="photonValue" @on-validity-change="handleInputValidity" />
+        <InputPhoton v-model="inputPhotonModel" @on-validity-change="handleInputValidity" />
         <span v-if="txError" class="text-red-500 text-left text-xs">{{ txError }}</span>
         <Button class="w-full" :disabled="!isBalanceInputValid" @click="handleSumbmit">
           {{ $t('components.Button.submit') }}

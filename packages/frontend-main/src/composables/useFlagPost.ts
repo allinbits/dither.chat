@@ -6,9 +6,11 @@ import { useMutation, useQueryClient } from '@tanstack/vue-query';
 import { post } from './usePost';
 import { useWallet } from './useWallet';
 
+import { addAtomics } from '@/utility/atomics';
+
 interface FlagPostRequestMutation {
     post: Ref<Post>;
-    photonValue: number;
+    amountAtomics: string;
 }
 
 export function useFlagPost(
@@ -20,13 +22,13 @@ export function useFlagPost(
     const {
         mutateAsync,
     } = useMutation({
-        mutationFn: async ({ post, photonValue }: FlagPostRequestMutation) => {
+        mutationFn: async ({ post, amountAtomics }: FlagPostRequestMutation) => {
             txError.value = undefined;
             txSuccess.value = undefined;
 
             const result = await wallet.dither.send(
                 'Flag',
-                { args: [post.value.hash], amount: BigInt(photonValue).toString() },
+                { args: [post.value.hash], amount: amountAtomics },
             );
 
             if (!result.broadcast) {
@@ -58,8 +60,8 @@ export function useFlagPost(
             // Post with updated flags_burnt
             const optimisticPost: Post
                 = context.previousPost
-                    ? { ...context.previousPost, flags_burnt: (context.previousPost.flags_burnt || 0) + variables.photonValue }
-                    : { ...variables.post.value, flags_burnt: (variables.post.value.flags_burnt || 0) + variables.photonValue };
+                    ? { ...context.previousPost, flags_burnt: addAtomics((context.previousPost.flags_burnt ?? 0).toString(), variables.amountAtomics) }
+                    : { ...variables.post.value, flags_burnt: addAtomics((variables.post.value.flags_burnt ?? 0).toString(), variables.amountAtomics) };
 
             queryClient.setQueryData(postOpts.queryKey, optimisticPost);
         },

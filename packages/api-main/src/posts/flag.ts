@@ -25,7 +25,7 @@ const statementAddFlagToPost = getDatabase()
     .update(FeedTable)
     .set({
         flags: sql`${FeedTable.flags} + 1`,
-        flags_burnt: sql`${FeedTable.flags_burnt} + ${sql.placeholder('quantity')}`,
+        flags_burnt: sql`(${FeedTable.flags_burnt})::int + ${sql.placeholder('quantity')}`,
     })
     .where(eq(FeedTable.hash, sql.placeholder('post_hash')))
     .prepare('stmnt_add_flag_count_to_post');

@@ -25,7 +25,7 @@ const statementAddLikeToPost = getDatabase()
     .update(FeedTable)
     .set({
         likes: sql`${FeedTable.likes} + 1`,
-        likes_burnt: sql`${FeedTable.likes_burnt} + ${sql.placeholder('quantity')}`,
+        likes_burnt: sql`(${FeedTable.likes_burnt})::int + ${sql.placeholder('quantity')}`,
     })
     .where(eq(FeedTable.hash, sql.placeholder('post_hash')))
     .prepare('stmnt_add_like_count_to_post');

@@ -12,7 +12,7 @@ import { infiniteDataWithoutItem } from '@/utility/optimisticBuilders';
 
 interface UnfollowUserRequestMutation {
     userAddress: Ref<string>;
-    photonValue: number;
+    amountAtomics: string;
 }
 
 export function useUnfollowUser(
@@ -24,13 +24,13 @@ export function useUnfollowUser(
     const {
         mutateAsync,
     } = useMutation({
-        mutationFn: async ({ userAddress, photonValue }: UnfollowUserRequestMutation) => {
+        mutationFn: async ({ userAddress, amountAtomics }: UnfollowUserRequestMutation) => {
             txError.value = undefined;
             txSuccess.value = undefined;
 
             const result = await wallet.dither.send(
                 'Unfollow',
-                { args: [userAddress.value], amount: BigInt(photonValue).toString() },
+                { args: [userAddress.value], amount: amountAtomics },
             );
 
             if (!result.broadcast) {

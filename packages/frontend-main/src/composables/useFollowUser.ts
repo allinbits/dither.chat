@@ -12,7 +12,7 @@ import { infiniteDataWithNewItem, newFollowUser } from '@/utility/optimisticBuil
 
 interface FollowUserRequestMutation {
     userAddress: Ref<string>;
-    photonValue: number;
+    amountAtomics: string;
 }
 
 export function useFollowUser(
@@ -24,13 +24,13 @@ export function useFollowUser(
     const {
         mutateAsync,
     } = useMutation({
-        mutationFn: async ({ userAddress, photonValue }: FollowUserRequestMutation) => {
+        mutationFn: async ({ userAddress, amountAtomics }: FollowUserRequestMutation) => {
             txError.value = undefined;
             txSuccess.value = undefined;
 
             const result = await wallet.dither.send(
                 'Follow',
-                { args: [userAddress.value], amount: BigInt(photonValue).toString() },
+                { args: [userAddress.value], amount: amountAtomics },
             );
 
             if (!result.broadcast) {
