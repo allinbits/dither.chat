@@ -9,7 +9,8 @@ import { useWallet } from '@/composables/useWallet';
 
 import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
 import { cn } from '@/utility';
-import { formatAmount, formatCompactNumber } from '@/utility/text';
+import { fractionalDigits } from '@/utility/atomics';
+import { formatCompactAtomics, formatCompactNumber } from '@/utility/text';
 
 defineProps<{ post: Post }>();
 const isSmallScreen = useMediaQuery('(max-width: 422px)');
@@ -46,26 +47,26 @@ function handleAction(type: keyof PopupState, post: Post) {
     <div :class="buttonWrapperClass">
       <button :class="buttonClass" @click.stop="handleAction('like', post)">
         <ThumbsUp class="size-5" color="#A2A2A9" />
-        <span :class="buttonLabelClass">{{ formatCompactNumber(post.likes_burnt) }}</span>
+        <span :class="buttonLabelClass">{{ formatCompactAtomics(post.likes_burnt, fractionalDigits) }}</span>
       </button>
     </div>
 
     <div :class="buttonWrapperClass">
       <button :class="buttonClass" @click.stop="handleAction('dislike', post)">
         <ThumbsDown class="size-5 scale-x-[-1]" color="#A2A2A9" />
-        <span :class="buttonLabelClass">{{ formatCompactNumber(post.dislikes_burnt) }}</span>
+        <span :class="buttonLabelClass">{{ formatCompactAtomics(post.dislikes_burnt, fractionalDigits) }}</span>
       </button>
     </div>
 
     <div :class="buttonWrapperClass">
       <button :class="buttonClass" @click.stop="handleAction('flag', post)">
         <Flag class="size-5" color="#A2A2A9" />
-        <span :class="buttonLabelClass">{{ formatCompactNumber(post.flags_burnt) }}</span>
+        <span :class="buttonLabelClass">{{ formatCompactAtomics(post.flags_burnt, fractionalDigits) }}</span>
       </button>
     </div>
 
     <div class="flex flex-wrap justify-end gap-x-1 ml-auto text-xs text-right  text-neutral-400">
-      <span class="w-[64px]">{{ formatAmount(post.quantity, 6) }}</span>
+      <span class="w-[64px]">{{ formatCompactAtomics(post.quantity, fractionalDigits) }}</span>
       <span>PHOTON</span>
     </div>
   </div>

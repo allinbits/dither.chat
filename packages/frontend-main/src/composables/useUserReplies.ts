@@ -20,13 +20,13 @@ export const userReplies = (params: Params) => {
     const configStore = useConfigStore();
     const apiRoot = configStore.envConfig.apiRoot ?? 'http://localhost:3000';
 
-    const { minSendAmount } = storeToRefs(useFiltersStore());
-    const debouncedMinSendAmount = refDebounced<number>(minSendAmount, 600);
+    const { filterAmountAtomics } = storeToRefs(useFiltersStore());
+    const debouncedFilterAmount = refDebounced<string>(filterAmountAtomics, 600);
     return infiniteQueryOptions({
-        queryKey: ['user-replies', params.userAddress, debouncedMinSendAmount],
+        queryKey: ['user-replies', params.userAddress, debouncedFilterAmount],
         queryFn: async ({ pageParam = 0 }) => {
             const queryClient = useQueryClient();
-            const res = await fetch(`${apiRoot}/user-replies?address=${params.userAddress.value}&offset=${pageParam}&limit=${LIMIT}&minQuantity=${Math.trunc(debouncedMinSendAmount.value)}`);
+            const res = await fetch(`${apiRoot}/user-replies?address=${params.userAddress.value}&offset=${pageParam}&limit=${LIMIT}&minQuantity=${debouncedFilterAmount.value}`);
             const json = (await res.json()) as { status: number; rows: ReplyWithParent[] };
             const rows = json.rows ?? [];
             // Update the query cache with the parent posts and reply posts

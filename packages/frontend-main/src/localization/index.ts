@@ -51,6 +51,8 @@ export const messages = {
             },
             InputPhoton: {
                 notEnough: 'Not enough balance',
+                placeholder: 'Type amount',
+                available: 'available',
             },
             PopupTitles: {
                 likePost: 'Like Post',
