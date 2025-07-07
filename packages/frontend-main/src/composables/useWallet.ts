@@ -428,11 +428,6 @@ const useWalletInstance = () => {
             return;
         }
 
-        // if (walletState.isUsingSessionSigning.value) {
-        //     walletState.isUsingSessionSigning.value = false;
-        //     return;
-        // }
-
         const aminoTypes = new AminoTypes({ ...createAuthzAminoConverters(), ...createFeegrantAminoConverters() });
 
         const client = await SigningStargateClient.connectWithSigner(chainInfo.value.rpc, signer.value, {
@@ -454,18 +449,14 @@ const useWalletInstance = () => {
                 allowedRecipients: [destinationWallet],
             });
 
-            console.log(messages);
-            const res = await client.signAndBroadcastSync(primaryAddress, messages, 'auto');
-            console.log(res);
+            await client.signAndBroadcastSync(primaryAddress, messages, 'auto');
         }
 
-        await sessionSigner.value.client.sendTokens(
-            primaryAddress,
-            destinationWallet,
-            [{ denom: 'uphoton', amount: String(100_000) }], // 0.1 PHOTON
-            'auto',
-            'dither.Post("hello from stint integration")',
-        );
+        // const result = await sessionSigner.value.execute.send({
+        //     toAddress: destinationWallet,
+        //     amount: [{ denom: 'uphoton', amount: String(100_000) }], // 0.1 PHOTON
+        //     memo: 'dither.Post("hello from stint integration")',
+        // });
     };
 
     window.addEventListener('cosmostation_keystorechange', refreshAddress);
@@ -479,6 +470,7 @@ const useWalletInstance = () => {
         sendTx,
         refreshAddress,
         signMessage,
+        sessionSigner,
         toggleSessionMode,
         dither: {
             send: ditherSend,

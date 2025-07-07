@@ -13,8 +13,8 @@ export const messages = {
                 balance: 'Balance',
                 cancel: 'Cancel',
                 back: 'Go back',
-                disconnect: 'Disconnect wallet',
-                connecting: 'Connecting wallet',
+                disconnect: 'Disconnect Wallet',
+                connecting: 'Connecting Wallet',
                 wait: 'Please wait...',
                 trouble: 'Troubleshooting',
                 slow: 'The connection seems to be slow...',
@@ -27,6 +27,8 @@ export const messages = {
                 otherWallet: 'Make sure you have a wallet browser extension enabled.',
                 enterAddress: 'Enter your wallet address',
                 addressPlaceholder: 'e.g. atone1ad453f23bc2d...',
+                singleClickDisable: 'Single-Click Disable',
+                singleClickEnable: 'Single-Click Enable',
             },
             Wallet: {
                 popupSign:

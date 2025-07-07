@@ -16,9 +16,8 @@ export const useWalletStateStore = defineStore(
         const address = ref('');
         const used = ref<Wallets | null>(null);
         const processState = ref<WalletProcessState>('idle');
-        const isUsingSessionSigning = ref(false);
 
-        return { keplr, leap, cosmostation, loggedIn, isUsingSessionSigning, address, used, processState };
+        return { keplr, leap, cosmostation, loggedIn, address, used, processState };
     },
     {
         persist: {

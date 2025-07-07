@@ -69,7 +69,6 @@ const buttonLabelClass = 'text-lg font-semibold';
         {{ $t('components.Button.newPost') }}
       </Button>
     </div>
-
-    <WalletConnectButton/>
+    <WalletConnectButton />
   </header>
 </template>
