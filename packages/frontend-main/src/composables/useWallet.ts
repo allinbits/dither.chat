@@ -4,9 +4,10 @@ import type { OfflineAminoSigner } from '@keplr-wallet/types';
 import type { DitherTypes } from '@/types';
 
 import { type Ref, ref } from 'vue';
-import { coins, type DeliverTxResponse, SigningStargateClient } from '@cosmjs/stargate';
+import { coins, type DeliverTxResponse, GasPrice, SigningStargateClient } from '@cosmjs/stargate';
 import { getOfflineSigner } from '@cosmostation/cosmos-client';
 import { storeToRefs } from 'pinia';
+import { consoleLogger, newSessionSigner, type SessionSigner } from 'stint-signer';
 
 import { useBalanceFetcher } from './useBalanceFetcher';
 
@@ -61,6 +62,7 @@ const useWalletInstance = () => {
     const chainInfo = getChainConfigLazy();
     const configStore = useConfigStore();
     const balanceFetcher = useBalanceFetcher();
+    const sessionSigner = ref<SessionSigner>();
 
     const apiRoot = configStore.envConfig.apiRoot ?? 'http://localhost:3000';
     const destinationWallet = configStore.envConfig.communityWallet ?? 'atone1uq6zjslvsa29cy6uu75y8txnl52mw06j6fzlep';
@@ -421,6 +423,38 @@ const useWalletInstance = () => {
         return await sendBankTx(memo, data.amount);
     };
 
+    const toggleSessionMode = async () => {
+        if (!signer.value) {
+            return;
+        }
+
+        // if (walletState.isUsingSessionSigning.value) {
+        //     walletState.isUsingSessionSigning.value = false;
+        //     return;
+        // }
+
+        const client = await SigningStargateClient.connectWithSigner(chainInfo.value.rpc, signer.value, { gasPrice: GasPrice.fromString('0.025uphoton') });
+
+        sessionSigner.value = await newSessionSigner({ primaryClient: client as any, saltName: 'dither-session', logger: consoleLogger });
+
+        const messages = sessionSigner.value.generateDelegationMessages({
+            sessionExpiration: new Date(Date.now() + 24 * 60 * 60 * 1000),
+            spendLimit: { denom: 'uphoton', amount: String(1_000_000) }, // 1 PHOTON
+            gasLimit: { denom: 'uphoton', amount: String(500_000) }, // 0.5 PHOTON,
+            allowedRecipients: [destinationWallet],
+        });
+
+        const primaryAddress = sessionSigner.value.primaryAddress();
+        await client.signAndBroadcast(primaryAddress, messages, 'auto');
+        // await sessionSigner.value.client.sendTokens(
+        //     sessionSigner.value.primaryAddress(),
+        //     destinationWallet,
+        //     [{ denom: 'uphoton', amount: String(100_000) }], // 0.1 PHOTON
+        //     'auto',
+        //     'Sent via session signer',
+        // );
+    };
+
     window.addEventListener('cosmostation_keystorechange', refreshAddress);
     window.addEventListener('keplr_keystorechange', refreshAddress);
     window.addEventListener('leap_keystorechange', refreshAddress);
@@ -432,6 +466,7 @@ const useWalletInstance = () => {
         sendTx,
         refreshAddress,
         signMessage,
+        toggleSessionMode,
         dither: {
             send: ditherSend,
             tipUser: ditherTipUser,

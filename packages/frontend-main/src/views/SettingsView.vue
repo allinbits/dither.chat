@@ -2,6 +2,7 @@
 import { ChevronRight } from 'lucide-vue-next';
 
 import Button from '@/components/ui/button/Button.vue';
+import ToggleSessionSwitch from '@/components/ui/switch/ToggleSessionSwitch.vue';
 import MainLayout from '@/layouts/MainLayout.vue';
 </script>
 
@@ -29,6 +30,8 @@ import MainLayout from '@/layouts/MainLayout.vue';
             <ChevronRight class="size-4" />
           </Button>
         </RouterLink>
+
+        <ToggleSessionSwitch />
       </div>
     </div>
   </MainLayout>
