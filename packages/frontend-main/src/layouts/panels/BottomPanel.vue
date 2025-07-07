@@ -7,11 +7,12 @@ import { usePopups } from '@/composables/usePopups';
 import { useWallet } from '@/composables/useWallet';
 
 import NotificationsCount from '@/components/notifications/NotificationsCount.vue';
+import { routesNames } from '@/router';
 import { cn } from '@/utility';
 const wallet = useWallet();
 const popups = usePopups();
 const router = useRouter();
-const isMyProfileRoute = computed(() => router.currentRoute.value.name?.toString().startsWith('Profile') && wallet.loggedIn.value && wallet.address.value === router.currentRoute.value.params.address);
+const isMyProfileRoute = computed(() => router.currentRoute.value.name?.toString().startsWith(routesNames.profile) && wallet.loggedIn.value && wallet.address.value === router.currentRoute.value.params.address);
 const buttonClass = (routeName?: RouteRecordNameGeneric) => `flex justify-center items-center size-[52px] rounded-full active:bg-accent hover:bg-accent ${!!routeName && router.currentRoute.value.name?.toString().startsWith(routeName.toString()) && 'bg-accent/80'}`;
 
 </script>
@@ -19,24 +20,24 @@ const buttonClass = (routeName?: RouteRecordNameGeneric) => `flex justify-center
 <template>
   <header class="h-full w-full flex flex-row items-center justify-around border-t bg-background px-4">
     <nav class="contents">
-      <RouterLink to="/" :class="buttonClass('Home')">
+      <RouterLink to="/" :class="buttonClass(routesNames.home)">
         <House class="size-6" />
       </RouterLink>
 
-      <RouterLink to="/explore" :class="buttonClass('Explore')">
+      <RouterLink to="/explore" :class="buttonClass(routesNames.explore)">
         <Search class="size-6" />
       </RouterLink>
 
-      <RouterLink v-if="wallet.loggedIn.value" to="/notifications" :class="cn(buttonClass('Notifications'), 'relative')">
+      <RouterLink v-if="wallet.loggedIn.value" to="/notifications" :class="cn(buttonClass(routesNames.notifications), 'relative')">
         <NotificationsCount class="absolute top-1 left-6"/>
         <Bell class="size-6" />
       </RouterLink>
 
-      <RouterLink v-if="wallet.loggedIn.value" :to="`/profile/${wallet.address.value}`" :class="buttonClass(isMyProfileRoute ? 'Profile' : undefined)">
+      <RouterLink v-if="wallet.loggedIn.value" :to="`/profile/${wallet.address.value}`" :class="buttonClass(isMyProfileRoute ? routesNames.profile : undefined)">
         <User class="size-6" />
       </RouterLink>
 
-      <RouterLink v-if="wallet.loggedIn.value" to="/settings" :class="buttonClass('Settings')">
+      <RouterLink v-if="wallet.loggedIn.value" to="/settings" :class="buttonClass(routesNames.settings)">
         <Settings class="size-6" />
       </RouterLink>
     </nav>

@@ -14,26 +14,41 @@ import ProfileRepliesView from './views/Profile/ProfileRepliesView.vue';
 import SettingsView from './views/SettingsView.vue';
 import UnauthorizedView from './views/UnauthorizedView.vue';
 
+export const routesNames = {
+    home: 'Home',
+    homeFollowing: 'Home Following',
+    explore: 'Explore',
+    notifications: 'Notifications',
+    profile: 'Profile',
+    profileReplies: 'Profile Replies',
+    settings: 'Settings',
+    settingsManageFollowers: 'Settings Manage Followers',
+    settingsConfig: 'Settings Config',
+    post: 'Post',
+    unauthorized: 'Unauthorized',
+    notFound: 'NotFound',
+};
+
 const routes = [
-    { path: '/', name: 'Home', component: HomeFeedView },
-    { path: '/following', name: 'Home Following', component: HomeFollowingView },
-    { path: '/explore', name: 'Explore', component: ExploreView },
-    { path: '/notifications', name: 'Notifications', component: NotificationsView, meta: { authRequired: true } },
-    { path: '/profile/:address', name: 'Profile', component: ProfilePostsView },
-    { path: '/profile/:address/replies', name: 'Profile Replies', component: ProfileRepliesView },
-    { path: '/settings', name: 'Settings', component: SettingsView, meta: { authRequired: true } },
-    { path: '/settings/manage-following', name: 'Settings Manage Followers', component: ManageFollowingView, meta: { authRequired: true } },
-    { path: '/settings/env-config', name: 'Settings Config', component: EnvConfigView, meta: { authRequired: true } },
-    { path: '/post/:hash/:postHash?', name: 'Post', component: PostView },
+    { path: '/', name: routesNames.home, component: HomeFeedView },
+    { path: '/following', name: routesNames.homeFollowing, component: HomeFollowingView },
+    { path: '/explore', name: routesNames.explore, component: ExploreView },
+    { path: '/notifications', name: routesNames.notifications, component: NotificationsView, meta: { authRequired: true } },
+    { path: '/profile/:address', name: routesNames.profile, component: ProfilePostsView },
+    { path: '/profile/:address/replies', name: routesNames.profileReplies, component: ProfileRepliesView },
+    { path: '/settings', name: routesNames.settings, component: SettingsView, meta: { authRequired: true } },
+    { path: '/settings/manage-following', name: routesNames.settingsManageFollowers, component: ManageFollowingView, meta: { authRequired: true } },
+    { path: '/settings/env-config', name: routesNames.settingsConfig, component: EnvConfigView, meta: { authRequired: true } },
+    { path: '/post/:hash/:postHash?', name: routesNames.post, component: PostView },
     {
         path: '/unauthorized',
-        name: 'Unauthorized',
+        name: routesNames.unauthorized,
         component: UnauthorizedView,
     },
     // Catch-all route for 404
     {
         path: '/:pathMatch(.*)*',
-        name: 'NotFound',
+        name: routesNames.notFound,
         component: NotFoundView,
     },
 ];
@@ -41,6 +56,21 @@ const routes = [
 const router = createRouter({
     history: createWebHistory(),
     routes,
+    scrollBehavior(to, _, savedPosition) {
+        // If this is a back/forward navigation (e.g. browser back button or router.go(-1)) → Restore he saved scroll position
+        if (savedPosition) {
+            return savedPosition;
+        }
+        // If navigating to the home/following pages → Keep the current scroll position
+        else if (
+            to.name === routesNames.home
+            || to.name === routesNames.homeFollowing
+        ) {
+            return undefined;
+        }
+        // For any other route (e.g. navigating to `/post/:hash`) → Force scroll to the top of the page
+        return { top: 0 };
+    },
 });
 
 router.beforeEach((to, _, next) => {
@@ -48,7 +78,7 @@ router.beforeEach((to, _, next) => {
 
     // If the route is auth required and the user is not authenticated, redirect to the unauthorized page
     if (to.meta.authRequired && !walletState.loggedIn) {
-        next({ name: 'Unauthorized' });
+        next({ name: routesNames.unauthorized });
     }
     else {
         next();
