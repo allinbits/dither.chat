@@ -4,7 +4,7 @@ import type { OfflineAminoSigner } from '@keplr-wallet/types';
 import type { DitherTypes } from '@/types';
 
 import { type Ref, ref } from 'vue';
-import { coins, type DeliverTxResponse, GasPrice, SigningStargateClient } from '@cosmjs/stargate';
+import { AminoTypes, coins, createAuthzAminoConverters, createFeegrantAminoConverters, type DeliverTxResponse, GasPrice, SigningStargateClient } from '@cosmjs/stargate';
 import { getOfflineSigner } from '@cosmostation/cosmos-client';
 import { storeToRefs } from 'pinia';
 import { consoleLogger, newSessionSigner, type SessionSigner } from 'stint-signer';
@@ -89,12 +89,12 @@ const useWalletInstance = () => {
                 try {
                     await window.keplr?.experimentalSuggestChain(chainInfo.value);
                     await window.keplr?.enable(chainInfo.value.chainId);
-                    if (window.getOfflineSignerOnlyAmino) {
+                    if (window.getOfflineSigner) {
                         walletState.address.value = (
-                            await window.getOfflineSignerOnlyAmino(chainInfo.value.chainId).getAccounts()
+                            await window.getOfflineSigner(chainInfo.value.chainId).getAccounts()
                         )[0].address;
                         walletState.used.value = Wallets.keplr;
-                        signer.value = window.getOfflineSignerOnlyAmino(chainInfo.value.chainId);
+                        signer.value = window.getOfflineSigner(chainInfo.value.chainId);
                         if (signal?.aborted) {
                             signOut();
                         }
@@ -115,10 +115,10 @@ const useWalletInstance = () => {
                     await window.leap?.experimentalSuggestChain(chainInfo.value);
                     await window.leap?.enable(chainInfo.value.chainId);
                     walletState.address.value = (
-                        await window.leap.getOfflineSignerOnlyAmino(chainInfo.value.chainId).getAccounts()
+                        await window.leap.getOfflineSigner(chainInfo.value.chainId).getAccounts()
                     )[0].address;
                     walletState.used.value = Wallets.leap;
-                    signer.value = window.leap.getOfflineSignerOnlyAmino(chainInfo.value.chainId);
+                    signer.value = window.leap.getOfflineSigner(chainInfo.value.chainId);
                     if (signal?.aborted) {
                         signOut();
                     }
@@ -433,26 +433,39 @@ const useWalletInstance = () => {
         //     return;
         // }
 
-        const client = await SigningStargateClient.connectWithSigner(chainInfo.value.rpc, signer.value, { gasPrice: GasPrice.fromString('0.025uphoton') });
+        const aminoTypes = new AminoTypes({ ...createAuthzAminoConverters(), ...createFeegrantAminoConverters() });
+
+        const client = await SigningStargateClient.connectWithSigner(chainInfo.value.rpc, signer.value, {
+            gasPrice: GasPrice.fromString('0.025uphoton'),
+            aminoTypes,
+        });
 
         sessionSigner.value = await newSessionSigner({ primaryClient: client as any, saltName: 'dither-session', logger: consoleLogger });
 
-        const messages = sessionSigner.value.generateDelegationMessages({
-            sessionExpiration: new Date(Date.now() + 24 * 60 * 60 * 1000),
-            spendLimit: { denom: 'uphoton', amount: String(1_000_000) }, // 1 PHOTON
-            gasLimit: { denom: 'uphoton', amount: String(500_000) }, // 0.5 PHOTON,
-            allowedRecipients: [destinationWallet],
-        });
-
+        const existingAuthz = await sessionSigner.value.hasAuthzGrant();
+        const existingFeegrant = await sessionSigner.value.hasFeegrant();
         const primaryAddress = sessionSigner.value.primaryAddress();
-        await client.signAndBroadcast(primaryAddress, messages, 'auto');
-        // await sessionSigner.value.client.sendTokens(
-        //     sessionSigner.value.primaryAddress(),
-        //     destinationWallet,
-        //     [{ denom: 'uphoton', amount: String(100_000) }], // 0.1 PHOTON
-        //     'auto',
-        //     'Sent via session signer',
-        // );
+
+        if (!existingAuthz || !existingFeegrant) {
+            const messages = sessionSigner.value.generateDelegationMessages({
+                sessionExpiration: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                spendLimit: { denom: 'uphoton', amount: String(1_000_000) }, // 1 PHOTON
+                gasLimit: { denom: 'uphoton', amount: String(500_000) }, // 0.5 PHOTON,
+                allowedRecipients: [destinationWallet],
+            });
+
+            console.log(messages);
+            const res = await client.signAndBroadcastSync(primaryAddress, messages, 'auto');
+            console.log(res);
+        }
+
+        await sessionSigner.value.client.sendTokens(
+            primaryAddress,
+            destinationWallet,
+            [{ denom: 'uphoton', amount: String(100_000) }], // 0.1 PHOTON
+            'auto',
+            'dither.Post("hello from stint integration")',
+        );
     };
 
     window.addEventListener('cosmostation_keystorechange', refreshAddress);
