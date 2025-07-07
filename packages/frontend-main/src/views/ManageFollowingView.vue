@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { ChevronLeft, Loader } from 'lucide-vue-next';
+import { Loader } from 'lucide-vue-next';
 
 import { useFollowing } from '@/composables/useFollowing';
 import { type PopupState, usePopups } from '@/composables/usePopups';
@@ -10,6 +10,7 @@ import Button from '@/components/ui/button/Button.vue';
 import UserAvatarUsername from '@/components/users/UserAvatarUsername.vue';
 import MainLayout from '@/layouts/MainLayout.vue';
 import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
+import HeaderBack from '@/views/ViewHeading.vue';
 
 const wallet = useWallet();
 const { data, fetchNextPage, isFetchingNextPage, hasNextPage, isLoading } = useFollowing({
@@ -35,19 +36,8 @@ function handleAction(type: keyof PopupState, userAddress: string) {
 <template>
   <MainLayout>
     <div class="flex flex-col">
-      <div class="flex flex-row items-center border-b py-2 pr-4">
-        <RouterLink to="/settings" class="w-32">
-          <Button size="sm" class="w-full text-left decoration-2" variant="link">
-            <ChevronLeft class="size-4" />
-            <span class="grow">
-              {{ $t('components.Settings.back') }}
-            </span>
-          </Button>
-        </RouterLink>
-        <h1 class="font-semibold grow text-right select-none">
-          {{ $t(`components.Settings.following`) }}
-        </h1>
-      </div>
+      <HeaderBack :title="$t('components.Headings.manageFollows')" />
+
       <div class="flex flex-col">
         <Loader v-if="isLoading" class="animate-spin w-full mt-10" />
 

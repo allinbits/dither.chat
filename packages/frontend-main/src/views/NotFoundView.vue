@@ -1,13 +1,20 @@
 <script setup lang="ts">
+import ViewHeading from './ViewHeading.vue';
+
 import MainLayout from '@/layouts/MainLayout.vue';
 
 </script>
 
 <template>
   <MainLayout>
-    <div class="flex flex-col items-center justify-center h-full w-full">
-      <h1 class="text-2xl font-bold">Page not found</h1>
-      <p class="text-gray-500">The page you are looking for does not exist.</p>
+    <div class="flex flex-col h-full">
+      <ViewHeading/>
+
+      <div class="flex flex-col flex-1 items-center justify-center  w-full">
+        <h1 class="text-2xl font-bold">{{ $t('components.NotFound.title') }}</h1>
+        <p class="text-gray-500">{{ $t('components.NotFound.message') }}</p>
+      </div>
     </div>
   </MainLayout>
+
 </template>

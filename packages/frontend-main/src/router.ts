@@ -5,7 +5,7 @@ import EnvConfigView from './views/EnvConfigView.vue';
 import ExploreView from './views/ExploreView.vue';
 import HomeFeedView from './views/Home/HomeFeedView.vue';
 import HomeFollowingView from './views/Home/HomeFollowingView.vue';
-import ManageFollowsView from './views/ManageFollowsView.vue';
+import ManageFollowingView from './views/ManageFollowingView.vue';
 import NotFoundView from './views/NotFoundView.vue';
 import NotificationsView from './views/NotificationsView.vue';
 import PostView from './views/PostView.vue';
@@ -22,7 +22,7 @@ const routes = [
     { path: '/profile/:address', name: 'Profile', component: ProfilePostsView },
     { path: '/profile/:address/replies', name: 'Profile Replies', component: ProfileRepliesView },
     { path: '/settings', name: 'Settings', component: SettingsView, meta: { authRequired: true } },
-    { path: '/settings/manage-followers', name: 'Settings Manage Followers', component: ManageFollowsView, meta: { authRequired: true } },
+    { path: '/settings/manage-following', name: 'Settings Manage Followers', component: ManageFollowingView, meta: { authRequired: true } },
     { path: '/settings/env-config', name: 'Settings Config', component: EnvConfigView, meta: { authRequired: true } },
     { path: '/post/:hash/:postHash?', name: 'Post', component: PostView },
     {

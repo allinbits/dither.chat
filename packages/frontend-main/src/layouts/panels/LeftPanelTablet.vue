@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import { type RouteRecordNameGeneric, useRouter } from 'vue-router';
 import { Bell, Feather, House, Search, Settings, User } from 'lucide-vue-next';
 
@@ -11,6 +12,7 @@ import { cn } from '@/utility';
 const wallet = useWallet();
 const popups = usePopups();
 const router = useRouter();
+const isMyProfileRoute = computed(() => router.currentRoute.value.name?.toString().startsWith('Profile') && wallet.loggedIn.value && wallet.address.value === router.currentRoute.value.params.address);
 const buttonClass = (routeName?: RouteRecordNameGeneric) => `flex justify-center items-center size-[52px] rounded-full active:bg-accent hover:bg-accent transition-colors ${!!routeName && router.currentRoute.value.name?.toString().startsWith(routeName.toString()) && 'bg-accent/80'}`;
 
 </script>
@@ -32,7 +34,7 @@ const buttonClass = (routeName?: RouteRecordNameGeneric) => `flex justify-center
           <Bell class="size-6" />
         </RouterLink>
 
-        <RouterLink v-if="wallet.loggedIn.value"  :to="`/profile/${wallet.address.value}`" :class="buttonClass('Profile')">
+        <RouterLink v-if="wallet.loggedIn.value"  :to="`/profile/${wallet.address.value}`" :class="buttonClass(isMyProfileRoute ? 'Profile' : undefined)">
           <User class="size-6" />
         </RouterLink>
 
