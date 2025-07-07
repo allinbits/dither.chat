@@ -17,7 +17,17 @@ import { cn } from '@/utility';
 const wallet = useWallet();
 
 const { data, fetchNextPage, isLoading, isFetchingNextPage, hasNextPage } = useNotifications({ userAddress: wallet.address });
-const flatNotifications = computed(() => data.value?.pages.flat() ?? []);
+// const flatNotifications = computed(() => data.value?.pages.flat() ?? []);
+
+const flatNotifications = [{
+    hash: 'b1faa15fad9d3ad1058c0a7f72613fe95735cbe696965b65be91aaaf032a7ae9',
+    owner: 'atone14n7v36p24sckmdrwpr83pad35dcjm636sz9tt81',
+    actor: 'atone14n7v36p24sckmdrwpr83pad35dcjm636sz9tt8',
+    type: 'like',
+    subcontext: '1',
+    timestamp: new Date(),
+    was_read: false,
+}];
 
 </script>
 
