@@ -46,6 +46,6 @@ const buttonClass = (routeName?: RouteRecordNameGeneric) => `flex justify-center
       </button>
     </div>
 
-    <WalletConnectButtonMobile/>
+    <WalletConnectButtonMobile class="size-[52px]"/>
   </header>
 </template>
