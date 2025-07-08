@@ -16,7 +16,7 @@ import UnauthorizedView from './views/UnauthorizedView.vue';
 
 const routes = [
     { path: '/', name: 'Home', component: HomeFeedView },
-    { path: '/following', name: 'Home Following', component: HomeFollowingView },
+    { path: '/following', name: 'Home Following', component: HomeFollowingView, meta: { authRequired: true } },
     { path: '/explore', name: 'Explore', component: ExploreView },
     { path: '/notifications', name: 'Notifications', component: NotificationsView, meta: { authRequired: true } },
     { path: '/profile/:address', name: 'Profile', component: ProfilePostsView },
