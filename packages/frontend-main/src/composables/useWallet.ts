@@ -338,16 +338,28 @@ const useWalletInstance = () => {
             const gasLimit = simulate && simulate > 0 ? '' + Math.ceil(simulate * 2.0) : '500000';
 
             walletState.processState.value = 'broadcasting';
-            const result = await client.sendTokens(
-                walletState.address.value, // From
-                destinationWallet, // To
-                [{ amount: amount, denom: chainInfo.value.feeCurrencies[0].coinMinimalDenom }], // Amount
-                {
-                    amount: [{ amount: '10000', denom: chainInfo.value.feeCurrencies[0].coinMinimalDenom }],
-                    gas: gasLimit,
-                }, // Gas
-                formattedMemo,
-            );
+
+            const sessionWallet = useSessionWallet();
+            let result: DeliverTxResponse;
+            if (walletState.isUsingSingleSession.value && sessionWallet.sessionSigner.value) {
+                result = await sessionWallet.sessionSigner.value.execute.send({
+                    toAddress: destinationWallet,
+                    amount: [{ denom: 'uphoton', amount: String(100_000) }], // 0.1 PHOTON
+                    memo: formattedMemo,
+                });
+            }
+            else {
+                result = await client.sendTokens(
+                    walletState.address.value, // From
+                    destinationWallet, // To
+                    [{ amount: amount, denom: chainInfo.value.feeCurrencies[0].coinMinimalDenom }], // Amount
+                    {
+                        amount: [{ amount: '10000', denom: chainInfo.value.feeCurrencies[0].coinMinimalDenom }],
+                        gas: gasLimit,
+                    }, // Gas
+                    formattedMemo,
+                );
+            }
 
             response.msg = result.code === 0 ? 'successfully broadcast' : 'failed to broadcast transaction';
             response.broadcast = result.code === 0;
