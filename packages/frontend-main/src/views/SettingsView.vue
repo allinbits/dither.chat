@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ChevronRight } from 'lucide-vue-next';
 
+import ViewHeading from './ViewHeading.vue';
+
 import Button from '@/components/ui/button/Button.vue';
 import MainLayout from '@/layouts/MainLayout.vue';
 </script>
@@ -8,14 +10,13 @@ import MainLayout from '@/layouts/MainLayout.vue';
 <template>
   <MainLayout>
     <div class="flex flex-col">
-      <h1 class="text-lg font-semibold border-b px-4 py-4">
-        {{ $t(`components.Titles.settings`) }}
-      </h1>
+      <ViewHeading :title="$t('components.Headings.settings')" />
+
       <div class="flex flex-col">
-        <RouterLink to="/settings/manage-followers" class="border-b">
+        <RouterLink to="/settings/manage-following" class="border-b">
           <Button size="sm" class="w-full text-left py-8" variant="ghost">
             <span class="grow pl-2">
-              {{ $t('components.Settings.manageFollows') }}
+              {{ $t('components.Headings.manageFollows') }}
             </span>
             <ChevronRight class="size-4" />
           </Button>
@@ -24,7 +25,7 @@ import MainLayout from '@/layouts/MainLayout.vue';
         <RouterLink to="/settings/env-config" class="border-b">
           <Button size="sm" class="w-full text-left py-8" variant="ghost">
             <span class="grow pl-2">
-              {{ $t('components.Settings.envConfig') }}
+              {{ $t('components.Headings.envConfig') }}
             </span>
             <ChevronRight class="size-4" />
           </Button>

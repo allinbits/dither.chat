@@ -7,6 +7,8 @@ import { useIsFollowing } from '@/composables/useIsFollowing';
 import { type PopupState, usePopups } from '@/composables/usePopups';
 import { useWallet } from '@/composables/useWallet';
 
+import ViewHeading from '../ViewHeading.vue';
+
 import Button from '@/components/ui/button/Button.vue';
 import RouterLinkTab from '@/components/ui/tabs/RouterLinkTab.vue';
 import UserAvatarUsername from '@/components/users/UserAvatarUsername.vue';
@@ -39,13 +41,10 @@ function handleAction(type: keyof PopupState, userAddress: string) {
 
 <template>
   <MainLayout>
-    <div class="mt-6  flex flex-col">
+    <div class="flex flex-col">
+      <ViewHeading :title="$t(`components.Headings.${isMyProfile ? 'myProfile' : 'profile'}`)" />
 
-      <h1 class="hidden xl:inline text-lg font-semibold mb-6 ml-3 px-4">
-        {{ $t(`components.Titles.${isMyProfile ? 'myProfile' : 'profile'}`) }}
-      </h1>
-
-      <div class="flex flex-row justify-between items-center px-4">
+      <div class="flex flex-row justify-between items-center p-4">
         <UserAvatarUsername :userAddress="address" size="lg" disabled/>
         <Loader v-if="isFetchingIsFollowing" class="animate-spin w-[80px]" />
         <template v-else-if="!isMyProfile && wallet.loggedIn.value">
@@ -64,9 +63,7 @@ function handleAction(type: keyof PopupState, userAddress: string) {
         </template>
       </div>
 
-      <div class="border-b mt-6" />
-
-      <div v-if="wallet.loggedIn.value" class='flex flex-row'>
+      <div v-if="wallet.loggedIn.value" class='flex flex-row border-t'>
         <RouterLinkTab :label="$t(`components.Tabs.${isMyProfile ? 'myPosts' : 'posts'}`)"
                        :isActive="route.path === `/profile/${address}`"
                        :to="`/profile/${address}`"

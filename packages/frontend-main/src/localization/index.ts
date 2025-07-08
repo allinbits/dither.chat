@@ -77,12 +77,15 @@ export const messages = {
                 replies: 'Replies',
                 myReplies: 'My Replies',
             },
-            Titles: {
+            Headings: {
                 profile: 'Profile',
                 myProfile: 'My Profile',
                 notifications: 'Notifications',
                 settings: 'Settings',
-                config: 'Config',
+                manageFollows: 'Manage Following',
+                envConfig: 'Environment Config',
+                post: 'Post',
+                explore: 'Explore',
             },
             SearchInput: {
                 noResults: 'No results found',
@@ -122,6 +125,10 @@ export const messages = {
                 following: 'Following',
                 back: 'Back',
                 singleSessionSummary: 'Single Session creations a local private key through a passkey to sign transactions through the Comsos Authz and Feegrant modules. The settings below let you configure the authorization.',
+            },
+            NotFound: {
+                title: 'Page Not Found',
+                message: 'The page you are looking for does not exist.',
             },
         },
         feedbacks: {

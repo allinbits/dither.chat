@@ -66,8 +66,8 @@ function handleAction(type: keyof PopupState, post: Post) {
     </div>
 
     <div class="flex flex-wrap justify-end gap-x-1 ml-auto text-xs text-right  text-neutral-400">
-      <span class="w-[64px]">{{ formatCompactAtomics(post.quantity, fractionalDigits) }}</span>
-      <span>PHOTON</span>
+      <span :class="cn(buttonLabelClass, 'w-[64px]')">{{ formatCompactAtomics(post.quantity, fractionalDigits) }}</span>
+      <span :class="buttonLabelClass">PHOTON</span>
     </div>
   </div>
 </template>
