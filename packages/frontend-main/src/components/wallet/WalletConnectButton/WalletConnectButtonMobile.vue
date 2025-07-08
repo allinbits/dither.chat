@@ -25,11 +25,11 @@ const connectedState = computed(() => !isConnecting.value && loggedIn.value && !
 </script>
 
 <template>
-  <div>
+  <div class="size-[40px]">
     <!-- Normal signed in account display -->
     <template v-if="connectedState">
       <Popover>
-        <PopoverTrigger class="w-full">
+        <PopoverTrigger class="size-full flex justify-center items-center">
           <UserAvatar :userAddress="address" disabled/>
         </PopoverTrigger>
 
@@ -38,7 +38,7 @@ const connectedState = computed(() => !isConnecting.value && loggedIn.value && !
     </template>
 
     <template v-else>
-      <button @click="walletDialogStore.showDialog" class="flex items-center justify-center flex-row size-[52px] rounded-full hover:bg-accent active:bg-accent transition-colors">
+      <button @click="walletDialogStore.showDialog" class="flex items-center justify-center flex-row size-full rounded-full hover:bg-accent active:bg-accent transition-colors">
         <Wallet class="size-6" />
       </button>
     </template>

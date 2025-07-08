@@ -8,6 +8,7 @@ import Input from '../input/Input.vue';
 
 import PostMessage from '@/components/posts/PostMessage.vue';
 import UserAvatarUsername from '@/components/users/UserAvatarUsername.vue';
+import { routesNames } from '@/router';
 
 const router = useRouter();
 
@@ -19,7 +20,7 @@ const clearSearch = () => {
 const { query, posts, isLoading, error } = useSearchPosts();
 
 const gotoExplore = () => {
-    router.push({ name: 'Explore', query: { q: query.value } });
+    router.push({ name: routesNames.explore, query: { q: query.value } });
 };
 
 </script>
