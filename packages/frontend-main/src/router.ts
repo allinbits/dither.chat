@@ -30,16 +30,16 @@ export const routesNames = {
 };
 
 const routes = [
-    { path: '/', name: routesNames.home, component: HomeFeedView },
-    { path: '/following', name: routesNames.homeFollowing, component: HomeFollowingView },
-    { path: '/explore', name: routesNames.explore, component: ExploreView },
-    { path: '/notifications', name: routesNames.notifications, component: NotificationsView, meta: { authRequired: true } },
-    { path: '/profile/:address', name: routesNames.profile, component: ProfilePostsView },
-    { path: '/profile/:address/replies', name: routesNames.profileReplies, component: ProfileRepliesView },
-    { path: '/settings', name: routesNames.settings, component: SettingsView, meta: { authRequired: true } },
-    { path: '/settings/manage-following', name: routesNames.settingsManageFollowers, component: ManageFollowingView, meta: { authRequired: true } },
-    { path: '/settings/env-config', name: routesNames.settingsConfig, component: EnvConfigView, meta: { authRequired: true } },
-    { path: '/post/:hash/:postHash?', name: routesNames.post, component: PostView },
+    { path: '/', name: 'Home', component: HomeFeedView },
+    { path: '/following', name: 'Home Following', component: HomeFollowingView, meta: { authRequired: true } },
+    { path: '/explore', name: 'Explore', component: ExploreView },
+    { path: '/notifications', name: 'Notifications', component: NotificationsView, meta: { authRequired: true } },
+    { path: '/profile/:address', name: 'Profile', component: ProfilePostsView },
+    { path: '/profile/:address/replies', name: 'Profile Replies', component: ProfileRepliesView },
+    { path: '/settings', name: 'Settings', component: SettingsView, meta: { authRequired: true } },
+    { path: '/settings/manage-followers', name: 'Settings Manage Followers', component: ManageFollowingView, meta: { authRequired: true } },
+    { path: '/settings/env-config', name: 'Settings Config', component: EnvConfigView, meta: { authRequired: true } },
+    { path: '/post/:hash/:postHash?', name: 'Post', component: PostView },
     {
         path: '/unauthorized',
         name: routesNames.unauthorized,
