@@ -120,6 +120,9 @@ export const messages = {
                 title: 'Page Not Found',
                 message: 'The page you are looking for does not exist.',
             },
+            PostActions: {
+                replies: 'reply | replies',
+            },
         },
         feedbacks: {
             copied: 'Copied to clipboard',

@@ -8,7 +8,6 @@ import { useWallet } from '@/composables/useWallet';
 import Input from './Input.vue';
 
 import { fractionalDigits } from '@/utility/atomics';
-import { formatCompactNumber } from '@/utility/text';
 
 const emit = defineEmits(['update:modelValue', 'onValidityChange']);
 
@@ -30,7 +29,9 @@ const hasEnoughBalance = computed(() =>
         Decimal.fromUserInput(model.value.toString(), fractionalDigits),
     ),
 );
-const balanceDiffDisplay = computed(() => formatCompactNumber(balanceDecimal.value.minus(Decimal.fromUserInput(model.value.toString(), fractionalDigits)).toFloatApproximation()));
+const balanceDiffDisplay = computed(() =>
+    balanceDecimal.value.minus(Decimal.fromUserInput(model.value.toString(), fractionalDigits)).toString(),
+);
 
 // Truncate the input value to respect fractionalDigits
 function sanitizeDecimals(value: number | string) {
