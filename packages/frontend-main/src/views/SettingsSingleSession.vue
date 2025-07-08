@@ -39,7 +39,7 @@ const { createSession, clearSession, hasGrants } = useSessionWallet();
               <!-- {{ $t('components.Settings.back') }} -->
             </span>
           </Button>
-          <Button size="sm" class="w-full text-left decoration-2" variant="outline" @click="createSession" v-else>
+          <Button size="sm" class="w-full text-left decoration-2" variant="outline" @click="clearSession" v-else>
             <span class="grow">
               Revoke Session
               <!-- {{ $t('components.Settings.back') }} -->

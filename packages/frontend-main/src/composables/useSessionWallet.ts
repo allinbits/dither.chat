@@ -27,6 +27,7 @@ export const useSessionWallet = () => {
         const client = await SigningStargateClient.connectWithSigner(chainInfo.value.rpc, signer.value, {
             gasPrice: GasPrice.fromString('0.025uphoton'),
         });
+
         await client.signAndBroadcastSync(sessionSigner.value.primaryAddress(), messages, 'auto');
 
         sessionSigner.value = undefined;
