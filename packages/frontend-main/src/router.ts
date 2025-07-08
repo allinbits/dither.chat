@@ -11,6 +11,7 @@ import NotificationsView from './views/NotificationsView.vue';
 import PostView from './views/PostView.vue';
 import ProfilePostsView from './views/Profile/ProfilePostsView.vue';
 import ProfileRepliesView from './views/Profile/ProfileRepliesView.vue';
+import SettingsSingleSession from './views/SettingsSingleSession.vue';
 import SettingsView from './views/SettingsView.vue';
 import UnauthorizedView from './views/UnauthorizedView.vue';
 
@@ -24,6 +25,7 @@ const routes = [
     { path: '/settings', name: 'Settings', component: SettingsView, meta: { authRequired: true } },
     { path: '/settings/manage-followers', name: 'Settings Manage Followers', component: ManageFollowsView, meta: { authRequired: true } },
     { path: '/settings/env-config', name: 'Settings Config', component: EnvConfigView, meta: { authRequired: true } },
+    { path: '/settings/settings-single-session', name: 'Settings Single Session', component: SettingsSingleSession, meta: { authRequired: true } },
     { path: '/post/:hash/:postHash?', name: 'Post', component: PostView },
     {
         path: '/unauthorized',

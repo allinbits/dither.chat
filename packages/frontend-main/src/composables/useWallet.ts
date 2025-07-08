@@ -4,12 +4,12 @@ import type { OfflineAminoSigner } from '@keplr-wallet/types';
 import type { DitherTypes } from '@/types';
 
 import { type Ref, ref } from 'vue';
-import { AminoTypes, coins, createAuthzAminoConverters, createFeegrantAminoConverters, type DeliverTxResponse, GasPrice, SigningStargateClient } from '@cosmjs/stargate';
+import { coins, type DeliverTxResponse, SigningStargateClient } from '@cosmjs/stargate';
 import { getOfflineSigner } from '@cosmostation/cosmos-client';
 import { storeToRefs } from 'pinia';
-import { consoleLogger, newSessionSigner, type SessionSigner } from 'stint-signer';
 
 import { useBalanceFetcher } from './useBalanceFetcher';
+import { useSessionWallet } from './useSessionWallet';
 
 import { useConfigStore } from '@/stores/useConfigStore';
 import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
@@ -62,7 +62,6 @@ const useWalletInstance = () => {
     const chainInfo = getChainConfigLazy();
     const configStore = useConfigStore();
     const balanceFetcher = useBalanceFetcher();
-    const sessionSigner = ref<SessionSigner>();
 
     const apiRoot = configStore.envConfig.apiRoot ?? 'http://localhost:3000';
     const destinationWallet = configStore.envConfig.communityWallet ?? 'atone1uq6zjslvsa29cy6uu75y8txnl52mw06j6fzlep';
@@ -251,6 +250,10 @@ const useWalletInstance = () => {
             }
         }
 
+        if (walletState.isUsingSingleSession.value) {
+            await useSessionWallet().createSession();
+        }
+
         walletDialogStore.hideDialog();
     };
 
@@ -423,55 +426,18 @@ const useWalletInstance = () => {
         return await sendBankTx(memo, data.amount);
     };
 
-    const toggleSessionMode = async () => {
-        if (!signer.value) {
-            return;
-        }
-
-        const aminoTypes = new AminoTypes({ ...createAuthzAminoConverters(), ...createFeegrantAminoConverters() });
-
-        const client = await SigningStargateClient.connectWithSigner(chainInfo.value.rpc, signer.value, {
-            gasPrice: GasPrice.fromString('0.025uphoton'),
-            aminoTypes,
-        });
-
-        sessionSigner.value = await newSessionSigner({ primaryClient: client as any, saltName: 'dither-session', logger: consoleLogger });
-
-        const existingAuthz = await sessionSigner.value.hasAuthzGrant();
-        const existingFeegrant = await sessionSigner.value.hasFeegrant();
-        const primaryAddress = sessionSigner.value.primaryAddress();
-
-        if (!existingAuthz || !existingFeegrant) {
-            const messages = sessionSigner.value.generateDelegationMessages({
-                sessionExpiration: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                spendLimit: { denom: 'uphoton', amount: String(1_000_000) }, // 1 PHOTON
-                gasLimit: { denom: 'uphoton', amount: String(500_000) }, // 0.5 PHOTON,
-                allowedRecipients: [destinationWallet],
-            });
-
-            await client.signAndBroadcastSync(primaryAddress, messages, 'auto');
-        }
-
-        // const result = await sessionSigner.value.execute.send({
-        //     toAddress: destinationWallet,
-        //     amount: [{ denom: 'uphoton', amount: String(100_000) }], // 0.1 PHOTON
-        //     memo: 'dither.Post("hello from stint integration")',
-        // });
-    };
-
     window.addEventListener('cosmostation_keystorechange', refreshAddress);
     window.addEventListener('keplr_keystorechange', refreshAddress);
     window.addEventListener('leap_keystorechange', refreshAddress);
 
     return {
         ...walletState,
+        signer,
         signOut,
         connect,
         sendTx,
         refreshAddress,
         signMessage,
-        sessionSigner,
-        toggleSessionMode,
         dither: {
             send: ditherSend,
             tipUser: ditherTipUser,
