@@ -119,6 +119,9 @@ export const messages = {
                 following: 'Following',
                 back: 'Back',
             },
+            PostActions: {
+                replies: 'reply | replies',
+            },
         },
         feedbacks: {
             copied: 'Copied to clipboard',

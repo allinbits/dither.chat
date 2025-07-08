@@ -11,9 +11,11 @@ export function shorten(text: string, start = 8, end = 8) {
 
 export function formatCompactNumber(num: number | null) {
     if (!num) return '0';
-    if (num >= 1e9) return (num / 1e9).toFixed(1).replace(/\.0$/, '') + 'B';
-    if (num >= 1e6) return (num / 1e6).toFixed(1).replace(/\.0$/, '') + 'M';
-    if (num >= 1e3) return (num / 1e3).toFixed(1).replace(/\.0$/, '') + 'K';
+    if (num < 1) return '<1';
+    if (num > 1 && Math.round(num) < 1e3) return num.toFixed(1).replace(/\.0$/, '');
+    if (Math.round(num) >= 1e9) return (num / 1e9).toFixed(1).replace(/\.0$/, '') + 'B';
+    if (Math.round(num) >= 1e6) return (num / 1e6).toFixed(1).replace(/\.0$/, '') + 'M';
+    if (Math.round(num) >= 1e3) return (num / 1e3).toFixed(1).replace(/\.0$/, '') + 'K';
     return num.toString();
 }
 

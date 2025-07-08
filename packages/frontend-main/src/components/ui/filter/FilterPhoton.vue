@@ -5,7 +5,6 @@ import { Decimal } from '@cosmjs/math';
 import { Slider } from '@/components/ui/slider';
 import { useFiltersStore } from '@/stores/useFiltersStore';
 import { fractionalDigits } from '@/utility/atomics';
-import { formatCompactAtomics } from '@/utility/text';
 
 const store = useFiltersStore();
 
@@ -28,7 +27,7 @@ const sliderValue = computed({
     set: val => store.setFilterAmountAtomics(exponentialScale(val[0]).atomics),
 });
 
-const displayValue = computed(() => formatCompactAtomics(store.filterAmountAtomics, fractionalDigits));
+const displayValue = computed(() => Decimal.fromAtomics(store.filterAmountAtomics, fractionalDigits).toString());
 
 function exponentialScale(value: number): Decimal {
     const t = value / maxFloat;
