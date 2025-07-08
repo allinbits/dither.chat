@@ -9,6 +9,8 @@ import { usePost } from '@/composables/usePost';
 import { useReplies } from '@/composables/useReplies';
 import { useWallet } from '@/composables/useWallet';
 
+import ViewHeading from './ViewHeading.vue';
+
 import PostActions from '@/components/posts/PostActions.vue';
 import PostMessage from '@/components/posts/PostMessage.vue';
 import PostMoreActions from '@/components/posts/PostMoreActions.vue';
@@ -61,6 +63,8 @@ async function handleReply() {
 
 <template>
   <MainLayout>
+    <ViewHeading :title="$t('components.Headings.post')"/>
+
     <div v-if="isLoading || isError" class="w-full mt-10 flex justify-center">
       <Loader v-if="isLoading" class="animate-spin" />
       <span v-else-if="isError && error" class="text-center text-red-500">{{ error.message }}</span>

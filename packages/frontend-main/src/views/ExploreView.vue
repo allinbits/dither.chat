@@ -4,6 +4,8 @@ import { CircleX, Loader } from 'lucide-vue-next';
 
 import { useSearchPosts } from '@/composables/useSearchPosts';
 
+import ViewHeading from './ViewHeading.vue';
+
 import PostItem from '@/components/posts/PostItem.vue';
 import { Input } from '@/components/ui/input';
 import MainLayout from '@/layouts/MainLayout.vue';
@@ -25,6 +27,8 @@ query.value = route.query.q as string;
 
 <template>
   <MainLayout>
+    <ViewHeading :title="$t('components.Headings.explore')" />
+
     <div class="search-input flex items-center gap-2 relative">
       <Input class="m-4" v-model="query" :placeholder="$t('placeholders.search')"/>
 
