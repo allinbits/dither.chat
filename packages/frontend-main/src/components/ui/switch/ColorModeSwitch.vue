@@ -12,7 +12,7 @@ const toggleColorMode = useToggle(isDarkMode);
 </script>
 
 <template>
-  <div>
+  <div class="flex">
     <SwitchRoot
       data-slot="switch"
       :modelValue="isDarkMode"
