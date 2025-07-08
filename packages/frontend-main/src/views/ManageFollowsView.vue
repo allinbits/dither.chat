@@ -15,7 +15,7 @@ const wallet = useWallet();
 const { data, fetchNextPage, isFetchingNextPage, hasNextPage, isLoading } = useFollowing({
     userAddress: wallet.address,
 });
-const flatFollowUsers = computed(() => data.value?.pages.flat() ?? []);
+const flatFollowingList = computed(() => data.value?.pages.flat() ?? []);
 
 const popups = usePopups();
 const walletDialogStore = useWalletDialogStore();
@@ -51,16 +51,16 @@ function handleAction(type: keyof PopupState, userAddress: string) {
       <div class="flex flex-col">
         <Loader v-if="isLoading" class="animate-spin w-full mt-10" />
 
-        <span v-else-if="!flatFollowUsers.length" class="self-center text-md font-semibold text-base mt-10">
+        <span v-else-if="!flatFollowingList.length" class="self-center text-md font-semibold text-base mt-10">
           {{ $t('components.FollowingList.empty') }}
         </span>
 
-        <div v-for="(followUser, index) in flatFollowUsers" :key="index"
+        <div v-for="(following, index) in flatFollowingList" :key="index"
              class="flex flex-row items-center justify-between p-4 border-b">
-          <RouterLink :to="`/profile/${followUser.address}`">
-            <UserAvatarUsername :userAddress="followUser.address" />
+          <RouterLink :to="`/profile/${following.address}`">
+            <UserAvatarUsername :userAddress="following.address" />
           </RouterLink>
-          <Button @click="handleAction('unfollow', followUser.address)" size="sm" class="w-[100px]">
+          <Button @click="handleAction('unfollow', following.address)" size="sm" class="w-[100px]">
             {{ $t('components.Button.unfollow') }}
           </Button>
         </div>

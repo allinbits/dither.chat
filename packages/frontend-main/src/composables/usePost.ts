@@ -1,9 +1,9 @@
 import { type Ref } from 'vue';
 import { queryOptions, useQuery } from '@tanstack/vue-query';
-import { postSchema } from 'api-main/types/feed';
+import { type Post, postSchema } from 'api-main/types/feed';
 
 import { useConfigStore } from '@/stores/useConfigStore';
-import { checkTypeboxSchema } from '@/utility/sanitize';
+import { checkRowsSchema } from '@/utility/sanitize';
 
 interface Params {
     hash: Ref<string>;
@@ -26,17 +26,17 @@ export const post = (params: Params) => {
                 throw new Error('Post not found');
             }
 
-            const postData = result.rows[0];
-            if (postData?.timestamp) {
-                postData.timestamp = new Date(postData.timestamp);
+            const row = result.rows[0];
+            if (row?.timestamp) {
+                row.timestamp = new Date(row.timestamp);
             }
 
-            const checkedData = checkTypeboxSchema(postSchema, postData);
-            if (!checkedData) {
+            const checkedRows: Post[] = checkRowsSchema(postSchema, [row]);
+            if (!checkedRows.length) {
                 throw new Error('Invalid post format');
             }
 
-            return checkedData;
+            return checkedRows[0];
         },
         enabled: () => !!params.hash.value,
         staleTime: Infinity,

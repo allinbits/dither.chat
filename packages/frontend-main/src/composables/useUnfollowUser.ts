@@ -1,4 +1,4 @@
-import type { FollowUser } from 'api-main/types/follows';
+import type { Following } from 'api-main/types/follows';
 
 import { type Ref, ref } from 'vue';
 import { type InfiniteData, useMutation, useQueryClient } from '@tanstack/vue-query';
@@ -53,7 +53,7 @@ export function useUnfollowUser(
             ) as boolean | undefined;
             const previousFollowing = queryClient.getQueryData(
                 followingOpts.queryKey,
-            ) as InfiniteData<FollowUser[], unknown> | undefined;
+            ) as InfiniteData<Following[], unknown> | undefined;
 
             return {
                 previousIsFollowing,
@@ -65,7 +65,7 @@ export function useUnfollowUser(
             const followingOpts = following({ userAddress: wallet.address });
             const followingPostsOpts = followingPosts({ userAddress: wallet.address });
 
-            const newFollowingData = infiniteDataWithoutItem<FollowUser>({
+            const newFollowingData = infiniteDataWithoutItem<Following>({
                 previousItems: context.previousFollowing,
                 predicate: followUser => followUser.address === variables.userAddress.value,
             });

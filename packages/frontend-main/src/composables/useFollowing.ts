@@ -1,9 +1,9 @@
-import type { FollowUser } from 'api-main/types/follows';
-
 import { type Ref } from 'vue';
 import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/vue-query';
+import { type Following, followingSchema } from 'api-main/types/follows';
 
 import { useConfigStore } from '@/stores/useConfigStore';
+import { checkRowsSchema } from '@/utility/sanitize';
 
 const LIMIT = 15;
 
@@ -21,8 +21,11 @@ export const following = (params: Params) => {
             const res = await fetch(
                 `${apiRoot}/following?address=${params.userAddress.value}&offset=${pageParam}&limit=${LIMIT}`,
             );
-            const json = (await res.json()) as { status: number; rows: FollowUser[] };
-            return json.rows ?? [];
+            const json = await res.json();
+            console.log('json.rowsjson.rows', json.rows);
+            // Check if the fetched rows match the follow schema
+            const checkedRows: Following[] = checkRowsSchema(followingSchema, json.rows ?? []);
+            return checkedRows;
         },
         initialPageParam: 0,
         getNextPageParam: (lastPage, allPages) => {
