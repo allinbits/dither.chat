@@ -22,7 +22,6 @@ export const following = (params: Params) => {
                 `${apiRoot}/following?address=${params.userAddress.value}&offset=${pageParam}&limit=${LIMIT}`,
             );
             const json = await res.json();
-            console.log('json.rowsjson.rows', json.rows);
             // Check if the fetched rows match the follow schema
             const checkedRows: Following[] = checkRowsSchema(followingSchema, json.rows ?? []);
             return checkedRows;
