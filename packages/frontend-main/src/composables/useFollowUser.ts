@@ -1,4 +1,4 @@
-import type { FollowUser } from 'api-main/types/follows';
+import type { Following } from 'api-main/types/follows';
 
 import { type Ref, ref } from 'vue';
 import { type InfiniteData, useMutation, useQueryClient } from '@tanstack/vue-query';
@@ -8,7 +8,7 @@ import { followingPosts } from './useFollowingPosts';
 import { isFollowing } from './useIsFollowing';
 import { useWallet } from './useWallet';
 
-import { infiniteDataWithNewItem, newFollowUser } from '@/utility/optimisticBuilders';
+import { infiniteDataWithNewItem, newFollowing } from '@/utility/optimisticBuilders';
 
 interface FollowUserRequestMutation {
     userAddress: Ref<string>;
@@ -53,7 +53,7 @@ export function useFollowUser(
             ) as boolean | undefined;
             const previousFollowing = queryClient.getQueryData(
                 followingOpts.queryKey,
-            ) as InfiniteData<FollowUser[], unknown> | undefined;
+            ) as InfiniteData<Following[], unknown> | undefined;
 
             return {
                 previousIsFollowing,
@@ -65,10 +65,10 @@ export function useFollowUser(
             const followingOpts = following({ userAddress: wallet.address });
             const followingPostsOpts = followingPosts({ userAddress: wallet.address });
 
-            const optimisticNewFollowUSer: FollowUser = newFollowUser({ address: variables.userAddress.value });
-            const newFollowingData = infiniteDataWithNewItem<FollowUser>({
+            const optimisticNewFollowing: Following = newFollowing({ address: variables.userAddress.value });
+            const newFollowingData = infiniteDataWithNewItem<Following>({
                 previousItems: context.previousFollowing,
-                newItem: optimisticNewFollowUSer,
+                newItem: optimisticNewFollowing,
             });
 
             queryClient.setQueryData(isFollowingOpts.queryKey, true);

@@ -1,9 +1,10 @@
-import type { Notification } from 'api-main/types/notifications';
 import type { Ref } from 'vue';
 
 import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/vue-query';
+import { type Notification, notificationSchema } from 'api-main/types/notifications';
 
 import { useConfigStore } from '@/stores/useConfigStore';
+import { checkRowsSchema } from '@/utility/sanitize';
 
 const LIMIT = 15;
 
@@ -24,9 +25,10 @@ export const notifications = (params: Params) => {
                     credentials: 'include',
                 },
             );
-
-            const json = (await res.json()) as { status: number; rows: Notification[] };
-            return json.rows ?? [];
+            const json = await res.json();
+            // Check if the fetched rows match the notification schema
+            const checkedRows: Notification[] = checkRowsSchema(notificationSchema, json.rows ?? []);
+            return checkedRows;
         },
         initialPageParam: 0,
         getNextPageParam: (lastPage, allPages) => {
