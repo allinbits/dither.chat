@@ -28,7 +28,7 @@ const { createSession, clearSession, hasGrants } = useSessionWallet();
       <div class="flex flex-col text-pretty">
         <!-- Summary of Session Wallet -->
         <div class="flex flex-col border-b">
-          <span class="pt-3 pl-3 font-bold">What is it?</span>
+          <span class="pt-4 pl-4 font-bold">What is it?</span>
           <p class="p-4 text-sm">{{ $t(`components.Settings.singleSessionSummary`) }}</p>
         </div>
         <!-- Invoke Session Wallet -->
