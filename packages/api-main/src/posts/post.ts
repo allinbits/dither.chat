@@ -18,8 +18,6 @@ const statement = getDatabase()
     .prepare('stmnt_post');
 
 export async function Post(body: typeof Posts.PostBody.static, headers: Record<string, string | undefined>) {
-    console.log(headers);
-
     if (!isReaderAuthorizationValid(headers)) {
         return { status: 401, error: 'Unauthorized to make write request' };
     }
