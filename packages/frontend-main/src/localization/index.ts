@@ -125,6 +125,8 @@ export const messages = {
                 following: 'Following',
                 back: 'Back',
                 singleSessionSummary: 'Single Session creations a local private key through a passkey to sign transactions through the Comsos Authz and Feegrant modules. The settings below let you configure the authorization.',
+                createSession: 'Create Session',
+                revokeSession: 'Revoke Session',
             },
             NotFound: {
                 title: 'Page Not Found',

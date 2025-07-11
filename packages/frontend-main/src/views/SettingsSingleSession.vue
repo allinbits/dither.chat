@@ -35,14 +35,12 @@ const { createSession, clearSession, hasGrants } = useSessionWallet();
         <div class="flex flex-col p-3">
           <Button size="sm" class="w-full decoration-2" variant="outline" @click="createSession" v-if="!hasGrants">
             <span class="grow">
-              Create Session
-              <!-- {{ $t('components.Settings.back') }} -->
+              {{ $t('components.Settings.createSession') }}
             </span>
           </Button>
           <Button size="sm" class="w-full decoration-2" variant="outline" @click="clearSession" v-else>
             <span class="grow">
-              Revoke Session
-              <!-- {{ $t('components.Settings.back') }} -->
+              {{ $t('components.Settings.revokeSession') }}
             </span>
           </Button>
         </div>
