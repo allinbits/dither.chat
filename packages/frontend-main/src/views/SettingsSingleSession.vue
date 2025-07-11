@@ -7,7 +7,7 @@ import Button from '@/components/ui/button/Button.vue';
 import MainLayout from '@/layouts/MainLayout.vue';
 import ViewHeading from '@/views/ViewHeading.vue';
 
-const { createSession, clearSession, hasGrants, isGranting } = useSessionWallet();
+const { createSession, clearSession, hasGrants, isUpdating } = useSessionWallet();
 </script>
 
 <template>
@@ -22,7 +22,7 @@ const { createSession, clearSession, hasGrants, isGranting } = useSessionWallet(
         </div>
         <!-- Invoke Session Wallet -->
         <div class="flex flex-col p-3">
-          <template v-if="!isGranting">
+          <template v-if="!isUpdating">
             <Button size="sm" class="w-full decoration-2" variant="outline" @click="createSession" v-if="!hasGrants">
               <span class="grow">
                 {{ $t('components.Settings.createSession') }}
