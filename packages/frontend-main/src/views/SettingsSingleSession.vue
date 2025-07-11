@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { ChevronLeft } from 'lucide-vue-next';
-
 import { useSessionWallet } from '@/composables/useSessionWallet';
 
 import Button from '@/components/ui/button/Button.vue';
 import MainLayout from '@/layouts/MainLayout.vue';
+import ViewHeading from '@/views/ViewHeading.vue';
 
 const { createSession, clearSession, hasGrants } = useSessionWallet();
 </script>
@@ -12,7 +11,7 @@ const { createSession, clearSession, hasGrants } = useSessionWallet();
 <template>
   <MainLayout>
     <div class="flex flex-col">
-      <ViewHeading :title="$t(`components.Headings.singleSession`)"/>
+      <ViewHeading :title="$t(`components.Settings.singleSession`)"/>
       <div class="flex flex-col text-pretty">
         <!-- Summary of Session Wallet -->
         <div class="flex flex-col border-b">
