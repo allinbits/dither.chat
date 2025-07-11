@@ -23,6 +23,7 @@
         "@elysiajs/cors": "~1.2.0",
         "@elysiajs/node": "~1.2.6",
         "@keplr-wallet/cosmos": "^0.12.230",
+        "@sinclair/typebox": "^0.34.33",
         "dotenv": "^16.5.0",
         "drizzle-orm": "^0.43.1",
         "drizzle-typebox": "^0.3.2",

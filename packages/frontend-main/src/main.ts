@@ -20,6 +20,11 @@ const i18n = createI18n({
     locale: 'en',
     fallbackLocale: 'en',
     messages,
+    pluralRules: {
+        en: (choice) => {
+            return choice === 0 || choice === 1 ? 0 : 1;
+        },
+    },
 });
 app.use(i18n);
 app.use(pinia);

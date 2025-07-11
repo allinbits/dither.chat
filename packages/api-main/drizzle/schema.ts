@@ -1,5 +1,5 @@
 import { sql } from 'drizzle-orm';
-import { bigint, boolean, index, integer, pgEnum, pgTable, primaryKey, serial, text, timestamp, varchar } from 'drizzle-orm/pg-core';
+import { boolean, index, integer, pgEnum, pgTable, primaryKey, serial, text, timestamp, varchar } from 'drizzle-orm/pg-core';
 
 const MEMO_LENGTH = 512;
 
@@ -11,14 +11,14 @@ export const FeedTable = pgTable(
         author: varchar({ length: 44 }).notNull(), // Address of user, usually in the transfer message
         timestamp: timestamp({ withTimezone: true }).notNull(), // Timestamp parsed with new Date()
         message: varchar({ length: MEMO_LENGTH }).notNull(), // The message inside of the memo
-        quantity: bigint({ mode: 'number' }).notNull(), // The total amount of tokens the user spent to post this message
+        quantity: text().default('0'), // The total amount of tokens the user spent to post this message
         replies: integer().default(0), // The amount of replies this post / reply has
         likes: integer().default(0), // The amount of likes this post / reply has
         dislikes: integer().default(0), // The amount of dislikes this post / reply has
         flags: integer().default(0), // The amount of flags this post / reply has
-        likes_burnt: bigint({ mode: 'number' }).default(0), // The amount of tokens burnt from each user who liked this post / reply
-        dislikes_burnt: bigint({ mode: 'number' }).default(0), // The amount of tokens burnt from each user who disliked this post / reply
-        flags_burnt: bigint({ mode: 'number' }).default(0), // The amount of tokens burnt from each user who wante dto flag this post / reply
+        likes_burnt: text().default('0'), // The amount of tokens burnt from each user who liked this post / reply
+        dislikes_burnt: text().default('0'), // The amount of tokens burnt from each user who disliked this post / reply
+        flags_burnt: text().default('0'), // The amount of tokens burnt from each user who wante dto flag this post / reply
         removed_hash: varchar({ length: 64 }), // The hash that corresponds with the soft delete request
         removed_at: timestamp({ withTimezone: true }), // When this post was removed
         removed_by: varchar({ length: 44 }), // Who removed this post
@@ -36,7 +36,7 @@ export const DislikesTable = pgTable(
         hash: varchar({ length: 64 }).primaryKey(),
         post_hash: varchar({ length: 64 }).notNull(),
         author: varchar({ length: 44 }).notNull(),
-        quantity: bigint({ mode: 'number' }).default(0),
+        quantity: text().default('0'),
         timestamp: timestamp({ withTimezone: true }).notNull(),
     },
     t => [
@@ -51,7 +51,7 @@ export const LikesTable = pgTable(
         hash: varchar({ length: 64 }).primaryKey(),
         post_hash: varchar({ length: 64 }).notNull(),
         author: varchar({ length: 44 }).notNull(),
-        quantity: bigint({ mode: 'number' }).default(0),
+        quantity: text().default('0'),
         timestamp: timestamp({ withTimezone: true }).notNull(),
     },
     t => [
@@ -66,7 +66,7 @@ export const FlagsTable = pgTable(
         hash: varchar({ length: 64 }).primaryKey(),
         post_hash: varchar({ length: 64 }).notNull(),
         author: varchar({ length: 44 }).notNull(),
-        quantity: bigint({ mode: 'number' }).default(0),
+        quantity: text().default('0'),
         timestamp: timestamp({ withTimezone: true }).notNull(),
     },
     t => [
@@ -125,6 +125,7 @@ export const NotificationTable = pgTable(
     'notifications',
     {
         hash: varchar({ length: 64 }).notNull(),
+        post_hash: varchar({ length: 64 }),
         owner: varchar({ length: 44 }).notNull(),
         actor: varchar({ length: 44 }).notNull(),
         type: notificationTypeEnum().notNull(),

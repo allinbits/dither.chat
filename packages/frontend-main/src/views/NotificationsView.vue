@@ -5,6 +5,8 @@ import { Loader } from 'lucide-vue-next';
 import { useNotifications } from '@/composables/useNotifications';
 import { useWallet } from '@/composables/useWallet';
 
+import ViewHeading from './ViewHeading.vue';
+
 import DislikeNotification from '@/components/notifications/DislikeNotification.vue';
 import FlagNotification from '@/components/notifications/FlagNotification.vue';
 import FollowNotification from '@/components/notifications/FollowNotification.vue';
@@ -23,10 +25,8 @@ const flatNotifications = computed(() => data.value?.pages.flat() ?? []);
 
 <template>
   <MainLayout>
-    <div class="mt-6 flex flex-col">
-      <h1 class="hidden xl:inline text-lg font-semibold mb-4 ml-7">
-        {{ $t('components.Titles.notifications') }}
-      </h1>
+    <div class="flex flex-col">
+      <ViewHeading :title="$t('components.Headings.notifications')" />
 
       <div :class="cn('flex flex-col w-full', flatNotifications.length && 'border-t')">
         <Loader v-if="isLoading" class="animate-spin w-full mt-10" />

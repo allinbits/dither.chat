@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { Notification } from 'api-main/types/notifications';
 
+import { computed } from 'vue';
 import { Check } from 'lucide-vue-next';
 
 import { useReadNotification } from '@/composables/useReadNotification';
@@ -15,12 +16,33 @@ import Button from '@/components/ui/button/Button.vue';
 
 const { readNotification } = useReadNotification();
 
-defineProps<{ notification: Notification }>();
+const props = defineProps<{ notification: Notification }>();
+
+const navigationPath = computed(() => {
+    const notification = props.notification;
+
+    // actions on post
+    if (['like', 'dislike', 'flag'].includes(notification.type)) {
+        return `/post/${notification.post_hash}`;
+    }
+
+    // actions on user
+    if (['follow'].includes(notification.type)) {
+        return `/profile/${notification.actor}`;
+    }
+
+    // reply
+    if (['reply'].includes(notification.type)) {
+        return `/post/${notification.hash}`;
+    }
+
+    return '/';
+});
 
 </script>
 
 <template>
-  <RouterLink :to="`/post/${notification.hash}`" custom v-slot="{ navigate }">
+  <RouterLink :to="navigationPath" custom v-slot="{ navigate }">
     <div class="flex flex-row gap-3 border-b cursor-pointer p-4" @click="navigate">
       <RouterLink :to="`/profile/${notification.actor}`">
         <UserAvatar :userAddress="notification.actor" />

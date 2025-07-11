@@ -1,13 +1,13 @@
-import type { Post } from 'api-main/types/feed';
-
 import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { refDebounced } from '@vueuse/core';
 import { useQuery } from '@tanstack/vue-query';
+import { type Post, postSchema } from 'api-main/types/feed';
 import { storeToRefs } from 'pinia';
 
 import { useConfigStore } from '@/stores/useConfigStore';
 import { useFiltersStore } from '@/stores/useFiltersStore';
+import { checkRowsSchema } from '@/utility/sanitize';
 
 export function useSearchPosts(minQueryLength: number = 3, debounceMs: number = 300) {
     const configStore = useConfigStore();
@@ -16,18 +16,20 @@ export function useSearchPosts(minQueryLength: number = 3, debounceMs: number = 
     const { t } = useI18n();
     const query = ref<string>('');
     const debouncedQuery = refDebounced<string>(query, debounceMs);
-    const { minSendAmount } = storeToRefs(useFiltersStore());
-    const debouncedMinSendAmount = refDebounced<number>(minSendAmount, 600);
+    const { filterAmountAtomics } = storeToRefs(useFiltersStore());
+    const debouncedFilterAmount = refDebounced<string>(filterAmountAtomics, 600);
 
     const searchPosts = async ({ queryKey, signal }: { queryKey: string[]; signal: AbortSignal }) => {
-        const rawResponse = await fetch(`${apiRoot}/search?text=${queryKey[1]}&minQuantity=${Math.trunc(debouncedMinSendAmount.value)}`, { signal });
-        const res = (await rawResponse.json()) as { status: number; rows: Post[] };
-
+        const res = await fetch(`${apiRoot}/search?text=${queryKey[1]}&minQuantity=${debouncedFilterAmount.value}`, { signal });
         if (res.status !== 200) {
             throw Error(t('components.SearchInput.failedToSearch'));
         }
+        const json = await res.json();
 
-        return res.rows;
+        // Check if the fetched rows match the post schema
+        const checkedRows: Post[] = checkRowsSchema(postSchema, json.rows ?? []);
+
+        return checkedRows;
     };
 
     const {
@@ -36,7 +38,7 @@ export function useSearchPosts(minQueryLength: number = 3, debounceMs: number = 
         error,
         refetch,
     } = useQuery({
-        queryKey: ['searchPosts', debouncedQuery, debouncedMinSendAmount.value.toString()],
+        queryKey: ['searchPosts', debouncedQuery, debouncedFilterAmount.value.toString()],
         queryFn: searchPosts,
         enabled: false,
         retry: false,

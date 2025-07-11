@@ -1,7 +1,12 @@
-import type { GetColumnData } from 'drizzle-orm';
-import type { FollowsTable } from '../../drizzle/schema';
+import { type Static, Type } from '@sinclair/typebox';
+import { createSelectSchema } from 'drizzle-typebox';
 
-export type FollowUser = {
-    address: GetColumnData<typeof FollowsTable.following, 'query'>;
-    // hash: GetColumnData<typeof FollowsTable.hash, 'query'>;
-};
+import { FollowsTable } from '../../drizzle/schema';
+
+export const followSchema = createSelectSchema(FollowsTable);
+
+export const followingSchema = Type.Object({
+    address: followSchema.properties.following,
+    hash: followSchema.properties.hash,
+});
+export type Following = Static<typeof followingSchema>;

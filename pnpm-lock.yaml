@@ -65,6 +65,9 @@ importers:
       '@keplr-wallet/cosmos':
         specifier: ^0.12.230
         version: 0.12.232(bitcoinjs-lib@6.1.7)(starknet@6.24.1)
+      '@sinclair/typebox':
+        specifier: ^0.34.33
+        version: 0.34.33
       dotenv:
         specifier: ^16.5.0
         version: 16.5.0
@@ -117,6 +120,9 @@ importers:
 
   packages/frontend-main:
     dependencies:
+      '@cosmjs/math':
+        specifier: ^0.33.1
+        version: 0.33.1
       '@cosmjs/proto-signing':
         specifier: ^0.32.2
         version: 0.32.4

@@ -1,15 +1,16 @@
 import type { QueryClient } from '@tanstack/vue-query';
-import type { Post } from 'api-main/types/feed';
 
 import { ref } from 'vue';
 import { refDebounced } from '@vueuse/core';
 import { infiniteQueryOptions, useInfiniteQuery, useQueryClient } from '@tanstack/vue-query';
+import { type Post, postSchema } from 'api-main/types/feed';
 import { storeToRefs } from 'pinia';
 
 import { post } from './usePost';
 
 import { useConfigStore } from '@/stores/useConfigStore';
 import { useFiltersStore } from '@/stores/useFiltersStore';
+import { checkRowsSchema } from '@/utility/sanitize';
 
 const LIMIT = 15;
 
@@ -17,23 +18,27 @@ export const feed = (queryClient: QueryClient) => {
     const configStore = useConfigStore();
     const apiRoot = configStore.envConfig.apiRoot ?? 'http://localhost:3000';
 
-    const { minSendAmount } = storeToRefs(useFiltersStore());
-    const debouncedMinSendAmount = refDebounced<number>(minSendAmount, 600);
+    const { filterAmountAtomics } = storeToRefs(useFiltersStore());
+    const debouncedFilterAmount = refDebounced<string>(filterAmountAtomics, 600);
 
     return infiniteQueryOptions({
-        queryKey: ['feed', debouncedMinSendAmount],
+        queryKey: ['feed', debouncedFilterAmount],
         queryFn: async ({ pageParam = 0 }) => {
             const res = await fetch(
-                `${apiRoot}/feed?offset=${pageParam}&limit=${LIMIT}&minQuantity=${Math.trunc(debouncedMinSendAmount.value)}`,
+                `${apiRoot}/feed?offset=${pageParam}&limit=${LIMIT}&minQuantity=${debouncedFilterAmount.value}`,
             );
-            const json = (await res.json()) as { status: number; rows: Post[] };
-            const rows = json.rows ?? [];
-            // Update the query cache with the feed posts
-            rows.forEach((row) => {
+            const json = await res.json();
+
+            // Check if the fetched rows match the post schema
+            const checkedRows: Post[] = checkRowsSchema(postSchema, json.rows ?? []);
+
+            // Update the query cache with the posts
+            checkedRows.forEach((row) => {
                 const postOpts = post({ hash: ref(row.hash) });
                 queryClient.setQueryData(postOpts.queryKey, row);
             });
-            return rows;
+
+            return checkedRows;
         },
         initialPageParam: 0,
         getNextPageParam: (lastPage, allPages) => {

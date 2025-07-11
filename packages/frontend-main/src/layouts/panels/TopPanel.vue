@@ -15,13 +15,15 @@ import WalletConnectButtonMobile from '@/components/wallet/WalletConnectButton/W
 
 <template>
   <header class="h-full w-full flex flex-row items-center justify-between border-b bg-background px-4 gap-2">
-    <WalletConnectButtonMobile class="w-[40px] h-full flex justify-center items-center" />
+    <div class="size-[40px]">
+      <WalletConnectButtonMobile/>
+    </div>
 
     <div class="flex flex-row items-center gap-2">
       <SearchInput class="self-start" />
       <Popover>
         <PopoverTrigger>
-          <div class="flex flex-row items-center justify-center size-[40px] rounded-xs hover:bg-accent active:bg-accent transition-colors">
+          <div class="flex flex-row items-center justify-center size-[40px] rounded-full hover:bg-accent active:bg-accent transition-colors">
             <SlidersHorizontal class="size-6" />
           </div>
         </PopoverTrigger>

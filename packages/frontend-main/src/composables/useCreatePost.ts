@@ -1,17 +1,19 @@
 import type { Post } from 'api-main/types/feed';
 
 import { ref } from 'vue';
+import { Decimal } from '@cosmjs/math';
 import { type InfiniteData, useMutation, useQueryClient } from '@tanstack/vue-query';
 
 import { feed } from './useFeed';
 import { userPosts } from './useUserPosts';
 import { useWallet } from './useWallet';
 
+import { fractionalDigits } from '@/utility/atomics';
 import { infiniteDataWithNewItem, newPost } from '@/utility/optimisticBuilders';
 
 interface CreatePostRequestMutation {
     message: string;
-    photonValue: number;
+    amountAtomics: string;
 }
 
 export function useCreatePost(
@@ -20,16 +22,17 @@ export function useCreatePost(
     const wallet = useWallet();
     const txError = ref<string>();
     const txSuccess = ref<string>();
+
     const {
         mutateAsync,
     } = useMutation({
-        mutationFn: async ({ message, photonValue }: CreatePostRequestMutation) => {
+        mutationFn: async ({ message, amountAtomics }: CreatePostRequestMutation) => {
             txError.value = undefined;
             txSuccess.value = undefined;
 
             const result = await wallet.dither.send(
                 'Post',
-                { args: [message], amount: BigInt(photonValue).toString() },
+                { args: [message], amount: amountAtomics },
             );
 
             if (!result.broadcast) {
@@ -66,7 +69,7 @@ export function useCreatePost(
             const userPostsOpts = userPosts({ userAddress: wallet.address });
 
             // Created Post
-            const optimisticNewPost: Post = newPost({ message: variables.message, quantity: variables.photonValue, hash, author: wallet.address.value, postHash: null });
+            const optimisticNewPost: Post = newPost({ message: variables.message, quantity: Decimal.fromAtomics(variables.amountAtomics, fractionalDigits).atomics, hash, author: wallet.address.value, postHash: null });
             const newFeedData = infiniteDataWithNewItem<Post>({ previousItems: context.previousFeed, newItem: optimisticNewPost });
             const newUserPostsData = infiniteDataWithNewItem<Post>({ previousItems: context.previousUserPosts, newItem: optimisticNewPost });
 

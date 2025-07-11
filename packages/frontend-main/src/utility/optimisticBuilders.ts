@@ -1,12 +1,12 @@
 import type { InfiniteData } from '@tanstack/vue-query';
 import type { Post } from 'api-main/types/feed';
-import type { FollowUser } from 'api-main/types/follows';
+import type { Following } from 'api-main/types/follows';
 
 interface NewPostParams {
-    message: string; hash: string; postHash: string | null; author: string; quantity: number;
+    message: string; hash: string; postHash: string | null; author: string; quantity: string;
 }
 
-interface NewFollowUserParams {
+interface NewFollowingParams {
     address: string;
 }
 
@@ -30,9 +30,10 @@ export const newPost = ({ message, hash, postHash, author, quantity }: NewPostPa
     removed_by: null,
 });
 
-// Returns a new FollowUser, used for display
-export const newFollowUser = ({ address }: NewFollowUserParams): FollowUser => ({
+// Returns a new Following, used for display
+export const newFollowing = ({ address }: NewFollowingParams): Following => ({
     address,
+    hash: '',
 });
 
 interface InfiniteDataWithNewItemParams<T> {

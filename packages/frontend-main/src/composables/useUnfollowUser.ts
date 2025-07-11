@@ -1,4 +1,4 @@
-import type { FollowUser } from 'api-main/types/follows';
+import type { Following } from 'api-main/types/follows';
 
 import { type Ref, ref } from 'vue';
 import { type InfiniteData, useMutation, useQueryClient } from '@tanstack/vue-query';
@@ -12,7 +12,7 @@ import { infiniteDataWithoutItem } from '@/utility/optimisticBuilders';
 
 interface UnfollowUserRequestMutation {
     userAddress: Ref<string>;
-    photonValue: number;
+    amountAtomics: string;
 }
 
 export function useUnfollowUser(
@@ -24,13 +24,13 @@ export function useUnfollowUser(
     const {
         mutateAsync,
     } = useMutation({
-        mutationFn: async ({ userAddress, photonValue }: UnfollowUserRequestMutation) => {
+        mutationFn: async ({ userAddress, amountAtomics }: UnfollowUserRequestMutation) => {
             txError.value = undefined;
             txSuccess.value = undefined;
 
             const result = await wallet.dither.send(
                 'Unfollow',
-                { args: [userAddress.value], amount: BigInt(photonValue).toString() },
+                { args: [userAddress.value], amount: amountAtomics },
             );
 
             if (!result.broadcast) {
@@ -53,7 +53,7 @@ export function useUnfollowUser(
             ) as boolean | undefined;
             const previousFollowing = queryClient.getQueryData(
                 followingOpts.queryKey,
-            ) as InfiniteData<FollowUser[], unknown> | undefined;
+            ) as InfiniteData<Following[], unknown> | undefined;
 
             return {
                 previousIsFollowing,
@@ -65,7 +65,7 @@ export function useUnfollowUser(
             const followingOpts = following({ userAddress: wallet.address });
             const followingPostsOpts = followingPosts({ userAddress: wallet.address });
 
-            const newFollowingData = infiniteDataWithoutItem<FollowUser>({
+            const newFollowingData = infiniteDataWithoutItem<Following>({
                 previousItems: context.previousFollowing,
                 predicate: followUser => followUser.address === variables.userAddress.value,
             });

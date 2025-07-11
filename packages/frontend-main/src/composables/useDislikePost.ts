@@ -6,9 +6,11 @@ import { useMutation, useQueryClient } from '@tanstack/vue-query';
 import { post } from './usePost';
 import { useWallet } from './useWallet';
 
+import { addAtomics } from '@/utility/atomics';
+
 interface DislikePostRequestMutation {
     post: Ref<Post>;
-    photonValue: number;
+    amountAtomics: string;
 }
 
 export function useDislikePost(
@@ -20,13 +22,13 @@ export function useDislikePost(
     const {
         mutateAsync,
     } = useMutation({
-        mutationFn: async ({ post, photonValue }: DislikePostRequestMutation) => {
+        mutationFn: async ({ post, amountAtomics }: DislikePostRequestMutation) => {
             txError.value = undefined;
             txSuccess.value = undefined;
 
             const result = await wallet.dither.send(
                 'Dislike',
-                { args: [post.value.hash], amount: BigInt(photonValue).toString() },
+                { args: [post.value.hash], amount: amountAtomics },
             );
             if (!result.broadcast) {
                 txError.value = result.msg;
@@ -54,8 +56,8 @@ export function useDislikePost(
             // Post with updated dislikes_burnt
             const optimisticPost: Post
                 = context.previousPost
-                    ? { ...context.previousPost, dislikes_burnt: (context.previousPost.dislikes_burnt || 0) + variables.photonValue }
-                    : { ...variables.post.value, dislikes_burnt: (variables.post.value.dislikes_burnt || 0) + variables.photonValue };
+                    ? { ...context.previousPost, dislikes_burnt: addAtomics((context.previousPost.dislikes_burnt ?? 0).toString(), variables.amountAtomics) }
+                    : { ...variables.post.value, dislikes_burnt: addAtomics((variables.post.value.dislikes_burnt ?? 0).toString(), variables.amountAtomics) };
 
             queryClient.setQueryData(postOpts.queryKey, optimisticPost);
         },

@@ -8,6 +8,7 @@ const statementInsertNotification = getDatabase()
     .values({
         owner: sql.placeholder('owner'),
         hash: sql.placeholder('hash'),
+        post_hash: sql.placeholder('post_hash'),
         type: sql.placeholder('type'),
         timestamp: sql.placeholder('timestamp'),
         subcontext: sql.placeholder('subcontext'),
@@ -52,6 +53,7 @@ export const notify = async (data: {
 
     await statementInsertNotification.execute({
         owner: owner.toLowerCase(),
+        post_hash: data.post_hash?.toLowerCase(),
         hash: data.hash.toLowerCase(),
         type: data.type,
         timestamp: data.timestamp ?? null,

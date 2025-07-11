@@ -4,13 +4,13 @@ import 'vanilla-jsoneditor/themes/jse-theme-dark.css';
 import { toast } from 'vue-sonner';
 import { debouncedWatch, useColorMode } from '@vueuse/core';
 import JsonEditorVue from 'json-editor-vue';
-import { ChevronLeft } from 'lucide-vue-next';
 
 import NetworkSelector from '@/components/selects/NetworkSelector.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import MainLayout from '@/layouts/MainLayout.vue';
 import { useConfigStore } from '@/stores/useConfigStore';
+import HeaderBack from '@/views/ViewHeading.vue';
 
 const configStore = useConfigStore();
 const mode = useColorMode();
@@ -26,19 +26,7 @@ debouncedWatch(configStore.config, () => {
 <template>
   <MainLayout>
     <div class="flex flex-col mb-2">
-      <div class="flex flex-row items-center border-b py-2 pr-4">
-        <RouterLink to="/settings" class="w-32">
-          <Button size="sm" class="w-full text-left decoration-2" variant="link">
-            <ChevronLeft class="size-4" />
-            <span class="grow">
-              {{ $t('components.Settings.back') }}
-            </span>
-          </Button>
-        </RouterLink>
-        <h1 class="font-semibold grow text-right select-none">
-          {{ $t(`components.Titles.config`) }}
-        </h1>
-      </div>
+      <HeaderBack :title="$t('components.Headings.envConfig')" />
 
       <div class="border-b p-4 mb-4 flex flex-row justify-between">
         <div class="flex flex-row gap-2 items-center justify-evenly w-full">

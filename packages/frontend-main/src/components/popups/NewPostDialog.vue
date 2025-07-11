@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
+import { Decimal } from '@cosmjs/math';
 import { Loader } from 'lucide-vue-next';
 
 import { useConfirmDialog } from '@/composables/useConfirmDialog';
@@ -16,6 +17,7 @@ import {
 } from '@/components/ui/dialog';
 import InputPhoton from '@/components/ui/input/InputPhoton.vue';
 import { Textarea } from '@/components/ui/textarea';
+import { fractionalDigits } from '@/utility/atomics';
 
 const isBalanceInputValid = ref(false);
 const message = ref('');
@@ -25,7 +27,7 @@ const MAX_CHARS = 512 - 'dither.Post("")'.length;
 const { createPost, txError, txSuccess } = useCreatePost();
 const { showConfirmDialog } = useConfirmDialog();
 
-const { isProcessing, isShown, photonValue, handleClose } = useTxDialog<object>('newPost', 'Post', txSuccess, txError);
+const { isProcessing, isShown, inputPhotonModel, handleClose } = useTxDialog<object>('newPost', 'Post', txSuccess, txError);
 
 function handleInputValidity(value: boolean) {
     isBalanceInputValid.value = value;
@@ -55,7 +57,7 @@ async function handleSumbit() {
     if (!canSubmit.value) {
         return;
     }
-    await createPost({ message: message.value, photonValue: photonValue.value });
+    await createPost({ message: message.value, amountAtomics: Decimal.fromUserInput(inputPhotonModel.value.toString(), fractionalDigits).atomics });
     message.value = '';
     handleClose();
 }
@@ -71,7 +73,7 @@ async function handleSumbit() {
 
         <!-- Transaction Form -->
         <div class="flex flex-col w-full gap-4" v-if="!isProcessing && !txSuccess">
-          <InputPhoton v-model="photonValue" @on-validity-change="handleInputValidity" />
+          <InputPhoton v-model="inputPhotonModel" @on-validity-change="handleInputValidity" />
           <span v-if="txError" class="text-red-500 text-left text-xs">{{ txError }}</span>
           <Button class="w-full" :disabled="!canSubmit" @click="handleSumbit">
             {{ $t('components.Button.submit') }}

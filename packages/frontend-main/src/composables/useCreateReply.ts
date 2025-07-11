@@ -1,6 +1,7 @@
 import type { Post, ReplyWithParent } from 'api-main/types/feed';
 
 import { type Ref, ref } from 'vue';
+import { Decimal } from '@cosmjs/math';
 import { type InfiniteData, useMutation, useQueryClient } from '@tanstack/vue-query';
 
 import { post } from './usePost';
@@ -8,12 +9,13 @@ import { replies } from './useReplies';
 import { userReplies } from './useUserReplies';
 import { useWallet } from './useWallet';
 
+import { fractionalDigits } from '@/utility/atomics';
 import { infiniteDataWithNewItem, newPost } from '@/utility/optimisticBuilders';
 
 interface CreateReplyRequestMutation {
     parentPost: Ref<Post>;
     message: string;
-    photonValue: number;
+    amountAtomics: string;
 }
 
 export function useCreateReply(
@@ -25,13 +27,13 @@ export function useCreateReply(
     const {
         mutateAsync,
     } = useMutation({
-        mutationFn: async ({ parentPost, message, photonValue }: CreateReplyRequestMutation) => {
+        mutationFn: async ({ parentPost, message, amountAtomics }: CreateReplyRequestMutation) => {
             txError.value = undefined;
             txSuccess.value = undefined;
 
             const result = await wallet.dither.send(
                 'Reply',
-                { args: [parentPost.value.hash, message], amount: BigInt(photonValue).toString() },
+                { args: [parentPost.value.hash, message], amount: amountAtomics },
             );
 
             if (!result.broadcast) {
@@ -80,11 +82,11 @@ export function useCreateReply(
                     ? { ...context.previousParentPost, replies: (context.previousParentPost.replies || 0) + 1 }
                     : { ...variables.parentPost.value, replies: (variables.parentPost.value.replies || 0) + 1 };
             // Created Post with parent hash as post_hash
-            const optimisticNewReply: Post = newPost({ message: variables.message, quantity: variables.photonValue, hash: createdHash, postHash: variables.parentPost.value.hash, author: wallet.address.value });
+            const optimisticNewReply: Post = newPost({ message: variables.message, quantity: Decimal.fromAtomics(variables.amountAtomics, fractionalDigits).atomics, hash: createdHash, postHash: variables.parentPost.value.hash, author: wallet.address.value });
             // Created Post in ReplyWithParent
             const optimisticNewUserReply: ReplyWithParent = {
                 reply: newPost(
-                    { message: variables.message, quantity: variables.photonValue, hash: createdHash, postHash: variables.parentPost.value.hash, author: wallet.address.value },
+                    { message: variables.message, quantity: Decimal.fromAtomics(variables.amountAtomics, fractionalDigits).atomics, hash: createdHash, postHash: variables.parentPost.value.hash, author: wallet.address.value },
                 ),
                 parent: optimisticParentPost,
             };

@@ -51,6 +51,8 @@ export const messages = {
             },
             InputPhoton: {
                 notEnough: 'Not enough balance',
+                placeholder: 'Type amount',
+                available: 'available',
             },
             PopupTitles: {
                 likePost: 'Like Post',
@@ -73,12 +75,15 @@ export const messages = {
                 replies: 'Replies',
                 myReplies: 'My Replies',
             },
-            Titles: {
+            Headings: {
                 profile: 'Profile',
                 myProfile: 'My Profile',
                 notifications: 'Notifications',
                 settings: 'Settings',
-                config: 'Config',
+                manageFollows: 'Manage Following',
+                envConfig: 'Environment Config',
+                post: 'Post',
+                explore: 'Explore',
             },
             SearchInput: {
                 noResults: 'No results found',
@@ -111,11 +116,12 @@ export const messages = {
                 success: '{txLabel} Successful',
                 fail: '{txLabel} Failed',
             },
-            Settings: {
-                manageFollows: 'Manage Follows',
-                envConfig: 'Environment Config',
-                following: 'Following',
-                back: 'Back',
+            NotFound: {
+                title: 'Page Not Found',
+                message: 'The page you are looking for does not exist.',
+            },
+            PostActions: {
+                replies: 'reply | replies',
             },
         },
         feedbacks: {
