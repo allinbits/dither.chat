@@ -1,11 +1,13 @@
 <script setup lang="ts">
+import { Loader } from 'lucide-vue-next';
+
 import { useSessionWallet } from '@/composables/useSessionWallet';
 
 import Button from '@/components/ui/button/Button.vue';
 import MainLayout from '@/layouts/MainLayout.vue';
 import ViewHeading from '@/views/ViewHeading.vue';
 
-const { createSession, clearSession, hasGrants } = useSessionWallet();
+const { createSession, clearSession, hasGrants, isGranting } = useSessionWallet();
 </script>
 
 <template>
@@ -20,16 +22,23 @@ const { createSession, clearSession, hasGrants } = useSessionWallet();
         </div>
         <!-- Invoke Session Wallet -->
         <div class="flex flex-col p-3">
-          <Button size="sm" class="w-full decoration-2" variant="outline" @click="createSession" v-if="!hasGrants">
-            <span class="grow">
-              {{ $t('components.Settings.createSession') }}
-            </span>
-          </Button>
-          <Button size="sm" class="w-full decoration-2" variant="outline" @click="clearSession" v-else>
-            <span class="grow">
-              {{ $t('components.Settings.revokeSession') }}
-            </span>
-          </Button>
+          <template v-if="!isGranting">
+            <Button size="sm" class="w-full decoration-2" variant="outline" @click="createSession" v-if="!hasGrants">
+              <span class="grow">
+                {{ $t('components.Settings.createSession') }}
+              </span>
+            </Button>
+            <Button size="sm" class="w-full decoration-2" variant="outline" @click="clearSession" v-else>
+              <span class="grow">
+                {{ $t('components.Settings.revokeSession') }}
+              </span>
+            </Button>
+          </template>
+          <templte v-else>
+            <div class="flex items-center justify-center pt-4">
+              <Loader  class="animate-spin" :size="24" />
+            </div>
+          </templte>
         </div>
       </div>
     </div>

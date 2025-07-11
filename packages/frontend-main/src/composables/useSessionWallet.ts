@@ -10,6 +10,7 @@ import { getChainConfigLazy } from '@/utility/getChainConfigLazy';
 
 const sessionSigner = ref<SessionSigner>();
 const hasGrants = ref(false);
+const isGranting = ref(false);
 
 export const useSessionWallet = () => {
     const configStore = useConfigStore();
@@ -33,6 +34,7 @@ export const useSessionWallet = () => {
         sessionSigner.value = undefined;
         hasGrants.value = false;
         walletState.isUsingSingleSession = false;
+        isGranting.value = false;
     };
 
     const createSession = async () => {
@@ -47,18 +49,24 @@ export const useSessionWallet = () => {
             return;
         }
 
+        isGranting.value = true;
         const aminoTypes = new AminoTypes({ ...createAuthzAminoConverters(), ...createFeegrantAminoConverters() });
         const client = await SigningStargateClient.connectWithSigner(chainInfo.value.rpc, signer.value, {
             gasPrice: GasPrice.fromString('0.025uphoton'),
             aminoTypes,
         });
 
-        const stintSigner = await newSessionSigner({ primaryClient: client as never, saltName: 'dither-session', logger: consoleLogger });
+        const stintSigner = await newSessionSigner({
+            primaryClient: client as never,
+            saltName: window.location.origin + '/dither-session',
+            logger: consoleLogger,
+        });
         const primaryAddress = stintSigner.primaryAddress();
         let existingAuthz = await stintSigner.hasAuthzGrant();
         let existingFeeGrant = await stintSigner.hasFeegrant();
 
         if (!existingAuthz || !existingFeeGrant) {
+            
             const messages = stintSigner.generateDelegationMessages({
                 sessionExpiration: new Date(Date.now() + 24 * 60 * 60 * 1000),
                 spendLimit: { denom: 'uphoton', amount: String(1_000_000) }, // 1 PHOTON
@@ -67,6 +75,7 @@ export const useSessionWallet = () => {
             });
 
             await client.signAndBroadcastSync(primaryAddress, messages, 'auto');
+            isGranting.value = false;
         }
 
         existingAuthz = await stintSigner.hasAuthzGrant();
@@ -77,6 +86,8 @@ export const useSessionWallet = () => {
             sessionSigner.value = stintSigner;
             walletState.isUsingSingleSession = true;
         }
+
+        isGranting.value = false;
     };
 
     return {
@@ -84,5 +95,6 @@ export const useSessionWallet = () => {
         createSession,
         sessionSigner,
         hasGrants,
+        isGranting,
     };
 };
