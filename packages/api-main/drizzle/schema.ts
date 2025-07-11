@@ -125,6 +125,7 @@ export const NotificationTable = pgTable(
     'notifications',
     {
         hash: varchar({ length: 64 }).notNull(),
+        post_hash: varchar({ length: 64 }),
         owner: varchar({ length: 44 }).notNull(),
         actor: varchar({ length: 44 }).notNull(),
         type: notificationTypeEnum().notNull(),
