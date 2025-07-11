@@ -12,19 +12,7 @@ const { createSession, clearSession, hasGrants } = useSessionWallet();
 <template>
   <MainLayout>
     <div class="flex flex-col">
-      <div class="flex flex-row items-center border-b py-2 pr-4">
-        <RouterLink to="/settings" class="w-32">
-          <Button size="sm" class="w-full text-left decoration-2" variant="link">
-            <ChevronLeft class="size-4" />
-            <span class="grow">
-              {{ $t('components.Settings.back') }}
-            </span>
-          </Button>
-        </RouterLink>
-        <h1 class="font-semibold grow text-right select-none">
-          {{ $t(`components.Settings.singleSession`) }}
-        </h1>
-      </div>
+      <ViewHeading :title="$t(`components.Headings.singleSession`)"/>
       <div class="flex flex-col text-pretty">
         <!-- Summary of Session Wallet -->
         <div class="flex flex-col border-b">
