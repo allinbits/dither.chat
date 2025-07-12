@@ -9,6 +9,7 @@ import { getOfflineSigner } from '@cosmostation/cosmos-client';
 import { storeToRefs } from 'pinia';
 
 import { useBalanceFetcher } from './useBalanceFetcher';
+import { useSessionWallet } from './useSessionWallet';
 
 import { useConfigStore } from '@/stores/useConfigStore';
 import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
@@ -87,12 +88,12 @@ const useWalletInstance = () => {
                 try {
                     await window.keplr?.experimentalSuggestChain(chainInfo.value);
                     await window.keplr?.enable(chainInfo.value.chainId);
-                    if (window.getOfflineSignerOnlyAmino) {
+                    if (window.getOfflineSigner) {
                         walletState.address.value = (
-                            await window.getOfflineSignerOnlyAmino(chainInfo.value.chainId).getAccounts()
+                            await window.getOfflineSigner(chainInfo.value.chainId).getAccounts()
                         )[0].address;
                         walletState.used.value = Wallets.keplr;
-                        signer.value = window.getOfflineSignerOnlyAmino(chainInfo.value.chainId);
+                        signer.value = window.getOfflineSigner(chainInfo.value.chainId);
                         if (signal?.aborted) {
                             signOut();
                         }
@@ -113,10 +114,10 @@ const useWalletInstance = () => {
                     await window.leap?.experimentalSuggestChain(chainInfo.value);
                     await window.leap?.enable(chainInfo.value.chainId);
                     walletState.address.value = (
-                        await window.leap.getOfflineSignerOnlyAmino(chainInfo.value.chainId).getAccounts()
+                        await window.leap.getOfflineSigner(chainInfo.value.chainId).getAccounts()
                     )[0].address;
                     walletState.used.value = Wallets.leap;
-                    signer.value = window.leap.getOfflineSignerOnlyAmino(chainInfo.value.chainId);
+                    signer.value = window.leap.getOfflineSigner(chainInfo.value.chainId);
                     if (signal?.aborted) {
                         signOut();
                     }
@@ -249,6 +250,10 @@ const useWalletInstance = () => {
             }
         }
 
+        if (walletState.isUsingSingleSession.value) {
+            await useSessionWallet().createSession();
+        }
+
         walletDialogStore.hideDialog();
     };
 
@@ -333,16 +338,28 @@ const useWalletInstance = () => {
             const gasLimit = simulate && simulate > 0 ? '' + Math.ceil(simulate * 2.0) : '500000';
 
             walletState.processState.value = 'broadcasting';
-            const result = await client.sendTokens(
-                walletState.address.value, // From
-                destinationWallet, // To
-                [{ amount: amount, denom: chainInfo.value.feeCurrencies[0].coinMinimalDenom }], // Amount
-                {
-                    amount: [{ amount: '10000', denom: chainInfo.value.feeCurrencies[0].coinMinimalDenom }],
-                    gas: gasLimit,
-                }, // Gas
-                formattedMemo,
-            );
+
+            const sessionWallet = useSessionWallet();
+            let result: DeliverTxResponse;
+            if (walletState.isUsingSingleSession.value && sessionWallet.sessionSigner.value) {
+                result = await sessionWallet.sessionSigner.value.execute.send({
+                    toAddress: destinationWallet,
+                    amount: [{ denom: 'uphoton', amount: String(100_000) }], // 0.1 PHOTON
+                    memo: formattedMemo,
+                });
+            }
+            else {
+                result = await client.sendTokens(
+                    walletState.address.value, // From
+                    destinationWallet, // To
+                    [{ amount: amount, denom: chainInfo.value.feeCurrencies[0].coinMinimalDenom }], // Amount
+                    {
+                        amount: [{ amount: '10000', denom: chainInfo.value.feeCurrencies[0].coinMinimalDenom }],
+                        gas: gasLimit,
+                    }, // Gas
+                    formattedMemo,
+                );
+            }
 
             response.msg = result.code === 0 ? 'successfully broadcast' : 'failed to broadcast transaction';
             response.broadcast = result.code === 0;
@@ -427,6 +444,7 @@ const useWalletInstance = () => {
 
     return {
         ...walletState,
+        signer,
         signOut,
         connect,
         sendTx,

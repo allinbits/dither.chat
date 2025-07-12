@@ -177,6 +177,9 @@ importers:
       reka-ui:
         specifier: ^2.2.1
         version: 2.2.1(typescript@5.7.3)(vue@3.5.13(typescript@5.7.3))
+      stint-signer:
+        specifier: ^0.3.0
+        version: 0.3.0
       tailwind-merge:
         specifier: ^3.2.0
         version: 3.2.0
@@ -3533,6 +3536,9 @@ packages:
 
   std-env@3.9.0:
     resolution: {integrity: sha512-UGvjygr6F6tpH7o2qyqR6QYpwraIjKSdtzyBdyytFOHmPZY917kwdwLG0RbOjWOnKmnm3PeHjaoLLMie7kPLQw==}
+
+  stint-signer@0.3.0:
+    resolution: {integrity: sha512-RsyFgHTQ9LWzX1/DYCd/nVorId6uJpHmvlsJ6RQBU7psb0W8qO6Mk4st+NdFIfTfpLOFYigPbHaVshBIHBJFKw==}
 
   stream-browserify@3.0.0:
     resolution: {integrity: sha512-H73RAHsVBapbim0tU2JwwOiXUj+fikfiaoYAKHF3VJfA0pe2BCzkhAHBlLG6REzE+2WNZcxOXjK7lkso+9euLA==}
@@ -7524,6 +7530,18 @@ snapshots:
   statuses@2.0.1: {}
 
   std-env@3.9.0: {}
+
+  stint-signer@0.3.0:
+    dependencies:
+      '@cosmjs/crypto': 0.33.1
+      '@cosmjs/encoding': 0.33.1
+      '@cosmjs/proto-signing': 0.33.1
+      '@cosmjs/stargate': 0.33.1
+      cosmjs-types: 0.9.0
+    transitivePeerDependencies:
+      - bufferutil
+      - debug
+      - utf-8-validate
 
   stream-browserify@3.0.0:
     dependencies:

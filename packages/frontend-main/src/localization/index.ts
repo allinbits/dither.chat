@@ -13,8 +13,8 @@ export const messages = {
                 balance: 'Balance',
                 cancel: 'Cancel',
                 back: 'Go back',
-                disconnect: 'Disconnect wallet',
-                connecting: 'Connecting wallet',
+                disconnect: 'Disconnect Wallet',
+                connecting: 'Connecting Wallet',
                 wait: 'Please wait...',
                 trouble: 'Troubleshooting',
                 slow: 'The connection seems to be slow...',
@@ -27,6 +27,8 @@ export const messages = {
                 otherWallet: 'Make sure you have a wallet browser extension enabled.',
                 enterAddress: 'Enter your wallet address',
                 addressPlaceholder: 'e.g. atone1ad453f23bc2d...',
+                singleClickDisable: 'Single-Click Disable',
+                singleClickEnable: 'Single-Click Enable',
             },
             Wallet: {
                 popupSign:
@@ -115,6 +117,16 @@ export const messages = {
                 wait: 'Please wait a moment...',
                 success: '{txLabel} Successful',
                 fail: '{txLabel} Failed',
+            },
+            Settings: {
+                manageFollows: 'Manage Follows',
+                envConfig: 'Environment Config',
+                singleSession: 'Single Session',
+                following: 'Following',
+                back: 'Back',
+                singleSessionSummary: 'Single Session creations a local private key through a passkey to sign transactions through the Comsos Authz and Feegrant modules. The settings below let you configure the authorization.',
+                createSession: 'Create Session',
+                revokeSession: 'Revoke Session',
             },
             NotFound: {
                 title: 'Page Not Found',

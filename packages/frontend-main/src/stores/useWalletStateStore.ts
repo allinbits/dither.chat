@@ -16,13 +16,14 @@ export const useWalletStateStore = defineStore(
         const address = ref('');
         const used = ref<Wallets | null>(null);
         const processState = ref<WalletProcessState>('idle');
+        const isUsingSingleSession = ref(false);
 
-        return { keplr, leap, cosmostation, loggedIn, address, used, processState };
+        return { keplr, leap, cosmostation, loggedIn, address, used, processState, isUsingSingleSession };
     },
     {
         persist: {
             storage: sessionStorage,
-            pick: ['loggedIn', 'address', 'used'],
+            pick: ['loggedIn', 'address', 'used', 'isUsingSingleSession'],
         },
     },
 );
