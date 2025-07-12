@@ -37,7 +37,7 @@ const routes = [
     { path: '/profile/:address', name: 'Profile', component: ProfilePostsView },
     { path: '/profile/:address/replies', name: 'Profile Replies', component: ProfileRepliesView },
     { path: '/settings', name: 'Settings', component: SettingsView, meta: { authRequired: true } },
-    { path: '/settings/manage-followers', name: 'Settings Manage Followers', component: ManageFollowingView, meta: { authRequired: true } },
+    { path: '/settings/manage-following', name: 'Settings Manage Following', component: ManageFollowingView, meta: { authRequired: true } },
     { path: '/settings/env-config', name: 'Settings Config', component: EnvConfigView, meta: { authRequired: true } },
     { path: '/post/:hash/:postHash?', name: 'Post', component: PostView },
     {
