@@ -1,6 +1,8 @@
 import jwt from 'jsonwebtoken';
 
-import { secretKey } from './useUserAuth';
+import { useConfig } from '../config';
+
+const { JWT } = useConfig();
 
 export const verifyJWT = async (token: string | undefined) => {
     if (!token) {
@@ -8,7 +10,7 @@ export const verifyJWT = async (token: string | undefined) => {
     }
 
     try {
-        const tokenData = jwt.verify(token, secretKey) as { data: string; iat: number; exp: number };
+        const tokenData = jwt.verify(token, JWT) as { data: string; iat: number; exp: number };
         if (!tokenData) {
             return undefined;
         }

@@ -2,9 +2,11 @@ import type { Cookie } from 'elysia';
 
 import { type Posts } from '@atomone/dither-api-types';
 
+import { useConfig } from '../config';
 import { useUserAuth } from '../shared/useUserAuth';
 
 const { verifyAndCreate } = useUserAuth();
+const { JWT_STRICTNESS } = useConfig();
 
 export async function Auth(body: typeof Posts.AuthBody.static, auth: Cookie<string | undefined>) {
     try {
@@ -15,9 +17,8 @@ export async function Auth(body: typeof Posts.AuthBody.static, auth: Cookie<stri
 
         const result = await verifyAndCreate(body.pub_key.value, body.signature, body.id);
         if (result.status === 200) {
-            // TODO - When deployed the samesite should be set to strict for subdomain deployment
             auth.remove();
-            auth.set({ sameSite: 'lax', httpOnly: true, value: result.bearer, maxAge: 259200, priority: 'high' });
+            auth.set({ sameSite: JWT_STRICTNESS, httpOnly: true, value: result.bearer, maxAge: 259200, priority: 'high' });
             return { status: 200 };
         }
 
