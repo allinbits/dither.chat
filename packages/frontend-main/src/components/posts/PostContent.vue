@@ -25,6 +25,16 @@ const hasImage = computed(() => {
 const imageUrl = computed(() => {
     return extractImageURL(props.message) ?? '';
 });
+
+const youtubeRegex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/g;
+const youtubeLink = computed(() => {
+    const regex = youtubeRegex.exec(props.message);
+    if (!regex || !regex[0]) {
+        return undefined;
+    }
+
+    return regex[0].replace('watch?v=', 'embed/');
+});
 </script>
 
 <template>
@@ -44,5 +54,14 @@ const imageUrl = computed(() => {
         </div>
       </template>
     </div>
+
+    <iframe
+      v-if="youtubeLink"
+      class="w-full aspect-video rounded-sm"
+      :src="youtubeLink"
+      title="YouTube Video"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen
+    ></iframe>
   </div>
 </template>
