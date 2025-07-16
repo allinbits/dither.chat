@@ -7,9 +7,11 @@ import jwt from 'jsonwebtoken';
 
 import { getDatabase } from '../../drizzle/db';
 import { AuthRequests } from '../../drizzle/schema';
+import { useConfig } from '../config';
+
+const { JWT } = useConfig();
 
 const expirationTime = 60_000 * 5;
-export const secretKey = 'temp-key-need-to-config-this';
 
 function getSignerAddressFromPublicKey(publicKeyBase64: string, prefix: string = 'atone'): string {
     const publicKeyBytes = new Uint8Array(Buffer.from(publicKeyBase64, 'base64'));
@@ -97,7 +99,7 @@ export function useUserAuth() {
         }
 
         await getDatabase().delete(AuthRequests).where(eq(AuthRequests.id, id)).returning();
-        return { status: 200, bearer: jwt.sign({ data: rows[0].msg }, secretKey, { expiresIn: '3d' }) };
+        return { status: 200, bearer: jwt.sign({ data: rows[0].msg }, JWT, { expiresIn: '3d' }) };
     };
 
     return {
