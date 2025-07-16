@@ -1,9 +1,10 @@
 <script lang="ts" setup>
-defineProps<{ message: string }>();
+const props = defineProps<{ message: string }>();
+
 </script>
 
 <template>
-  <span class="leading-6 text-sm break-word">
-    {{ message }}
-  </span>
+  <div
+    class="leading-6 text-sm"
+  >{{ props.message }}</div>
 </template>

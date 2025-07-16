@@ -3,6 +3,7 @@ import type { Static } from '@sinclair/typebox';
 import type { ValueError } from '@sinclair/typebox/compiler';
 
 import { TypeCompiler } from '@sinclair/typebox/compiler';
+import DOMPurify from 'dompurify';
 
 export interface RawRow {
     timestamp?: unknown;
@@ -37,4 +38,13 @@ export function checkRowsSchema<T extends TSchema>(
             return validatedRow;
         })
         .filter((row): row is Static<T> => !!row);
+}
+
+// This function sanitizes HTML content to prevent XSS attacks.
+export function purifyHtml(html: string): string {
+    return DOMPurify.sanitize(html, {
+        ADD_TAGS: ['iframe'],
+        ADD_ATTR: ['allow', 'allowfullscreen', 'frameborder', 'scrolling', 'src'],
+        ALLOWED_URI_REGEXP: /^(https?:)?\/\/(www\.)?(youtube\.com|youtu\.be)\/embed\//,
+    });
 }
