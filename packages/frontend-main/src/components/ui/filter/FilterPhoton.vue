@@ -9,7 +9,7 @@ import { fractionalDigits } from '@/utility/atomics';
 const store = useFiltersStore();
 
 const minDecimal = Decimal.fromAtomics('1', fractionalDigits);
-const maxDecimal = Decimal.fromUserInput('100', fractionalDigits);
+const maxDecimal = Decimal.fromUserInput('99', fractionalDigits);
 const stepDecimal = Decimal.fromAtomics('1', fractionalDigits);
 
 const min = computed(() => minDecimal.toFloatApproximation());
