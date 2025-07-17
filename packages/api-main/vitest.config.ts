@@ -2,7 +2,10 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
     test: {
-        setupFiles: ['./tests/setup.ts'],
+        sequence: {
+            setupFiles: 'list',
+        },
+        globalSetup: './tests/setup.ts',
     },
     define: {
         'process.env.SKIP_START': JSON.stringify(true),

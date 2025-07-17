@@ -1,3 +1,9 @@
-import { start } from '../src/index';
+import { start, stop } from '../src/index';
 
-start();
+export async function setup() {
+    start();
+}
+
+export async function teardown() {
+    stop();
+}

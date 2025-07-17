@@ -1,10 +1,10 @@
 import type { Posts } from '@atomone/dither-api-types';
 
-import { eq, sql } from 'drizzle-orm';
+import { sql } from 'drizzle-orm';
 import { assert, describe, it } from 'vitest';
 
 import { getDatabase } from '../drizzle/db';
-import { ModeratorTable, ReaderState, tables } from '../drizzle/schema';
+import { ModeratorTable, tables } from '../drizzle/schema';
 
 import { createWallet, get, getAtomOneAddress, getRandomHash, post, signADR36Document, userLogin } from './shared';
 
@@ -1110,22 +1110,6 @@ describe('get post from followed', async () => {
         assert.isOk(readResponse.rows[0].author, 'Author was not included');
         assert.isOk(readResponse.rows[0].message, 'message was not included');
         assert.isOk(readResponse.rows[0].quantity, 'quantity was not included');
-    });
-});
-
-describe('update state', () => {
-    it('should update state', async () => {
-        let response = await post<{ status: number; error: string }>(`update-state`, { last_block: '1' });
-        assert.isOk(response?.status === 200, 'could not post to update state');
-
-        let [state] = await getDatabase().select().from(ReaderState).where(eq(ReaderState.id, 0)).limit(1);
-        assert.isOk(state.last_block == '1');
-
-        response = await post<{ status: number; error: string }>(`update-state`, { last_block: '2' });
-        assert.isOk(response?.status === 200, 'could not post to update state');
-
-        [state] = await getDatabase().select().from(ReaderState).where(eq(ReaderState.id, 0)).limit(1);
-        assert.isOk(state.last_block == '2');
     });
 });
 

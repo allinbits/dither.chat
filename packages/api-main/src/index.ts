@@ -8,10 +8,9 @@ import * as PostRequests from './posts/index';
 import { useConfig } from './config';
 
 const config = useConfig();
+const app = new Elysia({ adapter: node(), prefix: '/v1' });
 
 export function start() {
-    const app = new Elysia({ adapter: node(), prefix: '/v1' });
-
     app.use(cors());
     app.get('/health', GetRequests.health);
     app.get('/dislikes', ({ query }) => GetRequests.Dislikes(query), { query: Gets.DislikesQuery });
@@ -74,6 +73,10 @@ export function start() {
     });
 
     app.listen(config.PORT);
+}
+
+export function stop() {
+    app.stop(true);
 }
 
 if (!process.env.SKIP_START) {
