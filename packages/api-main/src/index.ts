@@ -9,7 +9,7 @@ import { useConfig } from './config';
 
 const config = useConfig();
 
-export function startServer() {
+export function start() {
     const app = new Elysia({ adapter: node(), prefix: '/v1' });
 
     app.use(cors());
@@ -76,4 +76,6 @@ export function startServer() {
     app.listen(config.PORT);
 }
 
-startServer();
+if (!process.env.SKIP_START) {
+    start();
+}

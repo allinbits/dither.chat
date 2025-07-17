@@ -1,5 +1,3 @@
-import '../src/index';
-
 import type { Posts } from '@atomone/dither-api-types';
 
 import { eq, sql } from 'drizzle-orm';
