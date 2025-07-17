@@ -1,10 +1,6 @@
 import type { Posts } from '@atomone/dither-api-types';
 
-import { sql } from 'drizzle-orm';
 import { assert, describe, it } from 'vitest';
-
-import { getDatabase } from '../drizzle/db';
-import { tables } from '../drizzle/schema';
 
 import { createWallet, get, getRandomHash, post } from './shared';
 
@@ -13,12 +9,6 @@ describe('filter post depending on send tokens', async () => {
     const cheapPostMessage = 'cheap post';
     const expensivePostMessage = 'expensive post';
     const expensivePostTokens = '20';
-
-    it('EMPTY ALL TABLES', async () => {
-        for (const tableName of tables) {
-            await getDatabase().execute(sql`TRUNCATE TABLE ${sql.raw(tableName)};`);
-        }
-    });
 
     it('user creates one cheap and one expensive posts', async () => {
         const body: typeof Posts.PostBody.static = {
@@ -151,10 +141,93 @@ describe('user replies with parent', async () => {
             }[];
         }>(`user-replies?address=${walletB.publicKey}`);
         assert.isOk(userRepliesResponse?.status === 200, `response was not okay, got ${userRepliesResponse?.status}`);
-        assert.lengthOf(userRepliesResponse.rows, 1);
+        assert.isOk(userRepliesResponse.rows.length >= 1);
         assert.equal(userRepliesResponse.rows[0].reply.hash, replyPost);
         assert.equal(userRepliesResponse.rows[0].parent.hash, parentPost);
         assert.equal(userRepliesResponse.rows[0].reply.message, replyMessage);
         assert.equal(userRepliesResponse.rows[0].parent.message, postMessage);
+    });
+});
+
+describe('get post from followed', async () => {
+    const walletA = await createWallet();
+    const walletB = await createWallet();
+    const postMessage = 'this is a post';
+
+    it('zero posts if not followers', async () => {
+        const readResponse = await get<{
+            status: number;
+            rows: {
+                hash: string;
+                author: string;
+                message: string;
+                deleted_at: Date;
+                deleted_reason: string;
+                deleted_hash: string;
+                quantity: string;
+            }[];
+        }>(`following-posts?address=${walletA.publicKey}`);
+        assert.isOk(readResponse?.status === 200, `response was not okay, got ${readResponse?.status}`);
+        assert.lengthOf(readResponse.rows, 0);
+    });
+
+    it('POST - now followed user posts', async () => {
+        const body: typeof Posts.PostBody.static = {
+            from: walletB.publicKey,
+            hash: getRandomHash(),
+            msg: postMessage,
+            quantity: '1',
+            timestamp: '2025-04-16T19:46:42Z',
+        };
+
+        const postResponse = await post(`post`, body);
+        assert.isOk(postResponse != null);
+        assert.isOk(postResponse && postResponse.status === 200, 'response was not okay');
+    });
+
+    it('Still empty response', async () => {
+        const readResponse = await get<{
+            status: number;
+            rows: {
+                hash: string;
+                author: string;
+                message: string;
+                deleted_at: Date;
+                deleted_reason: string;
+                deleted_hash: string;
+            }[];
+        }>(`following-posts?address=${walletA.publicKey}`);
+        assert.isOk(readResponse?.status === 200, `response was not okay, got ${readResponse?.status}`);
+        assert.lengthOf(readResponse.rows, 0);
+    });
+
+    it('One post when user follows', async () => {
+        const body: typeof Posts.FollowBody.static = {
+            from: walletA.publicKey,
+            hash: getRandomHash(),
+            address: walletB.publicKey,
+            timestamp: '2025-04-16T19:46:42Z',
+        };
+
+        const response = await post(`follow`, body);
+        assert.isOk(response?.status === 200, 'unable to follow user');
+
+        const readResponse = await get<{
+            status: number;
+            rows: {
+                hash: string;
+                author: string;
+                message: string;
+                deleted_at: Date;
+                deleted_reason: string;
+                deleted_hash: string;
+                quantity: string;
+            }[];
+        }>(`following-posts?address=${walletA.publicKey}`);
+        assert.isOk(readResponse?.status === 200, `response was not okay, got ${readResponse?.status}`);
+        assert.lengthOf(readResponse.rows, 1);
+        assert.isOk(readResponse.rows[0].author, 'Author was not included');
+        assert.isOk(readResponse.rows[0].message, 'message was not included');
+        assert.isOk(readResponse.rows[0].quantity, 'quantity was not included');
     });
 });

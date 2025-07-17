@@ -6,6 +6,9 @@ export default defineConfig({
             setupFiles: 'list',
         },
         globalSetup: './tests/setup.ts',
+        forceRerunTriggers: [
+            '**/tests/**/*',
+        ],
     },
     define: {
         'process.env.SKIP_START': JSON.stringify(true),
