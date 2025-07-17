@@ -17,8 +17,8 @@ export async function setup(project: TestProject) {
     try {
         stop();
     }
-    catch (err) {
-        console.log(err);
+    catch (_err) {
+        console.log(`Skipping Stop Step`);
     }
 
     start();

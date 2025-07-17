@@ -166,6 +166,5 @@ export async function createPost(msg = 'default content') {
         return undefined;
     }
 
-    console.log(response);
     return { hash, address };
 };
