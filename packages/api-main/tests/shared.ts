@@ -148,3 +148,23 @@ export async function userLogin(wallet: { mnemonic: string; publicKey: string })
 
     return responseVerify.bearer;
 }
+
+export async function createPost(msg = 'default content') {
+    const address = getAtomOneAddress();
+    const hash = getRandomHash();
+
+    const body: typeof Posts.PostBody.static = {
+        from: address,
+        hash: hash,
+        msg,
+        quantity: '1',
+        timestamp: '2025-04-16T19:46:42Z',
+    };
+
+    const response = await post(`post`, body);
+    if (response?.status !== 200) {
+        return undefined;
+    }
+
+    return { hash, address };
+};
