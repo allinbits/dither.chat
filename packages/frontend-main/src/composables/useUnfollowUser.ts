@@ -6,6 +6,7 @@ import { type InfiniteData, useMutation, useQueryClient } from '@tanstack/vue-qu
 import { following } from './useFollowing';
 import { followingPosts } from './useFollowingPosts';
 import { isFollowing } from './useIsFollowing';
+import { useTxNotification } from './useTxNotification';
 import { useWallet } from './useWallet';
 
 import { infiniteDataWithoutItem } from '@/utility/optimisticBuilders';
@@ -21,12 +22,16 @@ export function useUnfollowUser(
     const wallet = useWallet();
     const txError = ref<string>();
     const txSuccess = ref<string>();
+    const isToastShown = ref(false);
+    useTxNotification(isToastShown, 'Unfollow', txSuccess, txError);
+
     const {
         mutateAsync,
     } = useMutation({
         mutationFn: async ({ userAddress, amountAtomics }: UnfollowUserRequestMutation) => {
             txError.value = undefined;
             txSuccess.value = undefined;
+            isToastShown.value = true;
 
             const result = await wallet.dither.send(
                 'Unfollow',
@@ -80,6 +85,9 @@ export function useUnfollowUser(
 
             queryClient.setQueryData(isFollowingOpts.queryKey, context?.previousIsFollowing);
             queryClient.setQueryData(followingOpts.queryKey, context?.previousFollowing);
+        },
+        onSettled: () => {
+            isToastShown.value = false;
         },
     });
 

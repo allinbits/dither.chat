@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { Decimal } from '@cosmjs/math';
 import { Loader } from 'lucide-vue-next';
 
 import { useCreateReply } from '@/composables/useCreateReply';
+import { useDefaultAmount } from '@/composables/useDefaultAmount';
 import { usePost } from '@/composables/usePost';
 import { useReplies } from '@/composables/useReplies';
 import { useWallet } from '@/composables/useWallet';
@@ -22,8 +23,13 @@ import Textarea from '@/components/ui/textarea/Textarea.vue';
 import UserAvatar from '@/components/users/UserAvatar.vue';
 import UserAvatarUsername from '@/components/users/UserAvatarUsername.vue';
 import MainLayout from '@/layouts/MainLayout.vue';
+import { routesNames } from '@/router';
+import { useConfigStore } from '@/stores/useConfigStore';
 import { fractionalDigits } from '@/utility/atomics';
 
+const wallet = useWallet();
+const { isDefaultAmountInvalid } = useDefaultAmount();
+const router = useRouter();
 const route = useRoute();
 const hash = computed(() =>
     typeof route.params.hash === 'string' ? route.params.hash : '',
@@ -31,13 +37,14 @@ const hash = computed(() =>
 const { data: post, isLoading, isError, error } = usePost({
     hash,
 });
-const wallet = useWallet();
 const repliesQuery = useReplies({ hash });
 const POST_HASH_LEN = 64;
 const MAX_CHARS = 512 - ('dither.Reply("", "")'.length + POST_HASH_LEN);
 const reply = ref('');
 const isBalanceInputValid = ref(false);
 const inputPhotonModel = ref(Decimal.fromAtomics('1', fractionalDigits).toFloatApproximation());
+const configStore = useConfigStore();
+const amountAtomics = computed(() => configStore.config.defaultAmountEnabled ? configStore.config.defaultAmountAtomics : Decimal.fromUserInput(inputPhotonModel.value.toString(), fractionalDigits).atomics);
 
 const { createReply,
     txError } = useCreateReply();
@@ -56,7 +63,7 @@ async function handleReply() {
     if (!canReply.value || !post.value) {
         return;
     }
-    await createReply({ parentPost: post, message: reply.value, amountAtomics: Decimal.fromUserInput(inputPhotonModel.value.toString(), fractionalDigits).atomics });
+    await createReply({ parentPost: post, message: reply.value, amountAtomics: amountAtomics.value });
     reply.value = '';
 }
 </script>
@@ -94,22 +101,31 @@ async function handleReply() {
           <Loader class="animate-spin w-full"/>
         </div>
         <!-- Transaction Form -->
-        <template v-if="wallet.loggedIn.value && !isProcessing">
-          <div class="flex flex-row item-center mt-4">
-            <UserAvatar :userAddress="wallet.address.value" disabled/>
-            <Textarea :placeholder="$t('placeholders.reply')" v-model="reply" :maxlength="MAX_CHARS" class="ml-1 mt-1" />
-          </div>
-
-          <div class="flex flex-row mt-4 gap-4">
-            <InputPhoton v-model="inputPhotonModel" @on-validity-change="handleInputValidity" />
-            <Button size="sm" :disabled="!canReply" @click="handleReply">
-              {{ $t('components.Button.reply') }}
+        <div v-if="wallet.loggedIn.value && !isProcessing" class="flex flex-col gap-4 mt-4">
+          <div  v-if="isDefaultAmountInvalid" class="flex flex-col items-right gap-4">
+            <span class="text-sm whitespace-pre-line">{{ $t('components.PostView.invalidDefaultAmount') }}</span>
+            <Button size="sm" @click="router.push({ name: routesNames.settingsDefaultAmount });" class="ml-auto">
+              {{ $t('components.Button.adjustDefaultAmount') }}
             </Button>
           </div>
 
+          <template v-else>
+            <div class="flex flex-row item-center">
+              <UserAvatar :userAddress="wallet.address.value" disabled/>
+              <Textarea :placeholder="$t('placeholders.reply')" v-model="reply" :maxlength="MAX_CHARS" class="ml-1 mt-1" />
+            </div>
+
+            <div  class="flex flex-row gap-4">
+              <InputPhoton v-if="!configStore.config.defaultAmountEnabled" v-model="inputPhotonModel" @on-validity-change="handleInputValidity" />
+              <Button size="sm" :disabled="!canReply" @click="handleReply" class="ml-auto">
+                {{ $t('components.Button.reply') }}
+              </Button>
+            </div>
+          </template>
+
           <!-- TX error -->
-          <span v-if="txError" class="text-red-500 text-left text-xs mt-2">{{ txError }}</span>
-        </template>
+          <span v-if="txError" class="text-red-500 text-left text-xs">{{ txError }}</span>
+        </div>
       </div>
     </div>
 

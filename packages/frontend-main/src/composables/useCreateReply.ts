@@ -6,6 +6,7 @@ import { type InfiniteData, useMutation, useQueryClient } from '@tanstack/vue-qu
 
 import { post } from './usePost';
 import { replies } from './useReplies';
+import { useTxNotification } from './useTxNotification';
 import { userReplies } from './useUserReplies';
 import { useWallet } from './useWallet';
 
@@ -24,12 +25,16 @@ export function useCreateReply(
     const wallet = useWallet();
     const txError = ref<string>();
     const txSuccess = ref<string>();
+    const isToastShown = ref(false);
+    useTxNotification(isToastShown, 'Reply', txSuccess, txError);
+
     const {
         mutateAsync,
     } = useMutation({
         mutationFn: async ({ parentPost, message, amountAtomics }: CreateReplyRequestMutation) => {
             txError.value = undefined;
             txSuccess.value = undefined;
+            isToastShown.value = true;
 
             const result = await wallet.dither.send(
                 'Reply',
@@ -106,6 +111,9 @@ export function useCreateReply(
             queryClient.setQueryData(parentPostOpts.queryKey, context?.previousParentPost);
             queryClient.setQueryData(repliesOpts.queryKey, context?.previousReplies);
             queryClient.setQueryData(userRepliesOpts.queryKey, context?.previousUserReplies);
+        },
+        onSettled: () => {
+            isToastShown.value = false;
         },
     });
 

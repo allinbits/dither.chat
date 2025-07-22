@@ -1,16 +1,22 @@
 import { computed, reactive } from 'vue';
+import { Decimal } from '@cosmjs/math';
 import { defineStore } from 'pinia';
 
 import { envConfigs } from '@/env-config';
+import { fractionalDigits } from '@/utility/atomics';
 
 interface Config {
     selectedChain: keyof typeof envConfigs;
     envConfigs: typeof envConfigs;
+    defaultAmountAtomics: string;
+    defaultAmountEnabled: boolean;
 }
 
 const defaultConfig: Config = {
     envConfigs: envConfigs,
     selectedChain: 'testnet',
+    defaultAmountAtomics: Decimal.fromUserInput('0.1', fractionalDigits).atomics,
+    defaultAmountEnabled: false,
 };
 
 // deep clone the default config to avoid mutating the original object

@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import { type RouteRecordNameGeneric, useRouter } from 'vue-router';
 import { Bell, House, Search, Settings, User } from 'lucide-vue-next';
 
+import { useDefaultAmount } from '@/composables/useDefaultAmount';
 import { usePopups } from '@/composables/usePopups';
 import { useWallet } from '@/composables/useWallet';
 
@@ -14,6 +15,7 @@ import { cn } from '@/utility';
 
 const wallet = useWallet();
 const popups = usePopups();
+const { isDefaultAmountInvalid } = useDefaultAmount();
 const router = useRouter();
 const isMyProfileRoute = computed(() => router.currentRoute.value.name?.toString().startsWith(routesNames.profile) && wallet.loggedIn.value && wallet.address.value === router.currentRoute.value.params.address);
 const buttonClass = (routeName?: RouteRecordNameGeneric) => `flex items-center flex-row h-[52px] px-4 gap-3 rounded-sm hover:bg-accent active:bg-accent transition-colors ${!!routeName && router.currentRoute.value.name?.toString().startsWith(routeName.toString()) && 'bg-accent/60'}`;
@@ -68,7 +70,8 @@ const buttonLabelClass = 'text-lg font-semibold';
         </div>
       </nav>
 
-      <Button class="ml-4 w-[208px]" @click="popups.show('newPost', {})" v-if="wallet.loggedIn.value">
+      <Button class="ml-4 w-[208px]" @click="isDefaultAmountInvalid ? popups.show('invalidDefaultAmount', 'none') : popups.show('newPost', {})"
+              v-if="wallet.loggedIn.value">
         {{ $t('components.Button.newPost') }}
       </Button>
     </div>

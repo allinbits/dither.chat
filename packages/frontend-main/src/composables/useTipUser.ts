@@ -1,6 +1,7 @@
 import { type Ref, ref } from 'vue';
 import { useMutation } from '@tanstack/vue-query';
 
+import { useTxNotification } from './useTxNotification';
 import { useWallet } from './useWallet';
 
 interface TipUserRequestMutation {
@@ -12,10 +13,14 @@ export function useTipUser() {
     const wallet = useWallet();
     const txError = ref<string>();
     const txSuccess = ref<string>();
+    const isToastShown = ref(false);
+    useTxNotification(isToastShown, 'Tip', txSuccess, txError);
+
     const { mutateAsync } = useMutation({
         mutationFn: async ({ userAddress, amountAtomics }: TipUserRequestMutation) => {
             txError.value = undefined;
             txSuccess.value = undefined;
+            isToastShown.value = true;
 
             const result = await wallet.dither.tipUser(userAddress.value, amountAtomics);
             if (!result.broadcast) {
@@ -29,6 +34,9 @@ export function useTipUser() {
         onMutate: async (_) => {},
         onSuccess: () => {},
         onError: () => {},
+        onSettled: () => {
+            isToastShown.value = false;
+        },
         retry: false,
     });
 

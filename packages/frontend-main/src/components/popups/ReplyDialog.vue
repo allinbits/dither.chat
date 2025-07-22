@@ -3,7 +3,6 @@ import type { Post } from 'api-main/types/feed';
 
 import { computed, ref } from 'vue';
 import { Decimal } from '@cosmjs/math';
-import { Loader } from 'lucide-vue-next';
 
 import { useCreateReply } from '@/composables/useCreateReply';
 import { useTxDialog } from '@/composables/useTxDialog';
@@ -16,29 +15,29 @@ import InputPhoton from '@/components/ui/input/InputPhoton.vue';
 import { Textarea } from '@/components/ui/textarea';
 import UserAvatar from '@/components/users/UserAvatar.vue';
 import Username from '@/components/users/Username.vue';
+import { useConfigStore } from '@/stores/useConfigStore';
 import { fractionalDigits } from '@/utility/atomics';
-
-const isBalanceInputValid = ref(false);
-const message = ref('');
 
 const POST_HASH_LEN = 64;
 const MAX_CHARS = 512 - ('dither.Reply("", "")'.length + POST_HASH_LEN);
+const message = ref('');
+const isBalanceInputValid = ref(false);
+const configStore = useConfigStore();
 
 const { createReply, txError, txSuccess } = useCreateReply();
-
 const {
-    isProcessing,
     isShown,
     inputPhotonModel,
     popupState: reply,
     handleClose,
-} = useTxDialog<Post>('reply', 'Reply', txSuccess, txError);
+} = useTxDialog<Post>('reply', txSuccess, txError);
+const amountAtomics = computed(() => configStore.config.defaultAmountEnabled ? configStore.config.defaultAmountAtomics : Decimal.fromUserInput(inputPhotonModel.value.toString(), fractionalDigits).atomics);
 
-async function handleSumbit() {
+async function handleSubmit() {
     if (!canSubmit.value || !reply.value) {
         return;
     }
-    await createReply({ parentPost: reply, message: message.value, amountAtomics: Decimal.fromUserInput(inputPhotonModel.value.toString(), fractionalDigits).atomics });
+    await createReply({ parentPost: reply, message: message.value, amountAtomics: amountAtomics.value });
     message.value = '';
     handleClose();
 }
@@ -47,9 +46,7 @@ function handleInputValidity(value: boolean) {
     isBalanceInputValid.value = value;
 }
 
-const canSubmit = computed(() => {
-    return isBalanceInputValid.value && message.value.length > 0;
-});
+const canSubmit = computed(() => configStore.config.defaultAmountEnabled || (isBalanceInputValid.value && message.value.length > 0));
 
 </script>
 
@@ -59,7 +56,7 @@ const canSubmit = computed(() => {
       <DialogContent>
         <DialogTitle>{{ $t('components.PopupTitles.reply') }}</DialogTitle>
 
-        <div v-if="!isProcessing && !txSuccess" class="flex flex-row gap-3 border-b pb-3">
+        <div  class="flex flex-row gap-3 border-b pb-3">
           <UserAvatar :userAddress="reply.author" />
           <div class="flex flex-col w-full gap-3">
             <div class="flex flex-row gap-3 pt-2.5">
@@ -71,20 +68,15 @@ const canSubmit = computed(() => {
         </div>
 
         <Textarea :placeholder="$t('placeholders.reply')" v-model="message" :maxlength="MAX_CHARS"
-                  v-if="!isProcessing && !txSuccess" />
+        />
 
         <!-- Transaction Form -->
-        <div class="flex flex-col w-full gap-4" v-if="!isProcessing && !txSuccess">
-          <InputPhoton v-model="inputPhotonModel" @on-validity-change="handleInputValidity" />
-          <span v-if="txError" class="text-red-500 text-left text-xs">{{ txError }}</span>
-          <Button class="w-full" :disabled="!canSubmit" @click="handleSumbit">
+        <div class="flex flex-col w-full gap-4">
+          <InputPhoton v-if="!configStore.config.defaultAmountEnabled" v-model="inputPhotonModel" @on-validity-change="handleInputValidity" />
+          <span v-if="txError" class="text-red-500 text-xs">{{ txError }}</span>
+          <Button class="w-full" :disabled="!canSubmit" @click="handleSubmit">
             {{ $t('components.Button.submit') }}
           </Button>
-        </div>
-        <!-- Broadcast Status -->
-        <div class="flex flex-col w-full gap-4" v-if="isProcessing && !txSuccess">
-          {{ $t('components.Wallet.popupSign') }}
-          <Loader class="animate-spin w-full" />
         </div>
       </DialogContent>
     </Dialog>

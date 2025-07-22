@@ -17,11 +17,11 @@ const { createSession, clearSession, hasGrants, isUpdating } = useSessionWallet(
       <div class="flex flex-col text-pretty">
         <!-- Summary of Session Wallet -->
         <div class="flex flex-col border-b">
-          <span class="pt-4 pl-4 font-bold">What is it?</span>
+          <span class="pt-4 pl-4 font-bold">{{ $t(`components.Settings.whatIsIt`) }}</span>
           <p class="p-4 text-sm">{{ $t(`components.Settings.singleSessionSummary`) }}</p>
         </div>
         <!-- Invoke Session Wallet -->
-        <div class="flex flex-col p-3">
+        <div class="flex flex-col p-4">
           <template v-if="!isUpdating">
             <Button size="sm" class="w-full decoration-2" variant="outline" @click="createSession" v-if="!hasGrants">
               <span class="grow">
@@ -34,11 +34,11 @@ const { createSession, clearSession, hasGrants, isUpdating } = useSessionWallet(
               </span>
             </Button>
           </template>
-          <templte v-else>
+          <template v-else>
             <div class="flex items-center justify-center pt-4">
               <Loader  class="animate-spin" :size="24" />
             </div>
-          </templte>
+          </template>
         </div>
       </div>
     </div>

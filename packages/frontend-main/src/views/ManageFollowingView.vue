@@ -1,14 +1,17 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { Loader } from 'lucide-vue-next';
 
+import { useDefaultAmount } from '@/composables/useDefaultAmount';
 import { useFollowing } from '@/composables/useFollowing';
 import { type PopupState, usePopups } from '@/composables/usePopups';
+import { useUnfollowUser } from '@/composables/useUnfollowUser';
 import { useWallet } from '@/composables/useWallet';
 
 import Button from '@/components/ui/button/Button.vue';
 import UserAvatarUsername from '@/components/users/UserAvatarUsername.vue';
 import MainLayout from '@/layouts/MainLayout.vue';
+import { useConfigStore } from '@/stores/useConfigStore';
 import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
 import HeaderBack from '@/views/ViewHeading.vue';
 
@@ -20,6 +23,9 @@ const flatFollowingList = computed(() => data.value?.pages.flat() ?? []);
 
 const popups = usePopups();
 const walletDialogStore = useWalletDialogStore();
+const configStore = useConfigStore();
+const { unfollowUser } = useUnfollowUser();
+const { isDefaultAmountInvalid } = useDefaultAmount();
 
 function handleAction(type: keyof PopupState, userAddress: string) {
     if (wallet.loggedIn.value) {
@@ -30,6 +36,18 @@ function handleAction(type: keyof PopupState, userAddress: string) {
     walletDialogStore.showDialog(null, () => {
         popups.show(type, userAddress);
     });
+}
+
+async function onClickUnfollow(address: string) {
+    if (isDefaultAmountInvalid.value) {
+        popups.show('invalidDefaultAmount', 'none');
+    }
+    else if (configStore.config.defaultAmountEnabled) {
+        await unfollowUser({ userAddress: ref(address), amountAtomics: configStore.config.defaultAmountAtomics });
+    }
+    else {
+        handleAction('unfollow', address);
+    }
 }
 </script>
 
@@ -50,7 +68,7 @@ function handleAction(type: keyof PopupState, userAddress: string) {
           <RouterLink :to="`/profile/${following.address}`">
             <UserAvatarUsername :userAddress="following.address" />
           </RouterLink>
-          <Button @click="handleAction('unfollow', following.address)" size="sm" class="w-[100px]">
+          <Button @click="onClickUnfollow(following.address)" size="sm" class="w-[100px]">
             {{ $t('components.Button.unfollow') }}
           </Button>
         </div>
