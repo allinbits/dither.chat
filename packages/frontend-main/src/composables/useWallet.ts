@@ -4,8 +4,9 @@ import type { OfflineAminoSigner } from '@keplr-wallet/types';
 import type { DitherTypes } from '@/types';
 
 import { type Ref, ref } from 'vue';
-import { coins, type DeliverTxResponse, SigningStargateClient } from '@cosmjs/stargate';
+import { coins, type DeliverTxResponse, type SignerData, SigningStargateClient } from '@cosmjs/stargate';
 import { getOfflineSigner } from '@cosmostation/cosmos-client';
+import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
 import { storeToRefs } from 'pinia';
 
 import { useBalanceFetcher } from './useBalanceFetcher';
@@ -59,6 +60,8 @@ const isCredentialsValid = async () => {
 };
 
 const useWalletInstance = () => {
+    const localSequence = ref(0);
+
     const chainInfo = getChainConfigLazy();
     const configStore = useConfigStore();
     const balanceFetcher = useBalanceFetcher();
@@ -275,15 +278,38 @@ const useWalletInstance = () => {
             const gasLimit = simulate && simulate > 0 ? '' + Math.ceil(simulate * 1.5) : '500000';
 
             walletState.processState.value = 'broadcasting';
-            const result = await client.signAndBroadcast(
+
+            const offlineClient = await SigningStargateClient.offline(signer.value);
+            const { sequence, accountNumber } = await offlineClient.getSequence(walletState.address.value);
+
+            // initialize local sequence
+            if (localSequence.value === 0) {
+                localSequence.value = sequence;
+            }
+
+            const explicitSignerData: SignerData = {
+                accountNumber,
+                sequence: localSequence.value,
+                chainId: chainInfo.value.chainId,
+            };
+
+            // NOTE: to allow multi actions at a time, we support that the tx would be done successfully
+            // and the sequence would be incremented by 1 then decremented by 1 later if failed
+            localSequence.value++;
+
+            const signedTx = await client.sign(
                 walletState.address.value,
                 msgs,
                 {
                     amount: [{ amount: '10000', denom: chainInfo.value.feeCurrencies[0].coinMinimalDenom }],
                     gas: gasLimit,
                 },
-                formattedMemo,
+                formattedMemo ?? '',
+                explicitSignerData,
             );
+
+            const txBytes = TxRaw.encode(signedTx).finish();
+            const result = await client.broadcastTx(txBytes, 10_000);
 
             response.msg = result.code === 0 ? 'successfully broadcast' : 'failed to broadcast transaction';
             response.broadcast = result.code === 0;
@@ -298,6 +324,7 @@ const useWalletInstance = () => {
         }
         catch (err) {
             console.error(err);
+            localSequence.value--;
             throw new Error('Could not sign messages');
         }
         finally {
@@ -349,16 +376,44 @@ const useWalletInstance = () => {
                 });
             }
             else {
-                result = await client.sendTokens(
-                    walletState.address.value, // From
-                    destinationWallet, // To
-                    [{ amount: amount, denom: chainInfo.value.feeCurrencies[0].coinMinimalDenom }], // Amount
+                const { sequence, accountNumber } = await client.getSequence(walletState.address.value);
+
+                if (localSequence.value === 0) {
+                    localSequence.value = sequence;
+                }
+
+                const explicitSignerData: SignerData = {
+                    accountNumber,
+                    sequence: localSequence.value,
+                    chainId: chainInfo.value.chainId,
+                };
+
+                // NOTE: to allow multi actions at a time, we support that the tx would be done successfully
+                // and the sequence would be incremented by 1 then decremented by 1 later if failed
+                localSequence.value++;
+
+                const signedTx = await client.sign(
+                    walletState.address.value,
+                    [
+                        {
+                            typeUrl: '/cosmos.bank.v1beta1.MsgSend',
+                            value: {
+                                fromAddress: walletState.address.value,
+                                toAddress: destinationWallet,
+                                amount: [{ amount: amount, denom: chainInfo.value.feeCurrencies[0].coinMinimalDenom }], // Amount
+                            },
+                        },
+                    ],
                     {
                         amount: [{ amount: '10000', denom: chainInfo.value.feeCurrencies[0].coinMinimalDenom }],
                         gas: gasLimit,
                     }, // Gas
                     formattedMemo,
+                    explicitSignerData,
                 );
+
+                const txBytes = TxRaw.encode(signedTx).finish();
+                result = await client.broadcastTx(txBytes, 10_000);
             }
 
             response.msg = result.code === 0 ? 'successfully broadcast' : 'failed to broadcast transaction';
@@ -373,6 +428,7 @@ const useWalletInstance = () => {
             return response;
         }
         catch (err) {
+            localSequence.value--;
             response.msg = String(err);
             return response;
         }
@@ -432,7 +488,10 @@ const useWalletInstance = () => {
         );
     };
 
-    const ditherSend = async <K extends keyof DitherTypes>(type: K, data: { args: DitherTypes[K]; amount?: string }) => {
+    const ditherSend = async <K extends keyof DitherTypes>(
+        type: K,
+        data: { args: DitherTypes[K]; amount?: string },
+    ) => {
         data.amount ??= '1';
         const memo = `dither.${type}("${data.args.join('","')}")`;
         return await sendBankTx(memo, data.amount);

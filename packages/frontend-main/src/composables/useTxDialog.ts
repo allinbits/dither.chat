@@ -16,18 +16,17 @@ export const useTxDialog = <T>(
 ) => {
     const inputPhotonModel = ref(Decimal.fromAtomics('1', fractionalDigits).toFloatApproximation());
 
+    const wallet = useWallet();
+    const balanceFetcher = useBalanceFetcher();
+
     const popups = usePopups();
     const popupState = computed(() => popups.state[dialogType]) as Ref<T>;
 
-    const isProcessing = computed(() => wallet.processState.value !== 'idle');
-    const isBroadcasting = computed(() => wallet.processState.value === 'broadcasting');
-    const isShown = computed(() => !!popupState.value && !isBroadcasting.value);
-    const isToastShown = computed(() => !!popupState.value);
+    // const isProcessing = computed(() => wallet.processState.value !== 'idle' && !!popupState.value);
+    // const isBroadcasting = computed(() => wallet.processState.value === 'broadcasting');
+    const isShown = computed(() => !!popupState.value);
 
-    useTxNotification(isToastShown, txLabel, txSuccess, txError);
-
-    const wallet = useWallet();
-    const balanceFetcher = useBalanceFetcher();
+    useTxNotification(txLabel, txSuccess, txError);
 
     const handleClose = () => {
         popups.state[dialogType] = null;
@@ -45,7 +44,6 @@ export const useTxDialog = <T>(
     });
 
     return {
-        isProcessing,
         isShown,
         popupState,
         inputPhotonModel,

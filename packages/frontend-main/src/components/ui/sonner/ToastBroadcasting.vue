@@ -6,6 +6,7 @@ import ToastWrapper from './ToastWrapper.vue';
 
 const { t } = useI18n();
 defineProps<{
+    txLabel: string;
     close: () => void;
 }>();
 </script>
@@ -17,7 +18,7 @@ defineProps<{
     </div>
     <div>
       <div class="font-semibold text-sm text-gray-900 dark:text-gray-100">
-        {{ t('components.Toast.broadcasting') }}
+        {{ t('components.Toast.broadcasting') }} {{ txLabel }}
       </div>
       <div class="text-sm text-gray-700 dark:text-gray-300 mt-1">
         {{ t('components.Toast.wait') }}

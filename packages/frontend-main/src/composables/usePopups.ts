@@ -33,8 +33,13 @@ export function usePopups() {
         state[key] = val;
     };
 
+    const hide = <T extends keyof PopupState>(key: T) => {
+        state[key] = null;
+    };
+
     return {
         state,
         show,
+        hide,
     };
 }
