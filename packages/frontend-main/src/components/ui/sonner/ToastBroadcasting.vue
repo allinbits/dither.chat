@@ -12,7 +12,7 @@ defineProps<{
 </script>
 
 <template>
-  <ToastWrapper :close="close" class="min-w-[330px]">
+  <ToastWrapper :close="close" class="min-w-[400px]">
     <div>
       <Loader class="animate-spin text-gray-700 dark:text-gray-200 w-6"/>
     </div>

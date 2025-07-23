@@ -3,7 +3,7 @@ import type { EncodeObject, OfflineDirectSigner, OfflineSigner } from '@cosmjs/p
 import type { OfflineAminoSigner } from '@keplr-wallet/types';
 import type { DitherTypes } from '@/types';
 
-import { type Ref, ref } from 'vue';
+import { type Ref, ref, watch } from 'vue';
 import { coins, type DeliverTxResponse, type SignerData, SigningStargateClient } from '@cosmjs/stargate';
 import { getOfflineSigner } from '@cosmostation/cosmos-client';
 import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
@@ -16,6 +16,8 @@ import { useConfigStore } from '@/stores/useConfigStore';
 import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
 import { useWalletStateStore } from '@/stores/useWalletStateStore';
 import { getChainConfigLazy } from '@/utility/getChainConfigLazy';
+
+const TX_BROADCAST_TIMEOUT = 30_000;
 
 export enum Wallets {
     keplr = 'Keplr',
@@ -61,6 +63,10 @@ const isCredentialsValid = async () => {
 
 const useWalletInstance = () => {
     const localSequence = ref(0);
+    const localAccountNumber = ref(0);
+
+    const txProcessingCount = ref(0);
+    const cachedGasLimit = ref('');
 
     const chainInfo = getChainConfigLazy();
     const configStore = useConfigStore();
@@ -80,6 +86,15 @@ const useWalletInstance = () => {
         document.cookie = 'auth=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
     };
     const signer: Ref<OfflineSigner | null> = ref(null);
+
+    watch([walletState.address, signer], async ([addressValue, signerValue]) => {
+        if (addressValue && signerValue) {
+            const client = await SigningStargateClient.connectWithSigner(chainInfo.value.rpc, signerValue);
+            const { sequence, accountNumber } = await client.getSequence(addressValue);
+            localSequence.value = sequence;
+            localAccountNumber.value = accountNumber;
+        }
+    });
 
     const connect = async (walletType: Wallets, address?: string, signal?: AbortSignal) => {
         if (signal?.aborted) {
@@ -269,26 +284,32 @@ const useWalletInstance = () => {
             throw new Error('Could not sign messages');
         }
 
+        let isPreIncremented = false;
+
         try {
+            txProcessingCount.value++;
+
             walletState.processState.value = 'connecting';
+
             const client = await SigningStargateClient.connectWithSigner(chainInfo.value.rpc, signer.value);
 
             walletState.processState.value = 'simulating';
-            const simulate = await client.simulate(walletState.address.value, msgs, formattedMemo);
-            const gasLimit = simulate && simulate > 0 ? '' + Math.ceil(simulate * 1.5) : '500000';
+
+            let gasLimit = '';
+
+            if (txProcessingCount.value > 1) {
+                gasLimit = cachedGasLimit.value;
+            }
+            else {
+                const simulate = await client.simulate(walletState.address.value, msgs, formattedMemo);
+                gasLimit = simulate && simulate > 0 ? '' + Math.ceil(simulate * 1.5) : '500000';
+                cachedGasLimit.value = gasLimit;
+            }
 
             walletState.processState.value = 'broadcasting';
 
-            const offlineClient = await SigningStargateClient.offline(signer.value);
-            const { sequence, accountNumber } = await offlineClient.getSequence(walletState.address.value);
-
-            // initialize local sequence
-            if (localSequence.value === 0) {
-                localSequence.value = sequence;
-            }
-
             const explicitSignerData: SignerData = {
-                accountNumber,
+                accountNumber: localAccountNumber.value,
                 sequence: localSequence.value,
                 chainId: chainInfo.value.chainId,
             };
@@ -296,6 +317,7 @@ const useWalletInstance = () => {
             // NOTE: to allow multi actions at a time, we support that the tx would be done successfully
             // and the sequence would be incremented by 1 then decremented by 1 later if failed
             localSequence.value++;
+            isPreIncremented = true;
 
             const signedTx = await client.sign(
                 walletState.address.value,
@@ -309,7 +331,7 @@ const useWalletInstance = () => {
             );
 
             const txBytes = TxRaw.encode(signedTx).finish();
-            const result = await client.broadcastTx(txBytes, 10_000);
+            const result = await client.broadcastTx(txBytes, TX_BROADCAST_TIMEOUT);
 
             response.msg = result.code === 0 ? 'successfully broadcast' : 'failed to broadcast transaction';
             response.broadcast = result.code === 0;
@@ -324,11 +346,15 @@ const useWalletInstance = () => {
         }
         catch (err) {
             console.error(err);
-            localSequence.value--;
+            if (isPreIncremented) {
+                localSequence.value--;
+            }
             throw new Error('Could not sign messages');
         }
         finally {
+            isPreIncremented = false;
             walletState.processState.value = 'idle';
+            txProcessingCount.value--;
         }
     };
 
@@ -342,27 +368,46 @@ const useWalletInstance = () => {
             return response;
         }
 
+        let isPreIncremented = false;
+
+        const currentLocalSequence = localSequence.value;
+
         try {
+            txProcessingCount.value++;
+
             walletState.processState.value = 'connecting';
+
             const client = await SigningStargateClient.connectWithSigner(chainInfo.value.rpc, signer.value);
 
             walletState.processState.value = 'simulating';
-            const simulate = await client.simulate(
-                walletState.address.value,
-                [
-                    {
-                        typeUrl: '/cosmos.bank.v1beta1.MsgSend',
-                        value: {
-                            fromAddress: walletState.address.value,
-                            toAddress: destinationWallet,
-                            amount: coins(1, chainInfo.value.feeCurrencies[0].coinMinimalDenom),
-                        },
-                    },
-                ],
-                formattedMemo,
-            );
 
-            const gasLimit = simulate && simulate > 0 ? '' + Math.ceil(simulate * 2.0) : '500000';
+            let gasLimit = '';
+
+            // NOTE: when executing multiple txs, when then first tx is not done, the 2nd tx should have
+            // sequence = 1st tx sequence + 1, but there is no way to send custom sequence with simulate function
+            // which will throw error. So we use the cached gas limit to avoid simulating again
+            if (txProcessingCount.value > 1) {
+                gasLimit = cachedGasLimit.value;
+            }
+            else {
+                const simulate = await client.simulate(
+                    walletState.address.value,
+                    [
+                        {
+                            typeUrl: '/cosmos.bank.v1beta1.MsgSend',
+                            value: {
+                                fromAddress: walletState.address.value,
+                                toAddress: destinationWallet,
+                                amount: coins(1, chainInfo.value.feeCurrencies[0].coinMinimalDenom),
+                            },
+                        },
+                    ],
+                    formattedMemo,
+                );
+
+                gasLimit = simulate && simulate > 0 ? '' + Math.ceil(simulate * 2.0) : '500000';
+                cachedGasLimit.value = gasLimit;
+            }
 
             walletState.processState.value = 'broadcasting';
 
@@ -374,23 +419,23 @@ const useWalletInstance = () => {
                     amount: [{ denom: 'uphoton', amount: String(100_000) }], // 0.1 PHOTON
                     memo: formattedMemo,
                 });
+
+                // NOTE: to allow multi actions at a time, we support that the tx would be done successfully
+                // and the sequence would be incremented by 1 then decremented by 1 later if failed
+                localSequence.value++;
+                isPreIncremented = true;
             }
             else {
-                const { sequence, accountNumber } = await client.getSequence(walletState.address.value);
-
-                if (localSequence.value === 0) {
-                    localSequence.value = sequence;
-                }
-
                 const explicitSignerData: SignerData = {
-                    accountNumber,
-                    sequence: localSequence.value,
+                    accountNumber: localAccountNumber.value,
+                    sequence: currentLocalSequence,
                     chainId: chainInfo.value.chainId,
                 };
 
                 // NOTE: to allow multi actions at a time, we support that the tx would be done successfully
                 // and the sequence would be incremented by 1 then decremented by 1 later if failed
                 localSequence.value++;
+                isPreIncremented = true;
 
                 const signedTx = await client.sign(
                     walletState.address.value,
@@ -413,7 +458,7 @@ const useWalletInstance = () => {
                 );
 
                 const txBytes = TxRaw.encode(signedTx).finish();
-                result = await client.broadcastTx(txBytes, 10_000);
+                result = await client.broadcastTx(txBytes, TX_BROADCAST_TIMEOUT);
             }
 
             response.msg = result.code === 0 ? 'successfully broadcast' : 'failed to broadcast transaction';
@@ -428,12 +473,18 @@ const useWalletInstance = () => {
             return response;
         }
         catch (err) {
-            localSequence.value--;
+            if (isPreIncremented) {
+                localSequence.value--;
+            }
+            throw err;
+
             response.msg = String(err);
             return response;
         }
         finally {
+            isPreIncremented = false;
             walletState.processState.value = 'idle';
+            txProcessingCount.value--;
         }
     };
 

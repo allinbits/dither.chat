@@ -2,8 +2,8 @@
 import type { Post } from 'api-main/types/feed';
 
 import { computed, ref } from 'vue';
+import { toast } from 'vue-sonner';
 import { Decimal } from '@cosmjs/math';
-import { Loader } from 'lucide-vue-next';
 
 import { useFlagPost } from '@/composables/useFlagPost';
 import { useTxDialog } from '@/composables/useTxDialog';
@@ -17,13 +17,12 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import InputPhoton from '@/components/ui/input/InputPhoton.vue';
 import { fractionalDigits } from '@/utility/atomics';
+import { showBroadcastingToast } from '@/utility/toast';
 
 const isBalanceInputValid = ref(false);
 const { flagPost, txError, txSuccess } = useFlagPost();
 
-const {
-    isProcessing,
-    isShown, inputPhotonModel, popupState: flag, handleClose } = useTxDialog<Post>('flag', 'Flag', txSuccess, txError);
+const { isShown, inputPhotonModel, popupState: flag, handleClose } = useTxDialog<Post>('flag', 'Flag', txSuccess, txError);
 
 const canSubmit = computed(() => {
     return isBalanceInputValid.value;
@@ -37,8 +36,17 @@ async function handleSumbit() {
     if (!canSubmit.value || !flag.value) {
         return;
     }
-    await flagPost({ post: ref(flag.value), amountAtomics: Decimal.fromUserInput(inputPhotonModel.value.toString(), fractionalDigits).atomics });
+
+    const post = ref(flag.value);
     handleClose();
+    const toastId = showBroadcastingToast('Flag');
+
+    try {
+        await flagPost({ post, amountAtomics: Decimal.fromUserInput(inputPhotonModel.value.toString(), fractionalDigits).atomics });
+    }
+    finally {
+        toast.dismiss(toastId);
+    }
 }
 </script>
 
@@ -47,7 +55,7 @@ async function handleSumbit() {
     <DialogContent>
       <DialogTitle>{{ $t('components.PopupTitles.flagPost') }}</DialogTitle>
       <span>{{ $t('components.PopupDescriptions.flagPost') }}</span>
-      <div v-if="!isProcessing && !txSuccess" class="flex flex-row gap-3 border-b pb-3">
+      <div class="flex flex-row gap-3 border-b pb-3">
         <UserAvatar :userAddress="flag.author" />
         <div class="flex flex-col w-full gap-3">
           <div class="flex flex-row gap-3 pt-2.5">
@@ -59,17 +67,12 @@ async function handleSumbit() {
       </div>
 
       <!-- Transaction Form -->
-      <div class="flex flex-col w-full gap-4" v-if="!isProcessing && !txSuccess">
+      <div class="flex flex-col w-full gap-4">
         <InputPhoton v-model="inputPhotonModel" @on-validity-change="handleInputValidity" />
         <span v-if="txError" class="text-red-500 text-left text-xs">{{ txError }}</span>
         <Button class="w-full" :disabled="!isBalanceInputValid" @click="handleSumbit">
           {{ $t('components.Button.submit') }}
         </Button>
-      </div>
-      <!-- Broadcast Status -->
-      <div class="flex flex-col w-full gap-4" v-if="isProcessing && !txSuccess">
-        {{ $t('components.Wallet.popupSign') }}
-        <Loader class="animate-spin w-full" />
       </div>
     </DialogContent>
   </Dialog>

@@ -59,13 +59,13 @@ async function handleSumbit() {
         return;
     }
 
+    const msgValue = message.value;
+    message.value = '';
+    handleClose();
+
     const toastId = showBroadcastingToast('Post');
 
     try {
-        const msgValue = message.value;
-        message.value = '';
-        handleClose();
-
         await createPost({
             message: msgValue,
             amountAtomics: Decimal.fromUserInput(inputPhotonModel.value.toString(), fractionalDigits).atomics,
