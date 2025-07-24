@@ -22,8 +22,6 @@ export const useTxDialog = <T>(
     const popups = usePopups();
     const popupState = computed(() => popups.state[dialogType]) as Ref<T>;
 
-    // const isProcessing = computed(() => wallet.processState.value !== 'idle' && !!popupState.value);
-    // const isBroadcasting = computed(() => wallet.processState.value === 'broadcasting');
     const isShown = computed(() => !!popupState.value);
 
     useTxNotification(txLabel, txSuccess, txError);
