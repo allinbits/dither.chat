@@ -476,7 +476,6 @@ const useWalletInstance = () => {
             if (isPreIncremented) {
                 localSequence.value--;
             }
-            throw err;
 
             response.msg = String(err);
             return response;
