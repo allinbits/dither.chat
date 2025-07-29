@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
+import { toast } from 'vue-sonner';
 import { Decimal } from '@cosmjs/math';
-import { Loader } from 'lucide-vue-next';
 
 import { useTxDialog } from '@/composables/useTxDialog';
 import { useUnfollowUser } from '@/composables/useUnfollowUser';
@@ -18,13 +18,13 @@ import {
 } from '@/components/ui/dialog';
 import InputPhoton from '@/components/ui/input/InputPhoton.vue';
 import { fractionalDigits } from '@/utility/atomics';
+import { showBroadcastingToast } from '@/utility/toast';
 
 const { unfollowUser, txError, txSuccess } = useUnfollowUser();
 
 const isBalanceInputValid = ref(false);
 
 const {
-    isProcessing,
     isShown,
     inputPhotonModel,
     popupState: unfollow,
@@ -43,8 +43,17 @@ async function handleSumbmit() {
     if (!canSubmit.value || !unfollow.value) {
         return;
     }
-    await unfollowUser({ userAddress: unfollow, amountAtomics: Decimal.fromUserInput(inputPhotonModel.value.toString(), fractionalDigits).atomics });
+
+    const userAddress = ref(unfollow.value);
     handleClose();
+    const toastId = showBroadcastingToast('Unfollow');
+
+    try {
+        await unfollowUser({ userAddress, amountAtomics: Decimal.fromUserInput(inputPhotonModel.value.toString(), fractionalDigits).atomics });
+    }
+    finally {
+        toast.dismiss(toastId);
+    }
 }
 </script>
 
@@ -57,17 +66,12 @@ async function handleSumbmit() {
       </DialogDescription>
 
       <!-- Transaction Form -->
-      <div class="flex flex-col w-full gap-4" v-if="!isProcessing && !txSuccess">
+      <div class="flex flex-col w-full gap-4">
         <InputPhoton v-model="inputPhotonModel" @on-validity-change="handleInputValidity" />
         <span v-if="txError" class="text-red-500 text-left text-xs">{{ txError }}</span>
         <Button class="w-full xl:inline hidden" :disabled="!isBalanceInputValid" @click="handleSumbmit">
           {{ $t('components.Button.submit') }}
         </Button>
-      </div>
-      <!-- Broadcast Status -->
-      <div class="flex flex-col w-full gap-4" v-if="isProcessing && !txSuccess">
-        {{ $t('components.Wallet.popupSign') }}
-        <Loader class="animate-spin w-full" />
       </div>
     </DialogContent>
   </Dialog>

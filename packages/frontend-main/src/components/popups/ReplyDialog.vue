@@ -2,8 +2,8 @@
 import type { Post } from 'api-main/types/feed';
 
 import { computed, ref } from 'vue';
+import { toast } from 'vue-sonner';
 import { Decimal } from '@cosmjs/math';
-import { Loader } from 'lucide-vue-next';
 
 import { useCreateReply } from '@/composables/useCreateReply';
 import { useTxDialog } from '@/composables/useTxDialog';
@@ -17,6 +17,7 @@ import { Textarea } from '@/components/ui/textarea';
 import UserAvatar from '@/components/users/UserAvatar.vue';
 import Username from '@/components/users/Username.vue';
 import { fractionalDigits } from '@/utility/atomics';
+import { showBroadcastingToast } from '@/utility/toast';
 
 const isBalanceInputValid = ref(false);
 const message = ref('');
@@ -27,7 +28,6 @@ const MAX_CHARS = 512 - ('dither.Reply("", "")'.length + POST_HASH_LEN);
 const { createReply, txError, txSuccess } = useCreateReply();
 
 const {
-    isProcessing,
     isShown,
     inputPhotonModel,
     popupState: reply,
@@ -38,9 +38,17 @@ async function handleSumbit() {
     if (!canSubmit.value || !reply.value) {
         return;
     }
-    await createReply({ parentPost: reply, message: message.value, amountAtomics: Decimal.fromUserInput(inputPhotonModel.value.toString(), fractionalDigits).atomics });
-    message.value = '';
+
+    const parentPost = ref(reply.value);
     handleClose();
+    const toastId = showBroadcastingToast('Reply');
+
+    try {
+        await createReply({ parentPost, message: message.value, amountAtomics: Decimal.fromUserInput(inputPhotonModel.value.toString(), fractionalDigits).atomics });
+    }
+    finally {
+        toast.dismiss(toastId);
+    }
 }
 
 function handleInputValidity(value: boolean) {
@@ -59,7 +67,7 @@ const canSubmit = computed(() => {
       <DialogContent>
         <DialogTitle>{{ $t('components.PopupTitles.reply') }}</DialogTitle>
 
-        <div v-if="!isProcessing && !txSuccess" class="flex flex-row gap-3 border-b pb-3">
+        <div class="flex flex-row gap-3 border-b pb-3">
           <UserAvatar :userAddress="reply.author" />
           <div class="flex flex-col w-full gap-3">
             <div class="flex flex-row gap-3 pt-2.5">
@@ -70,21 +78,15 @@ const canSubmit = computed(() => {
           </div>
         </div>
 
-        <Textarea :placeholder="$t('placeholders.reply')" v-model="message" :maxlength="MAX_CHARS"
-                  v-if="!isProcessing && !txSuccess" />
+        <Textarea :placeholder="$t('placeholders.reply')" v-model="message" :maxlength="MAX_CHARS" />
 
         <!-- Transaction Form -->
-        <div class="flex flex-col w-full gap-4" v-if="!isProcessing && !txSuccess">
+        <div class="flex flex-col w-full gap-4">
           <InputPhoton v-model="inputPhotonModel" @on-validity-change="handleInputValidity" />
           <span v-if="txError" class="text-red-500 text-left text-xs">{{ txError }}</span>
           <Button class="w-full" :disabled="!canSubmit" @click="handleSumbit">
             {{ $t('components.Button.submit') }}
           </Button>
-        </div>
-        <!-- Broadcast Status -->
-        <div class="flex flex-col w-full gap-4" v-if="isProcessing && !txSuccess">
-          {{ $t('components.Wallet.popupSign') }}
-          <Loader class="animate-spin w-full" />
         </div>
       </DialogContent>
     </Dialog>

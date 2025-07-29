@@ -2,8 +2,8 @@
 import type { Post } from 'api-main/types/feed';
 
 import { computed, ref } from 'vue';
+import { toast } from 'vue-sonner';
 import { Decimal } from '@cosmjs/math';
-import { Loader } from 'lucide-vue-next';
 
 import { useLikePost } from '@/composables/useLikePost';
 import { useTxDialog } from '@/composables/useTxDialog';
@@ -15,10 +15,11 @@ import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import InputPhoton from '@/components/ui/input/InputPhoton.vue';
 import { fractionalDigits } from '@/utility/atomics';
 import { shorten } from '@/utility/text';
+import { showBroadcastingToast } from '@/utility/toast';
 
 const isBalanceInputValid = ref(false);
 const { likePost, txError, txSuccess } = useLikePost();
-const { isProcessing, isShown, inputPhotonModel, handleClose, popupState: like } = useTxDialog<Post>('like', 'Like', txSuccess, txError);
+const { isShown, inputPhotonModel, handleClose, popupState: like } = useTxDialog<Post>('like', 'Like', txSuccess, txError);
 
 const canSubmit = computed(() => {
     return isBalanceInputValid.value;
@@ -32,8 +33,17 @@ async function handleSumbmit() {
     if (!canSubmit.value || !like.value) {
         return;
     }
-    await likePost({ post: ref(like.value), amountAtomics: Decimal.fromUserInput(inputPhotonModel.value.toString(), fractionalDigits).atomics });
+
+    const post = ref(like.value);
     handleClose();
+    const toastId = showBroadcastingToast('Like');
+
+    try {
+        await likePost({ post, amountAtomics: Decimal.fromUserInput(inputPhotonModel.value.toString(), fractionalDigits).atomics });
+    }
+    finally {
+        toast.dismiss(toastId);
+    }
 }
 </script>
 
@@ -44,7 +54,7 @@ async function handleSumbmit() {
       <DialogDescription>{{ shorten(like.hash) }}</DialogDescription>
 
       <!-- Transaction Form -->
-      <div class="flex flex-col w-full gap-4" v-if="!isProcessing && !txSuccess">
+      <div class="flex flex-col w-full gap-4">
         <InputPhoton
           v-model="inputPhotonModel"
           @on-validity-change="handleInputValidity"
@@ -53,11 +63,6 @@ async function handleSumbmit() {
         <Button class="w-full" :disabled="!isBalanceInputValid" @click="handleSumbmit">
           {{ $t('components.Button.submit') }}
         </Button>
-      </div>
-      <!-- Broadcast Status -->
-      <div class="flex flex-col w-full gap-4" v-if="isProcessing && !txSuccess">
-        {{  $t('components.Wallet.popupSign') }}
-        <Loader class="animate-spin w-full"/>
       </div>
     </DialogContent>
   </Dialog>

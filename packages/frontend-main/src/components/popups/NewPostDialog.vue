@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
+import { toast } from 'vue-sonner';
 import { Decimal } from '@cosmjs/math';
-import { Loader } from 'lucide-vue-next';
 
 import { useConfirmDialog } from '@/composables/useConfirmDialog';
 import { useCreatePost } from '@/composables/useCreatePost';
@@ -18,6 +18,7 @@ import {
 import InputPhoton from '@/components/ui/input/InputPhoton.vue';
 import { Textarea } from '@/components/ui/textarea';
 import { fractionalDigits } from '@/utility/atomics';
+import { showBroadcastingToast } from '@/utility/toast';
 
 const isBalanceInputValid = ref(false);
 const message = ref('');
@@ -27,7 +28,7 @@ const MAX_CHARS = 512 - 'dither.Post("")'.length;
 const { createPost, txError, txSuccess } = useCreatePost();
 const { showConfirmDialog } = useConfirmDialog();
 
-const { isProcessing, isShown, inputPhotonModel, handleClose } = useTxDialog<object>('newPost', 'Post', txSuccess, txError);
+const { isShown, inputPhotonModel, handleClose } = useTxDialog<object>('newPost', 'Post', txSuccess, txError);
 
 function handleInputValidity(value: boolean) {
     isBalanceInputValid.value = value;
@@ -57,9 +58,22 @@ async function handleSumbit() {
     if (!canSubmit.value) {
         return;
     }
-    await createPost({ message: message.value, amountAtomics: Decimal.fromUserInput(inputPhotonModel.value.toString(), fractionalDigits).atomics });
+
+    const msgValue = message.value;
     message.value = '';
     handleClose();
+
+    const toastId = showBroadcastingToast('Post');
+
+    try {
+        await createPost({
+            message: msgValue,
+            amountAtomics: Decimal.fromUserInput(inputPhotonModel.value.toString(), fractionalDigits).atomics,
+        });
+    }
+    finally {
+        toast.dismiss(toastId);
+    }
 }
 </script>
 
@@ -69,20 +83,15 @@ async function handleSumbit() {
       <DialogContent>
         <DialogTitle>{{ $t('components.PopupTitles.newPost') }}</DialogTitle>
 
-        <Textarea :placeholder="$t('placeholders.post')" v-model="message" :maxlength="MAX_CHARS" v-if="!isProcessing && !txSuccess" />
+        <Textarea :placeholder="$t('placeholders.post')" v-model="message" :maxlength="MAX_CHARS" />
 
         <!-- Transaction Form -->
-        <div class="flex flex-col w-full gap-4" v-if="!isProcessing && !txSuccess">
+        <div class="flex flex-col w-full gap-4">
           <InputPhoton v-model="inputPhotonModel" @on-validity-change="handleInputValidity" />
           <span v-if="txError" class="text-red-500 text-left text-xs">{{ txError }}</span>
           <Button class="w-full" :disabled="!canSubmit" @click="handleSumbit">
             {{ $t('components.Button.submit') }}
           </Button>
-        </div>
-        <!-- Broadcast Status -->
-        <div class="flex flex-col w-full gap-4" v-if="isProcessing && !txSuccess">
-          {{  $t('components.Wallet.popupSign') }}
-          <Loader class="animate-spin w-full"/>
         </div>
       </DialogContent>
     </Dialog>
