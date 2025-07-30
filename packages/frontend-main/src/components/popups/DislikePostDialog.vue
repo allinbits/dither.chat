@@ -13,14 +13,16 @@ import DialogDescription from '../ui/dialog/DialogDescription.vue';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import InputPhoton from '@/components/ui/input/InputPhoton.vue';
+import { useConfigStore } from '@/stores/useConfigStore';
 import { fractionalDigits } from '@/utility/atomics';
 import { shorten } from '@/utility/text';
 import { showBroadcastingToast } from '@/utility/toast';
 
 const isBalanceInputValid = ref(false);
 const { dislikePost, txError, txSuccess } = useDislikePost();
-
-const { isShown, inputPhotonModel, handleClose, popupState: dislike } = useTxDialog<Post>('dislike', 'Dislike', txSuccess, txError);
+const { isShown, inputPhotonModel, handleClose, popupState: dislike } = useTxDialog<Post>('dislike', txSuccess, txError);
+const configStore = useConfigStore();
+const amountAtomics = computed(() => configStore.config.defaultAmountEnabled ? configStore.config.defaultAmountAtomics : Decimal.fromUserInput(inputPhotonModel.value.toString(), fractionalDigits).atomics);
 
 const canSubmit = computed(() => {
     return isBalanceInputValid.value;
@@ -30,7 +32,7 @@ function handleInputValidity(value: boolean) {
     isBalanceInputValid.value = value;
 }
 
-async function handleSumbmit() {
+async function handleSubmit() {
     if (!canSubmit.value || !dislike.value) {
         return;
     }
@@ -40,7 +42,7 @@ async function handleSumbmit() {
     const toastId = showBroadcastingToast('Dislike');
 
     try {
-        await dislikePost({ post, amountAtomics: Decimal.fromUserInput(inputPhotonModel.value.toString(), fractionalDigits).atomics });
+        await dislikePost({ post, amountAtomics: amountAtomics.value });
     }
     finally {
         toast.dismiss(toastId);
@@ -56,9 +58,8 @@ async function handleSumbmit() {
 
       <!-- Transaction Form -->
       <div class="flex flex-col w-full gap-4">
-        <InputPhoton v-model="inputPhotonModel" @on-validity-change="handleInputValidity" />
-        <span v-if="txError" class="text-red-500 text-left text-xs">{{ txError }}</span>
-        <Button class="w-full" :disabled="!isBalanceInputValid" @click="handleSumbmit">
+        <InputPhoton v-if="!configStore.config.defaultAmountEnabled" v-model="inputPhotonModel" @on-validity-change="handleInputValidity" />
+        <Button class="w-full" :disabled="!isBalanceInputValid" @click="handleSubmit">
           {{ $t('components.Button.submit') }}
         </Button>
       </div>

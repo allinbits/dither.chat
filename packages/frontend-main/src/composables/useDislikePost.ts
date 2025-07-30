@@ -4,6 +4,7 @@ import { type Ref, ref } from 'vue';
 import { useMutation, useQueryClient } from '@tanstack/vue-query';
 
 import { post } from './usePost';
+import { useTxNotification } from './useTxNotification';
 import { useWallet } from './useWallet';
 
 import { addAtomics } from '@/utility/atomics';
@@ -19,12 +20,16 @@ export function useDislikePost(
     const wallet = useWallet();
     const txError = ref<string>();
     const txSuccess = ref<string>();
+    const isToastShown = ref(false);
+    useTxNotification('Dislike', txSuccess, txError);
+
     const {
         mutateAsync,
     } = useMutation({
         mutationFn: async ({ post, amountAtomics }: DislikePostRequestMutation) => {
             txError.value = undefined;
             txSuccess.value = undefined;
+            isToastShown.value = true;
 
             const result = await wallet.dither.send(
                 'Dislike',
@@ -64,6 +69,9 @@ export function useDislikePost(
         onError: (_, variables, context) => {
             const postOpts = post({ hash: ref(variables.post.value.hash) });
             queryClient.setQueryData(postOpts.queryKey, context?.previousPost);
+        },
+        onSettled: () => {
+            isToastShown.value = false;
         },
     });
 

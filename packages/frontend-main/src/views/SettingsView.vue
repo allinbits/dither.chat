@@ -39,6 +39,15 @@ import MainLayout from '@/layouts/MainLayout.vue';
             <ChevronRight class="size-4" />
           </Button>
         </RouterLink>
+
+        <RouterLink to="/settings/default-amount" class="border-b">
+          <Button size="sm" class="w-full text-left py-8" variant="ghost">
+            <span class="grow pl-2">
+              {{ $t('components.Settings.defaultAmount') }}
+            </span>
+            <ChevronRight class="size-4" />
+          </Button>
+        </RouterLink>
       </div>
     </div>
   </MainLayout>

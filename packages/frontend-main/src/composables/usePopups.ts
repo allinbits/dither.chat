@@ -11,6 +11,7 @@ export type PopupState = {
     follow: string | null;
     unfollow: string | null;
     tipUser: string | null;
+    invalidDefaultAmount: string | null;
 };
 
 const state = reactive<PopupState>({
@@ -22,6 +23,7 @@ const state = reactive<PopupState>({
     follow: null,
     unfollow: null,
     tipUser: null,
+    invalidDefaultAmount: null,
 });
 
 export function usePopups() {

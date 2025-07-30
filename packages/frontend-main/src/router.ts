@@ -11,6 +11,7 @@ import NotificationsView from './views/NotificationsView.vue';
 import PostView from './views/PostView.vue';
 import ProfilePostsView from './views/Profile/ProfilePostsView.vue';
 import ProfileRepliesView from './views/Profile/ProfileRepliesView.vue';
+import SettingsDefaultAmount from './views/SettingsDefaultAmount.vue';
 import SettingsSingleSession from './views/SettingsSingleSession.vue';
 import SettingsView from './views/SettingsView.vue';
 import UnauthorizedView from './views/UnauthorizedView.vue';
@@ -25,23 +26,26 @@ export const routesNames = {
     settings: 'Settings',
     settingsManageFollowers: 'Settings Manage Followers',
     settingsConfig: 'Settings Config',
+    settingsSingleSession: 'Settings Single Session',
+    settingsDefaultAmount: 'Settings Default Amount',
     post: 'Post',
     unauthorized: 'Unauthorized',
     notFound: 'NotFound',
 };
 
 const routes = [
-    { path: '/', name: 'Home', component: HomeFeedView },
-    { path: '/following', name: 'Home Following', component: HomeFollowingView, meta: { authRequired: true } },
-    { path: '/explore', name: 'Explore', component: ExploreView },
-    { path: '/notifications', name: 'Notifications', component: NotificationsView, meta: { authRequired: true } },
-    { path: '/profile/:address', name: 'Profile', component: ProfilePostsView },
-    { path: '/profile/:address/replies', name: 'Profile Replies', component: ProfileRepliesView },
-    { path: '/settings', name: 'Settings', component: SettingsView, meta: { authRequired: true } },
-    { path: '/settings/manage-following', name: 'Settings Manage Following', component: ManageFollowingView, meta: { authRequired: true } },
-    { path: '/settings/env-config', name: 'Settings Config', component: EnvConfigView, meta: { authRequired: true } },
-    { path: '/settings/settings-single-session', name: 'Settings Single Session', component: SettingsSingleSession, meta: { authRequired: true } },
-    { path: '/post/:hash/:postHash?', name: 'Post', component: PostView },
+    { path: '/', name: routesNames.home, component: HomeFeedView },
+    { path: '/following', name: routesNames.homeFollowing, component: HomeFollowingView, meta: { authRequired: true } },
+    { path: '/explore', name: routesNames.explore, component: ExploreView },
+    { path: '/notifications', name: routesNames.notifications, component: NotificationsView, meta: { authRequired: true } },
+    { path: '/profile/:address', name: routesNames.profile, component: ProfilePostsView },
+    { path: '/profile/:address/replies', name: routesNames.profileReplies, component: ProfileRepliesView },
+    { path: '/settings', name: routesNames.settings, component: SettingsView, meta: { authRequired: true } },
+    { path: '/settings/manage-following', name: routesNames.settingsManageFollowers, component: ManageFollowingView, meta: { authRequired: true } },
+    { path: '/settings/env-config', name: routesNames.settingsConfig, component: EnvConfigView, meta: { authRequired: true } },
+    { path: '/settings/settings-single-session', name: routesNames.settingsSingleSession, component: SettingsSingleSession, meta: { authRequired: true } },
+    { path: '/settings/default-amount', name: routesNames.settingsDefaultAmount, component: SettingsDefaultAmount, meta: { authRequired: true } },
+    { path: '/post/:hash/:postHash?', name: routesNames.post, component: PostView },
     {
         path: '/unauthorized',
         name: routesNames.unauthorized,

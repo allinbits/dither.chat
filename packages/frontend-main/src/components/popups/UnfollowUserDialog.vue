@@ -17,19 +17,21 @@ import {
     DialogTitle,
 } from '@/components/ui/dialog';
 import InputPhoton from '@/components/ui/input/InputPhoton.vue';
+import { useConfigStore } from '@/stores/useConfigStore';
 import { fractionalDigits } from '@/utility/atomics';
 import { showBroadcastingToast } from '@/utility/toast';
 
 const { unfollowUser, txError, txSuccess } = useUnfollowUser();
 
 const isBalanceInputValid = ref(false);
-
 const {
     isShown,
     inputPhotonModel,
     popupState: unfollow,
     handleClose,
-} = useTxDialog<string>('unfollow', 'Unfollow', txSuccess, txError);
+} = useTxDialog<string>('unfollow', txSuccess, txError);
+const configStore = useConfigStore();
+const amountAtomics = computed(() => configStore.config.defaultAmountEnabled ? configStore.config.defaultAmountAtomics : Decimal.fromUserInput(inputPhotonModel.value.toString(), fractionalDigits).atomics);
 
 const canSubmit = computed(() => {
     return isBalanceInputValid.value;
@@ -39,17 +41,16 @@ function handleInputValidity(value: boolean) {
     isBalanceInputValid.value = value;
 }
 
-async function handleSumbmit() {
+async function handleSubmit() {
     if (!canSubmit.value || !unfollow.value) {
         return;
     }
-
     const userAddress = ref(unfollow.value);
     handleClose();
     const toastId = showBroadcastingToast('Unfollow');
 
     try {
-        await unfollowUser({ userAddress, amountAtomics: Decimal.fromUserInput(inputPhotonModel.value.toString(), fractionalDigits).atomics });
+        await unfollowUser({ userAddress, amountAtomics: amountAtomics.value });
     }
     finally {
         toast.dismiss(toastId);
@@ -66,10 +67,9 @@ async function handleSumbmit() {
       </DialogDescription>
 
       <!-- Transaction Form -->
-      <div class="flex flex-col w-full gap-4">
-        <InputPhoton v-model="inputPhotonModel" @on-validity-change="handleInputValidity" />
-        <span v-if="txError" class="text-red-500 text-left text-xs">{{ txError }}</span>
-        <Button class="w-full xl:inline hidden" :disabled="!isBalanceInputValid" @click="handleSumbmit">
+      <div class="flex flex-col w-full gap-4" >
+        <InputPhoton v-if="!configStore.config.defaultAmountEnabled" v-model="inputPhotonModel" @on-validity-change="handleInputValidity" />
+        <Button class="w-full xl:inline hidden" :disabled="!isBalanceInputValid" @click="handleSubmit">
           {{ $t('components.Button.submit') }}
         </Button>
       </div>

@@ -5,6 +5,7 @@ import ConfirmDialog from './components/popups/ConfirmDialog.vue';
 import DislikePostDialog from './components/popups/DislikePostDialog.vue';
 import FlagPostDialog from './components/popups/FlagPostDialog.vue';
 import FollowDialog from './components/popups/FollowUserDialog.vue';
+import InvalidDefaultAmountDialog from './components/popups/InvalidDefaultAmountDialog.vue';
 import LikePostDialog from './components/popups/LikePostDialog.vue';
 import NewPostDialog from './components/popups/NewPostDialog.vue';
 import ReplyDialog from './components/popups/ReplyDialog.vue';
@@ -44,4 +45,5 @@ onMounted(() => {
   <Sonner closeButton expand dismissible :visible-toasts="5"  />
   <TipUserDialog />
   <ConfirmDialog />
+  <InvalidDefaultAmountDialog />
 </template>

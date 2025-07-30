@@ -1,9 +1,15 @@
 <script setup lang="ts">
 import type { Post } from 'api-main/types/feed';
 
+import { ref } from 'vue';
+import { toast } from 'vue-sonner';
 import { Decimal } from '@cosmjs/math';
 import { Flag, MessageCircle, ThumbsDown, ThumbsUp } from 'lucide-vue-next';
 
+import { useDefaultAmount } from '@/composables/useDefaultAmount';
+import { useDislikePost } from '@/composables/useDislikePost';
+import { useFlagPost } from '@/composables/useFlagPost';
+import { useLikePost } from '@/composables/useLikePost';
 import { type PopupState, usePopups } from '@/composables/usePopups';
 import { useWallet } from '@/composables/useWallet';
 
@@ -11,12 +17,14 @@ import Popover from '../ui/popover/Popover.vue';
 import PopoverContent from '../ui/popover/PopoverContent.vue';
 import PopoverTrigger from '../ui/popover/PopoverTrigger.vue';
 
+import { useConfigStore } from '@/stores/useConfigStore';
 import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
 import { cn } from '@/utility';
 import { fractionalDigits } from '@/utility/atomics';
 import { formatCompactAtomics, formatCompactNumber } from '@/utility/text';
+import { showBroadcastingToast } from '@/utility/toast';
 
-defineProps<{ post: Post }>();
+const props = defineProps<{ post: Post }>();
 const buttonWrapperClass = 'flex items-center flex-1 min-w-[84px]';
 const buttonClass = 'flex flex-row items-center gap-1 p-2 rounded-full hover:bg-accent active:bg-accent transition-colors';
 const amountTextClass = 'text-[#A2A2A9] text-xs font-medium hover:underline active:underline transition-colors';
@@ -26,6 +34,12 @@ const fullAmountTextClass = 'text-sm ';
 const wallet = useWallet();
 const popups = usePopups();
 const walletDialogStore = useWalletDialogStore();
+const configStore = useConfigStore();
+const { isDefaultAmountInvalid } = useDefaultAmount();
+
+const { likePost } = useLikePost();
+const { dislikePost } = useDislikePost();
+const { flagPost } = useFlagPost();
 
 function handleAction(type: keyof PopupState, post: Post) {
     if (wallet.loggedIn.value) {
@@ -38,12 +52,72 @@ function handleAction(type: keyof PopupState, post: Post) {
     });
 }
 
+async function onClickReply() {
+    if (isDefaultAmountInvalid.value) {
+        popups.show('invalidDefaultAmount', 'none');
+    }
+    else {
+        handleAction('reply', props.post);
+    }
+}
+async function onClickLike() {
+    if (isDefaultAmountInvalid.value) {
+        popups.show('invalidDefaultAmount', 'none');
+    }
+    else if (configStore.config.defaultAmountEnabled) {
+        const toastId = showBroadcastingToast('Like');
+        try {
+            await likePost({ post: ref(props.post), amountAtomics: configStore.config.defaultAmountAtomics });
+        }
+        finally {
+            toast.dismiss(toastId);
+        }
+    }
+    else {
+        handleAction('like', props.post);
+    }
+}
+async function onClickDislike() {
+    if (isDefaultAmountInvalid.value) {
+        popups.show('invalidDefaultAmount', 'none');
+    }
+    else if (configStore.config.defaultAmountEnabled) {
+        const toastId = showBroadcastingToast('Dislike');
+        try {
+            await dislikePost({ post: ref(props.post), amountAtomics: configStore.config.defaultAmountAtomics });
+        }
+        finally {
+            toast.dismiss(toastId);
+        }
+    }
+    else {
+        handleAction('dislike', props.post);
+    }
+}
+async function onClickFlag() {
+    if (isDefaultAmountInvalid.value) {
+        popups.show('invalidDefaultAmount', 'none');
+    }
+    else if (configStore.config.defaultAmountEnabled) {
+        const toastId = showBroadcastingToast('Flag');
+        try {
+            await flagPost({ post: ref(props.post), amountAtomics: configStore.config.defaultAmountAtomics });
+        }
+        finally {
+            toast.dismiss(toastId);
+        }
+    }
+    else {
+        handleAction('flag', props.post);
+    }
+}
+
 </script>
 
 <template>
   <div :class="cn('flex flex-row items-center justify-between pr-2 flex-wrap')">
     <div :class="buttonWrapperClass">
-      <button :class="buttonClass" @click.stop="handleAction('reply', post)">
+      <button :class="buttonClass" @click.stop="onClickReply">
         <MessageCircle class="size-5" color="#A2A2A9" />
       </button>
       <Popover>
@@ -57,7 +131,7 @@ function handleAction(type: keyof PopupState, post: Post) {
     </div>
 
     <div :class="buttonWrapperClass">
-      <button :class="buttonClass" @click.stop="handleAction('like', post)">
+      <button :class="buttonClass" @click.stop="onClickLike">
         <ThumbsUp class="size-5" color="#A2A2A9" />
       </button>
       <Popover>
@@ -72,7 +146,7 @@ function handleAction(type: keyof PopupState, post: Post) {
     </div>
 
     <div :class="buttonWrapperClass">
-      <button :class="buttonClass" @click.stop="handleAction('dislike', post)">
+      <button :class="buttonClass" @click.stop="onClickDislike">
         <ThumbsDown class="size-5 scale-x-[-1]" color="#A2A2A9" />
       </button>
       <Popover>
@@ -86,7 +160,7 @@ function handleAction(type: keyof PopupState, post: Post) {
     </div>
 
     <div :class="buttonWrapperClass">
-      <button :class="buttonClass" @click.stop="handleAction('flag', post)">
+      <button :class="buttonClass" @click.stop="onClickFlag">
         <Flag class="size-5" color="#A2A2A9" />
       </button>
       <Popover>

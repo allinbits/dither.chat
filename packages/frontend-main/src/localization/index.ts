@@ -50,11 +50,12 @@ export const messages = {
                 hideImage: 'Hide image',
                 viewOnExplorer: 'View on explorer',
                 tip: 'Tip',
+                adjustDefaultAmount: 'Adjust Default Amount',
             },
             InputPhoton: {
                 notEnough: 'Not enough balance',
                 placeholder: 'Type amount',
-                available: 'available',
+                remaining: 'remaining',
             },
             PopupTitles: {
                 likePost: 'Like Post',
@@ -65,9 +66,11 @@ export const messages = {
                 follow: 'Follow User',
                 unfollow: 'Unfollow User',
                 tipUser: 'Tip User',
+                invalidDefaultAmount: 'Not enough balance',
             },
             PopupDescriptions: {
                 flagPost: 'Flagging a post allows our moderation team to take a look and hide it if it violates community guidelines.',
+                invalidDefaultAmount: 'You have set a Default Amount and you don\'t have enough balance.\nPlease adjust your Default Amount.',
             },
             Tabs: {
                 feed: 'Global Feed',
@@ -98,6 +101,9 @@ export const messages = {
             PostsList: {
                 empty: 'No Posts Available',
             },
+            PostView: {
+                invalidDefaultAmount: 'You can\'t reply to this post because you have set a Default Amount and you don\'t have enough balance.\nPlease adjust your Default Amount.',
+            },
             RepliesGroupsList: {
                 empty: 'No Replies Available',
             },
@@ -119,14 +125,20 @@ export const messages = {
                 fail: '{txLabel} Failed',
             },
             Settings: {
+                enabled: 'Enabled',
+                disabled: 'Disabled',
                 manageFollows: 'Manage Follows',
                 envConfig: 'Environment Config',
                 singleSession: 'Single Session',
+                defaultAmount: 'Default Amount',
                 following: 'Following',
                 back: 'Back',
+                whatIsIt: 'What is it?',
                 singleSessionSummary: 'Single Session creations a local private key through a passkey to sign transactions through the Comsos Authz and Feegrant modules. The settings below let you configure the authorization.',
                 createSession: 'Create Session',
                 revokeSession: 'Revoke Session',
+                defaultAmountSummary: 'You can define a Default Amount of PHOTON to be used for actions (creating post, liking post, following user, etc).\nIf enabled, this amount will be automatically used for transactions when performing actions.',
+                defaultAmountWarning: 'Warning: You don\'t have enough balance to use this Default Amount. All actions will fail. Get more PHOTON or adjust this setting.',
             },
             NotFound: {
                 title: 'Page Not Found',

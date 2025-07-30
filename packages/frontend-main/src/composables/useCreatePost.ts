@@ -5,6 +5,7 @@ import { Decimal } from '@cosmjs/math';
 import { type InfiniteData, useMutation, useQueryClient } from '@tanstack/vue-query';
 
 import { feed } from './useFeed';
+import { useTxNotification } from './useTxNotification';
 import { userPosts } from './useUserPosts';
 import { useWallet } from './useWallet';
 
@@ -22,6 +23,8 @@ export function useCreatePost(
     const wallet = useWallet();
     const txError = ref<string>();
     const txSuccess = ref<string>();
+    const isToastShown = ref(false);
+    useTxNotification('Post', txSuccess, txError);
 
     const {
         mutateAsync,
@@ -29,6 +32,7 @@ export function useCreatePost(
         mutationFn: async ({ message, amountAtomics }: CreatePostRequestMutation) => {
             txError.value = undefined;
             txSuccess.value = undefined;
+            isToastShown.value = true;
 
             const result = await wallet.dither.send(
                 'Post',
@@ -81,6 +85,9 @@ export function useCreatePost(
             const userPostsOpts = userPosts({ userAddress: wallet.address });
             queryClient.setQueryData(feedOpts.queryKey, context?.previousFeed);
             queryClient.setQueryData(userPostsOpts.queryKey, context?.previousUserPosts);
+        },
+        onSettled: () => {
+            isToastShown.value = false;
         },
     });
 

@@ -77,12 +77,12 @@ watchEffect(() => {
         @update:modelValue="onInput"
         @keydown="onKeydown"
       />
-      <span class="dark:text-white">PHOTON</span>
+      <span class="text-sm">PHOTON</span>
     </div>
     <span class="text-left text-sm">
       {{
         hasEnoughBalance
-          ? balanceDiffDisplay + ' PHOTON ' + $t('components.InputPhoton.available')
+          ? balanceDiffDisplay + ' PHOTON ' + $t('components.InputPhoton.remaining')
           : $t('components.InputPhoton.notEnough')
       }}
     </span>
