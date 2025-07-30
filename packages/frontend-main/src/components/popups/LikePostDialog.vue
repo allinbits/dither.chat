@@ -34,15 +34,13 @@ function handleInputValidity(value: boolean) {
     isBalanceInputValid.value = value;
 }
 
-async function handleSumbmit() {
+async function handleSubmit() {
     if (!canSubmit.value || !like.value) {
         return;
     }
-
     const post = ref(like.value);
     handleClose();
     const toastId = showBroadcastingToast('Like');
-
     try {
         await likePost({ post, amountAtomics: amountAtomics.value });
     }
@@ -65,8 +63,7 @@ async function handleSumbmit() {
           v-model="inputPhotonModel"
           @on-validity-change="handleInputValidity"
         />
-        <span v-if="txError" class="text-red-500 text-left text-xs">{{ txError }}</span>
-        <Button class="w-full" :disabled="!isBalanceInputValid" @click="handleSumbmit">
+        <Button class="w-full" :disabled="!isBalanceInputValid" @click="handleSubmit">
           {{ $t('components.Button.submit') }}
         </Button>
       </div>

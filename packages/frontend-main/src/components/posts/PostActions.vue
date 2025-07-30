@@ -2,6 +2,7 @@
 import type { Post } from 'api-main/types/feed';
 
 import { ref } from 'vue';
+import { toast } from 'vue-sonner';
 import { Decimal } from '@cosmjs/math';
 import { Flag, MessageCircle, ThumbsDown, ThumbsUp } from 'lucide-vue-next';
 
@@ -21,6 +22,7 @@ import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
 import { cn } from '@/utility';
 import { fractionalDigits } from '@/utility/atomics';
 import { formatCompactAtomics, formatCompactNumber } from '@/utility/text';
+import { showBroadcastingToast } from '@/utility/toast';
 
 const props = defineProps<{ post: Post }>();
 const buttonWrapperClass = 'flex items-center flex-1 min-w-[84px]';
@@ -63,7 +65,13 @@ async function onClickLike() {
         popups.show('invalidDefaultAmount', 'none');
     }
     else if (configStore.config.defaultAmountEnabled) {
-        await likePost({ post: ref(props.post), amountAtomics: configStore.config.defaultAmountAtomics });
+        const toastId = showBroadcastingToast('Like');
+        try {
+            await likePost({ post: ref(props.post), amountAtomics: configStore.config.defaultAmountAtomics });
+        }
+        finally {
+            toast.dismiss(toastId);
+        }
     }
     else {
         handleAction('like', props.post);
@@ -74,7 +82,13 @@ async function onClickDislike() {
         popups.show('invalidDefaultAmount', 'none');
     }
     else if (configStore.config.defaultAmountEnabled) {
-        await dislikePost({ post: ref(props.post), amountAtomics: configStore.config.defaultAmountAtomics });
+        const toastId = showBroadcastingToast('Dislike');
+        try {
+            await dislikePost({ post: ref(props.post), amountAtomics: configStore.config.defaultAmountAtomics });
+        }
+        finally {
+            toast.dismiss(toastId);
+        }
     }
     else {
         handleAction('dislike', props.post);
@@ -85,7 +99,13 @@ async function onClickFlag() {
         popups.show('invalidDefaultAmount', 'none');
     }
     else if (configStore.config.defaultAmountEnabled) {
-        await flagPost({ post: ref(props.post), amountAtomics: configStore.config.defaultAmountAtomics });
+        const toastId = showBroadcastingToast('Flag');
+        try {
+            await flagPost({ post: ref(props.post), amountAtomics: configStore.config.defaultAmountAtomics });
+        }
+        finally {
+            toast.dismiss(toastId);
+        }
     }
     else {
         handleAction('flag', props.post);

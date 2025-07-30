@@ -23,7 +23,7 @@ export function useUnfollowUser(
     const txError = ref<string>();
     const txSuccess = ref<string>();
     const isToastShown = ref(false);
-    useTxNotification(isToastShown, 'Unfollow', txSuccess, txError);
+    useTxNotification('Unfollow', txSuccess, txError);
 
     const {
         mutateAsync,

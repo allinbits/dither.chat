@@ -26,7 +26,7 @@ export function useCreateReply(
     const txError = ref<string>();
     const txSuccess = ref<string>();
     const isToastShown = ref(false);
-    useTxNotification(isToastShown, 'Reply', txSuccess, txError);
+    useTxNotification('Reply', txSuccess, txError);
 
     const {
         mutateAsync,

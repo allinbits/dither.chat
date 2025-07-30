@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { toast } from 'vue-sonner';
 import { Decimal } from '@cosmjs/math';
 import { Loader } from 'lucide-vue-next';
 
@@ -26,6 +27,7 @@ import MainLayout from '@/layouts/MainLayout.vue';
 import { routesNames } from '@/router';
 import { useConfigStore } from '@/stores/useConfigStore';
 import { fractionalDigits } from '@/utility/atomics';
+import { showBroadcastingToast } from '@/utility/toast';
 
 const wallet = useWallet();
 const { isDefaultAmountInvalid } = useDefaultAmount();
@@ -45,15 +47,10 @@ const isBalanceInputValid = ref(false);
 const inputPhotonModel = ref(Decimal.fromAtomics('1', fractionalDigits).toFloatApproximation());
 const configStore = useConfigStore();
 const amountAtomics = computed(() => configStore.config.defaultAmountEnabled ? configStore.config.defaultAmountAtomics : Decimal.fromUserInput(inputPhotonModel.value.toString(), fractionalDigits).atomics);
+const { createReply } = useCreateReply();
 
-const { createReply,
-    txError } = useCreateReply();
-
-const isProcessing = computed(() => {
-    return wallet.processState.value !== 'idle';
-});
 const canReply = computed(() => {
-    return isBalanceInputValid.value && reply.value.length > 0;
+    return (isBalanceInputValid.value || configStore.config.defaultAmountEnabled) && reply.value.length > 0;
 });
 
 function handleInputValidity(value: boolean) {
@@ -63,8 +60,14 @@ async function handleReply() {
     if (!canReply.value || !post.value) {
         return;
     }
-    await createReply({ parentPost: post, message: reply.value, amountAtomics: amountAtomics.value });
     reply.value = '';
+    const toastId = showBroadcastingToast('Reply');
+    try {
+        await createReply({ parentPost: post, message: reply.value, amountAtomics: amountAtomics.value });
+    }
+    finally {
+        toast.dismiss(toastId);
+    }
 }
 </script>
 
@@ -95,13 +98,8 @@ async function handleReply() {
           <PostActions :post="post" />
         </div>
 
-        <!-- Broadcast Status -->
-        <div class="flex flex-col w-full gap-2 mt-4" v-if="isProcessing">
-          {{  $t('components.Wallet.popupSign') }}
-          <Loader class="animate-spin w-full"/>
-        </div>
         <!-- Transaction Form -->
-        <div v-if="wallet.loggedIn.value && !isProcessing" class="flex flex-col gap-4 mt-4">
+        <div v-if="wallet.loggedIn.value" class="flex flex-col gap-4 mt-4">
           <div  v-if="isDefaultAmountInvalid" class="flex flex-col items-right gap-4">
             <span class="text-sm whitespace-pre-line">{{ $t('components.PostView.invalidDefaultAmount') }}</span>
             <Button size="sm" @click="router.push({ name: routesNames.settingsDefaultAmount });" class="ml-auto">
@@ -122,9 +120,6 @@ async function handleReply() {
               </Button>
             </div>
           </template>
-
-          <!-- TX error -->
-          <span v-if="txError" class="text-red-500 text-left text-xs">{{ txError }}</span>
         </div>
       </div>
     </div>

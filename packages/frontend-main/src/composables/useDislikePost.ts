@@ -21,7 +21,7 @@ export function useDislikePost(
     const txError = ref<string>();
     const txSuccess = ref<string>();
     const isToastShown = ref(false);
-    useTxNotification(isToastShown, 'Dislike', txSuccess, txError);
+    useTxNotification('Dislike', txSuccess, txError);
 
     const {
         mutateAsync,

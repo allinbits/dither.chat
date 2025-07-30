@@ -21,7 +21,7 @@ export function useFlagPost(
     const txError = ref<string>();
     const txSuccess = ref<string>();
     const isToastShown = ref(false);
-    useTxNotification(isToastShown, 'Flag', txSuccess, txError);
+    useTxNotification('Flag', txSuccess, txError);
 
     const {
         mutateAsync,

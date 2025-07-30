@@ -23,7 +23,7 @@ export function useFollowUser(
     const txError = ref<string>();
     const txSuccess = ref<string>();
     const isToastShown = ref(false);
-    useTxNotification(isToastShown, 'Follow', txSuccess, txError);
+    useTxNotification('Follow', txSuccess, txError);
 
     const {
         mutateAsync,

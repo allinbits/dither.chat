@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
+import { toast } from 'vue-sonner';
 import { Loader } from 'lucide-vue-next';
 
 import { useDefaultAmount } from '@/composables/useDefaultAmount';
@@ -19,6 +20,7 @@ import UserAvatarUsername from '@/components/users/UserAvatarUsername.vue';
 import MainLayout from '@/layouts/MainLayout.vue';
 import { useConfigStore } from '@/stores/useConfigStore';
 import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
+import { showBroadcastingToast } from '@/utility/toast';
 
 const wallet = useWallet();
 const popups = usePopups();
@@ -53,7 +55,13 @@ async function onClickTip() {
         popups.show('invalidDefaultAmount', 'none');
     }
     else if (configStore.config.defaultAmountEnabled) {
-        await tipUser({ userAddress: address, amountAtomics: configStore.config.defaultAmountAtomics });
+        const toastId = showBroadcastingToast('Tip');
+        try {
+            await tipUser({ userAddress: address, amountAtomics: configStore.config.defaultAmountAtomics });
+        }
+        finally {
+            toast.dismiss(toastId);
+        }
     }
     else {
         handleAction('tipUser', address.value);
@@ -64,7 +72,13 @@ async function onClickFollow() {
         popups.show('invalidDefaultAmount', 'none');
     }
     else if (configStore.config.defaultAmountEnabled) {
-        await followUser({ userAddress: address, amountAtomics: configStore.config.defaultAmountAtomics });
+        const toastId = showBroadcastingToast('Follow');
+        try {
+            await followUser({ userAddress: address, amountAtomics: configStore.config.defaultAmountAtomics });
+        }
+        finally {
+            toast.dismiss(toastId);
+        }
     }
     else {
         handleAction('follow', address.value);
@@ -75,7 +89,13 @@ async function onClickUnfollow() {
         popups.show('invalidDefaultAmount', 'none');
     }
     else if (configStore.config.defaultAmountEnabled) {
-        await unfollowUser({ userAddress: address, amountAtomics: configStore.config.defaultAmountAtomics });
+        const toastId = showBroadcastingToast('Unfollow');
+        try {
+            await unfollowUser({ userAddress: address, amountAtomics: configStore.config.defaultAmountAtomics });
+        }
+        finally {
+            toast.dismiss(toastId);
+        }
     }
     else {
         handleAction('unfollow', address.value);

@@ -24,7 +24,7 @@ export function useCreatePost(
     const txError = ref<string>();
     const txSuccess = ref<string>();
     const isToastShown = ref(false);
-    useTxNotification(isToastShown, 'Post', txSuccess, txError);
+    useTxNotification('Post', txSuccess, txError);
 
     const {
         mutateAsync,

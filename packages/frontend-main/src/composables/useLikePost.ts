@@ -21,7 +21,7 @@ export function useLikePost(
     const txError = ref<string>();
     const txSuccess = ref<string>();
     const isToastShown = ref(false);
-    useTxNotification(isToastShown, 'Like', txSuccess, txError);
+    useTxNotification('Like', txSuccess, txError);
 
     const {
         mutateAsync,

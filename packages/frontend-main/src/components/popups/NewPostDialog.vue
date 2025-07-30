@@ -28,7 +28,7 @@ const isBalanceInputValid = ref(false);
 const { createPost, txError, txSuccess } = useCreatePost();
 const { showConfirmDialog } = useConfirmDialog();
 
-const { isShown, inputPhotonModel, handleClose } = useTxDialog<object>('newPost', 'Post', txSuccess, txError);
+const { isShown, inputPhotonModel, handleClose } = useTxDialog<object>('newPost', txSuccess, txError);
 const configStore = useConfigStore();
 const amountAtomics = computed(() => configStore.config.defaultAmountEnabled ? configStore.config.defaultAmountAtomics : Decimal.fromUserInput(inputPhotonModel.value.toString(), fractionalDigits).atomics);
 
@@ -90,7 +90,6 @@ async function handleSubmit() {
         <!-- Transaction Form -->
         <div class="flex flex-col w-full gap-4">
           <InputPhoton v-if="!configStore.config.defaultAmountEnabled" v-model="inputPhotonModel" @on-validity-change="handleInputValidity"/>
-          <span v-if="txError" class="text-red-500 text-left text-xs">{{ txError }}</span>
           <Button class="w-full" :disabled="!canSubmit" @click="handleSubmit">
             {{ $t('components.Button.submit') }}
           </Button>
