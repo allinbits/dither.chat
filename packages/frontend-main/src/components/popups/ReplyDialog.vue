@@ -2,6 +2,7 @@
 import type { Post } from 'api-main/types/feed';
 
 import { computed, ref } from 'vue';
+import { toast } from 'vue-sonner';
 import { Decimal } from '@cosmjs/math';
 
 import { useCreateReply } from '@/composables/useCreateReply';
@@ -17,6 +18,7 @@ import UserAvatar from '@/components/users/UserAvatar.vue';
 import Username from '@/components/users/Username.vue';
 import { useConfigStore } from '@/stores/useConfigStore';
 import { fractionalDigits } from '@/utility/atomics';
+import { showBroadcastingToast } from '@/utility/toast';
 
 const POST_HASH_LEN = 64;
 const MAX_CHARS = 512 - ('dither.Reply("", "")'.length + POST_HASH_LEN);
@@ -37,9 +39,17 @@ async function handleSubmit() {
     if (!canSubmit.value || !reply.value) {
         return;
     }
-    await createReply({ parentPost: reply, message: message.value, amountAtomics: amountAtomics.value });
-    message.value = '';
+
+    const parentPost = ref(reply.value);
     handleClose();
+    const toastId = showBroadcastingToast('Reply');
+
+    try {
+        await createReply({ parentPost, message: message.value, amountAtomics: amountAtomics.value });
+    }
+    finally {
+        toast.dismiss(toastId);
+    }
 }
 
 function handleInputValidity(value: boolean) {

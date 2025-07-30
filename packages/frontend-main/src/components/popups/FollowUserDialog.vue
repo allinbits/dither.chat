@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
+import { toast } from 'vue-sonner';
 import { Decimal } from '@cosmjs/math';
 
 import { useFollowUser } from '@/composables/useFollowUser';
@@ -13,6 +14,7 @@ import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import InputPhoton from '@/components/ui/input/InputPhoton.vue';
 import { useConfigStore } from '@/stores/useConfigStore';
 import { fractionalDigits } from '@/utility/atomics';
+import { showBroadcastingToast } from '@/utility/toast';
 
 const isBalanceInputValid = ref(false);
 const { followUser,
@@ -39,8 +41,17 @@ async function handleSumbmit() {
     if (!canSubmit.value || !follow.value) {
         return;
     }
-    await followUser({ userAddress: follow, amountAtomics: amountAtomics.value });
+
+    const userAddress = ref(follow.value);
     handleClose();
+    const toastId = showBroadcastingToast('Follow');
+
+    try {
+        await followUser({ userAddress, amountAtomics: amountAtomics.value });
+    }
+    finally {
+        toast.dismiss(toastId);
+    }
 }
 
 </script>

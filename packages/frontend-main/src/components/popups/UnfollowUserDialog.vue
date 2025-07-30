@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
+import { toast } from 'vue-sonner';
 import { Decimal } from '@cosmjs/math';
 
 import { useTxDialog } from '@/composables/useTxDialog';
@@ -18,10 +19,11 @@ import {
 import InputPhoton from '@/components/ui/input/InputPhoton.vue';
 import { useConfigStore } from '@/stores/useConfigStore';
 import { fractionalDigits } from '@/utility/atomics';
-
-const isBalanceInputValid = ref(false);
+import { showBroadcastingToast } from '@/utility/toast';
 
 const { unfollowUser, txError, txSuccess } = useUnfollowUser();
+
+const isBalanceInputValid = ref(false);
 const {
     isShown,
     inputPhotonModel,
@@ -43,8 +45,16 @@ async function handleSumbmit() {
     if (!canSubmit.value || !unfollow.value) {
         return;
     }
-    await unfollowUser({ userAddress: unfollow, amountAtomics: amountAtomics.value });
+    const userAddress = ref(unfollow.value);
     handleClose();
+    const toastId = showBroadcastingToast('Unfollow');
+
+    try {
+        await unfollowUser({ userAddress, amountAtomics: amountAtomics.value });
+    }
+    finally {
+        toast.dismiss(toastId);
+    }
 }
 </script>
 

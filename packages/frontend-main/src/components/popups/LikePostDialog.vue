@@ -2,6 +2,7 @@
 import type { Post } from 'api-main/types/feed';
 
 import { computed, ref } from 'vue';
+import { toast } from 'vue-sonner';
 import { Decimal } from '@cosmjs/math';
 
 import { useLikePost } from '@/composables/useLikePost';
@@ -15,6 +16,7 @@ import InputPhoton from '@/components/ui/input/InputPhoton.vue';
 import { useConfigStore } from '@/stores/useConfigStore';
 import { fractionalDigits } from '@/utility/atomics';
 import { shorten } from '@/utility/text';
+import { showBroadcastingToast } from '@/utility/toast';
 
 const isBalanceInputValid = ref(false);
 const { likePost, txError, txSuccess } = useLikePost();
@@ -36,8 +38,17 @@ async function handleSumbmit() {
     if (!canSubmit.value || !like.value) {
         return;
     }
-    await likePost({ post: ref(like.value), amountAtomics: amountAtomics.value });
+
+    const post = ref(like.value);
     handleClose();
+    const toastId = showBroadcastingToast('Like');
+
+    try {
+        await likePost({ post, amountAtomics: amountAtomics.value });
+    }
+    finally {
+        toast.dismiss(toastId);
+    }
 }
 </script>
 

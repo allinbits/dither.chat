@@ -2,6 +2,7 @@
 import type { Post } from 'api-main/types/feed';
 
 import { computed, ref } from 'vue';
+import { toast } from 'vue-sonner';
 import { Decimal } from '@cosmjs/math';
 
 import { useDislikePost } from '@/composables/useDislikePost';
@@ -15,6 +16,7 @@ import InputPhoton from '@/components/ui/input/InputPhoton.vue';
 import { useConfigStore } from '@/stores/useConfigStore';
 import { fractionalDigits } from '@/utility/atomics';
 import { shorten } from '@/utility/text';
+import { showBroadcastingToast } from '@/utility/toast';
 
 const isBalanceInputValid = ref(false);
 const { dislikePost, txError, txSuccess } = useDislikePost();
@@ -34,8 +36,17 @@ async function handleSumbmit() {
     if (!canSubmit.value || !dislike.value) {
         return;
     }
-    await dislikePost({ post: ref(dislike.value), amountAtomics: amountAtomics.value });
+
+    const post = ref(dislike.value);
     handleClose();
+    const toastId = showBroadcastingToast('Dislike');
+
+    try {
+        await dislikePost({ post, amountAtomics: amountAtomics.value });
+    }
+    finally {
+        toast.dismiss(toastId);
+    }
 }
 </script>
 

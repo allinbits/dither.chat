@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
+import { toast } from 'vue-sonner';
 import { Decimal } from '@cosmjs/math';
 
 import { useTipUser } from '@/composables/useTipUser';
@@ -13,6 +14,7 @@ import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import InputPhoton from '@/components/ui/input/InputPhoton.vue';
 import { useConfigStore } from '@/stores/useConfigStore';
 import { fractionalDigits } from '@/utility/atomics';
+import { showBroadcastingToast } from '@/utility/toast';
 
 const isBalanceInputValid = ref(false);
 
@@ -38,8 +40,17 @@ async function handleSubmit() {
     if (!canSubmit.value || !tip.value) {
         return;
     }
-    await tipUser({ userAddress: tip, amountAtomics: amountAtomics.value });
+
+    const userAddress = ref(tip.value);
     handleClose();
+    const toastId = showBroadcastingToast('Tip');
+
+    try {
+        await tipUser({ userAddress, amountAtomics: amountAtomics.value });
+    }
+    finally {
+        toast.dismiss(toastId);
+    }
 }
 
 </script>

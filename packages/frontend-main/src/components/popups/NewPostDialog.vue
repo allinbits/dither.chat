@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
+import { toast } from 'vue-sonner';
 import { Decimal } from '@cosmjs/math';
 
 import { useConfirmDialog } from '@/composables/useConfirmDialog';
@@ -18,6 +19,7 @@ import InputPhoton from '@/components/ui/input/InputPhoton.vue';
 import { Textarea } from '@/components/ui/textarea';
 import { useConfigStore } from '@/stores/useConfigStore';
 import { fractionalDigits } from '@/utility/atomics';
+import { showBroadcastingToast } from '@/utility/toast';
 
 const MAX_CHARS = 512 - 'dither.Post("")'.length;
 const message = ref('');
@@ -25,7 +27,8 @@ const isBalanceInputValid = ref(false);
 
 const { createPost, txError, txSuccess } = useCreatePost();
 const { showConfirmDialog } = useConfirmDialog();
-const { isShown, inputPhotonModel, handleClose } = useTxDialog<object>('newPost', txSuccess, txError);
+
+const { isShown, inputPhotonModel, handleClose } = useTxDialog<object>('newPost', 'Post', txSuccess, txError);
 const configStore = useConfigStore();
 const amountAtomics = computed(() => configStore.config.defaultAmountEnabled ? configStore.config.defaultAmountAtomics : Decimal.fromUserInput(inputPhotonModel.value.toString(), fractionalDigits).atomics);
 
@@ -57,9 +60,22 @@ async function handleSubmit() {
     if (!canSubmit.value) {
         return;
     }
-    await createPost({ message: message.value, amountAtomics: amountAtomics.value });
+
+    const msgValue = message.value;
     message.value = '';
     handleClose();
+
+    const toastId = showBroadcastingToast('Post');
+
+    try {
+        await createPost({
+            message: msgValue,
+            amountAtomics: amountAtomics.value,
+        });
+    }
+    finally {
+        toast.dismiss(toastId);
+    }
 }
 </script>
 

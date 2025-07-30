@@ -2,6 +2,7 @@
 import type { Post } from 'api-main/types/feed';
 
 import { computed, ref } from 'vue';
+import { toast } from 'vue-sonner';
 import { Decimal } from '@cosmjs/math';
 
 import { useFlagPost } from '@/composables/useFlagPost';
@@ -17,6 +18,7 @@ import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import InputPhoton from '@/components/ui/input/InputPhoton.vue';
 import { useConfigStore } from '@/stores/useConfigStore';
 import { fractionalDigits } from '@/utility/atomics';
+import { showBroadcastingToast } from '@/utility/toast';
 
 const isBalanceInputValid = ref(false);
 const { flagPost, txError, txSuccess } = useFlagPost();
@@ -37,8 +39,17 @@ async function handleSubmit() {
     if (!canSubmit.value || !flag.value) {
         return;
     }
-    await flagPost({ post: ref(flag.value), amountAtomics: amountAtomics.value });
+
+    const post = ref(flag.value);
     handleClose();
+    const toastId = showBroadcastingToast('Flag');
+
+    try {
+        await flagPost({ post, amountAtomics: amountAtomics.value });
+    }
+    finally {
+        toast.dismiss(toastId);
+    }
 }
 </script>
 
