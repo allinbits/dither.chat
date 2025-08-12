@@ -5,23 +5,22 @@ import { Decimal } from '@cosmjs/math';
 import { useMutation, useQueryClient } from '@tanstack/vue-query';
 import { ref } from 'vue';
 
-import { fractionalDigits } from '@/utility/atomics';
 import { infiniteDataWithNewItem, newPost } from '@/utility/optimisticBuilders';
 
 import { feed } from './useFeed';
+import { useFractionalDigits } from './useFractionalDigits';
 import { useTxNotification } from './useTxNotification';
 import { userPosts } from './useUserPosts';
 import { useWallet } from './useWallet';
-
 interface CreatePostRequestMutation {
   message: string;
   amountAtomics: string;
 }
 
-export function useCreatePost(
-) {
+export function useCreatePost() {
   const queryClient = useQueryClient();
   const wallet = useWallet();
+  const fractionalDigits = useFractionalDigits();
   const txError = ref<string>();
   const txSuccess = ref<string>();
   const isToastShown = ref(false);
@@ -35,7 +34,7 @@ export function useCreatePost(
       txSuccess.value = undefined;
       isToastShown.value = true;
 
-      const msg = message.replace(/&/g, '&amp;')
+      const sanitizedMessage = message.replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
@@ -43,7 +42,7 @@ export function useCreatePost(
 
       const result = await wallet.dither.send(
         'Post',
-        { args: [msg], amount: amountAtomics },
+        { args: [sanitizedMessage], amount: amountAtomics },
       );
 
       if (!result.broadcast) {
@@ -81,7 +80,13 @@ export function useCreatePost(
       const userPostsOpts = userPosts({ userAddress: wallet.address });
 
       // Created Post
-      const optimisticNewPost: Post = newPost({ message: variables.message, quantity: Decimal.fromAtomics(variables.amountAtomics, fractionalDigits).atomics, hash, author: wallet.address.value, postHash: null });
+      const optimisticNewPost: Post = newPost({
+        message: variables.message,
+        quantity: Decimal.fromAtomics(variables.amountAtomics, fractionalDigits).atomics,
+        hash,
+        author: wallet.address.value,
+        postHash: null,
+      });
       const newFeedData = infiniteDataWithNewItem<Post>({ previousItems: context.previousFeed, newItem: optimisticNewPost });
       const newUserPostsData = infiniteDataWithNewItem<Post>({ previousItems: context.previousUserPosts, newItem: optimisticNewPost });
 

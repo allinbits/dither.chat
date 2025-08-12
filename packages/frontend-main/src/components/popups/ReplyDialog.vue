@@ -14,9 +14,9 @@ import { Textarea } from '@/components/ui/textarea';
 import UserAvatar from '@/components/users/UserAvatar.vue';
 import Username from '@/components/users/Username.vue';
 import { useCreateReply } from '@/composables/useCreateReply';
+import { useFractionalDigits } from '@/composables/useFractionalDigits';
 import { useTxDialog } from '@/composables/useTxDialog';
 import { useConfigStore } from '@/stores/useConfigStore';
-import { fractionalDigits } from '@/utility/atomics';
 import { showBroadcastingToast } from '@/utility/toast';
 
 const POST_HASH_LEN = 64;
@@ -32,7 +32,12 @@ const {
   popupState: reply,
   handleClose,
 } = useTxDialog<Post>('reply', txSuccess, txError);
-const amountAtomics = computed(() => configStore.config.defaultAmountEnabled ? configStore.config.defaultAmountAtomics : Decimal.fromUserInput(inputPhotonModel.value.toString(), fractionalDigits).atomics);
+const fractionalDigits = useFractionalDigits();
+const amountAtomics = computed(() =>
+  configStore.config.defaultAmountEnabled
+    ? configStore.config.defaultAmountAtomics
+    : Decimal.fromUserInput(inputPhotonModel.value.toString(), fractionalDigits).atomics,
+);
 const canSubmit = computed(() => configStore.config.defaultAmountEnabled || (isBalanceInputValid.value && message.value.length > 0));
 
 async function handleSubmit() {
