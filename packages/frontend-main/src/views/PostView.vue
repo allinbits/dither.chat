@@ -60,10 +60,10 @@ async function handleReply() {
     if (!canReply.value || !post.value) {
         return;
     }
-    reply.value = '';
     const toastId = showBroadcastingToast('Reply');
     try {
         await createReply({ parentPost: post, message: reply.value, amountAtomics: amountAtomics.value });
+        reply.value = '';
     }
     finally {
         toast.dismiss(toastId);
