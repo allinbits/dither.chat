@@ -14,8 +14,7 @@ interface DislikePostRequestMutation {
     amountAtomics: string;
 }
 
-export function useDislikePost(
-) {
+export function useDislikePost() {
     const queryClient = useQueryClient();
     const wallet = useWallet();
     const txError = ref<string>();
@@ -23,9 +22,7 @@ export function useDislikePost(
     const isToastShown = ref(false);
     useTxNotification('Dislike', txSuccess, txError);
 
-    const {
-        mutateAsync,
-    } = useMutation({
+    const { mutateAsync } = useMutation({
         mutationFn: async ({ post, amountAtomics }: DislikePostRequestMutation) => {
             txError.value = undefined;
             txSuccess.value = undefined;
@@ -41,34 +38,14 @@ export function useDislikePost(
             }
             txSuccess.value = result.tx?.transactionHash;
         },
-        onMutate: async (variables) => {
+        onSuccess: (_, variables) => {
             const postOpts = post({ hash: ref(variables.post.value.hash) });
-
-            await Promise.all([
-                queryClient.cancelQueries(postOpts),
-            ]);
-
-            const previousPost = queryClient.getQueryData(
-                postOpts.queryKey,
-            ) as Post | undefined;
-
-            return {
-                previousPost,
-            };
-        },
-        onSuccess: (_, variables, context) => {
-            const postOpts = post({ hash: ref(variables.post.value.hash) });
-            // Post with updated dislikes_burnt
-            const optimisticPost: Post
-                = context.previousPost
-                    ? { ...context.previousPost, dislikes_burnt: addAtomics((context.previousPost.dislikes_burnt ?? 0).toString(), variables.amountAtomics) }
-                    : { ...variables.post.value, dislikes_burnt: addAtomics((variables.post.value.dislikes_burnt ?? 0).toString(), variables.amountAtomics) };
-
-            queryClient.setQueryData(postOpts.queryKey, optimisticPost);
-        },
-        onError: (_, variables, context) => {
-            const postOpts = post({ hash: ref(variables.post.value.hash) });
-            queryClient.setQueryData(postOpts.queryKey, context?.previousPost);
+            // Update post's dislikes_burnt
+            queryClient.setQueryData<Post>(postOpts.queryKey, (current) => {
+                const currentDislikesBurnt = current?.dislikes_burnt ?? variables.post.value.dislikes_burnt ?? '0';
+                const newDislikeBurnt = addAtomics(currentDislikesBurnt, variables.amountAtomics);
+                return { ...(current ?? variables.post.value), dislikes_burnt: newDislikeBurnt };
+            });
         },
         onSettled: () => {
             isToastShown.value = false;
