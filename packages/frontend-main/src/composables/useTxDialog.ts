@@ -23,7 +23,6 @@ export const useTxDialog = <T>(
         popups.state[dialogType] = null;
         txError.value = undefined;
         txSuccess.value = undefined;
-        inputPhotonModel.value = Decimal.fromAtomics('1', fractionalDigits).toFloatApproximation();
     };
 
     watch([wallet.loggedIn, wallet.address], async () => {
