@@ -99,7 +99,7 @@ export function useUserAuth() {
         }
 
         await getDatabase().delete(AuthRequests).where(eq(AuthRequests.id, id)).returning();
-        return { status: 200, bearer: jwt.sign({ data: rows[0].msg }, JWT, { expiresIn: '3d' }) };
+        return { status: 200, bearer: jwt.sign({ data: rows[0].msg }, JWT, { expiresIn: '3d', algorithm: 'HS256' }) };
     };
 
     return {
