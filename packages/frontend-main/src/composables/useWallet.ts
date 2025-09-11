@@ -78,12 +78,18 @@ const useWalletInstance = () => {
     const walletDialogStore = useWalletDialogStore();
     const walletState = storeToRefs(useWalletStateStore());
 
-    const signOut = () => {
+    const signOut = async () => {
         walletState.address.value = '';
         walletState.used.value = null;
         walletState.loggedIn.value = false;
         walletState.processState.value = 'idle';
-        document.cookie = 'auth=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        await fetch(apiRoot + `/logout`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+        });
     };
     const signer: Ref<OfflineSigner | null> = ref(null);
 

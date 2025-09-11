@@ -1,5 +1,6 @@
+import crypto from 'node:crypto';
+
 import dotenv from 'dotenv';
-import crypto from 'node:crypto'
 
 dotenv.config();
 
