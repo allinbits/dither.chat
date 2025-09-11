@@ -59,6 +59,8 @@ export function start() {
     app.post('/flag', ({ body, headers }) => PostRequests.Flag(body, headers), { body: Posts.FlagBody });
     app.post('/post-remove', ({ body, headers }) => PostRequests.PostRemove(body, headers), { body: Posts.PostRemoveBody });
     app.post('/update-state', ({ body, headers }) => PostRequests.UpdateState(body, headers), { body: t.Object({ last_block: t.String() }) });
+    app.post('/logout', ({ cookie: { auth } }) => PostRequests.Logout(auth));
+
     app.post('/mod/post-remove', ({ body, cookie: { auth } }) => PostRequests.ModRemovePost(body, auth), {
         body: Posts.ModRemovePostBody,
     });

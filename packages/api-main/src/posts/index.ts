@@ -4,6 +4,7 @@ export * from './dislike';
 export * from './flag';
 export * from './follow';
 export * from './like';
+export * from './logout';
 export * from './mod';
 export * from './post';
 export * from './postRemove';
