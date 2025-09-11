@@ -18,7 +18,7 @@ export async function Auth(body: typeof Posts.AuthBody.static, auth: Cookie<stri
         const result = await verifyAndCreate(body.pub_key.value, body.signature, body.id);
         if (result.status === 200) {
             auth.remove();
-            auth.set({ sameSite: JWT_STRICTNESS, httpOnly: true, value: result.bearer, maxAge: 259200, priority: 'high' });
+            auth.set({ sameSite: JWT_STRICTNESS, httpOnly: true, secure: true, value: result.bearer, maxAge: 259200, priority: 'high' });
             return { status: 200 };
         }
 
