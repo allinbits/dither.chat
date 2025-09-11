@@ -36,7 +36,7 @@ export function useConfig(): Config {
     }
 
     if (typeof process.env.JWT_STRICTNESS === 'undefined') {
-        console.warn(`JWT_STRICTNESS not set correctly, either set to 'lax' or 'strict'`);
+        console.warn(`JWT_STRICTNESS not set, defaulting to lax`);
         process.env.JWT_STRICTNESS = 'lax';
     }
 
