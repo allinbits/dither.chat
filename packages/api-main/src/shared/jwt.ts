@@ -10,7 +10,7 @@ export const verifyJWT = async (token: string | undefined) => {
     }
 
     try {
-        const tokenData = jwt.verify(token, JWT) as { data: string; iat: number; exp: number };
+        const tokenData = jwt.verify(token, JWT, { algorithms: ['HS256'], maxAge: '3d' }) as { data: string; iat: number; exp: number };
         if (!tokenData) {
             return undefined;
         }
