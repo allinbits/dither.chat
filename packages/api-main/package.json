@@ -28,7 +28,6 @@
         "drizzle-orm": "^0.43.1",
         "drizzle-typebox": "^0.3.3",
         "elysia": "~1.2.25",
-        "elysia-ip": "^1.0.8",
         "jsonwebtoken": "^9.0.2",
         "pg": "^8.14.1",
         "postgres": "^3.4.5",
