@@ -37,9 +37,6 @@ export function start() {
     app.get('/notification-read', ({ query, cookie: { auth } }) => GetRequests.ReadNotification(query, auth), {
         query: Gets.ReadNotificationQuery,
     });
-    app.get('/notification-read', ({ query, cookie: { auth } }) => GetRequests.ReadNotification(query, auth), {
-        query: Gets.ReadNotificationQuery,
-    });
 
     app.post('/auth-create', ({ body }) => PostRequests.AuthCreate(body), { body: Posts.AuthCreateBody });
     app.post('/auth', ({ body, cookie: { auth } }) => PostRequests.Auth(body, auth), { body: t.Object({
