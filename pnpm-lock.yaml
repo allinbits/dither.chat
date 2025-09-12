@@ -80,9 +80,6 @@ importers:
       elysia:
         specifier: ~1.2.25
         version: 1.2.25(@sinclair/typebox@0.34.38)(openapi-types@12.1.3)(typescript@5.8.3)
-      elysia-ip:
-        specifier: ^1.0.8
-        version: 1.0.8(elysia@1.2.25(@sinclair/typebox@0.34.38)(openapi-types@12.1.3)(typescript@5.8.3))
       jsonwebtoken:
         specifier: ^9.0.2
         version: 9.0.2
@@ -2378,11 +2375,6 @@ packages:
 
   elliptic@6.6.1:
     resolution: {integrity: sha512-RaddvvMatK2LJHqFJ+YA4WysVN5Ita9E35botqIYspQ4TkRAlCicdzKOjlyv/1Za5RyTNn7di//eEV0uTAfe3g==}
-
-  elysia-ip@1.0.8:
-    resolution: {integrity: sha512-xzuBMCN+hoM7BTzjB4QDqY6dxTYaK+NrxnVTilNsKW0+T5KTTWBi3vaj3hdRFw06KLNJIlAKR16yU00lPT5IXw==}
-    peerDependencies:
-      elysia: '>= 1.0.9'
 
   elysia@1.2.25:
     resolution: {integrity: sha512-WsdQpORJvb4uszzeqYT0lg97knw1iBW1NTzJ1Jm57tiHg+DfAotlWXYbjmvQ039ssV0fYELDHinLLoUazZkEHg==}
@@ -6567,10 +6559,6 @@ snapshots:
       inherits: 2.0.4
       minimalistic-assert: 1.0.1
       minimalistic-crypto-utils: 1.0.1
-
-  elysia-ip@1.0.8(elysia@1.2.25(@sinclair/typebox@0.34.38)(openapi-types@12.1.3)(typescript@5.8.3)):
-    dependencies:
-      elysia: 1.2.25(@sinclair/typebox@0.34.38)(openapi-types@12.1.3)(typescript@5.8.3)
 
   elysia@1.2.25(@sinclair/typebox@0.34.38)(openapi-types@12.1.3)(typescript@5.8.3):
     dependencies:
