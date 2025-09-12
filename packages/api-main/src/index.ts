@@ -34,9 +34,6 @@ export function start() {
     app.get('/notifications-count', ({ query, cookie: { auth } }) => GetRequests.NotificationsCount(query, auth), {
         query: Gets.NotificationsCountQuery,
     });
-    app.get('/notification-read', ({ query, cookie: { auth } }) => GetRequests.ReadNotification(query, auth), {
-        query: Gets.ReadNotificationQuery,
-    });
 
     app.post('/auth-create', ({ body }) => PostRequests.AuthCreate(body), { body: Posts.AuthCreateBody });
     app.post('/auth', ({ body, cookie: { auth } }) => PostRequests.Auth(body, auth), { body: t.Object({
@@ -56,6 +53,10 @@ export function start() {
     app.post('/post-remove', ({ body, headers }) => PostRequests.PostRemove(body, headers), { body: Posts.PostRemoveBody });
     app.post('/update-state', ({ body, headers }) => PostRequests.UpdateState(body, headers), { body: t.Object({ last_block: t.String() }) });
     app.post('/logout', ({ cookie: { auth } }) => PostRequests.Logout(auth));
+
+    app.post('/notification-read', ({ query, cookie: { auth } }) => GetRequests.ReadNotification(query, auth), {
+        query: Gets.ReadNotificationQuery,
+    });
 
     app.post('/mod/post-remove', ({ body, cookie: { auth } }) => PostRequests.ModRemovePost(body, auth), {
         body: Posts.ModRemovePostBody,
