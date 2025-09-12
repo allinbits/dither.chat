@@ -114,6 +114,9 @@ importers:
       tsx:
         specifier: ^4.20.5
         version: 4.20.5
+      vite-node:
+        specifier: ^3.2.4
+        version: 3.2.4(@types/node@22.15.17)(jiti@2.4.2)(lightningcss@1.30.1)(tsx@4.20.5)
       vitest:
         specifier: ^3.1.2
         version: 3.1.3(@types/node@22.15.17)(jiti@2.4.2)(lightningcss@1.30.1)(tsx@4.20.5)
@@ -264,6 +267,9 @@ importers:
       typescript:
         specifier: ^5.8.2
         version: 5.8.3
+      vite-node:
+        specifier: ^3.2.4
+        version: 3.2.4(@types/node@22.15.17)(jiti@2.4.2)(lightningcss@1.30.1)(tsx@4.20.5)
       vitest:
         specifier: ^3.1.3
         version: 3.1.3(@types/node@22.15.17)(jiti@2.4.2)(lightningcss@1.30.1)(tsx@4.20.5)
@@ -4082,6 +4088,11 @@ packages:
     engines: {node: ^18.0.0 || ^20.0.0 || >=22.0.0}
     hasBin: true
 
+  vite-node@3.2.4:
+    resolution: {integrity: sha512-EbKSKh+bh1E1IFxeO0pg1n4dvoOTt0UDiXMd/qn++r98+jPO1xtJilvXldeuQ8giIB5IkpjCgMleHMNEsGH6pg==}
+    engines: {node: ^18.0.0 || ^20.0.0 || >=22.0.0}
+    hasBin: true
+
   vite-plugin-node-polyfills@0.23.0:
     resolution: {integrity: sha512-4n+Ys+2bKHQohPBKigFlndwWQ5fFKwaGY6muNDMTb0fSQLyBzS+jjUNRZG9sKF0S/Go4ApG6LFnUGopjkILg3w==}
     peerDependencies:
@@ -5614,7 +5625,7 @@ snapshots:
       '@typescript-eslint/types': 8.32.0
       '@typescript-eslint/typescript-estree': 8.32.0(typescript@5.8.3)
       '@typescript-eslint/visitor-keys': 8.32.0
-      debug: 4.4.0
+      debug: 4.4.1
       eslint: 9.26.0(jiti@2.4.2)
       typescript: 5.8.3
     transitivePeerDependencies:
@@ -5642,7 +5653,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/types': 8.32.0
       '@typescript-eslint/visitor-keys': 8.32.0
-      debug: 4.4.0
+      debug: 4.4.1
       fast-glob: 3.3.3
       is-glob: 4.0.3
       minimatch: 9.0.5
@@ -6108,7 +6119,7 @@ snapshots:
     dependencies:
       bytes: 3.1.2
       content-type: 1.0.5
-      debug: 4.4.0
+      debug: 4.4.1
       http-errors: 2.0.0
       iconv-lite: 0.6.3
       on-finished: 2.4.1
@@ -6854,7 +6865,7 @@ snapshots:
       content-type: 1.0.5
       cookie: 0.7.2
       cookie-signature: 1.2.2
-      debug: 4.4.0
+      debug: 4.4.1
       encodeurl: 2.0.0
       escape-html: 1.0.3
       etag: 1.8.1
@@ -6924,7 +6935,7 @@ snapshots:
 
   finalhandler@2.1.0:
     dependencies:
-      debug: 4.4.0
+      debug: 4.4.1
       encodeurl: 2.0.0
       escape-html: 1.0.3
       on-finished: 2.4.1
@@ -7979,7 +7990,7 @@ snapshots:
 
   router@2.2.0:
     dependencies:
-      debug: 4.4.0
+      debug: 4.4.1
       depd: 2.0.0
       is-promise: 4.0.0
       parseurl: 1.3.3
@@ -8017,7 +8028,7 @@ snapshots:
 
   send@1.2.0:
     dependencies:
-      debug: 4.4.0
+      debug: 4.4.1
       encodeurl: 2.0.0
       escape-html: 1.0.3
       etag: 1.8.1
@@ -8481,6 +8492,27 @@ snapshots:
     dependencies:
       cac: 6.7.14
       debug: 4.4.0
+      es-module-lexer: 1.7.0
+      pathe: 2.0.3
+      vite: 6.3.5(@types/node@22.15.17)(jiti@2.4.2)(lightningcss@1.30.1)(tsx@4.20.5)
+    transitivePeerDependencies:
+      - '@types/node'
+      - jiti
+      - less
+      - lightningcss
+      - sass
+      - sass-embedded
+      - stylus
+      - sugarss
+      - supports-color
+      - terser
+      - tsx
+      - yaml
+
+  vite-node@3.2.4(@types/node@22.15.17)(jiti@2.4.2)(lightningcss@1.30.1)(tsx@4.20.5):
+    dependencies:
+      cac: 6.7.14
+      debug: 4.4.1
       es-module-lexer: 1.7.0
       pathe: 2.0.3
       vite: 6.3.5(@types/node@22.15.17)(jiti@2.4.2)(lightningcss@1.30.1)(tsx@4.20.5)
