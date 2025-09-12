@@ -28,7 +28,6 @@ export function start() {
     app.get('/following-posts', ({ query }) => GetRequests.FollowingPosts(query), { query: Gets.PostsQuery });
     app.get('/last-block', GetRequests.LastBlock);
     app.get('/auth-verify', ({ cookie: { auth } }) => GetRequests.AuthVerify(auth));
-    app.get('/last-block', GetRequests.LastBlock);
     app.get('/notifications', ({ query, cookie: { auth } }) => GetRequests.Notifications(query, auth), {
         query: Gets.NotificationsQuery,
     });
