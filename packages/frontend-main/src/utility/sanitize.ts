@@ -3,7 +3,6 @@ import type { Static } from '@sinclair/typebox';
 import type { ValueError } from '@sinclair/typebox/compiler';
 
 import { TypeCompiler } from '@sinclair/typebox/compiler';
-import DOMPurify from 'dompurify';
 
 export interface RawRow {
     timestamp?: unknown;
