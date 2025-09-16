@@ -63,7 +63,7 @@ export async function ModRemovePost(body: typeof Posts.ModRemovePostBody.static,
     }
     catch (err) {
         console.error(err);
-        return { status: 400, error: 'failed to delete post, maybe invalid: ' + err };
+        return { status: 400, error: 'failed to delete post' };
     }
 }
 
@@ -136,7 +136,7 @@ export async function ModRestorePost(body: typeof Posts.ModRemovePostBody.static
     }
     catch (err) {
         console.error(err);
-        return { status: 400, error: 'failed to delete post, maybe invalid' + err };
+        return { status: 400, error: 'failed to delete post, maybe invalid' };
     }
 }
 
@@ -191,7 +191,7 @@ export async function ModBan(body: typeof Posts.ModBanBody.static, auth: Cookie<
     }
     catch (err) {
         console.error(err);
-        return { status: 400, error: 'failed to ban user' + err };
+        return { status: 400, error: 'failed to ban user' };
     }
 }
 
@@ -234,6 +234,6 @@ export async function ModUnban(body: typeof Posts.ModBanBody.static, auth: Cooki
     }
     catch (err) {
         console.error(err);
-        return { status: 400, error: 'failed to unban user' + err };
+        return { status: 400, error: 'failed to unban user' };
     }
 }
