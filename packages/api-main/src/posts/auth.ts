@@ -13,7 +13,8 @@ const rateLimiter = useRateLimiter();
 
 export async function Auth(body: typeof Posts.AuthBody.static, auth: Cookie<string | undefined>, request: Request) {
     const ip = getRequestIP(request);
-    if (rateLimiter.isLimited(ip)) {
+    const isLimited = await rateLimiter.isLimited(ip);
+    if (isLimited) {
         return { status: 429, error: 'Too many requests, try again later' };
     }
 

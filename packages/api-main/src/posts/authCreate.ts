@@ -9,7 +9,8 @@ const rateLimiter = useRateLimiter();
 
 export async function AuthCreate(body: typeof Posts.AuthCreateBody.static, request: Request) {
     const ip = getRequestIP(request);
-    if (rateLimiter.isLimited(ip)) {
+    const isLimited = await rateLimiter.isLimited(ip);
+    if (isLimited) {
         return { status: 429, error: 'Too many requests, try again later' };
     }
 
