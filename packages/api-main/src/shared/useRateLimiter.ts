@@ -62,17 +62,8 @@ export function useRateLimiter() {
         return false;
     }
 
-    function remove(ip: string) {
-        if (!rateLimits[ip]) {
-            return;
-        }
-
-        delete rateLimits[ip];
-    }
-
     return {
         update,
         isLimited,
-        remove,
     };
 }
