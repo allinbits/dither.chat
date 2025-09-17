@@ -8,7 +8,10 @@ import { useUserAuth } from '../shared/useUserAuth';
 const { verifyAndCreate } = useUserAuth();
 const { JWT_STRICTNESS } = useConfig();
 
-export async function Auth(body: typeof Posts.AuthBody.static, auth: Cookie<string | undefined>) {
+export async function Auth(body: typeof Posts.AuthBody.static, auth: Cookie<string | undefined>, _request: Request) {
+    // const forwardedFor = request.headers.get('x-forwarded-for');
+    // const ip = forwardedFor ? forwardedFor.split(',')[0].trim() : request.headers.get('true-client-ip') || request.headers.get('cf-connecting-ip');
+
     try {
         if ('json' in body) {
             const jwt = await verifyAndCreate(body.pub_key.value, body.signature, body.id);

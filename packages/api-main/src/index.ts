@@ -35,8 +35,8 @@ export function start() {
         query: Gets.NotificationsCountQuery,
     });
 
-    app.post('/auth-create', ({ body }) => PostRequests.AuthCreate(body), { body: Posts.AuthCreateBody });
-    app.post('/auth', ({ body, cookie: { auth } }) => PostRequests.Auth(body, auth), { body: t.Object({
+    app.post('/auth-create', ({ body, request }) => PostRequests.AuthCreate(body, request), { body: Posts.AuthCreateBody });
+    app.post('/auth', ({ body, cookie: { auth }, request }) => PostRequests.Auth(body, auth, request), { body: t.Object({
         id: t.Number(),
         pub_key: t.Object({ type: t.String(), value: t.String() }),
         signature: t.String(),
