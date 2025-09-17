@@ -22,11 +22,9 @@ function cleanup() {
 
     const now = Date.now();
     for (const key of Object.keys(rateLimits)) {
-        if (rateLimits[key].lastRequest + MAX_REQUEST_TIME_MS < now) {
-            continue;
+        if (rateLimits[key].lastRequest + MAX_REQUEST_TIME_MS > now) {
+            delete rateLimits[key];
         }
-
-        delete rateLimits[key];
     }
 
     isCleaningUp = false;
