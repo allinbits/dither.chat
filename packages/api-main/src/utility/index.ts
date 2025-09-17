@@ -1,3 +1,5 @@
+import crypto from 'node:crypto';
+
 import type * as T from '../types/index';
 
 import { sql } from 'drizzle-orm';
@@ -38,7 +40,19 @@ export function isReaderAuthorizationValid(headers: Record<string, string | unde
         return false;
     }
 
-    return headers['authorization'] === AUTH;
+    try {
+        const authHeaderBuffer = Buffer.from(headers['authorization'], 'utf8');
+        const authSecretBuffer = Buffer.from(AUTH, 'utf8');
+        if (authHeaderBuffer.length !== authSecretBuffer.length) {
+            return false;
+        }
+
+        return crypto.timingSafeEqual(authHeaderBuffer, authSecretBuffer);
+    }
+    catch (error) {
+        console.error('Error during authorization validation:', error);
+        return false;
+    }
 }
 
 export async function getJsonbArrayCount(hash: string, tableName: string) {
