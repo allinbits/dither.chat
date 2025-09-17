@@ -18,7 +18,7 @@ export async function Auth(body: typeof Posts.AuthBody.static, auth: Cookie<stri
         return { status: 429, error: 'Too many requests, try again later' };
     }
 
-    rateLimiter.update(ip);
+    await rateLimiter.update(ip);
 
     try {
         if ('json' in body) {

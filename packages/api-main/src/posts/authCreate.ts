@@ -14,7 +14,7 @@ export async function AuthCreate(body: typeof Posts.AuthCreateBody.static, reque
         return { status: 429, error: 'Too many requests, try again later' };
     }
 
-    rateLimiter.update(ip);
+    await rateLimiter.update(ip);
 
     try {
         const result = await add(body.address);
