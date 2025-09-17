@@ -3,14 +3,21 @@ import type { Cookie } from 'elysia';
 import { type Posts } from '@atomone/dither-api-types';
 
 import { useConfig } from '../config';
+import { useRateLimiter } from '../shared/useRateLimiter';
 import { useUserAuth } from '../shared/useUserAuth';
+import { getRequestIP } from '../utility';
 
 const { verifyAndCreate } = useUserAuth();
 const { JWT_STRICTNESS } = useConfig();
+const rateLimiter = useRateLimiter();
 
-export async function Auth(body: typeof Posts.AuthBody.static, auth: Cookie<string | undefined>, _request: Request) {
-    // const forwardedFor = request.headers.get('x-forwarded-for');
-    // const ip = forwardedFor ? forwardedFor.split(',')[0].trim() : request.headers.get('true-client-ip') || request.headers.get('cf-connecting-ip');
+export async function Auth(body: typeof Posts.AuthBody.static, auth: Cookie<string | undefined>, request: Request) {
+    const ip = getRequestIP(request);
+    if (rateLimiter.isLimited(ip)) {
+        return { status: 429, error: 'Too many requests, try again later' };
+    }
+
+    rateLimiter.update(ip);
 
     try {
         if ('json' in body) {

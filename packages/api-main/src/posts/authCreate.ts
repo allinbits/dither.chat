@@ -1,14 +1,19 @@
 import { type Posts } from '@atomone/dither-api-types';
 
+import { useRateLimiter } from '../shared/useRateLimiter';
 import { useUserAuth } from '../shared/useUserAuth';
+import { getRequestIP } from '../utility';
 
 const { add } = useUserAuth();
+const rateLimiter = useRateLimiter();
 
 export async function AuthCreate(body: typeof Posts.AuthCreateBody.static, request: Request) {
-    const forwardedFor = request.headers.get('x-forwarded-for');
-    const ip = forwardedFor ? forwardedFor.split(',')[0].trim() : request.headers.get('true-client-ip') || request.headers.get('cf-connecting-ip');
-    console.log(ip);
-    console.log(request.headers);
+    const ip = getRequestIP(request);
+    if (rateLimiter.isLimited(ip)) {
+        return { status: 429, error: 'Too many requests, try again later' };
+    }
+
+    rateLimiter.update(ip);
 
     try {
         const result = await add(body.address);

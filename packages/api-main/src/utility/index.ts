@@ -50,3 +50,28 @@ export async function getJsonbArrayCount(hash: string, tableName: string) {
 
     return result.rows.length > 0 ? result.rows[0].array_count : 0;
 }
+
+export function getRequestIP(request: Request) {
+    const forwardedFor = request.headers.get('x-forwarded-for');
+    if (forwardedFor) {
+        return forwardedFor.split(',')[0].trim();
+    }
+
+    const realIp = request.headers.get('x-real-ip');
+    if (realIp) {
+        return realIp;
+    }
+
+    const flyClientIP = request.headers.get('fly-client-ip');
+    if (flyClientIP) {
+        return flyClientIP;
+    }
+
+    const cfIp = request.headers.get('cf-connecting-ip');
+    if (cfIp) {
+        return cfIp;
+    }
+
+    // We'll just default to `host` if not found
+    return request.headers.get('host') ?? 'localhost:3000';
+}

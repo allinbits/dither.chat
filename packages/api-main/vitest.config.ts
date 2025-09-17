@@ -9,7 +9,7 @@ export default defineConfig({
         forceRerunTriggers: [
             '**/tests/**/*',
         ],
-        reporters: ['verbose'],
+        // reporters: ['verbose'],
     },
     define: {
         'process.env.SKIP_START': JSON.stringify(true),
