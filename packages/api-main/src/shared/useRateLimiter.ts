@@ -20,11 +20,18 @@ function cleanup() {
 
     isCleaningUp = true;
 
+    let requestsRemoved = 0;
+
     const now = Date.now();
     for (const key of Object.keys(rateLimits)) {
         if (rateLimits[key].lastRequest + MAX_REQUEST_TIME_MS > now) {
             delete rateLimits[key];
+            requestsRemoved++;
         }
+    }
+
+    if (requestsRemoved >= 1) {
+        console.log(`Cleaned Up Requests | Count: ${requestsRemoved}`);
     }
 
     isCleaningUp = false;
