@@ -55,6 +55,11 @@ const isCredentialsValid = async () => {
 
     const resVerify = await resVerifyRaw.json();
     if (resVerify.status !== 200) {
+        if (resVerify.status === 429) {
+            console.log(`Exceeded rate limiting, try again later.`);
+            return false;
+        }
+
         return false;
     }
 
@@ -231,7 +236,24 @@ const useWalletInstance = () => {
                     method: 'POST',
                     headers,
                 });
-                const response = (await responseRaw.json()) as { status: number; id: number; message: string };
+
+                if (responseRaw.status === 200) {
+                    walletState.loggedIn.value = false;
+                    walletDialogStore.hideDialog();
+                    console.error(`Failed to create auth request`);
+                    return;
+                }
+
+                const response = (await responseRaw.json()) as { status: number; id: number; message: string; error?: string };
+                if (responseRaw.status === 429) {
+                    walletState.loggedIn.value = false;
+                    walletDialogStore.hideDialog();
+                    if (response.error) {
+                        console.error(`${response.message}`);
+                    }
+
+                    return;
+                }
 
                 // Sign the authentication request
                 const signedMsg = await signMessage(response.message);
