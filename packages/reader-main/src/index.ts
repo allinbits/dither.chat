@@ -4,6 +4,7 @@ import type { ResponseStatus } from './types/index';
 
 import { ChronoState } from '@atomone/chronostate';
 
+import { EclesiaClient } from './eclesia/client';
 import { useConfig } from './config/index';
 import { MessageHandlers } from './messages/index';
 import { useQueue } from './queue';
@@ -199,10 +200,42 @@ async function getLastBlock() {
 
 export async function start() {
     console.info('Starting Application');
-    let lastBlock = await getLastBlock();
-    lastBlock ??= config.START_BLOCK;
-    console.info(`Last Block: ${lastBlock}`);
-    state = new ChronoState({ ...config, START_BLOCK: lastBlock, LOG: true });
+
+    let startBlock = 0;
+
+    let lastBlockStored = parseInt(await getLastBlock() ?? '0');
+    console.info(`Last Block: `, lastBlockStored);
+
+    if (parseInt(config.START_BLOCK) > lastBlockStored) {
+        console.info(`START_BLOCK is higher than last block stored, starting from START_BLOCK=${config.START_BLOCK}`);
+        config.START_BLOCK = lastBlockStored.toString();
+    } else {
+        startBlock = lastBlockStored;
+    }
+
+    const isFastSync = (config.ECLESIA_GRAPHQL_ENDPOINT && config.ECLESIA_GRAPHQL_SECRET);
+    if (isFastSync) {
+        const eclesiaClient = new EclesiaClient(config.ECLESIA_GRAPHQL_ENDPOINT!, config.ECLESIA_GRAPHQL_SECRET!);
+
+        const response = await eclesiaClient.getTransactions(startBlock);
+
+        console.info(`Found ${response.transaction.length} transactions`);
+        for (const transaction of response.transaction) {
+            await processAction({
+                hash: transaction.hash,
+                height: transaction.block.height.toString(),
+                timestamp: transaction.block.timestamp,
+                memo: transaction.memo,
+                messages: transaction.messages.map((msg) => ({
+                    ...msg,
+                    from_address: msg['fromAddress'],
+                    to_address: msg['toAddress'],
+                })),
+            } as Action);
+        }
+    }
+
+    state = new ChronoState({ ...config, START_BLOCK: startBlock.toString(), LOG: true });
     state.onLastBlock(handleLastBlock);
     state.onAction(handleAction);
     state.start();
@@ -210,4 +243,13 @@ export async function start() {
     setInterval(handleQueue, process.env.QUEUE_CHECK_MS ? parseInt(process.env.QUEUE_CHECK_MS) : 10);
 }
 
-start();
+async function main() {
+    try {
+        await start();
+    } catch (error) {
+        console.error(error);
+        process.exit(1);
+    }
+}
+
+main();

@@ -32,6 +32,7 @@ services:
         condition: service_healthy
     environment:
       PG_URI: "postgresql://default:password@postgres:5432/postgres"
+      AUTH: "dev"
     ports:
       - 3000:3000
     healthcheck:
@@ -61,6 +62,11 @@ services:
       MEMO_PREFIX: "dither."
       RECEIVER: "atone1uq6zjslvsa29cy6uu75y8txnl52mw06j6fzlep"
       API_ROOT: "http://api-main:3000/v1"
+      AUTH: "dev"
+      # Uncomment to enable fast sync
+      # ECLESIA_GRAPHQL_ENDPOINT: "https://graphql-atomone-testnet-1.allinbits.services/v1/graphql"
+      # ECLESIA_GRAPHQL_SECRET: ""
+      
       # PG_URI: postgres://username:password@postgres-feed:5432/feed
       # LOG: process.env.LOG === 'true' ? true : false,
 
