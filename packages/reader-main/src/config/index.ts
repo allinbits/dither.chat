@@ -11,11 +11,6 @@ export function useConfig(): typeof config {
         return config;
     }
 
-    if (!process.env.START_BLOCK) {
-        console.error(`Failed to specify START_BLOCK in configuration`);
-        // process.exit(1);
-    }
-
     if (typeof process.env.AUTH === 'undefined') {
         console.warn(`AUTH env variable is set to default, ensure you provide an authorization key for reader communication`);
     }
