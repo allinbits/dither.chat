@@ -4,8 +4,8 @@ import type { ResponseStatus } from './types/index';
 
 import { ChronoState } from '@atomone/chronostate';
 
-import { EclesiaClient } from './eclesia/client';
 import { useConfig } from './config/index';
+import { EclesiaClient } from './eclesia/client';
 import { MessageHandlers } from './messages/index';
 import { useQueue } from './queue';
 
@@ -203,13 +203,14 @@ export async function start() {
 
     let startBlock = 0;
 
-    let lastBlockStored = parseInt(await getLastBlock() ?? '0');
+    const lastBlockStored = parseInt(await getLastBlock() ?? '0');
     console.info(`Last Block: `, lastBlockStored);
 
     if (parseInt(config.START_BLOCK) > lastBlockStored) {
         console.info(`START_BLOCK is higher than last block stored, starting from START_BLOCK=${config.START_BLOCK}`);
         config.START_BLOCK = lastBlockStored.toString();
-    } else {
+    }
+    else {
         startBlock = lastBlockStored;
     }
 
@@ -226,7 +227,7 @@ export async function start() {
                 height: transaction.block.height.toString(),
                 timestamp: transaction.block.timestamp,
                 memo: transaction.memo,
-                messages: transaction.messages.map((msg) => ({
+                messages: transaction.messages.map(msg => ({
                     ...msg,
                     from_address: msg['fromAddress'],
                     to_address: msg['toAddress'],
@@ -246,7 +247,8 @@ export async function start() {
 async function main() {
     try {
         await start();
-    } catch (error) {
+    }
+    catch (error) {
         console.error(error);
         process.exit(1);
     }

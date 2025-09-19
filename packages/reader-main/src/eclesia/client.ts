@@ -1,4 +1,4 @@
-import { GraphQLClient, gql } from 'graphql-request';
+import { gql, GraphQLClient } from 'graphql-request';
 
 export interface Transaction {
     hash: string;
@@ -28,11 +28,11 @@ export class EclesiaClient {
             throw new Error('ECLESIA_GRAPHQL_SECRET environment variable is required');
         }
 
-        this.client = new GraphQLClient(endpoint, { 
+        this.client = new GraphQLClient(endpoint, {
             headers: {
                 'content-type': 'application/json',
                 'x-hasura-admin-secret': secret,
-            }
+            },
         });
     }
 
@@ -60,7 +60,7 @@ export class EclesiaClient {
             }
         `;
 
-        let transactions: Transaction[] = [];
+        const transactions: Transaction[] = [];
         let offset = 0;
         let latest_block_stored: number = 0;
 
@@ -72,9 +72,9 @@ export class EclesiaClient {
                 transaction: Transaction[];
             }
 
-            const response: QueryResponse = await this.client.request(query, { 
-                limit, 
-                offset, 
+            const response: QueryResponse = await this.client.request(query, {
+                limit,
+                offset,
                 min_height,
             });
 
@@ -95,8 +95,8 @@ export class EclesiaClient {
         return {
             transaction: transactions,
             latest_block_stored: {
-                height: latest_block_stored
-            }
+                height: latest_block_stored,
+            },
         };
     }
 }

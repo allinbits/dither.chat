@@ -1,9 +1,9 @@
 import type { Config } from '@atomone/chronostate/dist/types';
 
 let config: Config & {
-    AUTH: string,
-    ECLESIA_GRAPHQL_ENDPOINT?: string
-    ECLESIA_GRAPHQL_SECRET?: string
+    AUTH: string;
+    ECLESIA_GRAPHQL_ENDPOINT?: string;
+    ECLESIA_GRAPHQL_SECRET?: string;
 };
 
 export function useConfig(): typeof config {
@@ -24,7 +24,7 @@ export function useConfig(): typeof config {
         SENDER: process.env.SENDER,
         LOG: process.env.LOG === 'true',
         AUTH: process.env.AUTH ?? 'default',
-        
+
         ECLESIA_GRAPHQL_ENDPOINT: process.env.ECLESIA_GRAPHQL_ENDPOINT,
         ECLESIA_GRAPHQL_SECRET: process.env.ECLESIA_GRAPHQL_SECRET,
     };
