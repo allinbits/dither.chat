@@ -20,15 +20,14 @@ async function cleanup() {
     isCleaningUp = true;
     try {
         const now = Date.now();
-        // Delete records older than the MAX_REQUEST_TIME_MS
+        const threshold = now - MAX_REQUEST_TIME_MS;
         const result = await getDatabase()
             .delete(rateLimits)
             .where(
-                lt(rateLimits.lastRequest, now - MAX_REQUEST_TIME_MS),
+                lt(rateLimits.lastRequest, sql`${threshold}`),
             )
             .execute();
 
-        // 📝 You might need to adjust this depending on your database adapter's result object.
         if (result.rowCount && result.rowCount > 0) {
             console.log(`Cleaned Up Requests | Count: ${result.rowCount}`);
         }
