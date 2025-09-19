@@ -237,14 +237,18 @@ const useWalletInstance = () => {
                     headers,
                 });
 
-                if (responseRaw.status === 200) {
+                let response: { status: number; id: number; message: string; error?: string };
+
+                try {
+                    response = await responseRaw.json();
+                }
+                catch (err) {
                     walletState.loggedIn.value = false;
                     walletDialogStore.hideDialog();
-                    console.error(`Failed to create auth request`);
+                    console.error(`Failed to create auth request`, err);
                     return;
                 }
 
-                const response = (await responseRaw.json()) as { status: number; id: number; message: string; error?: string };
                 if (responseRaw.status === 429) {
                     walletState.loggedIn.value = false;
                     walletDialogStore.hideDialog();
