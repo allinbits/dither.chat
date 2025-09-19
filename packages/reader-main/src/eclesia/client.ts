@@ -7,6 +7,7 @@ export interface Transaction {
         timestamp: string;
     };
     memo: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     messages: any[];
 }
 
