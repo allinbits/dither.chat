@@ -106,7 +106,7 @@ export const rateLimits = pgTable(
         id: serial('id').primaryKey(),
         ip: text().notNull().unique(),
         requests: integer().notNull().default(0),
-        lastRequest: bigint({ mode: 'string' }).notNull(),
+        lastRequest: bigint({ mode: 'number' }).notNull(),
     },
 );
 
