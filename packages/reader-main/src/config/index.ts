@@ -19,7 +19,7 @@ export function useConfig(): typeof config {
         API_URLS: process.env.API_URLS ? process.env.API_URLS.split(',') : [],
         MEMO_PREFIX: process.env.MEMO_PREFIX,
         BATCH_SIZE: process.env.BATCH_SIZE ? parseInt(process.env.BATCH_SIZE) : 50,
-        START_BLOCK: process.env.START_BLOCK ?? '',
+        START_BLOCK: process.env.START_BLOCK ?? '0',
         RECEIVER: process.env.RECEIVER,
         SENDER: process.env.SENDER,
         LOG: process.env.LOG === 'true',
