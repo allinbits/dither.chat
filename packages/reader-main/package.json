@@ -13,6 +13,8 @@
     "dependencies": {
         "@atomone/chronostate": "^2.2.3",
         "@atomone/dither-api-types": "^1.4.0",
+        "graphql": "^16.8.1",
+        "graphql-request": "^6.1.0",
         "tsx": "^4.20.5"
     },
     "prettier": {

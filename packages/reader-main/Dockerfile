@@ -2,7 +2,9 @@ FROM node:24-slim
 
 WORKDIR /app
 
-RUN apt-get update && rm -rf /var/lib/apt/lists/*
+ENV NODE_TLS_REJECT_UNAUTHORIZED=0
+
+RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
 RUN corepack enable
 
 COPY package.json pnpm-lock.yaml ./
