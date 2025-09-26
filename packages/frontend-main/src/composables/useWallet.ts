@@ -334,7 +334,7 @@ const useWalletInstance = () => {
             }
             else {
                 const simulate = await client.simulate(walletState.address.value, msgs, formattedMemo);
-                gasLimit = simulate && simulate > 0 ? '' + Math.ceil(simulate * 1.5) : '500000';
+                gasLimit = simulate && simulate > 0 ? '' + Math.ceil(simulate * 1.3) : '500000';
                 cachedGasLimit.value = gasLimit;
             }
 
@@ -437,7 +437,7 @@ const useWalletInstance = () => {
                     formattedMemo,
                 );
 
-                gasLimit = simulate && simulate > 0 ? '' + Math.ceil(simulate * 2.0) : '500000';
+                gasLimit = simulate && simulate > 0 ? '' + Math.ceil(simulate * 1.3) : '500000';
                 cachedGasLimit.value = gasLimit;
             }
 
