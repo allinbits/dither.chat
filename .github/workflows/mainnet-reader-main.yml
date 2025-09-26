@@ -32,11 +32,11 @@ jobs:
 
       # Add reader-main specific test steps here
 
-  deploy-testnet:
+  deploy-mainnet:
     needs: [detect-changes, test]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.detect-changes.outputs.changed == 'true'
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
-    environment: testnet
+    environment: mainnet
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
