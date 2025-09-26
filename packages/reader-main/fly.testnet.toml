@@ -1,15 +1,7 @@
-# fly.toml app configuration file generated for dither-testnet-reader-main on 2025-06-05T15:58:33-05:00
-#
-# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
-#
-
 app = 'dither-testnet-reader-main'
 primary_region = 'iad'
 
 [build]
-
-# non-secret environment variables
-# AUTH is also required but is set in the secrets on fly.io
 [env]
 BATCH_SIZE = "500"
 MEMO_PREFIX = "dither."
