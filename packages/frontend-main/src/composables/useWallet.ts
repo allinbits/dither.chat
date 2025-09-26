@@ -18,6 +18,7 @@ import { useWalletStateStore } from '@/stores/useWalletStateStore';
 import { getChainConfigLazy } from '@/utility/getChainConfigLazy';
 
 const TX_BROADCAST_TIMEOUT = 30_000;
+const DEFAULT_GAS_CEIL = 1.4;
 
 export enum Wallets {
     keplr = 'Keplr',
@@ -334,7 +335,7 @@ const useWalletInstance = () => {
             }
             else {
                 const simulate = await client.simulate(walletState.address.value, msgs, formattedMemo);
-                gasLimit = simulate && simulate > 0 ? '' + Math.ceil(simulate * 1.3) : '500000';
+                gasLimit = simulate && simulate > 0 ? '' + Math.ceil(simulate * DEFAULT_GAS_CEIL) : '500000';
                 cachedGasLimit.value = gasLimit;
             }
 
@@ -437,7 +438,7 @@ const useWalletInstance = () => {
                     formattedMemo,
                 );
 
-                gasLimit = simulate && simulate > 0 ? '' + Math.ceil(simulate * 1.3) : '500000';
+                gasLimit = simulate && simulate > 0 ? '' + Math.ceil(simulate * DEFAULT_GAS_CEIL) : '500000';
                 cachedGasLimit.value = gasLimit;
             }
 
