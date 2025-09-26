@@ -1,0 +1,52 @@
+name: mainnet-reader-main
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.changes.outputs.reader-main }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Detect reader-main changes
+        uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            reader-main:
+              - 'packages/reader-main/**'
+
+  test:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Add reader-main specific test steps here
+
+  deploy-mainnet:
+    needs: [detect-changes, test]
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    environment: mainnet
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Fly.io CLI
+        uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Deploy reader-main to Fly.io
+        run: |
+          cd ./packages/reader-main
+          flyctl deploy --remote-only --config ./fly.mainnet.toml
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_READER_MAIN }}
