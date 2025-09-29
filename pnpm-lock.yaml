@@ -7,6 +7,10 @@ settings:
 importers:
 
   .:
+    dependencies:
+      retypeapp:
+        specifier: ^3.11.0
+        version: 3.11.0
     devDependencies:
       '@eslint/js':
         specifier: ^9.26.0
@@ -3680,6 +3684,10 @@ packages:
   resolve@1.22.10:
     resolution: {integrity: sha512-NPRy+/ncIMeDlTAsuqwKIiferiawhefFJtkNSW0qZJEqMEb+qBt/77B/jGeeek+F0uOeN05CDa6HXbbIgtVX4w==}
     engines: {node: '>= 0.4'}
+    hasBin: true
+
+  retypeapp@3.11.0:
+    resolution: {integrity: sha512-emjLMnmAu3jNLUeM+6OEj0CUlW6GmAq2yXEsf2n40YEDEBu7U2n32pLCFpd6w9Y+MIDmV+1rffN96parLT9uZw==}
     hasBin: true
 
   reusify@1.1.0:
@@ -7962,6 +7970,8 @@ snapshots:
       is-core-module: 2.16.1
       path-parse: 1.0.7
       supports-preserve-symlinks-flag: 1.0.0
+
+  retypeapp@3.11.0: {}
 
   reusify@1.1.0: {}
 

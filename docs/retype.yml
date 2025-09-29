@@ -1,0 +1,19 @@
+input: .
+output: .retype
+
+url: docs.dither.chat
+
+start:
+  # Uncomment the next line to try Retype Pro features
+  # pro: true
+
+branding:
+  title: dither
+  label: Docs
+
+# links:
+#   - text: Getting Started
+#     link: https://retype.com/guides/getting-started/
+
+footer:
+  copyright: "&copy; All in Bits 2025"

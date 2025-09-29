@@ -1,14 +1,16 @@
 # Dither Service
 
-Dither Service is a provider engine for individual front-end applications to listen to the Dither Protcol.
+The **Dither Service** utilizes **event-sourcing data** to deterministically rebuild application state. This is achieved by processing events streamed directly from cosmos-based chains, specifically **AtomOne**.
 
-The Dither Service uses event-sourcing data to rebuild application state from Cosmos based chains, specifically AtomOne.
+## 🚀 Getting Started (Usage)
 
-## Usage
+To quickly spin up the entire Dither Service and its components, use the provided Docker Compose file:
 
-```
+```sh
 docker compose up --build
 ```
+
+You will need to start the frontend service on its own.
 
 ## Project Structure Explanation
 
@@ -20,9 +22,9 @@ A REST Endpoint Provider for post feeds, and looking up individual posts.
 
 A blockchain reader that parses memos, and re-routes them through an event system.
 
-### nginx
+### [cli](./packages/cli)
 
-Just an nginx configuration for gateway access to APIs
+A small reader that pulls all `dither.` messages from the chain in the last 100 blocks.
 
 ### [frontend-main](./packages/frontend-main/README.md)
 
@@ -31,3 +33,7 @@ An frontend Single Page Application for Dither as a whole.
 ## [tool-network-spammer](./packages/tool-network-spammer/README.md)
 
 A tool for spamming devnet / testnet and building test data to be consumed by the event system.
+
+### nginx
+
+Just an nginx configuration for gateway access to APIs
