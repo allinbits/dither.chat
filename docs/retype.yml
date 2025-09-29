@@ -1,7 +1,7 @@
 input: .
 output: .retype
 
-url: docs.dither.chat
+url: https://docs.dither.chat
 
 start:
   # Uncomment the next line to try Retype Pro features
