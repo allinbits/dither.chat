@@ -12,3 +12,4 @@ data/*
 .idea/
 .DS_Store
 .retype
+retype.manifest

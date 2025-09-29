@@ -17,6 +17,7 @@ jobs:
       - uses: retypeapp/action-build@latest
         env:
           RETYPE_KEY: ${{ secrets.RETYPE_KEY }}
+          config_path: ./docs
 
       - uses: retypeapp/action-github-pages@latest
         with:
