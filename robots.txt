@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://docs.dither.chat/sitemap.xml.gz
