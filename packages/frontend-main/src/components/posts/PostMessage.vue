@@ -18,8 +18,13 @@ function extractGenericLink(msg: string) {
     return null;
 }
 
+function unescapeHTML(str: string): string {
+    const doc = new DOMParser().parseFromString(str, 'text/html');
+    return doc.documentElement.textContent || str;
+}
+
 const parsedMessage = computed((): MessageSegment[] => {
-    const message = props.message;
+    const message = unescapeHTML(props.message);
     const link = extractGenericLink(message);
     const segments: MessageSegment[] = [];
 
