@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.11.0.812574813303">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.11.0.812575420291">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.11.0">
@@ -11,7 +11,7 @@
     <!-- Primary Meta Tags -->
     <title>About Dither</title>
     <meta name="title" content="About Dither">
-    <meta name="description" content="Dither is a public protocol for publishing messages onchain**.** It is designed to be simple, durable, and open to extension by anyone.">
+    <meta name="description" content="Dither is a public protocol for publishing messages onchain. It is designed to be simple, durable, and open to extension by anyone.">
 
     <!-- Canonical -->
     <link rel="canonical" href="https://docs.dither.chat/">
@@ -20,21 +20,21 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://docs.dither.chat/">
     <meta property="og:title" content="About Dither">
-    <meta property="og:description" content="Dither is a public protocol for publishing messages onchain**.** It is designed to be simple, durable, and open to extension by anyone.">
+    <meta property="og:description" content="Dither is a public protocol for publishing messages onchain. It is designed to be simple, durable, and open to extension by anyone.">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://docs.dither.chat/">
     <meta property="twitter:title" content="About Dither">
-    <meta property="twitter:description" content="Dither is a public protocol for publishing messages onchain**.** It is designed to be simple, durable, and open to extension by anyone.">
+    <meta property="twitter:description" content="Dither is a public protocol for publishing messages onchain. It is designed to be simple, durable, and open to extension by anyone.">
 
     <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
 
-    <link href="resources/css/retype.css?v=3.11.0.812574813303" rel="stylesheet">
+    <link href="resources/css/retype.css?v=3.11.0.812575420291" rel="stylesheet">
 
-    <script data-cfasync="false" src="resources/js/config.js?v=3.11.0.812574813303" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="resources/js/config.js?v=3.11.0.812575420291" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="resources/js/retype.js?v=3.11.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="resources/js/lunr.js?v=3.11.0.812574813303" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="resources/js/lunr.js?v=3.11.0.812575420291" data-turbo-eval="false" defer></script>
 </head>
 <body>
     <div id="retype-app" class="relative text-base antialiased text-base-text bg-base-bg font-body">
@@ -152,22 +152,21 @@
 <doc-anchor-target id="about-dither" class="break-words">
     <h1>
         <doc-anchor-trigger class="header-anchor-trigger" to="#about-dither">#</doc-anchor-trigger>
-        <span><strong>About Dither</strong></span>
+        <span>About Dither</span>
     </h1>
 </doc-anchor-target>
-<p>Dither is a public protocol for publishing messages onchain**.** It is designed to be simple, durable, and open to extension by anyone.</p>
+<p>Dither is a public protocol for publishing messages onchain. It is designed to be simple, durable, and open to extension by anyone.</p>
 <p>At its core, Dither is a read-optimized, event-sourced messaging protocol. It indexes a specific subset of memos from any compatible blockchain (currently AtomOne), reconstructs application state from those events, and exposes that state through a public API.</p>
-<p>There are two main components:</p>
-<ul>
-<li><p><strong>Dither Service</strong><br />
-A backend that monitors the blockchain, processes memo events, and reconstructs user and post data. This state is made available through a REST API.</p>
-</li>
-<li><p><strong>Dither Website</strong><br />
-A lightweight frontend that connects to the API and lets users post, browse, follow others, and reflect content. It is fully stateless and open source.</p>
-</li>
-</ul>
+<p>This is done through two key components:</p>
+<p><strong>Dither Service</strong></p>
+<p>A backend that monitors the blockchain, processes memo events, and reconstructs user and post data. This state is made available through a REST API.</p>
+<p><strong>Dither Website</strong></p>
+<p>A lightweight frontend that connects to the API and lets users post, browse, follow others, and reflect content. It is fully stateless and will soon be open source.</p>
+<hr>
 <p>These components are designed to be decoupled. Anyone can run their own version of the service, build their own client, or use the protocol in a completely different way. Dither is not a platform. It is a protocol and reference implementation.</p>
-<p>Dither avoids algorithmic feeds, editing tools, and moderation queues. It is minimal by design. All content is public and stored permanently onchain. This structure creates space for users and communities to define their own norms, tooling, and experience. Developers can run their own indexers, fork the client, or build custom frontends using the public API.</p>
+<p>Dither avoids algorithmic feeds, editing tools, and moderation queues. It is minimal by design.</p>
+<p>All content is public and stored permanently onchain. This structure creates space for users and communities to define their own norms, tooling, and experience.</p>
+<p>Developers can run their own indexers, fork the client, or build custom frontends using the public API.</p>
 
                                 
                                 <!-- Required only on API pages -->

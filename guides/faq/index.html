@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.11.0.812574813303">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.11.0.812575420291">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.11.0">
@@ -30,11 +30,11 @@
 
     <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
 
-    <link href="../../resources/css/retype.css?v=3.11.0.812574813303" rel="stylesheet">
+    <link href="../../resources/css/retype.css?v=3.11.0.812575420291" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../resources/js/config.js?v=3.11.0.812574813303" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/config.js?v=3.11.0.812575420291" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../resources/js/retype.js?v=3.11.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.11.0.812574813303" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.11.0.812575420291" data-turbo-eval="false" defer></script>
 </head>
 <body>
     <div id="retype-app" class="relative text-base antialiased text-base-text bg-base-bg font-body">
@@ -181,9 +181,9 @@ Never share this information with anyone else.</p>
         <span>How does dither work?</span>
     </h2>
 </doc-anchor-target>
-<p>Dither works by pushing messages to the AtomOne blockchain with a specific format.</p>
-<p>Specifically for posting it&#x27;s <code v-pre>dither.Post(&quot;My message goes here&quot;)</code></p>
-<p>As long as it goes to the <code v-pre>atone1uq6zjslvsa29cy6uu75y8txnl52mw06j6fzlep</code> address, it will be indexed.</p>
+<p>Dither pushes messages to the AtomOne blockchain using a specific format.</p>
+<p>For posting, the memo must be <code v-pre>dither.Post(&quot;My message goes here&quot;)</code></p>
+<p>As long as the message is sent to the address <code v-pre>atone1uq6zjslvsa29cy6uu75y8txnl52mw06j6fzlep</code> it will be indexed.</p>
 <doc-anchor-target id="can-i-upload-images">
     <h2>
         <doc-anchor-trigger class="header-anchor-trigger" to="#can-i-upload-images">#</doc-anchor-trigger>
@@ -204,7 +204,7 @@ Never share this information with anyone else.</p>
         <span>Why does dither cost PHOTON?</span>
     </h2>
 </doc-anchor-target>
-<p>In order to index your message and keep the service alive we take a very tiny fee for indexing, and the validators will get the rest of the fees for indexing the data on-chain.</p>
+<p>Dither&#x27;s indexing fee is exceptionally small and a mere fraction of a cent. This fee is to cover the operational cost of keeping our service alive. This tiny fee allows us to index your message, reply, or like. The rest is paid to the network validators who process and permanently store the data on the blockchain.</p>
 <doc-anchor-target id="can-messages-be-deleted">
     <h2>
         <doc-anchor-trigger class="header-anchor-trigger" to="#can-messages-be-deleted">#</doc-anchor-trigger>
@@ -231,10 +231,10 @@ Never share this information with anyone else.</p>
                                     </div>
                             
                                     <div class="w-1/2">
-                                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../../guides/usage/">
+                                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../../guides/protocol/">
                                             <span>
                                                 <span class="block text-xs font-normal text-right text-base-text-muted">Next</span>
-                                                <span class="block mt-1">Usage</span>
+                                                <span class="block mt-1">Protocol</span>
                                             </span>
                                             <svg xmlns="http://www.w3.org/2000/svg" class="ml-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19.92 12.38a1 1 0 00-.22-1.09l-7-7a.996.996 0 10-1.41 1.41l5.3 5.3H5c-.55 0-1 .45-1 1s.45 1 1 1h11.59l-5.29 5.29a.996.996 0 000 1.41c.19.2.44.3.7.3s.51-.1.71-.29l7-7c.09-.09.16-.21.21-.33z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
                                         </a>
