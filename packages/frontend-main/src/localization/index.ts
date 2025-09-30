@@ -89,6 +89,7 @@ export const messages = {
                 envConfig: 'Environment Config',
                 post: 'Post',
                 explore: 'Explore',
+                about: 'About',
             },
             SearchInput: {
                 noResults: 'No results found',
@@ -146,6 +147,10 @@ export const messages = {
             },
             PostActions: {
                 replies: 'reply | replies',
+            },
+            About: {
+                privacyPolicy: 'Privacy Policy',
+                termsAndConditions: 'Terms & Conditions',
             },
         },
         feedbacks: {

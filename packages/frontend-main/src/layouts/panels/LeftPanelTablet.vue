@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { type RouteRecordNameGeneric, useRouter } from 'vue-router';
-import { Bell, Feather, House, Search, Settings, User } from 'lucide-vue-next';
+import { Bell, Feather, HelpCircle, House, Search, Settings, User } from 'lucide-vue-next';
 
 import { useDefaultAmount } from '@/composables/useDefaultAmount';
 import { usePopups } from '@/composables/usePopups';
@@ -43,6 +43,10 @@ const buttonClass = (routeName?: RouteRecordNameGeneric) => `flex justify-center
 
         <RouterLink v-if="wallet.loggedIn.value"  to="/settings" :class="buttonClass(routesNames.settings)">
           <Settings class="size-6" />
+        </RouterLink>
+
+        <RouterLink  to="/about" :class="buttonClass(routesNames.about)">
+          <HelpCircle class="size-6" />
         </RouterLink>
       </nav>
 
