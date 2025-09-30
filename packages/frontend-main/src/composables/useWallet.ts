@@ -18,6 +18,7 @@ import { useWalletStateStore } from '@/stores/useWalletStateStore';
 import { getChainConfigLazy } from '@/utility/getChainConfigLazy';
 
 const TX_BROADCAST_TIMEOUT = 30_000;
+const DEFAULT_GAS_CEIL = 1.4;
 
 export enum Wallets {
     keplr = 'Keplr',
@@ -55,6 +56,11 @@ const isCredentialsValid = async () => {
 
     const resVerify = await resVerifyRaw.json();
     if (resVerify.status !== 200) {
+        if (resVerify.status === 429) {
+            console.log(`Exceeded rate limiting, try again later.`);
+            return false;
+        }
+
         return false;
     }
 
@@ -78,12 +84,18 @@ const useWalletInstance = () => {
     const walletDialogStore = useWalletDialogStore();
     const walletState = storeToRefs(useWalletStateStore());
 
-    const signOut = () => {
+    const signOut = async () => {
         walletState.address.value = '';
         walletState.used.value = null;
         walletState.loggedIn.value = false;
         walletState.processState.value = 'idle';
-        document.cookie = 'auth=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        await fetch(apiRoot + `/logout`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+        });
     };
     const signer: Ref<OfflineSigner | null> = ref(null);
 
@@ -225,7 +237,28 @@ const useWalletInstance = () => {
                     method: 'POST',
                     headers,
                 });
-                const response = (await responseRaw.json()) as { status: number; id: number; message: string };
+
+                let response: { status: number; id: number; message: string; error?: string };
+
+                try {
+                    response = await responseRaw.json();
+                }
+                catch (err) {
+                    walletState.loggedIn.value = false;
+                    walletDialogStore.hideDialog();
+                    console.error(`Failed to create auth request`, err);
+                    return;
+                }
+
+                if (responseRaw.status === 429) {
+                    walletState.loggedIn.value = false;
+                    walletDialogStore.hideDialog();
+                    if (response.error) {
+                        console.error(`${response.message}`);
+                    }
+
+                    return;
+                }
 
                 // Sign the authentication request
                 const signedMsg = await signMessage(response.message);
@@ -302,7 +335,7 @@ const useWalletInstance = () => {
             }
             else {
                 const simulate = await client.simulate(walletState.address.value, msgs, formattedMemo);
-                gasLimit = simulate && simulate > 0 ? '' + Math.ceil(simulate * 1.5) : '500000';
+                gasLimit = simulate && simulate > 0 ? '' + Math.ceil(simulate * DEFAULT_GAS_CEIL) : '500000';
                 cachedGasLimit.value = gasLimit;
             }
 
@@ -405,7 +438,7 @@ const useWalletInstance = () => {
                     formattedMemo,
                 );
 
-                gasLimit = simulate && simulate > 0 ? '' + Math.ceil(simulate * 2.0) : '500000';
+                gasLimit = simulate && simulate > 0 ? '' + Math.ceil(simulate * DEFAULT_GAS_CEIL) : '500000';
                 cachedGasLimit.value = gasLimit;
             }
 

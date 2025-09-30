@@ -1,0 +1,24 @@
+name: Deploy Retype Docs
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - mainnet
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: retypeapp/action-build@latest
+        env:
+          key: ${{ secrets.RETYPE_KEY }}
+          config_path: docs
+
+      - uses: retypeapp/action-github-pages@latest
+        with:
+          update-branch: true

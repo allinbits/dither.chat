@@ -24,7 +24,7 @@ export function useReadNotification(
     const { mutateAsync } = useMutation({
         mutationFn: async ({ notification }: FollowUserRequestMutation) => {
             const resVerifyRaw = await fetch(apiRoot + `/notification-read?hash=${notification.hash}&address=${wallet.address}`, {
-                method: 'GET',
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },

@@ -1,3 +1,5 @@
+import crypto from 'node:crypto';
+
 import type * as T from '../types/index';
 
 import { sql } from 'drizzle-orm';
@@ -38,7 +40,19 @@ export function isReaderAuthorizationValid(headers: Record<string, string | unde
         return false;
     }
 
-    return headers['authorization'] === AUTH;
+    try {
+        const authHeaderBuffer = Buffer.from(headers['authorization'], 'utf8');
+        const authSecretBuffer = Buffer.from(AUTH, 'utf8');
+        if (authHeaderBuffer.length !== authSecretBuffer.length) {
+            return false;
+        }
+
+        return crypto.timingSafeEqual(authHeaderBuffer, authSecretBuffer);
+    }
+    catch (error) {
+        console.error('Error during authorization validation:', error);
+        return false;
+    }
 }
 
 export async function getJsonbArrayCount(hash: string, tableName: string) {
@@ -49,4 +63,29 @@ export async function getJsonbArrayCount(hash: string, tableName: string) {
         `);
 
     return result.rows.length > 0 ? result.rows[0].array_count : 0;
+}
+
+export function getRequestIP(request: Request) {
+    const forwardedFor = request.headers.get('x-forwarded-for');
+    if (forwardedFor) {
+        return forwardedFor.split(',')[0].trim();
+    }
+
+    const realIp = request.headers.get('x-real-ip');
+    if (realIp) {
+        return realIp;
+    }
+
+    const flyClientIP = request.headers.get('fly-client-ip');
+    if (flyClientIP) {
+        return flyClientIP;
+    }
+
+    const cfIp = request.headers.get('cf-connecting-ip');
+    if (cfIp) {
+        return cfIp;
+    }
+
+    // We'll just default to `host` if not found
+    return request.headers.get('host') ?? 'localhost:3000';
 }

@@ -34,9 +34,15 @@ export function useCreateReply(
             txSuccess.value = undefined;
             isToastShown.value = true;
 
+            const msg = message.replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+
             const result = await wallet.dither.send(
                 'Reply',
-                { args: [parentPost.value.hash, message], amount: amountAtomics },
+                { args: [parentPost.value.hash, msg], amount: amountAtomics },
             );
 
             if (!result.broadcast) {

@@ -1,5 +1,5 @@
 import { sql } from 'drizzle-orm';
-import { boolean, index, integer, pgEnum, pgTable, primaryKey, serial, text, timestamp, varchar } from 'drizzle-orm/pg-core';
+import { bigint, boolean, index, integer, pgEnum, pgTable, primaryKey, serial, text, timestamp, varchar } from 'drizzle-orm/pg-core';
 
 const MEMO_LENGTH = 512;
 
@@ -100,6 +100,16 @@ export const AuthRequests = pgTable(
     },
 );
 
+export const rateLimits = pgTable(
+    'ratelimits',
+    {
+        id: serial('id').primaryKey(),
+        ip: text().notNull().unique(),
+        requests: integer().notNull().default(0),
+        lastRequest: bigint({ mode: 'number' }).notNull(),
+    },
+);
+
 // Audits are append only
 export const AuditTable = pgTable('audits', {
     id: serial('id').primaryKey(),
@@ -144,4 +154,16 @@ export const ReaderState = pgTable('state', {
     last_block: varchar().notNull(),
 });
 
-export const tables = ['feed', 'likes', 'dislikes', 'flags', 'follows', 'audits', 'moderators', 'notifications', 'state', 'authrequests'];
+export const tables = [
+    'feed',
+    'likes',
+    'dislikes',
+    'flags',
+    'follows',
+    'audits',
+    'moderators',
+    'notifications',
+    'state',
+    'authrequests',
+    'ratelimits',
+];

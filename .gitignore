@@ -11,3 +11,5 @@ data/*
 .vscode/
 .idea/
 .DS_Store
+.retype
+retype.manifest

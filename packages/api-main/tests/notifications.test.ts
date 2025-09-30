@@ -43,10 +43,11 @@ describe('v1/notifications', async () => {
         assert.isFalse(notificationResponse.rows[0].was_read, `notification was not marked as read, got true`);
         assert.isOk(notificationResponse.rows[0].actor === walletA.publicKey, `unexpected actor, got ${notificationResponse.rows[0].actor}`);
 
-        const readResponse = await get<{
+        const readResponse = await post<{
             status: number;
         }>(
             `notification-read?address=${walletB.publicKey}&hash=${notificationResponse.rows[0].hash}`,
+            {},
             bearerToken,
         );
         assert.isOk(readResponse?.status === 200, `response was not okay, got ${readResponse?.status}`);
@@ -121,10 +122,11 @@ describe('v1/notifications', async () => {
         assert.isFalse(notificationResponse.rows[0].was_read, `notification was not marked as read, got true`);
         assert.isOk(notificationResponse.rows[0].actor === walletB.publicKey, `unexpected actor, got ${notificationResponse.rows[0].actor}`);
 
-        const readResponse = await get<{
+        const readResponse = await post<{
             status: number;
         }>(
             `notification-read?address=${walletA.publicKey}&hash=${notificationResponse.rows[0].hash}`,
+            {},
             bearerToken,
         );
         assert.isOk(readResponse?.status === 200, `response was not okay, got ${readResponse?.status}`);

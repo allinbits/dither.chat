@@ -1,9 +1,4 @@
-# fly.toml app configuration file generated for dither-testnet-api-main on 2025-06-05T14:14:50-05:00
-#
-# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
-#
-
-app = 'dither-testnet-api-main'
+app = 'dither-mainnet-api-main'
 primary_region = 'iad'
 
 [build]
@@ -14,6 +9,7 @@ force_https = true
 auto_start_machines = true
 min_machines_running = 1
 processes = ['app']
+sticky_machines = true
 
 [http_service.http_options]
 h2_backend = false

@@ -1,4 +1,4 @@
-name: api-main
+name: testnet-api-main
 
 on:
   pull_request:
@@ -86,6 +86,6 @@ jobs:
       - name: Deploy api-main to Fly.io
         run: |
           cd ./packages/api-main
-          flyctl deploy --remote-only
+          flyctl deploy --remote-only --config ./fly.testnet.toml
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_API_MAIN }}

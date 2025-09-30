@@ -40,7 +40,7 @@ export async function post<T = { status: number }>(
 ): Promise<T | null> {
     const headers: Record<string, string> = {
         'Content-Type': 'application/json',
-        'authorization': 'default',
+        'authorization': process.env.AUTH ?? 'whatever',
     };
 
     if (token) {

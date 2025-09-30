@@ -1,3 +1,5 @@
+import crypto from 'node:crypto';
+
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -24,16 +26,17 @@ export function useConfig(): Config {
         process.exit(1);
     }
 
-    if (typeof process.env.AUTH === 'undefined') {
-        console.warn(`AUTH env variable is set to default, ensure you provide an authorization key for reader communication`);
+    if (!process.env.AUTH || process.env.AUTH === 'default') {
+        throw new Error(`AUTH must be set to a strong secret`);
     }
 
-    if (typeof process.env.JWT === 'undefined') {
-        console.warn(`JWT env variable is seto to default`);
+    if (!process.env.JWT) {
+        console.log(`JWT was not set, defaulting to a randomized byte hex string.`);
+        process.env.JWT = crypto.randomBytes(128).toString('hex');
     }
 
     if (typeof process.env.JWT_STRICTNESS === 'undefined') {
-        console.warn(`JWT_STRICTNESS not set correctly, either set to 'lax' or 'strict'`);
+        console.warn(`JWT_STRICTNESS not set, defaulting to lax`);
         process.env.JWT_STRICTNESS = 'lax';
     }
 

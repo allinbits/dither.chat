@@ -19,13 +19,13 @@ const flatPosts = computed(() => data.value?.pages.flat() ?? []);
 </script>
 
 <template>
-  <div :class="cn('flex flex-col w-full', flatPosts.length && 'border-t')">
+  <div :class="cn('flex flex-col w-full box-border', flatPosts.length && 'border-t')">
     <Loader v-if="isLoading" class="animate-spin w-full mt-10" />
 
     <span v-else-if="!flatPosts.length" class="self-center mt-4 text-md font-semibold text-base">{{
       emptyText || $t('components.PostsList.empty') }}</span>
 
-    <PostItem v-else v-for="post in flatPosts" :key="post.hash" :post="post" />
+    <PostItem v-else v-for="post in flatPosts" :key="post.hash" :post="post" class="flex flex-wrap w-full break-words" />
 
     <div v-if="isFetchingNextPage || hasNextPage" class="flex items-center justify-center my-4 px-4 h-[40px]">
       <Loader v-if="isFetchingNextPage" class="animate-spin " />

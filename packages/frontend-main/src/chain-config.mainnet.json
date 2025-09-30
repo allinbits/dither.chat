@@ -1,0 +1,41 @@
+{
+  "rpc": "https://atomone-rpc.allinbits.com/",
+  "rest": "https://atomone-api.allinbits.com/",
+  "chainId": "atomone-1",
+  "chainName": "AtomOne",
+  "bip44": {
+    "coinType": 118
+  },
+  "bech32Config": {
+    "bech32PrefixAccAddr": "atone",
+    "bech32PrefixAccPub": "atonepub",
+    "bech32PrefixValAddr": "atonevaloper",
+    "bech32PrefixValPub": "atonevaloperpub",
+    "bech32PrefixConsAddr": "atonevalcons",
+    "bech32PrefixConsPub": "atonevalconspub"
+  },
+  "currencies": [
+    {
+      "coinDenom": "ATONE",
+      "coinMinimalDenom": "uatone",
+      "coinDecimals": 6
+    },
+    {
+      "coinDenom": "PHOTON",
+      "coinMinimalDenom": "uphoton",
+      "coinDecimals": 6
+    }
+  ],
+  "stakeCurrency": {
+    "coinDenom": "ATONE",
+    "coinMinimalDenom": "uatone",
+    "coinDecimals": 6
+  },
+  "feeCurrencies": [
+    {
+      "coinDenom": "PHOTON",
+      "coinMinimalDenom": "uphoton",
+      "coinDecimals": 6
+    }
+  ]
+}

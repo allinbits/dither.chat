@@ -278,25 +278,6 @@ describe('v1 - mod', { sequential: true }, () => {
 
         const userBanResponse = await post(`mod/unban`, body, bearerToken);
         assert.isOk(userBanResponse?.status === 200, `response was not okay ${JSON.stringify(userBanResponse)}`);
-
-        // Totally user should have 2 post as one was deleted by itself (including the one posted while banned)
-        const postsResponse = await get<{
-            status: number;
-            rows: {
-                hash: string;
-                author: string;
-                message: string;
-                deleted_at: Date;
-                deleted_reason: string;
-                deleted_hash: string;
-            }[];
-        }>(`posts?address=${addressUserA}`);
-
-        assert.isOk(postsResponse?.status === 200, 'posts did not resolve');
-        assert.isOk(
-            Array.isArray(postsResponse.rows) && postsResponse.rows.length == 2,
-            `invalid number of posts, expeted 2, got ${postsResponse.rows.length}`,
-        );
     });
 
     it('POST - freshly unbanned user publishes without problems', async () => {

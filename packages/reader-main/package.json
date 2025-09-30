@@ -7,13 +7,15 @@
     "type": "module",
     "scripts": {
         "build": "tsc",
-        "start": "tsx ./src/index.ts",
+        "start": "vite-node ./src/index.ts",
         "test": "vitest"
     },
     "dependencies": {
         "@atomone/chronostate": "^2.2.3",
         "@atomone/dither-api-types": "^1.4.0",
-        "tsx": "^4.19.3"
+        "graphql": "^16.8.1",
+        "graphql-request": "^6.1.0",
+        "tsx": "^4.20.5"
     },
     "prettier": {
         "tabWidth": 4,
@@ -25,6 +27,7 @@
         "@types/node": "^22.13.10",
         "@types/pg": "^8.11.12",
         "typescript": "^5.8.2",
+        "vite-node": "^3.2.4",
         "vitest": "^3.1.3"
     }
 }

@@ -32,9 +32,15 @@ export function useCreatePost(
             txSuccess.value = undefined;
             isToastShown.value = true;
 
+            const msg = message.replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+
             const result = await wallet.dither.send(
                 'Post',
-                { args: [message], amount: amountAtomics },
+                { args: [msg], amount: amountAtomics },
             );
 
             if (!result.broadcast) {

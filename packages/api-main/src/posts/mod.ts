@@ -1,7 +1,7 @@
 import type { Cookie } from 'elysia';
 
 import { type Posts } from '@atomone/dither-api-types';
-import { and, eq, inArray, isNull, sql } from 'drizzle-orm';
+import { and, eq, isNull, sql } from 'drizzle-orm';
 
 import { getDatabase } from '../../drizzle/db';
 import { AuditTable, FeedTable, ModeratorTable } from '../../drizzle/schema';
@@ -63,7 +63,7 @@ export async function ModRemovePost(body: typeof Posts.ModRemovePostBody.static,
     }
     catch (err) {
         console.error(err);
-        return { status: 400, error: 'failed to delete post, maybe invalid: ' + err };
+        return { status: 400, error: 'failed to delete post' };
     }
 }
 
@@ -136,7 +136,7 @@ export async function ModRestorePost(body: typeof Posts.ModRemovePostBody.static
     }
     catch (err) {
         console.error(err);
-        return { status: 400, error: 'failed to delete post, maybe invalid' + err };
+        return { status: 400, error: 'failed to delete post, maybe invalid' };
     }
 }
 
@@ -191,7 +191,7 @@ export async function ModBan(body: typeof Posts.ModBanBody.static, auth: Cookie<
     }
     catch (err) {
         console.error(err);
-        return { status: 400, error: 'failed to ban user' + err };
+        return { status: 400, error: 'failed to ban user' };
     }
 }
 
@@ -222,27 +222,6 @@ export async function ModUnban(body: typeof Posts.ModBanBody.static, auth: Cooki
             return { status: 404, error: 'moderator not found' };
         }
 
-        const statement = getDatabase()
-            .update(FeedTable)
-            .set({
-                removed_at: null,
-                removed_hash: null,
-                removed_by: null,
-            })
-            .where(
-                and(
-                    eq(FeedTable.author, body.user_address),
-                    // Only restore posts that were removed by a moderator
-                    inArray(
-                        FeedTable.removed_by,
-                        getDatabase().select({ value: ModeratorTable.address }).from(ModeratorTable),
-                    ),
-                ),
-            )
-            .returning();
-
-        await statement.execute();
-
         await statementAuditUnbanUser.execute({
             user_address: body.user_address.toLowerCase(),
             hash: body.hash.toLowerCase(),
@@ -255,6 +234,6 @@ export async function ModUnban(body: typeof Posts.ModBanBody.static, auth: Cooki
     }
     catch (err) {
         console.error(err);
-        return { status: 400, error: 'failed to unban user' + err };
+        return { status: 400, error: 'failed to unban user' };
     }
 }
