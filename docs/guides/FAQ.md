@@ -9,11 +9,11 @@ Information for people who have questions about Dither and how it works.
 
 ## How does dither work?
 
-Dither works by pushing messages to the AtomOne blockchain with a specific format.
+Dither pushes messages to the AtomOne blockchain using a specific format.
 
-Specifically for posting it's `dither.Post("My message goes here")`
+For posting, the memo must be `dither.Post("My message goes here")`
 
-As long as it goes to the `atone1uq6zjslvsa29cy6uu75y8txnl52mw06j6fzlep` address, it will be indexed.
+As long as the message is sent to the address `atone1uq6zjslvsa29cy6uu75y8txnl52mw06j6fzlep` it will be indexed.
 
 ## Can I upload images?
 
@@ -25,7 +25,7 @@ If you are using a cli application like `atomoned` you can do a simple bank tran
 
 ## Why does dither cost PHOTON?
 
-In order to index your message and keep the service alive we take a very tiny fee for indexing, and the validators will get the rest of the fees for indexing the data on-chain.
+Dither's indexing fee is exceptionally small and a mere fraction of a cent. This fee is to cover the operational cost of keeping our service alive. This tiny fee allows us to index your message, reply, or like. The rest is paid to the network validators who process and permanently store the data on the blockchain.
 
 ## Can messages be deleted?
 
