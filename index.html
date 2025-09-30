@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.11.0.812494975535">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.11.0.812512695897">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.11.0">
 
     <!-- Primary Meta Tags -->
-    <title>Introducing Dither</title>
-    <meta name="title" content="Introducing Dither">
-    <meta name="description" content="A Public Protocol for Thought">
+    <title>About Dither</title>
+    <meta name="title" content="About Dither">
+    <meta name="description" content="Dither is a public protocol for publishing messages onchain**.** It is designed to be simple, durable, and open to extension by anyone.">
 
     <!-- Canonical -->
     <link rel="canonical" href="https://docs.dither.chat/">
@@ -19,22 +19,22 @@
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://docs.dither.chat/">
-    <meta property="og:title" content="Introducing Dither">
-    <meta property="og:description" content="A Public Protocol for Thought">
+    <meta property="og:title" content="About Dither">
+    <meta property="og:description" content="Dither is a public protocol for publishing messages onchain**.** It is designed to be simple, durable, and open to extension by anyone.">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://docs.dither.chat/">
-    <meta property="twitter:title" content="Introducing Dither">
-    <meta property="twitter:description" content="A Public Protocol for Thought">
+    <meta property="twitter:title" content="About Dither">
+    <meta property="twitter:description" content="Dither is a public protocol for publishing messages onchain**.** It is designed to be simple, durable, and open to extension by anyone.">
 
     <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
 
-    <link href="resources/css/retype.css?v=3.11.0.812494975535" rel="stylesheet">
+    <link href="resources/css/retype.css?v=3.11.0.812512695897" rel="stylesheet">
 
-    <script data-cfasync="false" src="resources/js/config.js?v=3.11.0.812494975535" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="resources/js/config.js?v=3.11.0.812512695897" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="resources/js/retype.js?v=3.11.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="resources/js/lunr.js?v=3.11.0.812494975535" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="resources/js/lunr.js?v=3.11.0.812512695897" data-turbo-eval="false" defer></script>
 </head>
 <body>
     <div id="retype-app" class="relative text-base antialiased text-base-text bg-base-bg font-body">
@@ -149,95 +149,25 @@
                                 <!-- Rendered if sidebar right is enabled -->
                                 <div id="retype-sidebar-right-toggle"></div>
                                 <!-- Page content  -->
-<doc-anchor-target id="introducing-dither" class="break-words">
+<doc-anchor-target id="about-dither" class="break-words">
     <h1>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#introducing-dither">#</doc-anchor-trigger>
-        <span>Introducing Dither</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#about-dither">#</doc-anchor-trigger>
+        <span><strong>About Dither</strong></span>
     </h1>
 </doc-anchor-target>
-<p><em>A Public Protocol for Thought</em></p>
-<p>The internet used to feel different. Before the timelines, the algorithms, the performative haze, there was honesty in how we shared. Words mattered. You didn’t need a strategy to speak your mind. That’s what we’re building towards again.</p>
-<p>All in Bits is proud to present <strong>Dither</strong>, a small but determined experiment in reclaiming what the internet used to feel like. Today, we’ve launched the first live version: a minimal but functional application stack that shows how the protocol works, how people can start using it, and how builders can extend it.</p>
-<p>There’s no algorithm. No timeline tricks. No edits. Just posts, preserved forever on-chain.</p>
-<doc-anchor-target id="what-dither-is">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#what-dither-is">#</doc-anchor-trigger>
-        <span><strong>What Dither Is</strong></span>
-    </h2>
-</doc-anchor-target>
-<p>At its core, Dither is a read-optimized, event-sourced messaging protocol. It indexes a specific subset of memos on any compatible blockchain (currently <a href="https://atom.one/">AtomOne</a>), reconstructs logical state from those events, and exposes a public API.</p>
-<p>It has two main parts:</p>
+<p>Dither is a public protocol for publishing messages onchain**.** It is designed to be simple, durable, and open to extension by anyone.</p>
+<p>At its core, Dither is a read-optimized, event-sourced messaging protocol. It indexes a specific subset of memos from any compatible blockchain (currently AtomOne), reconstructs application state from those events, and exposes that state through a public API.</p>
+<p>There are two main components:</p>
 <ul>
-<li><p><strong>Dither Service</strong>: the backend that reads blockchain data, reconstructs user and post state, and serves that through a public API.</p>
+<li><p><strong>Dither Service</strong><br />
+A backend that monitors the blockchain, processes memo events, and reconstructs user and post data. This state is made available through a REST API.</p>
 </li>
-<li><p><strong>Dither Website</strong>: a lightweight client that connects to the service and lets users browse, post, follow, and interact with content.</p>
+<li><p><strong>Dither Website</strong><br />
+A lightweight frontend that connects to the API and lets users post, browse, follow others, and reflect content. It is fully stateless and open source.</p>
 </li>
 </ul>
-<p>This separation means anyone can run their own version of the service, create new clients, or build entirely new interfaces on top of the Dither protocol. It’s a toolset for building digital spaces.</p>
-<doc-anchor-target id="were-just-getting-started">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#were-just-getting-started">#</doc-anchor-trigger>
-        <span><strong>We’re Just Getting Started</strong></span>
-    </h2>
-</doc-anchor-target>
-<p>Here is what’s built so far, and what’s coming next.</p>
-<doc-anchor-target id="phase-1-launch-now">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#phase-1-launch-now">#</doc-anchor-trigger>
-        <span><strong>Phase 1: Launch (now)</strong></span>
-    </h3>
-</doc-anchor-target>
-<ul>
-<li><p>Live backend indexing memos on AtomOne</p>
-</li>
-<li><p>Basic client for posting, following, searching, and reflecting</p>
-</li>
-<li><p>No login required, but supports passkey and wallet connections</p>
-</li>
-<li><p>All content is public and preserved on-chain</p>
-</li>
-</ul>
-<doc-anchor-target id="phase-2-onboarding-and-community-soon">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#phase-2-onboarding-and-community-soon">#</doc-anchor-trigger>
-        <span><strong>Phase 2: Onboarding and Community (soon)</strong></span>
-    </h3>
-</doc-anchor-target>
-<ul>
-<li><p>A user-friendly faucet system for new accounts</p>
-</li>
-<li><p>Passkey onboarding with temporary delegated posting rights</p>
-</li>
-<li><p>Metadata improvements for rich previews in apps like Discord</p>
-</li>
-<li><p>Feedback loops to improve UX and guide feature development</p>
-</li>
-</ul>
-<doc-anchor-target id="phase-3-scaling-and-specialization-later">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#phase-3-scaling-and-specialization-later">#</doc-anchor-trigger>
-        <span><strong>Phase 3: Scaling and Specialization (later)</strong></span>
-    </h3>
-</doc-anchor-target>
-<ul>
-<li><p>Tools for moderation and shared community policies</p>
-</li>
-<li><p>Permissionless portal creation and custom clients</p>
-</li>
-<li><p>Growth through builders, not gatekeepers</p>
-</li>
-</ul>
-<doc-anchor-target id="protocols-need-people">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#protocols-need-people">#</doc-anchor-trigger>
-        <span><strong>Protocols Need People</strong></span>
-    </h2>
-</doc-anchor-target>
-<p>Dither is a public protocol that anyone can build on. It is early days, but the foundation is live and ready for real-world use. We are looking for people who care about creating better spaces online and want to shape what comes next.</p>
-<p>If you believe the internet should have places owned by the people who use them, places where communication is open, public, and resilient, this is your chance to help build and grow one.</p>
-<p><strong>Developers</strong> can contribute directly. Fork the repos, run your own service, extend the protocol, or build your own frontend. The core is open, composable, and designed to be remixed.</p>
-<p>If you’re <strong>not a builder</strong>, you can still help. Go post! Use it. Share your posts. Bring in new voices. Tell us what’s missing. Every real use case helps improve Dither.</p>
-<p>We’re building Dither in the open, and your participation now will help guide the future. The internet was a better place without algorithms. Let&#x27;s rebuild a corner of it again.</p>
+<p>These components are designed to be decoupled. Anyone can run their own version of the service, build their own client, or use the protocol in a completely different way. Dither is not a platform. It is a protocol and reference implementation.</p>
+<p>Dither avoids algorithmic feeds, editing tools, and moderation queues. It is minimal by design. All content is public and stored permanently onchain. This structure creates space for users and communities to define their own norms, tooling, and experience. Developers can run their own indexers, fork the client, or build custom frontends using the public API.</p>
 
                                 
                                 <!-- Required only on API pages -->
@@ -297,6 +227,6 @@
 
     <div id="retype-overlay-target"></div>
 
-    <script data-cfasync="false">window.__DOCS__ = { "title": "Introducing Dither", isRoot: true, level: 0, icon: "file", hasPrism: false, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
+    <script data-cfasync="false">window.__DOCS__ = { "title": "About Dither", isRoot: true, level: 0, icon: "file", hasPrism: false, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
 </body>
 </html>
