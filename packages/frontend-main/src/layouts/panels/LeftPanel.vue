@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { type RouteRecordNameGeneric, useRouter } from 'vue-router';
-import { Bell, House, Search, Settings, User } from 'lucide-vue-next';
+import { Bell, HelpCircle, House, Search, Settings, User } from 'lucide-vue-next';
 
 import { useDefaultAmount } from '@/composables/useDefaultAmount';
 import { usePopups } from '@/composables/usePopups';
@@ -66,6 +66,14 @@ const buttonLabelClass = 'text-lg font-semibold';
           >
             <Settings class="size-6" />
             <span :class="buttonLabelClass">Settings</span>
+          </RouterLink>
+
+          <RouterLink
+            :to="`/help`"
+            :class="buttonClass(routesNames.help)"
+          >
+            <HelpCircle class="size-6" />
+            <span :class="buttonLabelClass">Help</span>
           </RouterLink>
         </div>
       </nav>
