@@ -151,6 +151,7 @@ export const messages = {
             About: {
                 privacyPolicy: 'Privacy Policy',
                 termsAndConditions: 'Terms & Conditions',
+                docs: 'Documentation',
             },
         },
         feedbacks: {
