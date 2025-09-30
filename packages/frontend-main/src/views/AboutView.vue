@@ -17,13 +17,13 @@ const gotoTermsAndConditions = () => {
 <template>
   <MainLayout>
     <div class="flex flex-col">
-      <ViewHeading :title="$t('components.Headings.help')" />
+      <ViewHeading :title="$t('components.Headings.about')" />
 
       <div class="flex flex-col">
         <div class="border-b">
           <Button @click="gotoPrivacyPolicy" size="sm" class="w-full text-left py-8 " variant="ghost">
             <span class="grow pl-2">
-              {{ $t('components.Help.privacyPolicy') }}
+              {{ $t('components.About.privacyPolicy') }}
             </span>
           </Button>
         </div>
@@ -31,7 +31,7 @@ const gotoTermsAndConditions = () => {
         <div class="border-b">
           <Button @click="gotoTermsAndConditions" size="sm" class="w-full text-left py-8" variant="ghost">
             <span class="grow pl-2">
-              {{ $t('components.Help.termsAndConditions') }}
+              {{ $t('components.About.termsAndConditions') }}
             </span>
           </Button>
         </div>

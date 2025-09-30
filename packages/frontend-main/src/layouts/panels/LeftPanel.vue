@@ -69,11 +69,11 @@ const buttonLabelClass = 'text-lg font-semibold';
           </RouterLink>
 
           <RouterLink
-            :to="`/help`"
-            :class="buttonClass(routesNames.help)"
+            :to="`/about`"
+            :class="buttonClass(routesNames.about)"
           >
             <HelpCircle class="size-6" />
-            <span :class="buttonLabelClass">Help</span>
+            <span :class="buttonLabelClass">About</span>
           </RouterLink>
         </div>
       </nav>

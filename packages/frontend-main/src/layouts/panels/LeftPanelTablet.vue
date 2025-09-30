@@ -45,7 +45,7 @@ const buttonClass = (routeName?: RouteRecordNameGeneric) => `flex justify-center
           <Settings class="size-6" />
         </RouterLink>
 
-        <RouterLink  to="/help" :class="buttonClass(routesNames.help)">
+        <RouterLink  to="/about" :class="buttonClass(routesNames.about)">
           <HelpCircle class="size-6" />
         </RouterLink>
       </nav>

@@ -1,9 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
 import { useWalletStateStore } from './stores/useWalletStateStore';
+import AboutView from './views/AboutView.vue';
 import EnvConfigView from './views/EnvConfigView.vue';
 import ExploreView from './views/ExploreView.vue';
-import HelpView from './views/HelpView.vue';
 import HomeFeedView from './views/Home/HomeFeedView.vue';
 import HomeFollowingView from './views/Home/HomeFollowingView.vue';
 import ManageFollowingView from './views/ManageFollowingView.vue';
@@ -32,7 +32,7 @@ export const routesNames = {
     post: 'Post',
     unauthorized: 'Unauthorized',
     notFound: 'NotFound',
-    help: 'Help',
+    about: 'Anout',
 };
 
 const routes = [
@@ -48,7 +48,7 @@ const routes = [
     { path: '/settings/settings-single-session', name: routesNames.settingsSingleSession, component: SettingsSingleSession, meta: { authRequired: true } },
     { path: '/settings/default-amount', name: routesNames.settingsDefaultAmount, component: SettingsDefaultAmount, meta: { authRequired: true } },
     { path: '/post/:hash/:postHash?', name: routesNames.post, component: PostView },
-    { path: '/help', name: routesNames.help, component: HelpView },
+    { path: '/about', name: routesNames.about, component: AboutView },
     {
         path: '/unauthorized',
         name: routesNames.unauthorized,
