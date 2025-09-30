@@ -18,7 +18,7 @@ import { useWalletStateStore } from '@/stores/useWalletStateStore';
 import { getChainConfigLazy } from '@/utility/getChainConfigLazy';
 
 const TX_BROADCAST_TIMEOUT = 30_000;
-const DEFAULT_GAS_CEIL = 1.4;
+const DEFAULT_GAS_CEIL = 1.6;
 
 export enum Wallets {
     keplr = 'Keplr',
