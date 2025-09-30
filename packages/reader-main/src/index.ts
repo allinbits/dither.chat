@@ -11,7 +11,7 @@ import { useQueue } from './queue';
 
 const config = useConfig();
 const queue = useQueue();
-const apiRoot = process.env.API_ROOT ?? 'http://localhost:3000';
+const apiRoot = process.env.API_ROOT ?? 'http://localhost:3000/v1';
 const msCheckpointTime = 1_000;
 const actionTypes = ['Post', 'Reply', 'Like', 'Flag', 'Dislike', 'Follow', 'Unfollow', 'Remove'];
 

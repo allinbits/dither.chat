@@ -40,7 +40,7 @@ export const getWalletHelp = (wallet: Wallets) => {
 
 const isCredentialsValid = async () => {
     const configStore = useConfigStore();
-    const apiRoot = configStore.envConfig.apiRoot ?? 'http://localhost:3000';
+    const apiRoot = configStore.envConfig.apiRoot ?? 'http://localhost:3000/v1';
 
     const resVerifyRaw = await fetch(apiRoot + '/auth-verify', {
         method: 'GET',
@@ -78,7 +78,7 @@ const useWalletInstance = () => {
     const configStore = useConfigStore();
     const balanceFetcher = useBalanceFetcher();
 
-    const apiRoot = configStore.envConfig.apiRoot ?? 'http://localhost:3000';
+    const apiRoot = configStore.envConfig.apiRoot ?? 'http://localhost:3000/v1';
     const destinationWallet = configStore.envConfig.communityWallet ?? 'atone1uq6zjslvsa29cy6uu75y8txnl52mw06j6fzlep';
 
     const walletDialogStore = useWalletDialogStore();
@@ -231,12 +231,14 @@ const useWalletInstance = () => {
             }
 
             try {
+                console.log('postBodypostBody', postBody);
                 // Create the authentication request
                 const responseRaw = await fetch(apiRoot + '/auth-create', {
                     body: JSON.stringify(postBody),
                     method: 'POST',
                     headers,
                 });
+                console.log('responseRawresponseRaw', responseRaw);
 
                 let response: { status: number; id: number; message: string; error?: string };
 

@@ -10,7 +10,7 @@ interface Params {
 
 export const notificationsCount = (params: Params) => {
     const configStore = useConfigStore();
-    const apiRoot = configStore.envConfig.apiRoot ?? 'http://localhost:3000';
+    const apiRoot = configStore.envConfig.apiRoot ?? 'http://localhost:3000/v1';
 
     return queryOptions({
         queryKey: ['notifications-count', params.userAddress],
