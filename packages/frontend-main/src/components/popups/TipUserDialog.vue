@@ -3,6 +3,7 @@ import { computed, ref } from 'vue';
 import { toast } from 'vue-sonner';
 import { Decimal } from '@cosmjs/math';
 
+import { useFractionalDigits } from '@/composables/useFractionalDigits';
 import { useTipUser } from '@/composables/useTipUser';
 import { useTxDialog } from '@/composables/useTxDialog';
 
@@ -13,7 +14,6 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import InputPhoton from '@/components/ui/input/InputPhoton.vue';
 import { useConfigStore } from '@/stores/useConfigStore';
-import { fractionalDigits } from '@/utility/atomics';
 import { showBroadcastingToast } from '@/utility/toast';
 
 const isBalanceInputValid = ref(false);
@@ -26,6 +26,7 @@ const {
     handleClose,
 } = useTxDialog<string>('tipUser', txSuccess, txError);
 const configStore = useConfigStore();
+const fractionalDigits = useFractionalDigits();
 const amountAtomics = computed(() => configStore.config.defaultAmountEnabled ? configStore.config.defaultAmountAtomics : Decimal.fromUserInput(inputPhotonModel.value.toString(), fractionalDigits).atomics);
 
 const canSubmit = computed(() => {

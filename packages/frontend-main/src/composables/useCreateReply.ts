@@ -4,13 +4,13 @@ import { type Ref, ref } from 'vue';
 import { Decimal } from '@cosmjs/math';
 import { type InfiniteData, useMutation, useQueryClient } from '@tanstack/vue-query';
 
+import { useFractionalDigits } from './useFractionalDigits';
 import { post } from './usePost';
 import { replies } from './useReplies';
 import { useTxNotification } from './useTxNotification';
 import { userReplies } from './useUserReplies';
 import { useWallet } from './useWallet';
 
-import { fractionalDigits } from '@/utility/atomics';
 import { infiniteDataWithNewItem, newPost } from '@/utility/optimisticBuilders';
 
 interface CreateReplyRequestMutation {
@@ -23,6 +23,7 @@ export function useCreateReply(
 ) {
     const queryClient = useQueryClient();
     const wallet = useWallet();
+    const fractionalDigits = useFractionalDigits();
     const txError = ref<string>();
     const txSuccess = ref<string>();
     const isToastShown = ref(false);

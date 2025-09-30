@@ -5,6 +5,7 @@ import { computed, ref } from 'vue';
 import { toast } from 'vue-sonner';
 import { Decimal } from '@cosmjs/math';
 
+import { useFractionalDigits } from '@/composables/useFractionalDigits';
 import { useLikePost } from '@/composables/useLikePost';
 import { useTxDialog } from '@/composables/useTxDialog';
 
@@ -14,7 +15,6 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import InputPhoton from '@/components/ui/input/InputPhoton.vue';
 import { useConfigStore } from '@/stores/useConfigStore';
-import { fractionalDigits } from '@/utility/atomics';
 import { shorten } from '@/utility/text';
 import { showBroadcastingToast } from '@/utility/toast';
 
@@ -24,6 +24,7 @@ const { isShown, inputPhotonModel, handleClose, popupState: like } = useTxDialog
     txSuccess, txError,
 );
 const configStore = useConfigStore();
+const fractionalDigits = useFractionalDigits();
 const amountAtomics = computed(() => configStore.config.defaultAmountEnabled ? configStore.config.defaultAmountAtomics : Decimal.fromUserInput(inputPhotonModel.value.toString(), fractionalDigits).atomics);
 
 const canSubmit = computed(() => {
