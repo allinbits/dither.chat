@@ -15,7 +15,7 @@ declare module '@atomone/chronostate' {
 }
 
 const { AUTH } = useConfig();
-const apiRoot = process.env.API_ROOT ?? 'http://localhost:3000';
+const apiRoot = process.env.API_ROOT ?? 'http://localhost:3000/v1';
 
 export async function Like(action: ActionWithData): Promise<ResponseStatus> {
     try {

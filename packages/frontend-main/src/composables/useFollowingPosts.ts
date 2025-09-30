@@ -15,7 +15,7 @@ interface Params {
 
 export const followingPosts = (params: Params) => {
     const configStore = useConfigStore();
-    const apiRoot = configStore.envConfig.apiRoot ?? 'http://localhost:3000';
+    const apiRoot = configStore.envConfig.apiRoot ?? 'http://localhost:3000/v1';
 
     return infiniteQueryOptions({
         queryKey: ['following-posts', params.userAddress],

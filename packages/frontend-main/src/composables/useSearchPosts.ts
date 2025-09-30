@@ -11,7 +11,7 @@ import { checkRowsSchema } from '@/utility/sanitize';
 
 export function useSearchPosts(minQueryLength: number = 3, debounceMs: number = 300) {
     const configStore = useConfigStore();
-    const apiRoot = configStore.envConfig.apiRoot ?? 'http://localhost:3000';
+    const apiRoot = configStore.envConfig.apiRoot ?? 'http://localhost:3000/v1';
 
     const { t } = useI18n();
     const query = ref<string>('');

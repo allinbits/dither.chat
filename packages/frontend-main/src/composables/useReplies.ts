@@ -17,7 +17,7 @@ interface Params {
 
 export const replies = (params: Params) => {
     const configStore = useConfigStore();
-    const apiRoot = configStore.envConfig.apiRoot ?? 'http://localhost:3000';
+    const apiRoot = configStore.envConfig.apiRoot ?? 'http://localhost:3000/v1';
 
     const { filterAmountAtomics } = storeToRefs(useFiltersStore());
     const debouncedFilterAmount = refDebounced<string>(filterAmountAtomics, 600);

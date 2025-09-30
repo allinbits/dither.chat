@@ -16,7 +16,7 @@ interface FollowUserRequestMutation {
 export function useReadNotification(
 ) {
     const configStore = useConfigStore();
-    const apiRoot = configStore.envConfig.apiRoot ?? 'http://localhost:3000';
+    const apiRoot = configStore.envConfig.apiRoot ?? 'http://localhost:3000/v1';
     const queryClient = useQueryClient();
     const wallet = useWallet();
     const txError = ref<string>();
