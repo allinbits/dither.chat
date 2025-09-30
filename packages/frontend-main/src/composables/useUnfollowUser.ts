@@ -25,9 +25,7 @@ export function useUnfollowUser(
     const isToastShown = ref(false);
     useTxNotification('Unfollow', txSuccess, txError);
 
-    const {
-        mutateAsync,
-    } = useMutation({
+    const { mutateAsync } = useMutation({
         mutationFn: async ({ userAddress, amountAtomics }: UnfollowUserRequestMutation) => {
             txError.value = undefined;
             txSuccess.value = undefined;
@@ -44,47 +42,24 @@ export function useUnfollowUser(
             }
             txSuccess.value = result.tx?.transactionHash;
         },
-        onMutate: async (variables) => {
-            const isFollowingOpts = isFollowing({ followerAddress: wallet.address, followingAddress: variables.userAddress });
-            const followingOpts = following({ userAddress: wallet.address });
-
-            await Promise.all([
-                await queryClient.cancelQueries(isFollowingOpts),
-                await queryClient.cancelQueries(followingOpts),
-            ]);
-
-            const previousIsFollowing = queryClient.getQueryData(
-                isFollowingOpts.queryKey,
-            ) as boolean | undefined;
-            const previousFollowing = queryClient.getQueryData(
-                followingOpts.queryKey,
-            ) as InfiniteData<Following[], unknown> | undefined;
-
-            return {
-                previousIsFollowing,
-                previousFollowing,
-            };
-        },
-        onSuccess: (_, variables, context) => {
-            const isFollowingOpts = isFollowing({ followerAddress: wallet.address, followingAddress: variables.userAddress });
+        onSuccess: (_, variables) => {
+            const isFollowingOpts = isFollowing({
+                followerAddress: wallet.address,
+                followingAddress: variables.userAddress,
+            });
             const followingOpts = following({ userAddress: wallet.address });
             const followingPostsOpts = followingPosts({ userAddress: wallet.address });
 
-            const newFollowingData = infiniteDataWithoutItem<Following>({
-                previousItems: context.previousFollowing,
-                predicate: followUser => followUser.address === variables.userAddress.value,
-            });
-
-            queryClient.setQueryData(isFollowingOpts.queryKey, false);
-            queryClient.setQueryData(followingOpts.queryKey, newFollowingData);
+            queryClient.setQueryData(isFollowingOpts.queryKey, () => true);
+            queryClient.setQueryData<InfiniteData<Following[], unknown>>(
+                followingOpts.queryKey,
+                current =>
+                    infiniteDataWithoutItem<Following>({
+                        previousItems: current ?? { pages: [], pageParams: [] },
+                        predicate: item => item.address === variables.userAddress.value,
+                    }),
+            );
             queryClient.invalidateQueries(followingPostsOpts);
-        },
-        onError: (_, variables, context) => {
-            const isFollowingOpts = isFollowing({ followerAddress: wallet.address, followingAddress: variables.userAddress });
-            const followingOpts = following({ userAddress: wallet.address });
-
-            queryClient.setQueryData(isFollowingOpts.queryKey, context?.previousIsFollowing);
-            queryClient.setQueryData(followingOpts.queryKey, context?.previousFollowing);
         },
         onSettled: () => {
             isToastShown.value = false;
