@@ -149,8 +149,8 @@ export const messages = {
                 replies: 'reply | replies',
             },
             About: {
-                privacyPolicy: 'Privacy policy',
-                termsAndConditions: 'Terms & conditions',
+                privacyPolicy: 'Privacy Policy',
+                termsAndConditions: 'Terms & Conditions',
             },
         },
         feedbacks: {
