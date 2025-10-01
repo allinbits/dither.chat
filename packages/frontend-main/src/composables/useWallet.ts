@@ -358,7 +358,7 @@ const useWalletInstance = () => {
                 walletState.address.value,
                 msgs,
                 {
-                    amount: [{ amount: '10000', denom: chainInfo.value.feeCurrencies[0].coinMinimalDenom }],
+                    amount: [{ amount: Math.ceil(Number(gasLimit) * 0.025).toString(), denom: chainInfo.value.feeCurrencies[0].coinMinimalDenom }],
                     gas: gasLimit,
                 },
                 formattedMemo ?? '',
@@ -485,7 +485,7 @@ const useWalletInstance = () => {
                         },
                     ],
                     {
-                        amount: [{ amount: '10000', denom: chainInfo.value.feeCurrencies[0].coinMinimalDenom }],
+                        amount: [{ amount: Math.ceil(Number(gasLimit) * 0.025).toString(), denom: chainInfo.value.feeCurrencies[0].coinMinimalDenom }],
                         gas: gasLimit,
                     }, // Gas
                     formattedMemo,
