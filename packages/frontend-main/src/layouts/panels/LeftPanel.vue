@@ -29,7 +29,7 @@ const buttonLabelClass = 'text-lg font-semibold';
       <nav class="contents">
         <RouterLink to="/" :class="buttonClass()">
           <span class="text-2xl font-semibold">
-            Dither
+            dither
           </span>
         </RouterLink>
 
