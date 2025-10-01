@@ -29,11 +29,3 @@ A small reader that pulls all `dither.` messages from the chain in the last 100 
 ### [frontend-main](./packages/frontend-main/README.md)
 
 An frontend Single Page Application for Dither as a whole.
-
-## [tool-network-spammer](./packages/tool-network-spammer/README.md)
-
-A tool for spamming devnet / testnet and building test data to be consumed by the event system.
-
-### nginx
-
-Just an nginx configuration for gateway access to APIs
