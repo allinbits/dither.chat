@@ -43,6 +43,7 @@ const repliesQuery = useReplies({ hash });
 const POST_HASH_LEN = 64;
 const MAX_CHARS = 512 - ('dither.Reply("", "")'.length + POST_HASH_LEN);
 const reply = ref('');
+const showReply = ref(false);
 const isBalanceInputValid = ref(false);
 const inputPhotonModel = ref(Decimal.fromAtomics('1', fractionalDigits).toFloatApproximation());
 const configStore = useConfigStore();
@@ -100,30 +101,37 @@ async function handleReply() {
 
         <!-- Transaction Form -->
         <div v-if="wallet.loggedIn.value" class="flex flex-col gap-4 mt-4">
-          <div  v-if="isDefaultAmountInvalid" class="flex flex-col items-right gap-4">
-            <span class="text-sm whitespace-pre-line">{{ $t('components.PostView.invalidDefaultAmount') }}</span>
-            <Button size="sm" @click="router.push({ name: routesNames.settingsDefaultAmount });" class="ml-auto">
-              {{ $t('components.Button.adjustDefaultAmount') }}
-            </Button>
-          </div>
-
-          <template v-else>
-            <div class="flex flex-row item-center">
-              <UserAvatar :userAddress="wallet.address.value" disabled/>
-              <Textarea :placeholder="$t('placeholders.reply')" v-model="reply" :maxlength="MAX_CHARS" class="ml-1 mt-1" />
-            </div>
-
-            <div  class="flex flex-row gap-4">
-              <InputPhoton v-if="!configStore.config.defaultAmountEnabled" v-model="inputPhotonModel" @on-validity-change="handleInputValidity" />
-              <Button size="sm" :disabled="!canReply" @click="handleReply" class="ml-auto">
-                {{ $t('components.Button.reply') }}
+          <template v-if="showReply">
+            <div  v-if="isDefaultAmountInvalid" class="flex flex-col items-right gap-4">
+              <span class="text-sm whitespace-pre-line">{{ $t('components.PostView.invalidDefaultAmount') }}</span>
+              <Button size="sm" @click="router.push({ name: routesNames.settingsDefaultAmount });" class="ml-auto">
+                {{ $t('components.Button.adjustDefaultAmount') }}
               </Button>
             </div>
+
+            <template v-else>
+              <div class="flex flex-row item-center">
+                <UserAvatar :userAddress="wallet.address.value" disabled/>
+                <Textarea :placeholder="$t('placeholders.reply')" v-model="reply" :maxlength="MAX_CHARS" class="ml-1 mt-1" />
+              </div>
+
+              <div  class="flex flex-row gap-4">
+                <InputPhoton v-if="!configStore.config.defaultAmountEnabled" v-model="inputPhotonModel" @on-validity-change="handleInputValidity" />
+                <Button size="sm" :disabled="!canReply" @click="handleReply" class="ml-auto">
+                  {{ $t('components.Button.reply') }}
+                </Button>
+              </div>
+            </template>
           </template>
         </div>
       </div>
     </div>
-
+    <div class="flex flex-row p-3 border-t border-gray-200 items-center justify-between">
+      <div class="text-lg font-semibold">Replies</div>
+      <Button size="sm" @click="showReply = !showReply" v-if="wallet.loggedIn.value" class="ml-auto">
+        {{ showReply ? $t('components.Button.closeReply') : $t('components.Button.createReply') }}
+      </Button>
+    </div>
     <!-- Replies posts list -->
     <PostsList :query="repliesQuery" hideEmptyText/>
   </MainLayout>

@@ -44,6 +44,8 @@ export const messages = {
                 unfollow: 'Unfollow',
                 newPost: 'New post',
                 reply: 'Reply',
+                closeReply: 'Close Reply',
+                createReply: 'Create Reply',
                 mintscan: 'See on Mintscan',
                 pingpub: 'See on Ping.pub',
                 showImage: 'Show image',
