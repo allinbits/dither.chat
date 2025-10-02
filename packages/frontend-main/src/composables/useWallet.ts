@@ -118,12 +118,12 @@ const useWalletInstance = () => {
                 try {
                     await window.keplr?.experimentalSuggestChain(chainInfo.value);
                     await window.keplr?.enable(chainInfo.value.chainId);
-                    if (window.getOfflineSigner) {
+                    if (window.getOfflineSignerOnlyAmino) {
                         walletState.address.value = (
-                            await window.getOfflineSigner(chainInfo.value.chainId).getAccounts()
+                            await window.getOfflineSignerOnlyAmino(chainInfo.value.chainId).getAccounts()
                         )[0].address;
                         walletState.used.value = Wallets.keplr;
-                        signer.value = window.getOfflineSigner(chainInfo.value.chainId);
+                        signer.value = window.getOfflineSignerOnlyAmino(chainInfo.value.chainId);
                         if (signal?.aborted) {
                             signOut();
                         }
@@ -144,10 +144,10 @@ const useWalletInstance = () => {
                     await window.leap?.experimentalSuggestChain(chainInfo.value);
                     await window.leap?.enable(chainInfo.value.chainId);
                     walletState.address.value = (
-                        await window.leap.getOfflineSigner(chainInfo.value.chainId).getAccounts()
+                        await window.leap.getOfflineSignerOnlyAmino(chainInfo.value.chainId).getAccounts()
                     )[0].address;
                     walletState.used.value = Wallets.leap;
-                    signer.value = window.leap.getOfflineSigner(chainInfo.value.chainId);
+                    signer.value = window.leap.getOfflineSignerOnlyAmino(chainInfo.value.chainId);
                     if (signal?.aborted) {
                         signOut();
                     }
