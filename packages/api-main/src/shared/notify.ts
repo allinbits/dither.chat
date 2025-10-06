@@ -2,7 +2,6 @@ import { eq, sql } from 'drizzle-orm';
 
 import { getDatabase } from '../../drizzle/db';
 import { FeedTable, NotificationTable } from '../../drizzle/schema';
-import { postToDiscord } from '../utility';
 
 const statementInsertNotification = getDatabase()
     .insert(NotificationTable)
@@ -61,31 +60,4 @@ export const notify = async (data: {
         subcontext: data.subcontext,
         actor: data.actor,
     });
-
-    if (data.type === 'follow' || data.type === 'unfollow') {
-        return;
-    }
-
-    let msg = '';
-
-    switch (data.type) {
-        case 'post':
-            msg += data.subcontext;
-            break;
-        case 'reply':
-            msg += data.subcontext;
-            break;
-        case 'like':
-            msg += 'New Like';
-            break;
-        case 'dislike':
-            msg += 'New Dislike';
-            break;
-    }
-
-    if (msg === '') {
-        return;
-    }
-
-    await postToDiscord(msg, `https://dither.chat/post/${data.hash.toLowerCase()}`);
 };
