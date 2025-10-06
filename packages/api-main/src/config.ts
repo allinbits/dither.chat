@@ -12,6 +12,7 @@ type Config = {
     AUTH: string;
     JWT: string;
     JWT_STRICTNESS: JWT_STRICTNESS;
+    DISCORD_WEBHOOK_URL: string | undefined;
 };
 
 let config: Config;
@@ -46,6 +47,7 @@ export function useConfig(): Config {
         AUTH: process.env.AUTH ?? 'default',
         JWT: process.env.JWT ?? 'default-secret-key',
         JWT_STRICTNESS: process.env.JWT_STRICTNESS as JWT_STRICTNESS,
+        DISCORD_WEBHOOK_URL: process.env.DISCORD_WEBHOOK_URL,
     };
 
     return config;
