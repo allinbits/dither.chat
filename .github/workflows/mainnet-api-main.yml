@@ -43,6 +43,9 @@ jobs:
       - name: Install dependencies with pnpm
         run: pnpm install
 
+      - name: Create Directory
+        run: mkdir -p ./packages/api-main/data/postgres_data
+
       - name: Set up Docker
         uses: docker/setup-docker-action@v4
 
