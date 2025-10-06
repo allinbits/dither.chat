@@ -7,7 +7,7 @@ import { useSharedQueries } from '../shared/useSharedQueries';
 
 const sharedQueries = useSharedQueries();
 import { notify } from '../shared/notify';
-import { isReaderAuthorizationValid } from '../utility';
+import { isReaderAuthorizationValid, postToDiscord } from '../utility';
 
 const statement = getDatabase()
     .insert(DislikesTable)
@@ -65,6 +65,7 @@ export async function Dislike(body: typeof Posts.DislikeBody.static, headers: Re
             });
         }
 
+        await postToDiscord(`Disliked by ${body.from.toLowerCase()}`, `https://dither.chat/post/${body.hash.toLowerCase()}`);
         return { status: 200 };
     }
     catch (err) {

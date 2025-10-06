@@ -7,7 +7,7 @@ import { useSharedQueries } from '../shared/useSharedQueries';
 
 const sharedQueries = useSharedQueries();
 import { notify } from '../shared/notify';
-import { isReaderAuthorizationValid } from '../utility';
+import { isReaderAuthorizationValid, postToDiscord } from '../utility';
 
 const statement = getDatabase()
     .insert(FeedTable)
@@ -67,6 +67,7 @@ export async function Reply(body: typeof Posts.ReplyBody.static, headers: Record
             });
         }
 
+        await postToDiscord(`${body.msg}`, `https://dither.chat/post/${body.hash.toLowerCase()}`);
         return { status: 200 };
     }
     catch (err) {

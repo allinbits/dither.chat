@@ -92,11 +92,11 @@ export function getRequestIP(request: Request) {
 
 export async function postToDiscord(content: string, url: string) {
     if (!DISCORD_WEBHOOK_URL) {
+        console.log(`DISCORD_WEBHOOK_URL was not provided.`);
         return;
     }
 
     const payload = {
-    // Required: The main content of the message
         content: '',
         username: 'dither.chat',
         embeds: [
