@@ -91,7 +91,7 @@ export function getRequestIP(request: Request) {
 }
 
 export async function postToDiscord(content: string, url: string) {
-    if (!DISCORD_WEBHOOK_URL) {
+    if (DISCORD_WEBHOOK_URL == '') {
         console.log(`DISCORD_WEBHOOK_URL was not provided.`);
         return;
     }
