@@ -12,7 +12,7 @@ type Config = {
     AUTH: string;
     JWT: string;
     JWT_STRICTNESS: JWT_STRICTNESS;
-    DISCORD_WEBHOOK_URL: string | undefined;
+    DISCORD_WEBHOOK_URL: string;
 };
 
 let config: Config;
@@ -39,6 +39,11 @@ export function useConfig(): Config {
     if (typeof process.env.JWT_STRICTNESS === 'undefined') {
         console.warn(`JWT_STRICTNESS not set, defaulting to lax`);
         process.env.JWT_STRICTNESS = 'lax';
+    }
+
+    if (typeof process.env.DISCORD_WEBHOOK_URL === 'undefined') {
+        console.warn(`DISCORD_WEBHOOK_URL not set, defaulting to empty`);
+        process.env.DISCORD_WEBHOOK_URL = '';
     }
 
     config = {
