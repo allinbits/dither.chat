@@ -29,11 +29,11 @@ const imageUrl = computed(() => {
 const youtubeRegex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/g;
 const youtubeLink = computed(() => {
     const regex = youtubeRegex.exec(props.message);
-    if (!regex || !regex[0]) {
+    if (!regex || !regex[1]) {
         return undefined;
     }
 
-    return regex[0].replace('watch?v=', 'embed/');
+    return `https://www.youtube.com/embed/${regex[1]}`;
 });
 </script>
 
