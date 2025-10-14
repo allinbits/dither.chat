@@ -1,17 +1,16 @@
-
 services:
-  postgres:
-    network_mode: host
-    image: postgres:latest
-    container_name: postgres_db
-    restart: always
-    environment:
-      POSTGRES_USER: default
-      POSTGRES_PASSWORD: password
-    ports:
-      - "5432:5432"
-    volumes:
-      - ./data/postgres_data:/var/lib/postgresql/data
+    postgres:
+        network_mode: host
+        image: postgres:latest
+        container_name: postgres_db
+        restart: always
+        environment:
+            POSTGRES_USER: default
+            POSTGRES_PASSWORD: password
+        ports:
+            - '5432:5432'
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
 
 volumes:
-  postgres_data:
+    postgres_data:
