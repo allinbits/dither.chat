@@ -25,27 +25,37 @@ const usedPost = computed(() => cachedPost.value || props.post);
 
 <template>
   <RouterLink v-if="usedPost" :to="`/post/${usedPost.hash}`" custom v-slot="{ navigate }">
-    <div @click="navigate" :class="cn('flex flex-row gap-3 cursor-pointer pb-2 pt-4 pl-4 pr-2 relative hover:bg-accent/30 active:bg-accent/30 transition-colors', !showTimeline && 'border-b' )">
+    <div @click="navigate" :class="cn('flex flex-row gap-3 cursor-pointer pb-2 pt-4 pl-4 pr-2 relative hover:bg-accent/30 active:bg-accent/30 transition-colors', !showTimeline && 'border-b')">
       <div :class="cn('w-[40px] h-full flex flex-col items-center absolute', !showTimeline && 'hidden')">
         <div class="w-[3px] bg-border h-full" />
       </div>
 
-      <div class="flex flex-col w-full gap-3" >
-        <div class="flex flex-row justify-between items-center h-[40px]">
-          <div class="flex flex-row gap-3">
-            <RouterLink :to="`/profile/${usedPost.author}`">
-              <div class="flex flex-row gap-3 items-center">
-                <UserAvatar :userAddress="usedPost.author" />
-                <Username :userAddress="usedPost.author" />
-              </div>
-            </RouterLink>
-            <PrettyTimestamp :timestamp="new Date(usedPost.timestamp)" />
+      <div class="flex flex-row gap-3">
+        <div data-testid="post-avatar">
+          <div :class="cn('w-[40px] h-full flex flex-col items-center absolute', !showTimeline && 'hidden')">
+            <div class="w-[3px] bg-border h-full" />
           </div>
-          <PostMoreActions :post="usedPost" />
+          <RouterLink :to="`/profile/${usedPost.author}`">
+            <UserAvatar :userAddress="usedPost.author" />
+          </RouterLink>
         </div>
-        <PostContent :message="usedPost.message" />
-        <PostActions :post="usedPost" class="-ml-2 mt-2"/>
+
+        <div class="flex flex-col w-full gap-3">
+          <div class="flex flex-row justify-between">
+            <div class="flex items-center gap-3">
+              <RouterLink :to="`/profile/${usedPost.author}`">
+                <Username :userAddress="usedPost.author" />
+              </RouterLink>
+              <PrettyTimestamp :timestamp="new Date(usedPost.timestamp)" />
+            </div>
+            <PostMoreActions :post="usedPost" />
+          </div>
+
+          <PostContent :message="usedPost.message" />
+          <PostActions :post="usedPost" class="-ml-2 mt-2" />
+        </div>
       </div>
+
     </div>
   </RouterLink>
 </template>
