@@ -13,17 +13,17 @@
     "docs:start": "retype start ./docs"
   },
   "devDependencies": {
-    "@eslint/js": "^9.26.0",
-    "@stylistic/eslint-plugin": "^4.2.0",
-    "@typescript-eslint/eslint-plugin": "^8.31.1",
-    "eslint": "^9.26.0",
-    "eslint-config-prettier": "^10.1.2",
-    "eslint-plugin-prettier": "^5.3.1",
+    "@eslint/js": "^9.37.0",
+    "@stylistic/eslint-plugin": "^4.4.1",
+    "@typescript-eslint/eslint-plugin": "^8.46.1",
+    "eslint": "^9.37.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
     "eslint-plugin-simple-import-sort": "^12.1.1",
-    "eslint-plugin-vue": "^10.1.0",
-    "globals": "^16.0.0",
-    "prettier": "^3.5.3",
-    "typescript-eslint": "^8.31.1"
+    "eslint-plugin-vue": "^10.5.0",
+    "globals": "^16.4.0",
+    "prettier": "^3.6.2",
+    "typescript-eslint": "^8.46.1"
   },
   "packageManager": "pnpm@10.11.1+sha512.e519b9f7639869dc8d5c3c5dfef73b3f091094b0a006d7317353c72b124e80e1afd429732e28705ad6bfa1ee879c1fce46c128ccebd3192101f43dd67c667912",
   "dependencies": {

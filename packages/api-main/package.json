@@ -16,32 +16,32 @@
         "push-and-start": "drizzle-kit push --force && pnpm start"
     },
     "dependencies": {
-        "@atomone/chronostate": "^2.2.1",
+        "@atomone/chronostate": "^2.3.0",
         "@atomone/dither-api-types": "^1.8.0",
         "@cosmjs/crypto": "^0.33.1",
         "@cosmjs/encoding": "^0.33.1",
         "@elysiajs/cors": "~1.2.0",
         "@elysiajs/node": "~1.2.6",
-        "@keplr-wallet/cosmos": "^0.12.230",
-        "@sinclair/typebox": "^0.34.38",
-        "dotenv": "^16.5.0",
+        "@keplr-wallet/cosmos": "^0.12.280",
+        "@sinclair/typebox": "^0.34.41",
+        "dotenv": "^16.6.1",
         "drizzle-orm": "^0.43.1",
         "drizzle-typebox": "^0.3.3",
         "elysia": "~1.2.25",
         "jsonwebtoken": "^9.0.2",
-        "pg": "^8.14.1",
-        "postgres": "^3.4.5",
-        "ws": "^8.18.0"
+        "pg": "^8.16.3",
+        "postgres": "^3.4.7",
+        "ws": "^8.18.3"
     },
     "devDependencies": {
         "@cosmjs/amino": "^0.33.1",
-        "@types/jsonwebtoken": "^9.0.9",
-        "@types/node": "^22.14.1",
-        "@types/pg": "^8.11.13",
-        "drizzle-kit": "^0.31.0",
-        "tsx": "^4.20.5",
+        "@types/jsonwebtoken": "^9.0.10",
+        "@types/node": "^22.18.10",
+        "@types/pg": "^8.15.5",
+        "drizzle-kit": "^0.31.5",
+        "tsx": "^4.20.6",
         "vite-node": "^3.2.4",
-        "vitest": "^3.1.2"
+        "vitest": "^3.2.4"
     },
     "prettier": {
         "tabWidth": 4,
