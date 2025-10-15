@@ -10,7 +10,7 @@ To quickly spin up the entire Dither Service and its components, install [Tilt](
 tilt up
 ```
 
-You will need to start the frontend service on its own.
+You can vist Tilt dashboard at [http://localhost:10350/](http://localhost:10350/)
 
 ## Project Structure Explanation
 
