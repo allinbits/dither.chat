@@ -4,10 +4,10 @@ The **Dither Service** utilizes **event-sourcing data** to deterministically reb
 
 ## 🚀 Getting Started (Usage)
 
-To quickly spin up the entire Dither Service and its components, use the provided Docker Compose file:
+To quickly spin up the entire Dither Service and its components, install [Tilt](https://tilt.dev) and run:
 
 ```sh
-docker compose up --build
+tilt up
 ```
 
 You will need to start the frontend service on its own.
