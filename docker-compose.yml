@@ -66,7 +66,7 @@ services:
       # Uncomment to enable fast sync
       # ECLESIA_GRAPHQL_ENDPOINT: "https://graphql-atomone-testnet-1.allinbits.services/v1/graphql"
       # ECLESIA_GRAPHQL_SECRET: ""
-      
+
       # PG_URI: postgres://username:password@postgres-feed:5432/feed
       # LOG: process.env.LOG === 'true' ? true : false,
 
@@ -82,3 +82,4 @@ services:
   #   depends_on:
   #     - postgres
   #     - api-main
+
