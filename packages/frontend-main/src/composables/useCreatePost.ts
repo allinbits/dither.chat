@@ -10,7 +10,7 @@ import { userPosts } from './useUserPosts';
 import { useWallet } from './useWallet';
 
 import { fractionalDigits } from '@/utility/atomics';
-import { infiniteDataWithNewItem, newPost } from '@/utility/optimisticBuilders';
+import { infiniteDataWithNewItem, newPost as newPostFn } from '@/utility/optimisticBuilders';
 
 interface CreatePostRequestMutation {
     message: string;
@@ -26,9 +26,7 @@ export function useCreatePost(
     const isToastShown = ref(false);
     useTxNotification('Post', txSuccess, txError);
 
-    const {
-        mutateAsync,
-    } = useMutation({
+    const { mutateAsync } = useMutation({
         mutationFn: async ({ message, amountAtomics }: CreatePostRequestMutation) => {
             txError.value = undefined;
             txSuccess.value = undefined;
@@ -55,42 +53,35 @@ export function useCreatePost(
                 return txSuccess.value;
             }
         },
-        onMutate: async () => {
-            const feedOpts = feed(queryClient);
-            const userPostsOpts = userPosts({ userAddress: wallet.address });
-            await Promise.all([
-                queryClient.cancelQueries(feedOpts),
-                queryClient.cancelQueries(userPostsOpts),
-            ]);
-
-            const previousFeed = queryClient.getQueryData(
-                feedOpts.queryKey,
-            ) as InfiniteData<Post[], unknown> | undefined;
-            const previousUserPosts = queryClient.getQueryData(
-                userPostsOpts.queryKey,
-            ) as InfiniteData<Post[], unknown> | undefined;
-
-            return { previousFeed, previousUserPosts };
-        },
-        onSuccess: (hash, variables, context) => {
+        onSuccess: (hash, variables) => {
             if (!hash) throw new Error('Error: No hash in TX');
 
             const feedOpts = feed(queryClient);
             const userPostsOpts = userPosts({ userAddress: wallet.address });
 
-            // Created Post
-            const optimisticNewPost: Post = newPost({ message: variables.message, quantity: Decimal.fromAtomics(variables.amountAtomics, fractionalDigits).atomics, hash, author: wallet.address.value, postHash: null });
-            const newFeedData = infiniteDataWithNewItem<Post>({ previousItems: context.previousFeed, newItem: optimisticNewPost });
-            const newUserPostsData = infiniteDataWithNewItem<Post>({ previousItems: context.previousUserPosts, newItem: optimisticNewPost });
+            const newPost: Post = newPostFn({
+                message: variables.message,
+                quantity: Decimal.fromAtomics(variables.amountAtomics, fractionalDigits).atomics,
+                hash,
+                author: wallet.address.value,
+                postHash: null,
+            });
+
+            const previousFeed = queryClient.getQueryData<InfiniteData<Post[]>>(feedOpts.queryKey);
+            const previousUserPosts = queryClient.getQueryData<InfiniteData<Post[]>>(userPostsOpts.queryKey);
+
+            const newFeedData = infiniteDataWithNewItem<Post>({
+                previousItems: previousFeed,
+                newItem: newPost,
+            });
+
+            const newUserPostsData = infiniteDataWithNewItem({
+                previousItems: previousUserPosts,
+                newItem: newPost,
+            });
 
             queryClient.setQueryData(feedOpts.queryKey, newFeedData);
             queryClient.setQueryData(userPostsOpts.queryKey, newUserPostsData);
-        },
-        onError: (_, __, context) => {
-            const feedOpts = feed(queryClient);
-            const userPostsOpts = userPosts({ userAddress: wallet.address });
-            queryClient.setQueryData(feedOpts.queryKey, context?.previousFeed);
-            queryClient.setQueryData(userPostsOpts.queryKey, context?.previousUserPosts);
         },
         onSettled: () => {
             isToastShown.value = false;

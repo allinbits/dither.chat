@@ -14,8 +14,7 @@ interface LikePostRequestMutation {
     amountAtomics: string;
 }
 
-export function useLikePost(
-) {
+export function useLikePost() {
     const queryClient = useQueryClient();
     const wallet = useWallet();
     const txError = ref<string>();
@@ -23,9 +22,7 @@ export function useLikePost(
     const isToastShown = ref(false);
     useTxNotification('Like', txSuccess, txError);
 
-    const {
-        mutateAsync,
-    } = useMutation({
+    const { mutateAsync } = useMutation({
         mutationFn: async ({ post, amountAtomics }: LikePostRequestMutation) => {
             txError.value = undefined;
             txSuccess.value = undefined;
@@ -35,41 +32,20 @@ export function useLikePost(
                 'Like',
                 { args: [post.value.hash], amount: amountAtomics },
             );
-
             if (!result.broadcast) {
                 txError.value = result.msg;
                 throw new Error(result.msg);
             }
             txSuccess.value = result.tx?.transactionHash;
         },
-        onMutate: async (variables) => {
+        onSuccess: (_, variables) => {
             const postOpts = post({ hash: ref(variables.post.value.hash) });
-
-            await Promise.all([
-                queryClient.cancelQueries(postOpts),
-            ]);
-
-            const previousPost = queryClient.getQueryData(
-                postOpts.queryKey,
-            ) as Post | undefined;
-
-            return {
-                previousPost,
-            };
-        },
-        onSuccess: (_, variables, context) => {
-            const postOpts = post({ hash: ref(variables.post.value.hash) });
-            // Post with updated likes_burnt
-            const optimisticPost: Post
-                = context.previousPost
-                    ? { ...context.previousPost, likes_burnt: addAtomics((context.previousPost.likes_burnt ?? 0).toString(), variables.amountAtomics) }
-                    : { ...variables.post.value, likes_burnt: addAtomics((variables.post.value.likes_burnt ?? 0).toString(), variables.amountAtomics) };
-
-            queryClient.setQueryData(postOpts.queryKey, optimisticPost);
-        },
-        onError: (_, variables, context) => {
-            const postOpts = post({ hash: ref(variables.post.value.hash) });
-            queryClient.setQueryData(postOpts.queryKey, context?.previousPost);
+            // Update post's likes_burnt
+            queryClient.setQueryData<Post>(postOpts.queryKey, (current) => {
+                const currentLikesBurnt = current?.likes_burnt ?? variables.post.value.likes_burnt ?? '0';
+                const newLikesBurnt = addAtomics(currentLikesBurnt, variables.amountAtomics);
+                return { ...(current ?? variables.post.value), likes_burnt: newLikesBurnt };
+            });
         },
         onSettled: () => {
             isToastShown.value = false;
