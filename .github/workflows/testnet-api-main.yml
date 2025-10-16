@@ -38,6 +38,9 @@ jobs:
       - name: Install pnpm with npm
         run: npm install -g pnpm
 
+      - name: Create Directory
+        run: mkdir -p ./packages/api-main/data/postgres_data
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:

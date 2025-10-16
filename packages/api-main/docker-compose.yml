@@ -1,7 +1,7 @@
 services:
     postgres:
         # network_mode: host
-        image: postgres:latest
+        image: postgres:18.0-alpine3.22
         container_name: postgres_db
         restart: always
         environment:
@@ -10,7 +10,7 @@ services:
         ports:
             - '5432:5432'
         volumes:
-            - ./data/postgres_data:/var/lib/postgresql/data
+            - ./data/postgres_data:/var/lib/postgresql/18/docker
         # command:
         #     [
         #         '-c',
