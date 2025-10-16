@@ -26,6 +26,7 @@ services:
   api-main:
     container_name: "api-main"
     build: ./packages/api-main
+    image: ditherchat/api-main
     restart: always
     depends_on:
       postgres:
@@ -48,6 +49,7 @@ services:
   reader-main:
     container_name: "reader-main"
     build: ./packages/reader-main
+    image: ditherchat/reader-main
     restart: always
     command: ["pnpm", "start"]
     depends_on:
