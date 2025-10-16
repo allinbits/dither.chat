@@ -4,14 +4,16 @@ import { toast } from 'vue-sonner';
 import { debouncedWatch } from '@vueuse/core';
 import { Decimal } from '@cosmjs/math';
 
+import { useFractionalDigits } from '@/composables/useFractionalDigits';
+
 import InputPhoton from '@/components/ui/input/InputPhoton.vue';
 import Switch from '@/components/ui/switch/Switch.vue';
 import MainLayout from '@/layouts/MainLayout.vue';
 import { useConfigStore } from '@/stores/useConfigStore';
-import { fractionalDigits } from '@/utility/atomics';
 import ViewHeading from '@/views/ViewHeading.vue';
 
 const configStore = useConfigStore();
+const fractionalDigits = useFractionalDigits();
 const inputPhotonModel = ref(Decimal.fromAtomics(configStore.config.defaultAmountAtomics, fractionalDigits).toFloatApproximation());
 const hasEnoughBalance = ref(false);
 

@@ -2,13 +2,13 @@
 import { computed } from 'vue';
 
 import { useBalanceFetcher } from '@/composables/useBalanceFetcher';
+import { useFractionalDigits } from '@/composables/useFractionalDigits';
 import { useWallet } from '@/composables/useWallet';
 
-import { fractionalDigits } from '@/utility/atomics';
 import { formatCompactAtomics } from '@/utility/text';
 
 const wallet = useWallet();
-
+const fractionalDigits = useFractionalDigits();
 const balanceFetcher = useBalanceFetcher();
 
 const balanceAtomics = computed(() => {

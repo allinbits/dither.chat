@@ -5,11 +5,11 @@ import { Decimal } from '@cosmjs/math';
 import { type InfiniteData, useMutation, useQueryClient } from '@tanstack/vue-query';
 
 import { feed } from './useFeed';
+import { useFractionalDigits } from './useFractionalDigits';
 import { useTxNotification } from './useTxNotification';
 import { userPosts } from './useUserPosts';
 import { useWallet } from './useWallet';
 
-import { fractionalDigits } from '@/utility/atomics';
 import { infiniteDataWithNewItem, newPost } from '@/utility/optimisticBuilders';
 
 interface CreatePostRequestMutation {
@@ -21,6 +21,7 @@ export function useCreatePost(
 ) {
     const queryClient = useQueryClient();
     const wallet = useWallet();
+    const fractionalDigits = useFractionalDigits();
     const txError = ref<string>();
     const txSuccess = ref<string>();
     const isToastShown = ref(false);

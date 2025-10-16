@@ -3,7 +3,6 @@ import { Decimal } from '@cosmjs/math';
 import { defineStore } from 'pinia';
 
 import { envConfigs } from '@/env-config';
-import { fractionalDigits } from '@/utility/atomics';
 
 interface Config {
     selectedChain: keyof typeof envConfigs;
@@ -15,7 +14,7 @@ interface Config {
 const defaultConfig: Config = {
     envConfigs: envConfigs,
     selectedChain: import.meta.env.ENVIRONMENT_TYPE ?? 'mainnet',
-    defaultAmountAtomics: Decimal.fromUserInput('0.1', fractionalDigits).atomics,
+    defaultAmountAtomics: Decimal.fromUserInput('0.1', 0).atomics,
     defaultAmountEnabled: false,
 };
 
