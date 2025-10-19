@@ -180,11 +180,11 @@ graph TB
     TILT --> API
     TILT --> READER
 
-    classDef userLayer fill:#e1f5fe
-    classDef frontendLayer fill:#f3e5f5
-    classDef apiLayer fill:#e8f5e8
-    classDef blockchainLayer fill:#fff3e0
-    classDef toolsLayer fill:#fce4ec
+    classDef userLayer fill:#1565c0,stroke:#0d47a1,stroke-width:2px,color:#ffffff
+    classDef frontendLayer fill:#7b1fa2,stroke:#4a148c,stroke-width:2px,color:#ffffff
+    classDef apiLayer fill:#2e7d32,stroke:#1b5e20,stroke-width:2px,color:#ffffff
+    classDef blockchainLayer fill:#ef6c00,stroke:#e65100,stroke-width:2px,color:#ffffff
+    classDef toolsLayer fill:#c2185b,stroke:#880e4f,stroke-width:2px,color:#ffffff
 
     class U,W userLayer
     class F,UI,ST frontendLayer
@@ -254,11 +254,11 @@ graph TD
     G --> G3[⚡ toast.ts]
     G --> G4[⚡ sanitize.ts]
 
-    classDef folder fill:#e3f2fd
-    classDef file fill:#f3e5f5
-    classDef component fill:#e8f5e8
-    classDef store fill:#fff3e0
-    classDef utility fill:#fce4ec
+    classDef folder fill:#1976d2,stroke:#0d47a1,stroke-width:2px,color:#ffffff
+    classDef file fill:#7b1fa2,stroke:#4a148c,stroke-width:2px,color:#ffffff
+    classDef component fill:#388e3c,stroke:#1b5e20,stroke-width:2px,color:#ffffff
+    classDef store fill:#f57c00,stroke:#e65100,stroke-width:2px,color:#ffffff
+    classDef utility fill:#d32f2f,stroke:#b71c1c,stroke-width:2px,color:#ffffff
 
     class A,B,C,D,E,F,G,H folder
     class B1,B2,B3,B4,B5,B6,B7,C1,C2,C3,C4,D1,D2,D3,D4,E1,E2,E3,E4,F1,F2,F3,G1,G2,G3,G4 file
