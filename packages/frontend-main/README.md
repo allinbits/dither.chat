@@ -84,38 +84,17 @@ tilt up
 mindmap
   root((🛠️ Tech Stack))
     [🎨 Frontend]
-      (Vue 3)
-        **Composition API**
-        **TypeScript**
-        **Vite**
-      (🎨 Styling)
-        **Tailwind CSS 4**
-        **shadcn/ui**
-        **Responsive Design**
-    [📊 State Management]
-      (Pinia)
-        **Global State**
-        **Persistence**
-      (TanStack Query)
-        **Server State**
-        **Caching**
-        **Optimistic Updates**
+      **Vue 3 + TypeScript**
+      **Tailwind CSS + shadcn/ui**
+    [📊 State]
+      **Pinia**
+      **TanStack Query**
     [⛓️ Blockchain]
-      (CosmJS)
-        **Cosmos SDK**
-        **Transaction Building**
-      (💼 Multi-Wallet)
-        **Keplr**
-        **Leap**
-        **Cosmostation**
-    [🛠️ Development]
-      (ESLint)
-        **Code Quality**
-        **TypeScript Rules**
-      (Prettier)
-        **Code Formatting**
-      (Vitest)
-        **Testing Framework**
+      **CosmJS**
+      **Multi-Wallet Support**
+    [🛠️ Tooling]
+      **Vite**
+      **ESLint + Prettier**
 ```
 
 ### Technology Highlights
@@ -216,55 +195,38 @@ graph TB
 ```mermaid
 %%{init: {'theme':'dark', 'themeVariables': { 'primaryColor': '#1e40af', 'primaryTextColor': '#f8fafc', 'primaryBorderColor': '#60a5fa', 'lineColor': '#64748b', 'secondaryColor': '#1e293b', 'tertiaryColor': '#334155'}}}%%
 graph TD
-    A[📁 src/] --> B[📁 components/]
-    A --> C[📁 composables/]
-    A --> D[📁 stores/]
-    A --> E[📁 views/]
-    A --> F[📁 layouts/]
-    A --> G[📁 utility/]
-    A --> H[📁 types/]
-    A --> I[📁 localization/]
+    A[📁 src/] --> B[🎨 components/]
+    A --> C[🔧 composables/]
+    A --> D[🏪 stores/]
+    A --> E[📄 views/]
+    A --> F[📱 layouts/]
+    A --> G[⚡ utility/]
 
-    B --> B1[📁 posts/]
-    B --> B2[📁 users/]
-    B --> B3[📁 wallet/]
-    B --> B4[📁 ui/]
-    B --> B5[📁 notifications/]
-    B --> B6[📁 popups/]
-    B --> B7[📁 selects/]
+    B --> B1[**UI Components**]
+    B --> B2[**Business Logic**]
 
-    C --> C1[🔧 useWallet.ts]
-    C --> C2[🔧 usePosts.ts]
-    C --> C3[🔧 useAuth.ts]
-    C --> C4[🔧 useNotifications.ts]
+    C --> C1[**State Hooks**]
+    C --> C2[**API Integration**]
 
-    D --> D1[🏪 useConfigStore.ts]
-    D --> D2[🏪 useWalletStateStore.ts]
-    D --> D3[🏪 useFiltersStore.ts]
-    D --> D4[🏪 useWalletDialogStore.ts]
+    D --> D1[**Global State**]
+    D --> D2[**User Preferences**]
 
-    E --> E1[📄 HomeView.vue]
-    E --> E2[📄 ProfileView.vue]
-    E --> E3[📄 PostView.vue]
-    E --> E4[📄 SearchView.vue]
+    E --> E1[**Page Components**]
+    E --> E2[**Route Views**]
 
-    F --> F1[📱 MainLayout.vue]
-    F --> F2[📱 MainLayoutMobile.vue]
-    F --> F3[📁 panels/]
+    F --> F1[**Responsive Layouts**]
+    F --> F2[**Panel System**]
 
-    G --> G1[⚡ atomics.ts]
-    G --> G2[⚡ text.ts]
-    G --> G3[⚡ toast.ts]
-    G --> G4[⚡ sanitize.ts]
+    G --> G1[**Helper Functions**]
+    G --> G2[**Utilities**]
 
     classDef folder fill:#1e40af,stroke:#60a5fa,stroke-width:3px,color:#f8fafc
-    classDef file fill:#7c2d12,stroke:#fb923c,stroke-width:3px,color:#f8fafc
-    classDef component fill:#166534,stroke:#4ade80,stroke-width:3px,color:#f8fafc
-    classDef store fill:#92400e,stroke:#fbbf24,stroke-width:3px,color:#f8fafc
-    classDef utility fill:#991b1b,stroke:#f87171,stroke-width:3px,color:#f8fafc
+    classDef category fill:#7c2d12,stroke:#fb923c,stroke-width:3px,color:#f8fafc
+    classDef feature fill:#166534,stroke:#4ade80,stroke-width:3px,color:#f8fafc
 
-    class A,B,C,D,E,F,G,H folder
-    class B1,B2,B3,B4,B5,B6,B7,C1,C2,C3,C4,D1,D2,D3,D4,E1,E2,E3,E4,F1,F2,F3,G1,G2,G3,G4 file
+    class A folder
+    class B,C,D,E,F,G category
+    class B1,B2,C1,C2,D1,D2,E1,E2,F1,F2,G1,G2 feature
 ```
 
 #### Directory Overview
