@@ -63,7 +63,53 @@ describe('filter post depending on send tokens', async () => {
             }[];
         }>(`feed?minQuantity=${expensivePostTokens}`);
         assert.isOk(readResponse?.status === 200, `response was not okay, got ${readResponse?.status}`);
-        assert.lengthOf(readResponse.rows, 1);
+        // Should include the expensive post we created
+        const hasExpensivePost = readResponse.rows.some(row => row.message === expensivePostMessage);
+        assert.isTrue(hasExpensivePost, 'Should include the expensive post');
+        // Should not include the cheap post
+        const hasCheapPost = readResponse.rows.some(row => row.message === cheapPostMessage);
+        assert.isFalse(hasCheapPost, 'Should not include the cheap post');
+    });
+
+    it('filtering with large numbers (Photon filter bug fix)', async () => {
+        // Create posts with amounts that would fail with string comparison
+        const wallet = await createWallet();
+        
+        // Post with 500000 tokens
+        const post500k = await post(`post`, {
+            from: wallet.publicKey,
+            hash: getRandomHash(),
+            msg: 'post with 500000 tokens',
+            quantity: '500000',
+            timestamp: '2025-04-16T19:46:42Z',
+        } as typeof Posts.PostBody.static);
+        assert.isOk(post500k?.status === 200);
+
+        // Post with 50000 tokens
+        const post50k = await post(`post`, {
+            from: wallet.publicKey,
+            hash: getRandomHash(),
+            msg: 'post with 50000 tokens',
+            quantity: '50000',
+            timestamp: '2025-04-16T19:46:43Z',
+        } as typeof Posts.PostBody.static);
+        assert.isOk(post50k?.status === 200);
+
+        // Filter for posts >= 100000
+        // String comparison: "500000" > "100000" but "50000" < "100000" (WRONG - "50000" > "100000")
+        // Numeric comparison: 500000 > 100000 and 50000 < 100000 (CORRECT)
+        const filterResponse = await get<{
+            status: number;
+            rows: {
+                message: string;
+                quantity: string;
+            }[];
+        }>(`feed?minQuantity=100000`);
+        
+        assert.isOk(filterResponse?.status === 200);
+        const filteredMessages = filterResponse.rows.map(r => r.message);
+        assert.include(filteredMessages, 'post with 500000 tokens', 'Should include 500k post');
+        assert.notInclude(filteredMessages, 'post with 50000 tokens', 'Should NOT include 50k post');
     });
 
     it('Search: filtering cheap posts', async () => {

@@ -13,7 +13,7 @@ const statement = getDatabase()
         and(
             isNull(FeedTable.removed_at),
             isNull(FeedTable.post_hash),
-            gte(FeedTable.quantity, sql.placeholder('minQuantity')),
+            gte(sql`CAST(${FeedTable.quantity} AS NUMERIC)`, sql`CAST(${sql.placeholder('minQuantity')} AS NUMERIC)`),
         ),
     )
     .orderBy(desc(FeedTable.timestamp))
