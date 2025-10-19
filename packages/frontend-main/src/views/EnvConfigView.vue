@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import 'vanilla-jsoneditor/themes/jse-theme-dark.css';
 
-import { toast } from 'vue-sonner';
 import { debouncedWatch, useColorMode } from '@vueuse/core';
 import JsonEditorVue from 'json-editor-vue';
 
@@ -10,16 +9,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import MainLayout from '@/layouts/MainLayout.vue';
 import { useConfigStore } from '@/stores/useConfigStore';
+import { showInfoToast } from '@/utility/toast';
 import HeaderBack from '@/views/ViewHeading.vue';
 
 const configStore = useConfigStore();
 const mode = useColorMode();
 
 debouncedWatch(configStore.config, () => {
-    toast.success('Success', {
-        description: 'Config automatically updated',
-        duration: 2000,
-    });
+    showInfoToast('Settings Updated', 'Config automatically updated');
 }, { debounce: 1000 });
 </script>
 

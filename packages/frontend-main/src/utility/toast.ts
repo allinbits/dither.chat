@@ -2,6 +2,7 @@ import { h } from 'vue';
 import { toast } from 'vue-sonner';
 
 import ToastBroadcasting from '@/components/ui/sonner/ToastBroadcasting.vue';
+import ToastInfo from '@/components/ui/sonner/ToastInfo.vue';
 
 export const showBroadcastingToast = (txLabel: string) => {
     const toastId = toast.custom(
@@ -12,6 +13,21 @@ export const showBroadcastingToast = (txLabel: string) => {
             }),
         {
             duration: Infinity,
+        },
+    );
+    return toastId;
+};
+
+export const showInfoToast = (title: string, description?: string, duration = 2000) => {
+    const toastId = toast.custom(
+        () =>
+            h(ToastInfo, {
+                title,
+                description,
+                close: () => toast.dismiss(toastId),
+            }),
+        {
+            duration,
         },
     );
     return toastId;
