@@ -83,39 +83,39 @@ tilt up
 %%{init: {'theme':'dark', 'themeVariables': { 'primaryColor': '#1e40af', 'primaryTextColor': '#f8fafc', 'primaryBorderColor': '#60a5fa', 'lineColor': '#64748b', 'secondaryColor': '#1e293b', 'tertiaryColor': '#334155'}}}%%
 mindmap
   root((🛠️ Tech Stack))
-    🎨 Frontend
-      Vue 3
-        Composition API
-        TypeScript
-        Vite
-      🎨 Styling
-        Tailwind CSS 4
-        shadcn/ui
-        Responsive Design
-    📊 State Management
-      Pinia
-        Global State
-        Persistence
-      TanStack Query
-        Server State
-        Caching
-        Optimistic Updates
-    ⛓️ Blockchain
-      CosmJS
-        Cosmos SDK
-        Transaction Building
-      💼 Multi-Wallet
-        Keplr
-        Leap
-        Cosmostation
-    🛠️ Development
-      ESLint
-        Code Quality
-        TypeScript Rules
-      Prettier
-        Code Formatting
-      Vitest
-        Testing Framework
+    [🎨 Frontend]
+      (Vue 3)
+        **Composition API**
+        **TypeScript**
+        **Vite**
+      (🎨 Styling)
+        **Tailwind CSS 4**
+        **shadcn/ui**
+        **Responsive Design**
+    [📊 State Management]
+      (Pinia)
+        **Global State**
+        **Persistence**
+      (TanStack Query)
+        **Server State**
+        **Caching**
+        **Optimistic Updates**
+    [⛓️ Blockchain]
+      (CosmJS)
+        **Cosmos SDK**
+        **Transaction Building**
+      (💼 Multi-Wallet)
+        **Keplr**
+        **Leap**
+        **Cosmostation**
+    [🛠️ Development]
+      (ESLint)
+        **Code Quality**
+        **TypeScript Rules**
+      (Prettier)
+        **Code Formatting**
+      (Vitest)
+        **Testing Framework**
 ```
 
 ### Technology Highlights
