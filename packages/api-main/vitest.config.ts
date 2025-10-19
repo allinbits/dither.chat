@@ -9,6 +9,12 @@ export default defineConfig({
         forceRerunTriggers: [
             '**/tests/**/*',
         ],
+        pool: 'forks',
+        poolOptions: {
+            forks: {
+                singleFork: true,
+            }
+        },
         // reporters: ['verbose'],
     },
     define: {
