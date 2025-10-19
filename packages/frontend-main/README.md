@@ -83,16 +83,16 @@ tilt up
 %%{init: {'theme':'dark', 'themeVariables': { 'primaryColor': '#1e40af', 'primaryTextColor': '#f8fafc', 'primaryBorderColor': '#60a5fa', 'lineColor': '#64748b', 'secondaryColor': '#1e293b', 'tertiaryColor': '#334155'}}}%%
 mindmap
   root((🛠️ Tech Stack))
-    Frontend
+    🎨 Frontend
       Vue 3
         Composition API
         TypeScript
         Vite
-      Styling
+      🎨 Styling
         Tailwind CSS 4
         shadcn/ui
         Responsive Design
-    State Management
+    📊 State Management
       Pinia
         Global State
         Persistence
@@ -100,15 +100,15 @@ mindmap
         Server State
         Caching
         Optimistic Updates
-    Blockchain
+    ⛓️ Blockchain
       CosmJS
         Cosmos SDK
         Transaction Building
-      Multi-Wallet
+      💼 Multi-Wallet
         Keplr
         Leap
         Cosmostation
-    Development
+    🛠️ Development
       ESLint
         Code Quality
         TypeScript Rules
