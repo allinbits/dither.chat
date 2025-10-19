@@ -80,6 +80,7 @@ tilt up
 ## 🛠️ Tech Stack
 
 ```mermaid
+%%{init: {'theme':'dark', 'themeVariables': { 'primaryColor': '#1e40af', 'primaryTextColor': '#f8fafc', 'primaryBorderColor': '#60a5fa', 'lineColor': '#64748b', 'secondaryColor': '#1e293b', 'tertiaryColor': '#334155'}}}%%
 mindmap
   root((🛠️ Tech Stack))
     Frontend
@@ -136,6 +137,7 @@ mindmap
 This frontend is part of the larger Dither ecosystem:
 
 ```mermaid
+%%{init: {'theme':'dark', 'themeVariables': { 'primaryColor': '#1e40af', 'primaryTextColor': '#f8fafc', 'primaryBorderColor': '#60a5fa', 'lineColor': '#64748b', 'secondaryColor': '#1e293b', 'tertiaryColor': '#334155'}}}%%
 graph TB
     subgraph "🌐 User Layer"
         U[👤 Users]
@@ -180,11 +182,11 @@ graph TB
     TILT --> API
     TILT --> READER
 
-    classDef userLayer fill:#1565c0,stroke:#0d47a1,stroke-width:2px,color:#ffffff
-    classDef frontendLayer fill:#7b1fa2,stroke:#4a148c,stroke-width:2px,color:#ffffff
-    classDef apiLayer fill:#2e7d32,stroke:#1b5e20,stroke-width:2px,color:#ffffff
-    classDef blockchainLayer fill:#ef6c00,stroke:#e65100,stroke-width:2px,color:#ffffff
-    classDef toolsLayer fill:#c2185b,stroke:#880e4f,stroke-width:2px,color:#ffffff
+    classDef userLayer fill:#1e3a8a,stroke:#3b82f6,stroke-width:3px,color:#f8fafc
+    classDef frontendLayer fill:#7c2d12,stroke:#f97316,stroke-width:3px,color:#f8fafc
+    classDef apiLayer fill:#14532d,stroke:#22c55e,stroke-width:3px,color:#f8fafc
+    classDef blockchainLayer fill:#7c2d12,stroke:#f59e0b,stroke-width:3px,color:#f8fafc
+    classDef toolsLayer fill:#7c1d6f,stroke:#ec4899,stroke-width:3px,color:#f8fafc
 
     class U,W userLayer
     class F,UI,ST frontendLayer
@@ -212,6 +214,7 @@ graph TB
 ### Project Structure
 
 ```mermaid
+%%{init: {'theme':'dark', 'themeVariables': { 'primaryColor': '#1e40af', 'primaryTextColor': '#f8fafc', 'primaryBorderColor': '#60a5fa', 'lineColor': '#64748b', 'secondaryColor': '#1e293b', 'tertiaryColor': '#334155'}}}%%
 graph TD
     A[📁 src/] --> B[📁 components/]
     A --> C[📁 composables/]
@@ -254,11 +257,11 @@ graph TD
     G --> G3[⚡ toast.ts]
     G --> G4[⚡ sanitize.ts]
 
-    classDef folder fill:#1976d2,stroke:#0d47a1,stroke-width:2px,color:#ffffff
-    classDef file fill:#7b1fa2,stroke:#4a148c,stroke-width:2px,color:#ffffff
-    classDef component fill:#388e3c,stroke:#1b5e20,stroke-width:2px,color:#ffffff
-    classDef store fill:#f57c00,stroke:#e65100,stroke-width:2px,color:#ffffff
-    classDef utility fill:#d32f2f,stroke:#b71c1c,stroke-width:2px,color:#ffffff
+    classDef folder fill:#1e40af,stroke:#60a5fa,stroke-width:3px,color:#f8fafc
+    classDef file fill:#7c2d12,stroke:#fb923c,stroke-width:3px,color:#f8fafc
+    classDef component fill:#166534,stroke:#4ade80,stroke-width:3px,color:#f8fafc
+    classDef store fill:#92400e,stroke:#fbbf24,stroke-width:3px,color:#f8fafc
+    classDef utility fill:#991b1b,stroke:#f87171,stroke-width:3px,color:#f8fafc
 
     class A,B,C,D,E,F,G,H folder
     class B1,B2,B3,B4,B5,B6,B7,C1,C2,C3,C4,D1,D2,D3,D4,E1,E2,E3,E4,F1,F2,F3,G1,G2,G3,G4 file
@@ -290,6 +293,7 @@ graph TD
 ### User Interaction Workflow
 
 ```mermaid
+%%{init: {'theme':'dark', 'themeVariables': { 'primaryColor': '#1e40af', 'primaryTextColor': '#f8fafc', 'primaryBorderColor': '#60a5fa', 'lineColor': '#64748b', 'secondaryColor': '#1e293b', 'tertiaryColor': '#334155'}}}%%
 sequenceDiagram
     participant U as 👤 User
     participant F as 🌐 Frontend
