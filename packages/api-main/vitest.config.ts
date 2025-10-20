@@ -13,7 +13,7 @@ export default defineConfig({
         poolOptions: {
             forks: {
                 singleFork: true,
-            }
+            },
         },
         // reporters: ['verbose'],
     },

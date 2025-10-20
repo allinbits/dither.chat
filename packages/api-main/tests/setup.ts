@@ -12,7 +12,8 @@ async function clearTables() {
         for (const tableName of tables) {
             await getDatabase().execute(sql`TRUNCATE TABLE ${sql.raw(tableName)};`);
         }
-    } catch (err) {
+    }
+    catch (err) {
         console.error('Error clearing tables:', err);
         // Continue anyway - tables might not exist yet
     }
