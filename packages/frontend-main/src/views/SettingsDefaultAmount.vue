@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
-import { toast } from 'vue-sonner';
 import { debouncedWatch } from '@vueuse/core';
 import { Decimal } from '@cosmjs/math';
 
@@ -9,6 +8,7 @@ import Switch from '@/components/ui/switch/Switch.vue';
 import MainLayout from '@/layouts/MainLayout.vue';
 import { useConfigStore } from '@/stores/useConfigStore';
 import { fractionalDigits } from '@/utility/atomics';
+import { showInfoToast } from '@/utility/toast';
 import ViewHeading from '@/views/ViewHeading.vue';
 
 const configStore = useConfigStore();
@@ -20,10 +20,7 @@ function handleInputValidity(value: boolean) {
 }
 
 debouncedWatch(configStore.config, () => {
-    toast.success('Success', {
-        description: 'Config automatically updated',
-        duration: 2000,
-    });
+    showInfoToast('Settings Updated', 'Config automatically updated');
 }, { debounce: 1000 });
 
 watch(
