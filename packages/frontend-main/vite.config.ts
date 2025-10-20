@@ -7,9 +7,13 @@ import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
 // https://vite.dev/config/
 export default defineConfig({
+    server: {
+        host: '0.0.0.0',
+        port: 5173,
+    },
     plugins: [
         nodePolyfills({
-        // Whether to polyfill specific globals.
+            // Whether to polyfill specific globals.
             globals: {
                 Buffer: true, // can also be 'build', 'dev', or false
                 global: true,
