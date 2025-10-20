@@ -142,9 +142,9 @@ For detailed architecture documentation, see [ARCHITECTURE.md](./ARCHITECTURE.md
 
 ### Dither Protocol
 
-- [Dither Protocol Documentation](./docs/guides/protocol.md)
-- [Usage Guide](./docs/guides/usage.md)
-- [About Dither](./docs/README.md)
+- [Dither Protocol Documentation](../../docs/guides/protocol.md)
+- [Usage Guide](../../docs/guides/usage.md)
+- [About Dither](../../docs/README.md)
 
 ### Development Resources
 
