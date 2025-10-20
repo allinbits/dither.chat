@@ -4,7 +4,7 @@
 
 This document defines the coding standards, patterns, and constraints for the Dither.chat frontend application. Follow these guidelines to maintain consistency and code quality.
 
-## 🎯 Core Principles
+## Core Principles
 
 ### 1. TypeScript First
 
@@ -27,7 +27,7 @@ This document defines the coding standards, patterns, and constraints for the Di
 - **Composables for logic** - Extract reusable business logic
 - **Atomic design** - Build from smallest to largest components
 
-## 📝 Code Formatting
+## Code Formatting
 
 ### Prettier Configuration
 
@@ -48,7 +48,7 @@ This document defines the coding standards, patterns, and constraints for the Di
 - **120 character** line limit
 - **Trailing commas** in objects and arrays
 
-## 🏗️ Component Structure
+## Component Structure
 
 ### Standard Component Template
 
@@ -119,7 +119,7 @@ onMounted(() => {
 </template>
 ```
 
-## 🏷️ Naming Conventions
+## Naming Conventions
 
 ### Files & Directories
 
@@ -144,12 +144,12 @@ onMounted(() => {
 - **Custom classes**: `kebab-case` (e.g., `post-item`, `wallet-connect`)
 - **CSS variables**: `--kebab-case` (e.g., `--main-width`, `--border-radius`)
 
-## 🔧 TypeScript Patterns
+## TypeScript Patterns
 
 ### Props Definition
 
 ```typescript
-// ✅ Good - Explicit interface
+// Good - Explicit interface
 interface Props {
     title: string;
     isVisible?: boolean;
@@ -160,7 +160,7 @@ const props = withDefaults(defineProps<Props>(), {
     isVisible: false,
 });
 
-// ❌ Bad - Inline props
+// Bad - Inline props
 const props = defineProps<{
     title: string;
     isVisible?: boolean;
@@ -170,7 +170,7 @@ const props = defineProps<{
 ### Emits Definition
 
 ```typescript
-// ✅ Good - Explicit interface
+// Good - Explicit interface
 interface Emits {
     update: [value: string];
     close: [];
@@ -179,14 +179,14 @@ interface Emits {
 
 const emit = defineEmits<Emits>();
 
-// ❌ Bad - String-based emits
+// Bad - String-based emits
 const emit = defineEmits(['update', 'close', 'error']);
 ```
 
 ### Composables Pattern
 
 ```typescript
-// ✅ Good - Return object with named properties
+// Good - Return object with named properties
 export function useWallet() {
     const address = ref('');
     const isConnected = computed(() => !!address.value);
@@ -202,26 +202,26 @@ export function useWallet() {
     };
 }
 
-// ❌ Bad - Return array
+// Bad - Return array
 export function useWallet() {
     const address = ref('');
     return [address, connect];
 }
 ```
 
-## 🎨 Styling Guidelines
+## Styling Guidelines
 
 ### Tailwind CSS Usage
 
 ```vue
 <template>
-    <!-- ✅ Good - Semantic class grouping -->
+    <!-- Good - Semantic class grouping -->
     <div class="flex flex-col gap-4 p-6 bg-background border border-border rounded-lg">
         <h2 class="text-xl font-semibold text-foreground">Title</h2>
         <p class="text-sm text-muted-foreground">Description</p>
     </div>
 
-    <!-- ❌ Bad - Random class order -->
+    <!-- Bad - Random class order -->
     <div class="p-6 flex gap-4 border-border bg-background text-xl rounded-lg flex-col">
 </template>
 ```
@@ -229,14 +229,14 @@ export function useWallet() {
 ### CSS Custom Properties
 
 ```css
-/* ✅ Good - Use design tokens */
+/* Good - Use design tokens */
 .component {
     background-color: var(--background);
     color: var(--foreground);
     border-radius: var(--radius);
 }
 
-/* ❌ Bad - Hard-coded values */
+/* Bad - Hard-coded values */
 .component {
     background-color: #ffffff;
     color: #000000;
@@ -248,7 +248,7 @@ export function useWallet() {
 
 ```vue
 <script setup lang="ts">
-// ✅ Good - Use cn utility for conditional classes
+// Good - Use cn utility for conditional classes
 import { cn } from '@/utility';
 
 const props = defineProps<{
@@ -268,12 +268,12 @@ const buttonClasses = computed(() =>
 </script>
 ```
 
-## 🔄 State Management Patterns
+## State Management Patterns
 
 ### Pinia Store Structure
 
 ```typescript
-// ✅ Good - Clear store structure
+// Good - Clear store structure
 export const useWalletStore = defineStore(
     'wallet',
     () => {
@@ -318,7 +318,7 @@ export const useWalletStore = defineStore(
 ### TanStack Query Usage
 
 ```typescript
-// ✅ Good - Proper query structure
+// Good - Proper query structure
 export function useFeed() {
     const queryClient = useQueryClient();
 
@@ -336,12 +336,12 @@ export function useFeed() {
 }
 ```
 
-## 🚫 Common Anti-Patterns
+## Common Anti-Patterns
 
-### ❌ Avoid These Patterns
+### Avoid These Patterns
 
 ```vue
-<!-- ❌ Bad - Options API -->
+<!-- Bad - Options API -->
 <script lang="ts">
 export default {
     data() {
@@ -357,12 +357,12 @@ export default {
 };
 </script>
 
-<!-- ❌ Bad - Inline styles -->
+<!-- Bad - Inline styles -->
 <template>
     <div style="color: red; font-size: 16px;">Text</div>
 </template>
 
-<!-- ❌ Bad - Direct DOM manipulation -->
+<!-- Bad - Direct DOM manipulation -->
 <script setup>
 import { onMounted } from 'vue';
 
@@ -371,7 +371,7 @@ onMounted(() => {
 });
 </script>
 
-<!-- ❌ Bad - Mutating props -->
+<!-- Bad - Mutating props -->
 <script setup>
 const props = defineProps<{ items: string[] }>();
 
@@ -381,10 +381,10 @@ function removeItem(index: number) {
 </script>
 ```
 
-### ✅ Use These Patterns Instead
+### Use These Patterns Instead
 
 ```vue
-<!-- ✅ Good - Composition API -->
+<!-- Good - Composition API -->
 <script setup lang="ts">
 import { ref } from 'vue';
 
@@ -395,17 +395,17 @@ function increment() {
 }
 </script>
 
-<!-- ✅ Good - Tailwind classes -->
+<!-- Good - Tailwind classes -->
 <template>
     <div class="text-red-500 text-base">Text</div>
 </template>
 
-<!-- ✅ Good - Vue event handling -->
+<!-- Good - Vue event handling -->
 <template>
     <button @click="handleClick">Click me</button>
 </template>
 
-<!-- ✅ Good - Emit events for prop changes -->
+<!-- Good - Emit events for prop changes -->
 <script setup lang="ts">
 const props = defineProps<{ items: string[] }>();
 const emit = defineEmits<{ update: [items: string[]] }>();
@@ -417,7 +417,7 @@ function removeItem(index: number) {
 </script>
 ```
 
-## 🔍 Code Quality Rules
+## Code Quality Rules
 
 ### Required Practices
 
@@ -443,7 +443,7 @@ function removeItem(index: number) {
 4. **Handle wallet errors** - Gracefully handle wallet connection failures
 5. **Rate limit requests** - Implement proper rate limiting
 
-## 📚 Resources
+## Resources
 
 - [Vue 3 Composition API Guide](https://vuejs.org/guide/extras/composition-api-faq.html)
 - [TypeScript Handbook](https://www.typescriptlang.org/docs/)
