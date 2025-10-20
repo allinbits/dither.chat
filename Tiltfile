@@ -21,9 +21,10 @@ local_resource(
     dir='./packages/frontend-main',
     cmd='pnpm install',
     serve_cmd='cd ./packages/frontend-main && pnpm run dev',
+    resource_deps=['api-main'],
     deps=[
         './packages/frontend-main/src',
         './packages/frontend-main/package.json',
-        './packages/frontend-main/src/vite.config.ts'
+        './packages/frontend-main/vite.config.ts'
     ]
 )
