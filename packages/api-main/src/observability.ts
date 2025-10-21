@@ -9,7 +9,7 @@ export function observability(config: Config) {
     return opentelemetry({
         serviceName: process.env.FLY_APP_NAME || 'api-main',
         resource: resourceFromAttributes({
-            'service.group': 'diter.chat',
+            'service.group': 'dither.chat',
         }),
         spanProcessors: [
             new BatchSpanProcessor(
