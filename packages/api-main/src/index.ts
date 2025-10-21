@@ -6,12 +6,15 @@ import { Elysia, t } from 'elysia';
 import * as GetRequests from './gets/index';
 import * as PostRequests from './posts/index';
 import { useConfig } from './config';
+import { observability } from './observability';
 
 const config = useConfig();
 const app = new Elysia({ adapter: node(), prefix: '/v1' });
 
 export function start() {
     app.use(cors());
+    app.use(observability(config));
+
     app.get('/health', GetRequests.health);
     app.get('/dislikes', ({ query }) => GetRequests.Dislikes(query), { query: Gets.DislikesQuery });
     app.get('/feed', ({ query }) => GetRequests.Feed(query), { query: Gets.FeedQuery });
