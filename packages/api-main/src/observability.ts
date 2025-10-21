@@ -1,8 +1,8 @@
-import { opentelemetry } from '@elysiajs/opentelemetry';
-import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-node';
-import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-proto';
+import type { Config } from './config';
 
-import { Config } from "./config";
+import { opentelemetry } from '@elysiajs/opentelemetry';
+import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-proto';
+import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-node';
 
 export function observability(config: Config) {
     return opentelemetry({
@@ -11,11 +11,12 @@ export function observability(config: Config) {
             new BatchSpanProcessor(
                 new OTLPTraceExporter({
                     url: config.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT,
-                    headers: config.OTEL_EXPORTER_OTLP_HEADERS ? Object.fromEntries(
-                        config.OTEL_EXPORTER_OTLP_HEADERS.split(',').map(kv => kv.split('=')))
+                    headers: config.OTEL_EXPORTER_OTLP_HEADERS
+                        ? Object.fromEntries(
+                                config.OTEL_EXPORTER_OTLP_HEADERS.split(',').map(kv => kv.split('=')))
                         : undefined,
-                })
-            )
-        ]
+                }),
+            ),
+        ],
     });
 }
