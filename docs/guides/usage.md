@@ -78,7 +78,7 @@ Key points:
 |-------|---------------|
 | Wallet not detected | Unlock the extension; on mobile, open dither.chat inside the wallet’s in-app browser. |
 | “Insufficient funds” | Ensure you have both PHOTON (for burn) and ATONE (for fees). |
-| Post missing from feed | Verify the transaction on an AtomOne explorer such as [explorers.guru/chain/atomone](https://explorers.guru/chain/atomone). If confirmed on-chain, check community status channels for reader/API incidents. |
+| Post missing from feed | Verify the transaction on any AtomOne explorer. If it succeeded on-chain but is missing in the feed, the reader or API may be experiencing issues—check community status channels. |
 | Session expires frequently | Re-sign the session message. This currently happens after deployments; a permanent fix is planned. |
 | Stuck signing transaction | Re-enable the AtomOne chain in your wallet settings (e.g., Keplr → Settings → Manage Chain Visibility). |
 

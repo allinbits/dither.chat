@@ -77,7 +77,7 @@ File an issue on GitHub or contact the stewardship team via community channels (
 ## Troubleshooting
 
 **My post isn't showing up. Why?**  
-Check the transaction on an AtomOne explorer such as [https://explorers.guru/chain/atomone](https://explorers.guru/chain/atomone) to confirm it succeeded. If it did, but the post is missing, the reader or API may be experiencing issues. Check status channels or GitHub issues.
+Check the transaction on any AtomOne explorer to confirm it succeeded. If it did, but the post is missing, the reader or API may be experiencing issues. Check status channels or GitHub issues.
 
 **I'm seeing “insufficient funds” errors.**  
 Ensure you have enough PHOTON for the burn and ATONE for network fees. Wallets typically require both balances to complete a transaction.
