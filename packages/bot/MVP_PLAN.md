@@ -46,39 +46,39 @@ _Medium Impact + High Effort_
 
 ### **Week 1-2: Foundation & Core Features**
 
-#### **Sprint 1: Bot Setup & Basic Commands**
+#### **Sprint 1: Mini App Foundation & Dither Integration**
 
 **Effort**: 🟢 Low | **Impact**: 🔥🔥🔥
 
 **Deliverables:**
 
-- [ ] Telegram bot creation and setup
-- [ ] Basic command structure (`/start`, `/help`, `/feed`)
+- [x] Telegram Mini App scaffold (Vue 3 + TMA.js)
+- [x] TON Connect wallet integration
+- [x] Router and navigation setup
+- [x] TypeScript configuration
 - [ ] Dither API integration
-- [ ] Error handling framework
-- [ ] Basic logging and monitoring
+- [ ] Cosmos wallet support (Keplr/Leap)
+- [ ] Basic error handling
 
 **Technical Tasks:**
 
 ```typescript
-// Core bot structure
-class DitherBot {
-  async handleStartCommand(ctx: Context) {
-    return "🌐 Welcome to Dither Bot!\n\nI help you access the Dither decentralized social network.\n\nQuick Start:\n• /feed - View latest posts\n• /search <query> - Find content\n• /help - Show commands";
-  }
+// Dither API integration
+import { useDitherAPI } from "@/composables/useDitherAPI";
 
-  async handleFeedCommand(ctx: Context) {
-    const posts = await this.ditherAPI.getFeed({ limit: 10 });
-    return this.formatPosts(posts);
-  }
-}
+// Feed component
+const { posts, loading, error } = useDitherAPI.getFeed({ limit: 10 });
+
+// Wallet connection
+const { connectWallet, disconnectWallet, isConnected } = useWallet();
 ```
 
 **Success Criteria:**
 
-- Bot responds to all basic commands
-- Successfully fetches data from Dither API
-- Handles errors gracefully
+- Mini app loads in Telegram
+- Wallet connection works
+- Dither API integration functional
+- Error handling implemented
 
 #### **Sprint 2: Feed Reading & Post Viewing**
 
@@ -86,31 +86,42 @@ class DitherBot {
 
 **Deliverables:**
 
-- [ ] Global feed display
-- [ ] Individual post viewing
-- [ ] Post formatting and display
+- [ ] Global feed display component
+- [ ] Individual post viewing page
+- [ ] Post card component with interactions
 - [ ] Pagination support
 - [ ] Post metadata display
+- [ ] Loading states and error handling
 
 **Technical Tasks:**
 
-```typescript
-// Feed display formatting
-formatPosts(posts: Post[]): string {
-  return posts.map(post => `
-📝 ${post.content}
-👤 @${post.author} • ${this.formatTime(post.timestamp)}
-💎 ${post.quantity} PHOTON
-👍 ${post.likes} • 💬 ${post.replies} • 🔗 ${post.hash}
-  `).join('\n\n');
-}
+```vue
+<!-- FeedPage.vue -->
+<template>
+  <div class="feed-container">
+    <PostCard
+      v-for="post in posts"
+      :key="post.hash"
+      :post="post"
+      @like="handleLike"
+      @reply="handleReply"
+    />
+    <LoadingSpinner v-if="loading" />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { useDitherAPI } from "@/composables/useDitherAPI";
+const { posts, loading, error, loadMore } = useDitherAPI.useFeed();
+</script>
 ```
 
 **Success Criteria:**
 
-- Users can browse latest posts
-- Posts display with proper formatting
-- Metadata is clearly visible
+- Feed displays posts correctly
+- Post interactions work
+- Loading states implemented
+- Error handling functional
 
 ### **Week 3-4: Authentication & Search**
 
@@ -250,62 +261,50 @@ const postActions = Markup.inlineKeyboard([
 
 ### **MVP Tech Stack**
 
-#### **Backend (Bot)**
+#### **Frontend (Telegram Mini App)**
 
 ```json
 {
-  "runtime": "Node.js 20+",
-  "framework": "ElysiaJS",
-  "database": "PostgreSQL",
-  "cache": "Redis",
-  "telegram": "@telegram-apps/sdk",
-  "cosmos": "cosmjs",
-  "packageManager": "pnpm"
+  "framework": "Vue 3.5+",
+  "router": "Vue Router 4",
+  "telegram": "@tma.js/sdk-vue",
+  "wallet": "@tonconnect/ui",
+  "build": "Vite 7+",
+  "typescript": "5.9+",
+  "packageManager": "npm"
 }
 ```
 
-#### **Frontend (Mini App)**
+#### **Current Scaffold Features**
 
-```json
-{
-  "framework": "React 18",
-  "ui": "shadcn/ui",
-  "styling": "Tailwind CSS v4",
-  "state": "TanStack Query + Zustand",
-  "build": "Vite"
-}
-```
+- **Telegram Integration**: Full TMA.js SDK integration
+- **Wallet Connection**: TON Connect UI for wallet integration
+- **Vue 3 Composition API**: Modern reactive framework
+- **TypeScript**: Full type safety
+- **Vite**: Fast development and build tooling
+- **Router**: Vue Router for navigation
+- **Error Handling**: Built-in error handling system
 
-### **MVP Database Schema**
+### **Current Implementation Status**
 
-```sql
--- Users table
-CREATE TABLE users (
-  id SERIAL PRIMARY KEY,
-  telegram_id BIGINT UNIQUE NOT NULL,
-  wallet_address VARCHAR(255) UNIQUE,
-  auth_token TEXT,
-  created_at TIMESTAMP DEFAULT NOW()
-);
+#### **✅ Implemented Features**
 
--- User permissions table
-CREATE TABLE user_permissions (
-  id SERIAL PRIMARY KEY,
-  user_id INTEGER REFERENCES users(id),
-  permission_type VARCHAR(50),
-  spend_limit VARCHAR(50),
-  expires_at TIMESTAMP,
-  created_at TIMESTAMP DEFAULT NOW()
-);
+- **Telegram Mini App Structure**: Complete Vue 3 scaffold
+- **TON Connect Integration**: Wallet connection functionality
+- **Router Setup**: Navigation between pages
+- **TypeScript Configuration**: Full type safety
+- **Development Environment**: Vite with hot reload
+- **Error Handling**: Built-in error management
+- **Back Button Support**: Telegram navigation
 
--- Bot sessions table
-CREATE TABLE bot_sessions (
-  id SERIAL PRIMARY KEY,
-  user_id INTEGER REFERENCES users(id),
-  session_data JSONB,
-  last_activity TIMESTAMP DEFAULT NOW()
-);
-```
+#### **🔄 Next Implementation Steps**
+
+1. **Dither API Integration**: Connect to Dither backend
+2. **Feed Display**: Implement post viewing functionality
+3. **User Authentication**: JWT token management
+4. **Post Interactions**: Like, reply, follow features
+5. **Search Functionality**: Content discovery
+6. **Wallet Integration**: Cosmos wallet support (beyond TON)
 
 ## MVP User Experience
 

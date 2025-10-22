@@ -154,48 +154,59 @@ graph TB
 
 ### Technology Stack
 
-#### Backend Services
+#### Frontend (Telegram Mini App)
 
-- **Runtime**: Node.js 20+ with TypeScript
-- **Framework**: ElysiaJS (matching API Main)
-- **Database**: PostgreSQL with Drizzle ORM
-- **Cache**: Redis for session and response caching
-- **Queue**: BullMQ for background processing
-- **Package Manager**: pnpm
+- **Framework**: Vue 3.5+ with TypeScript
+- **Router**: Vue Router 4 for navigation
+- **Telegram SDK**: @tma.js/sdk-vue for Telegram integration
+- **Wallet Integration**: @tonconnect/ui for TON Connect
+- **Build Tool**: Vite 7+ with TypeScript
+- **Package Manager**: npm
+- **Development**: Hot reload with HTTPS support
 
-#### Frontend (Mini App)
+#### Current Implementation
 
-- **Framework**: React 18 with TypeScript
-- **UI Library**: shadcn/ui components
-- **Styling**: Tailwind CSS v4
-- **State**: TanStack Query + Zustand
-- **Build**: Vite with TypeScript
+- **Telegram Integration**: Full TMA.js SDK with back button support
+- **Wallet Connection**: TON Connect UI integration
+- **Router Setup**: Multi-page navigation structure
+- **Error Handling**: Built-in error management system
+- **TypeScript**: Full type safety throughout
+- **Development Environment**: Vite with Vue DevTools
 
-#### Blockchain Integration
+#### Blockchain Integration (Planned)
 
 - **Network**: AtomOne (Cosmos SDK)
-- **Wallets**: Keplr, Leap, Cosmostation SDKs
+- **Wallets**: Keplr, Leap, Cosmostation SDKs (beyond TON Connect)
 - **Transactions**: CosmJS for transaction building
 - **RPC**: AtomOne RPC endpoints
 
 ## User Experience Design
 
-### Telegram Bot Interface
+### Telegram Mini App Interface
 
-#### Command Structure
+#### Current Page Structure
 
 ```
-/start          - Welcome and onboarding
-/help           - Command reference
-/feed           - Global feed (10 posts)
-/search <query> - Search posts
-/user <addr>    - User profile
-/post <hash>    - Specific post
-/connect        - Wallet connection
-/settings      - User preferences
+/ (IndexPage)           - Home page with navigation
+/init-data             - Telegram init data display
+/theme-params          - Theme parameters
+/launch-params         - Launch parameters
+/ton-connect           - TON Connect wallet integration
 ```
 
-#### Interactive Menus
+#### Planned Navigation Structure
+
+```
+/                     - Home/Dashboard
+/feed                 - Global feed
+/search               - Search posts
+/user/:address        - User profile
+/post/:hash           - Specific post
+/settings             - User preferences
+/wallet               - Wallet management
+```
+
+#### Interactive Components
 
 **Main Navigation:**
 
@@ -217,7 +228,26 @@ graph TB
 
 ### Mini App Interface
 
-#### Layout Design
+#### Current Implementation
+
+```
+┌─────────────────────────────────┐
+│ 🏠 Dither Bot    🔗 TON Connect │
+├─────────────────────────────────┤
+│ [Home] [Init Data] [Theme] [TON] │
+├─────────────────────────────────┤
+│                                 │
+│  📱 Telegram Mini App           │
+│  🔗 TON Connect Integration     │
+│  🎨 Theme-aware UI              │
+│  📊 Launch Parameters           │
+│                                 │
+├─────────────────────────────────┤
+│ 💎 TON Wallet • 🔗 Connected    │
+└─────────────────────────────────┘
+```
+
+#### Planned Layout Design
 
 ```
 ┌─────────────────────────────────┐
@@ -239,7 +269,14 @@ graph TB
 └─────────────────────────────────┘
 ```
 
-#### Key Components
+#### Current Components
+
+- **AppPage**: Base page wrapper with navigation
+- **AppLink**: Navigation link component
+- **TonConnectButton**: TON wallet connection
+- **AppDisplayData**: Data display components
+
+#### Planned Components
 
 - **PostCard**: Rich post display with interactions
 - **UserProfile**: Comprehensive user information
@@ -306,24 +343,25 @@ POST / v1 / flag; // Flag content
 - **External Links**: Third-party image hosting allowed
 - **Content Safety**: Prevents malicious content on-chain
 
-## Bot Commands & Interactions
+## Mini App User Experience
 
-### Welcome Flow (`/start`)
+### Welcome Flow (Home Page)
 
 ```
-🌐 Welcome to Dither Bot!
+🌐 Welcome to Dither!
 
-I help you access the Dither decentralized social network.
+Access the Dither decentralized social network through Telegram.
 
 🚀 Quick Start:
-• /feed - Browse latest posts
-• /search <query> - Find content
-• /connect - Link your wallet
+• Browse latest posts
+• Search for content
+• Connect your wallet
+• Interact with posts
 
-💡 Need help? Use /help
+💡 Use the navigation below to explore features
 ```
 
-### Feed Display (`/feed`)
+### Feed Display (Planned)
 
 ```
 📱 Latest Posts (10/100)
@@ -338,7 +376,7 @@ I help you access the Dither decentralized social network.
 [Load More] [🏠 Home] [🔍 Search]
 ```
 
-### User Profile (`/user <address>`)
+### User Profile (Planned)
 
 ```
 👤 @alice
@@ -354,7 +392,7 @@ Recent Posts:
 [👤 Follow] [📊 Stats] [📝 Posts] [🔗 Profile]
 ```
 
-### Search Results (`/search <query>`)
+### Search Results (Planned)
 
 ```
 🔍 Search Results for "blockchain"
@@ -373,6 +411,12 @@ Recent Posts:
 ## Wallet Integration
 
 ### Supported Wallets
+
+#### Currently Implemented
+
+- **TON Connect**: TON wallet integration via @tonconnect/ui
+
+#### Planned Integration
 
 - **Keplr**: Most popular Cosmos wallet
 - **Leap**: Modern wallet with excellent UX
