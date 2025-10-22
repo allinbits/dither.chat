@@ -10,7 +10,8 @@
     "lint": "eslint",
     "lint:fix": "eslint --fix",
     "docs:build": "retype build ./docs",
-    "docs:start": "retype start ./docs"
+    "docs:start": "retype start ./docs",
+    "prepare": "simple-git-hooks"
   },
   "dependencies": {
     "retypeapp": "^3.11.0"
@@ -20,8 +21,17 @@
     "@types/node": "^22.18.10",
     "eslint": "^9.37.0",
     "eslint-plugin-format": "^1.0.2",
+    "lint-staged": "^16.2.6",
+    "simple-git-hooks": "^2.13.1",
     "tailwindcss": "^4.1.14",
     "typescript": "^5.9.3"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "pnpm lint-staged"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,mjs,cjs,vue}": "eslint --fix",
+    "*.{json,yml,yaml,md}": "eslint --fix"
   },
   "packageManager": "pnpm@10.11.1+sha512.e519b9f7639869dc8d5c3c5dfef73b3f091094b0a006d7317353c72b124e80e1afd429732e28705ad6bfa1ee879c1fce46c128ccebd3192101f43dd67c667912"
 }
