@@ -101,7 +101,6 @@ jobs:
     with:
       app_name: dither-testnet-api-main
 
-
   notify:
     needs: [ smoke-tests ]
     if: failure()
@@ -110,7 +109,7 @@ jobs:
       - uses: appleboy/telegram-action@v1.0.1
         with:
           to: ${{ secrets.TELEGRAM_TO }}
-          token: ${{ secrets.TELEGRAM_TOKEN }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           message: |
             🚨 **Smoke Tests Failed** 🚨
             
