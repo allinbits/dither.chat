@@ -1,18 +1,17 @@
 <script lang="ts" setup>
-
-import { computed, ref } from 'vue';
 import { Wallet } from 'lucide-vue-next';
-
-import { useWallet } from '@/composables/useWallet';
-
-import WalletConnectPopoverContent from './WalletConnectPopoverContent.vue';
+import { computed, ref } from 'vue';
 
 import {
-    Popover,
-    PopoverTrigger,
+  Popover,
+  PopoverTrigger,
 } from '@/components/ui/popover';
+
 import UserAvatar from '@/components/users/UserAvatar.vue';
+
+import { useWallet } from '@/composables/useWallet';
 import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
+import WalletConnectPopoverContent from './WalletConnectPopoverContent.vue';
 
 const isConnecting = ref(false);
 const isError = ref(false);
@@ -21,7 +20,6 @@ const { address, loggedIn } = useWallet();
 const walletDialogStore = useWalletDialogStore();
 
 const connectedState = computed(() => !isConnecting.value && loggedIn.value && !isError.value);
-
 </script>
 
 <template>
@@ -30,15 +28,15 @@ const connectedState = computed(() => !isConnecting.value && loggedIn.value && !
     <template v-if="connectedState">
       <Popover>
         <PopoverTrigger class="size-full flex justify-center items-center">
-          <UserAvatar :userAddress="address" disabled/>
+          <UserAvatar :user-address="address" disabled />
         </PopoverTrigger>
 
-        <WalletConnectPopoverContent/>
+        <WalletConnectPopoverContent />
       </Popover>
     </template>
 
     <template v-else>
-      <button @click="walletDialogStore.showDialog" class="flex items-center justify-center flex-row size-full rounded-full hover:bg-accent active:bg-accent transition-colors">
+      <button class="flex items-center justify-center flex-row size-full rounded-full hover:bg-accent active:bg-accent transition-colors" @click="walletDialogStore.showDialog">
         <Wallet class="size-6" />
       </button>
     </template>

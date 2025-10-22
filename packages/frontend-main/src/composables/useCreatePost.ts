@@ -1,105 +1,107 @@
+import type { InfiniteData } from '@tanstack/vue-query';
+
 import type { Post } from 'api-main/types/feed';
-
-import { ref } from 'vue';
 import { Decimal } from '@cosmjs/math';
-import { type InfiniteData, useMutation, useQueryClient } from '@tanstack/vue-query';
-
-import { feed } from './useFeed';
-import { useTxNotification } from './useTxNotification';
-import { userPosts } from './useUserPosts';
-import { useWallet } from './useWallet';
+import { useMutation, useQueryClient } from '@tanstack/vue-query';
+import { ref } from 'vue';
 
 import { fractionalDigits } from '@/utility/atomics';
 import { infiniteDataWithNewItem, newPost } from '@/utility/optimisticBuilders';
+import { feed } from './useFeed';
+import { useTxNotification } from './useTxNotification';
+
+import { userPosts } from './useUserPosts';
+import { useWallet } from './useWallet';
 
 interface CreatePostRequestMutation {
-    message: string;
-    amountAtomics: string;
+  message: string;
+  amountAtomics: string;
 }
 
 export function useCreatePost(
 ) {
-    const queryClient = useQueryClient();
-    const wallet = useWallet();
-    const txError = ref<string>();
-    const txSuccess = ref<string>();
-    const isToastShown = ref(false);
-    useTxNotification('Post', txSuccess, txError);
+  const queryClient = useQueryClient();
+  const wallet = useWallet();
+  const txError = ref<string>();
+  const txSuccess = ref<string>();
+  const isToastShown = ref(false);
+  useTxNotification('Post', txSuccess, txError);
 
-    const {
-        mutateAsync,
-    } = useMutation({
-        mutationFn: async ({ message, amountAtomics }: CreatePostRequestMutation) => {
-            txError.value = undefined;
-            txSuccess.value = undefined;
-            isToastShown.value = true;
+  const {
+    mutateAsync,
+  } = useMutation({
+    mutationFn: async ({ message, amountAtomics }: CreatePostRequestMutation) => {
+      txError.value = undefined;
+      txSuccess.value = undefined;
+      isToastShown.value = true;
 
-            const msg = message.replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#039;');
+      const msg = message.replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
 
-            const result = await wallet.dither.send(
-                'Post',
-                { args: [msg], amount: amountAtomics },
-            );
+      const result = await wallet.dither.send(
+        'Post',
+        { args: [msg], amount: amountAtomics },
+      );
 
-            if (!result.broadcast) {
-                txError.value = result.msg;
-                throw new Error(result.msg);
-            }
-            txSuccess.value = result.tx?.transactionHash;
-            if (txSuccess.value) {
-                message = '';
-                return txSuccess.value;
-            }
-        },
-        onMutate: async () => {
-            const feedOpts = feed(queryClient);
-            const userPostsOpts = userPosts({ userAddress: wallet.address });
-            await Promise.all([
-                queryClient.cancelQueries(feedOpts),
-                queryClient.cancelQueries(userPostsOpts),
-            ]);
+      if (!result.broadcast) {
+        txError.value = result.msg;
+        throw new Error(result.msg);
+      }
+      txSuccess.value = result.tx?.transactionHash;
+      if (txSuccess.value) {
+        message = '';
+        return txSuccess.value;
+      }
+    },
+    onMutate: async () => {
+      const feedOpts = feed(queryClient);
+      const userPostsOpts = userPosts({ userAddress: wallet.address });
+      await Promise.all([
+        queryClient.cancelQueries(feedOpts),
+        queryClient.cancelQueries(userPostsOpts),
+      ]);
 
-            const previousFeed = queryClient.getQueryData(
-                feedOpts.queryKey,
-            ) as InfiniteData<Post[], unknown> | undefined;
-            const previousUserPosts = queryClient.getQueryData(
-                userPostsOpts.queryKey,
-            ) as InfiniteData<Post[], unknown> | undefined;
+      const previousFeed = queryClient.getQueryData(
+        feedOpts.queryKey,
+      ) as InfiniteData<Post[], unknown> | undefined;
+      const previousUserPosts = queryClient.getQueryData(
+        userPostsOpts.queryKey,
+      ) as InfiniteData<Post[], unknown> | undefined;
 
-            return { previousFeed, previousUserPosts };
-        },
-        onSuccess: (hash, variables, context) => {
-            if (!hash) throw new Error('Error: No hash in TX');
+      return { previousFeed, previousUserPosts };
+    },
+    onSuccess: (hash, variables, context) => {
+      if (!hash)
+        throw new Error('Error: No hash in TX');
 
-            const feedOpts = feed(queryClient);
-            const userPostsOpts = userPosts({ userAddress: wallet.address });
+      const feedOpts = feed(queryClient);
+      const userPostsOpts = userPosts({ userAddress: wallet.address });
 
-            // Created Post
-            const optimisticNewPost: Post = newPost({ message: variables.message, quantity: Decimal.fromAtomics(variables.amountAtomics, fractionalDigits).atomics, hash, author: wallet.address.value, postHash: null });
-            const newFeedData = infiniteDataWithNewItem<Post>({ previousItems: context.previousFeed, newItem: optimisticNewPost });
-            const newUserPostsData = infiniteDataWithNewItem<Post>({ previousItems: context.previousUserPosts, newItem: optimisticNewPost });
+      // Created Post
+      const optimisticNewPost: Post = newPost({ message: variables.message, quantity: Decimal.fromAtomics(variables.amountAtomics, fractionalDigits).atomics, hash, author: wallet.address.value, postHash: null });
+      const newFeedData = infiniteDataWithNewItem<Post>({ previousItems: context.previousFeed, newItem: optimisticNewPost });
+      const newUserPostsData = infiniteDataWithNewItem<Post>({ previousItems: context.previousUserPosts, newItem: optimisticNewPost });
 
-            queryClient.setQueryData(feedOpts.queryKey, newFeedData);
-            queryClient.setQueryData(userPostsOpts.queryKey, newUserPostsData);
-        },
-        onError: (_, __, context) => {
-            const feedOpts = feed(queryClient);
-            const userPostsOpts = userPosts({ userAddress: wallet.address });
-            queryClient.setQueryData(feedOpts.queryKey, context?.previousFeed);
-            queryClient.setQueryData(userPostsOpts.queryKey, context?.previousUserPosts);
-        },
-        onSettled: () => {
-            isToastShown.value = false;
-        },
-    });
+      queryClient.setQueryData(feedOpts.queryKey, newFeedData);
+      queryClient.setQueryData(userPostsOpts.queryKey, newUserPostsData);
+    },
+    onError: (_, __, context) => {
+      const feedOpts = feed(queryClient);
+      const userPostsOpts = userPosts({ userAddress: wallet.address });
+      queryClient.setQueryData(feedOpts.queryKey, context?.previousFeed);
+      queryClient.setQueryData(userPostsOpts.queryKey, context?.previousUserPosts);
+    },
+    onSettled: () => {
+      isToastShown.value = false;
+    },
+  });
 
-    return {
-        createPost: mutateAsync,
-        txError,
-        txSuccess,
-    };
+  return {
+    createPost: mutateAsync,
+    txError,
+    txSuccess,
+  };
 }

@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       package:
-        description: "Package name to publish"
+        description: Package name to publish
         required: true
         type: choice
         options:
@@ -22,8 +22,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          registry-url: "https://registry.npmjs.org/"
-          scope: "@atomone"
+          registry-url: 'https://registry.npmjs.org/'
+          scope: '@atomone'
 
       - name: Install pnpm
         run: npm install -g pnpm

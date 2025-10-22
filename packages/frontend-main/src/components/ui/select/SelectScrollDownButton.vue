@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import type { HTMLAttributes } from 'vue';
+import type { SelectScrollDownButtonProps } from 'reka-ui';
 
+import type { HTMLAttributes } from 'vue';
 import { reactiveOmit } from '@vueuse/core';
 import { ChevronDown } from 'lucide-vue-next';
-import { SelectScrollDownButton, type SelectScrollDownButtonProps, useForwardProps } from 'reka-ui';
+import { SelectScrollDownButton, useForwardProps } from 'reka-ui';
 
 import { cn } from '@/utility';
 

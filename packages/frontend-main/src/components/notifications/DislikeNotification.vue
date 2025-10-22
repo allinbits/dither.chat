@@ -6,7 +6,6 @@ import PostMessage from '../posts/PostMessage.vue';
 import NotificationWrapper from './NotificationWrapper.vue';
 
 defineProps<{ notification: Notification }>();
-
 </script>
 
 <template>

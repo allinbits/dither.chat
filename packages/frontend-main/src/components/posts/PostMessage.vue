@@ -4,50 +4,50 @@ import { computed } from 'vue';
 const props = defineProps<{ message: string }>();
 
 interface MessageSegment {
-    type: 'text' | 'link';
-    content: string;
+  type: 'text' | 'link';
+  content: string;
 }
 
 function extractGenericLink(msg: string) {
-    const urlRegex = /(https?:\/\/[^\s]+)/i;
-    const match = msg.match(urlRegex);
+  const urlRegex = /(https?:\/\/\S+)/i;
+  const match = msg.match(urlRegex);
 
-    if (match && match[1]) {
-        return match[1];
-    }
-    return null;
+  if (match && match[1]) {
+    return match[1];
+  }
+  return null;
 }
 
 function unescapeHTML(str: string): string {
-    const doc = new DOMParser().parseFromString(str, 'text/html');
-    return doc.documentElement.textContent || str;
+  const doc = new DOMParser().parseFromString(str, 'text/html');
+  return doc.documentElement.textContent || str;
 }
 
 const parsedMessage = computed((): MessageSegment[] => {
-    const message = unescapeHTML(props.message);
-    const link = extractGenericLink(message);
-    const segments: MessageSegment[] = [];
+  const message = unescapeHTML(props.message);
+  const link = extractGenericLink(message);
+  const segments: MessageSegment[] = [];
 
-    if (!link) {
-        segments.push({ type: 'text', content: message });
-        return segments;
-    }
-
-    const parts = message.split(link, 2);
-    const textBefore = parts[0];
-    const textAfter = parts.length > 1 ? parts[1] : '';
-
-    if (textBefore.length > 0) {
-        segments.push({ type: 'text', content: textBefore });
-    }
-
-    segments.push({ type: 'link', content: link });
-
-    if (textAfter.length > 0) {
-        segments.push({ type: 'text', content: textAfter });
-    }
-
+  if (!link) {
+    segments.push({ type: 'text', content: message });
     return segments;
+  }
+
+  const parts = message.split(link, 2);
+  const textBefore = parts[0];
+  const textAfter = parts.length > 1 ? parts[1] : '';
+
+  if (textBefore.length > 0) {
+    segments.push({ type: 'text', content: textBefore });
+  }
+
+  segments.push({ type: 'link', content: link });
+
+  if (textAfter.length > 0) {
+    segments.push({ type: 'text', content: textAfter });
+  }
+
+  return segments;
 });
 </script>
 

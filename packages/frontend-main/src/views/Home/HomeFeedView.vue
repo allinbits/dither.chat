@@ -1,17 +1,15 @@
 <script setup lang="ts">
+import PostsList from '@/components/posts/PostsList.vue';
 
 import { useFeed } from '@/composables/useFeed';
 
 import HomeViewWrapper from './HomeViewWrapper.vue';
 
-import PostsList from '@/components/posts/PostsList.vue';
-
 const query = useFeed();
-
 </script>
 
 <template>
   <HomeViewWrapper>
-    <PostsList :query="query"/>
+    <PostsList :query="query" />
   </HomeViewWrapper>
 </template>

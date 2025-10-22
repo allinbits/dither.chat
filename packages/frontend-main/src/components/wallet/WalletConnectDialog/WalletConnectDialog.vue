@@ -1,25 +1,25 @@
 <script lang="ts" setup>
 import type { Ref } from 'vue';
 
-import { computed, ref } from 'vue';
 import { bech32 } from 'bech32';
 import { Link2, Loader } from 'lucide-vue-next';
 import { VisuallyHidden } from 'reka-ui';
-
-import { getWalletHelp, useWallet, Wallets } from '@/composables/useWallet';
-
-import ConnectButton from './WalletExtensionButton.vue';
+import { computed, ref } from 'vue';
 
 import { Button } from '@/components/ui/button';
+
 import { Dialog, DialogContent } from '@/components/ui/dialog';
+
 import DialogDescription from '@/components/ui/dialog/DialogDescription.vue';
 import DialogTitle from '@/components/ui/dialog/DialogTitle.vue';
 import Icon from '@/components/ui/icon/Icon.vue';
 import Input from '@/components/ui/input/Input.vue';
 import UserBalance from '@/components/users/UserBalance.vue';
+import { getWalletHelp, useWallet, Wallets } from '@/composables/useWallet';
 import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
 import { getChainConfigLazy } from '@/utility/getChainConfigLazy';
 import { shorten } from '@/utility/text';
+import ConnectButton from './WalletExtensionButton.vue';
 
 const chainConfig = getChainConfigLazy();
 
@@ -34,10 +34,10 @@ const { connect, signOut, address, loggedIn, keplr, leap, cosmostation } = useWa
 const walletDialogStore = useWalletDialogStore();
 
 const selectState = computed(
-    () => !isConnecting.value && !loggedIn.value && !isError.value && !isAddressOnlyConnection.value,
+  () => !isConnecting.value && !loggedIn.value && !isError.value && !isAddressOnlyConnection.value,
 );
 const addressState = computed(
-    () => !isConnecting.value && !loggedIn.value && !isError.value && isAddressOnlyConnection.value,
+  () => !isConnecting.value && !loggedIn.value && !isError.value && isAddressOnlyConnection.value,
 );
 const connectingState = computed(() => isConnecting.value && !loggedIn.value && !isError.value);
 const connectedState = computed(() => !isConnecting.value && loggedIn.value && !isError.value);
@@ -47,94 +47,91 @@ const errorState = computed(() => isError.value);
 const controller: Ref<AbortController | null> = ref(null);
 const chosenWallet: Ref<Wallets> = ref(Wallets.keplr);
 
-const connectWallet = async (walletType: Wallets, address?: string) => {
-    if (walletType == Wallets.addressOnly && !address) {
-        isAddressOnlyConnection.value = true;
-        return;
-    }
+async function connectWallet(walletType: Wallets, address?: string) {
+  if (walletType === Wallets.addressOnly && !address) {
+    isAddressOnlyConnection.value = true;
+    return;
+  }
 
-    if (window.keplr) {
-        window.keplr.defaultOptions = {
-            sign: { preferNoSetFee: true, preferNoSetMemo: true, disableBalanceCheck: true },
-        };
+  if (window.keplr) {
+    window.keplr.defaultOptions = {
+      sign: { preferNoSetFee: true, preferNoSetMemo: true, disableBalanceCheck: true },
+    };
+  }
+  if (window.leap) {
+    window.leap.defaultOptions = {
+      sign: { preferNoSetFee: true, preferNoSetMemo: true, disableBalanceCheck: true },
+    };
+  }
+  isAddressOnlyConnection.value = false;
+  isError.value = false;
+  isConnecting.value = true;
+  isSlowConnecting.value = false;
+  chosenWallet.value = walletType;
+  let slow: ReturnType<typeof setTimeout> | null = null;
+  controller.value = new AbortController();
+  try {
+    slow = setTimeout(() => (isSlowConnecting.value = true), 10000);
+    if (walletType === Wallets.addressOnly && address) {
+      await connect(walletType, address, controller.value.signal);
+    } else {
+      await connect(walletType, undefined, controller.value.signal);
     }
-    if (window.leap) {
-        window.leap.defaultOptions = {
-            sign: { preferNoSetFee: true, preferNoSetMemo: true, disableBalanceCheck: true },
-        };
-    }
-    isAddressOnlyConnection.value = false;
-    isError.value = false;
-    isConnecting.value = true;
-    isSlowConnecting.value = false;
-    chosenWallet.value = walletType;
-    let slow: ReturnType<typeof setTimeout> | null = null;
-    controller.value = new AbortController();
-    try {
-        slow = setTimeout(() => (isSlowConnecting.value = true), 10000);
-        if (walletType == Wallets.addressOnly && address) {
-            await connect(walletType, address, controller.value.signal);
-        }
-        else {
-            await connect(walletType, undefined, controller.value.signal);
-        }
-        isConnecting.value = false;
-        isSlowConnecting.value = false;
-        if (slow) {
-            clearTimeout(slow);
-            slow = null;
-        }
-
-        // Call the callback if it exists then clear it
-        if (walletDialogStore.onWalletConnected) {
-            walletDialogStore.onWalletConnected();
-            walletDialogStore.onWalletConnected = null;
-        }
-    }
-    catch (err) {
-        console.error(err);
-        isConnecting.value = false;
-        isSlowConnecting.value = false;
-        isError.value = true;
-        if (slow) {
-            clearTimeout(slow);
-            slow = null;
-        }
-    }
-};
-const openWalletHelp = () => {
-    window.open(getWalletHelp(chosenWallet.value), '_blank');
-};
-const cancelConnect = () => {
-    controller.value?.abort();
     isConnecting.value = false;
     isSlowConnecting.value = false;
-    isError.value = false;
-    isAddressOnlyConnection.value = false;
-    publicAddress.value = '';
-};
+    if (slow) {
+      clearTimeout(slow);
+      slow = null;
+    }
+
+    // Call the callback if it exists then clear it
+    if (walletDialogStore.onWalletConnected) {
+      walletDialogStore.onWalletConnected();
+      walletDialogStore.onWalletConnected = null;
+    }
+  } catch (err) {
+    console.error(err);
+    isConnecting.value = false;
+    isSlowConnecting.value = false;
+    isError.value = true;
+    if (slow) {
+      clearTimeout(slow);
+      slow = null;
+    }
+  }
+}
+function openWalletHelp() {
+  window.open(getWalletHelp(chosenWallet.value), '_blank');
+}
+function cancelConnect() {
+  controller.value?.abort();
+  isConnecting.value = false;
+  isSlowConnecting.value = false;
+  isError.value = false;
+  isAddressOnlyConnection.value = false;
+  publicAddress.value = '';
+}
 const isValidAddress = computed(() => {
-    try {
-        const decoded = bech32.decode(publicAddress.value);
-        if (decoded.prefix == chainConfig.value.bech32Config.bech32PrefixAccAddr) {
-            return true;
-        }
-        else {
-            return false;
-        }
+  try {
+    const decoded = bech32.decode(publicAddress.value);
+    if (decoded.prefix === chainConfig.value.bech32Config.bech32PrefixAccAddr) {
+      return true;
+    } else {
+      return false;
     }
-    catch (err) {
-        console.error(err);
-        return false;
-    }
+  } catch (err) {
+    console.error(err);
+    return false;
+  }
 });
 </script>
+
 <template>
   <Dialog v-model:open="walletDialogStore.isOpen" @update:open="cancelConnect">
     <DialogContent>
       <VisuallyHidden>
-        <DialogTitle></DialogTitle>
-        <DialogDescription></DialogDescription>
+        <DialogTitle />
+        <DialogDescription />
       </VisuallyHidden>
       <template v-if="selectState">
         <div class="flex flex-col gap-6">
@@ -184,8 +181,8 @@ const isValidAddress = computed(() => {
               {{ $t('components.WalletConnect.ctaAddress') }}
             </ConnectButton>
             <ConnectButton class="justify-center" @click="isAddressOnlyConnection = false">
-              {{ $t('components.WalletConnect.cancel') }}</ConnectButton
-            >
+              {{ $t('components.WalletConnect.cancel') }}
+            </ConnectButton>
           </div>
           <span class="font-semibold">
             {{ $t('components.WalletConnect.publicAddressDisclaimer') }}
@@ -196,7 +193,7 @@ const isValidAddress = computed(() => {
       <!-- Normal signed in account display -->
       <template v-else-if="connectedState">
         <div class="flex align-center items-stretch cursor-pointer">
-          <div class="bg-gradient w-10 h-10 rounded-full mr-3"></div>
+          <div class="bg-gradient w-10 h-10 rounded-full mr-3" />
           <div class="flex flex-col justify-around">
             <span>{{ shorten(address) }}</span>
 
@@ -212,18 +209,20 @@ const isValidAddress = computed(() => {
         <div>
           <div class="flex flex-col px-8 py-4 pt-12 bg-grey-300 rounded w-80 relative">
             <div class="flex align-center items-stretch">
-              <div class="bg-gradient w-10 h-10 rounded-full mr-3"></div>
+              <div class="bg-gradient w-10 h-10 rounded-full mr-3" />
               <div class="flex flex-col justify-around">
                 <span>{{ shorten(address) }}</span>
               </div>
             </div>
-            <div class="text-muted-foreground pt-6 pb-2">{{ $t('components.WalletConnect.balance') }}</div>
+            <div class="text-muted-foreground pt-6 pb-2">
+              {{ $t('components.WalletConnect.balance') }}
+            </div>
             <div class="text-muted-foreground">
               <UserBalance :address="address" /> {{ chainConfig.stakeCurrency.coinDenom }}
             </div>
             <ConnectButton class="my-4 justify-center" @click="signOut()">
-              {{ $t('components.WalletConnect.disconnect') }}</ConnectButton
-            >
+              {{ $t('components.WalletConnect.disconnect') }}
+            </ConnectButton>
           </div>
         </div>
       </template>
@@ -234,7 +233,9 @@ const isValidAddress = computed(() => {
           <div class="text-xl font-bold">
             {{ $t('components.WalletConnect.connecting') }}
           </div>
-          <div class="text-muted-foreground">{{ $t('components.WalletConnect.wait') }}</div>
+          <div class="text-muted-foreground">
+            {{ $t('components.WalletConnect.wait') }}
+          </div>
 
           <div class="flex justify-center">
             <Loader class="animate-spin" :size="24" />
@@ -247,8 +248,8 @@ const isValidAddress = computed(() => {
               }
             "
           >
-            {{ $t('components.WalletConnect.cancel') }}</ConnectButton
-          >
+            {{ $t('components.WalletConnect.cancel') }}
+          </ConnectButton>
 
           <div v-if="isSlowConnecting" class="flex flex-col items-center mt-2">
             <span class="text-muted-foreground">{{ $t('components.WalletConnect.slow') }}</span>
@@ -258,7 +259,7 @@ const isValidAddress = computed(() => {
               @click="openWalletHelp"
             >
               {{ chosenWallet }} {{ $t('components.WalletConnect.trouble') }}
-              <Link2 class="size-5"/>
+              <Link2 class="size-5" />
             </Button>
           </div>
         </div>
@@ -283,8 +284,8 @@ const isValidAddress = computed(() => {
                 }
               "
             >
-              {{ $t('components.WalletConnect.retry') }}</ConnectButton
-            >
+              {{ $t('components.WalletConnect.retry') }}
+            </ConnectButton>
             <ConnectButton
               class="justify-center"
               @click="
@@ -293,8 +294,8 @@ const isValidAddress = computed(() => {
                 }
               "
             >
-              {{ $t('components.WalletConnect.back') }}</ConnectButton
-            >
+              {{ $t('components.WalletConnect.back') }}
+            </ConnectButton>
           </div>
 
           <Button
@@ -302,7 +303,7 @@ const isValidAddress = computed(() => {
             @click="openWalletHelp"
           >
             {{ chosenWallet }} {{ $t('components.WalletConnect.trouble') }}
-            <Link2 class="size-5"/>
+            <Link2 class="size-5" />
           </Button>
         </div>
       </template>

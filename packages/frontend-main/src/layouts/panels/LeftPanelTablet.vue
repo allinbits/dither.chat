@@ -1,23 +1,24 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { type RouteRecordNameGeneric, useRouter } from 'vue-router';
+import type { RouteRecordNameGeneric } from 'vue-router';
 import { Bell, Feather, HelpCircle, House, Search, Settings, User } from 'lucide-vue-next';
-
-import { useDefaultAmount } from '@/composables/useDefaultAmount';
-import { usePopups } from '@/composables/usePopups';
-import { useWallet } from '@/composables/useWallet';
+import { computed } from 'vue';
+import { useRouter } from 'vue-router';
 
 import NotificationsCount from '@/components/notifications/NotificationsCount.vue';
 import WalletConnectButtonMobile from '@/components/wallet/WalletConnectButton/WalletConnectButtonMobile.vue';
+import { useDefaultAmount } from '@/composables/useDefaultAmount';
+
+import { usePopups } from '@/composables/usePopups';
+import { useWallet } from '@/composables/useWallet';
 import { routesNames } from '@/router';
 import { cn } from '@/utility';
+
 const wallet = useWallet();
 const popups = usePopups();
 const { isDefaultAmountInvalid } = useDefaultAmount();
 const router = useRouter();
 const isMyProfileRoute = computed(() => router.currentRoute.value.name?.toString().startsWith(routesNames.profile) && wallet.loggedIn.value && wallet.address.value === router.currentRoute.value.params.address);
 const buttonClass = (routeName?: RouteRecordNameGeneric) => `flex justify-center items-center size-[52px] rounded-full active:bg-accent hover:bg-accent transition-colors ${!!routeName && router.currentRoute.value.name?.toString().startsWith(routeName.toString()) && 'bg-accent/80'}`;
-
 </script>
 
 <template>
@@ -28,24 +29,24 @@ const buttonClass = (routeName?: RouteRecordNameGeneric) => `flex justify-center
           <House class="size-6" />
         </RouterLink>
 
-        <RouterLink  to="/explore" :class="buttonClass(routesNames.explore)">
+        <RouterLink to="/explore" :class="buttonClass(routesNames.explore)">
           <Search class="size-6" />
         </RouterLink>
 
-        <RouterLink v-if="wallet.loggedIn.value"  to="/notifications" :class="cn(buttonClass(routesNames.notifications), 'relative')">
-          <NotificationsCount class="absolute top-1 left-6"/>
+        <RouterLink v-if="wallet.loggedIn.value" to="/notifications" :class="cn(buttonClass(routesNames.notifications), 'relative')">
+          <NotificationsCount class="absolute top-1 left-6" />
           <Bell class="size-6" />
         </RouterLink>
 
-        <RouterLink v-if="wallet.loggedIn.value"  :to="`/profile/${wallet.address.value}`" :class="buttonClass(isMyProfileRoute ? routesNames.profile : undefined)">
+        <RouterLink v-if="wallet.loggedIn.value" :to="`/profile/${wallet.address.value}`" :class="buttonClass(isMyProfileRoute ? routesNames.profile : undefined)">
           <User class="size-6" />
         </RouterLink>
 
-        <RouterLink v-if="wallet.loggedIn.value"  to="/settings" :class="buttonClass(routesNames.settings)">
+        <RouterLink v-if="wallet.loggedIn.value" to="/settings" :class="buttonClass(routesNames.settings)">
           <Settings class="size-6" />
         </RouterLink>
 
-        <RouterLink  to="/about" :class="buttonClass(routesNames.about)">
+        <RouterLink to="/about" :class="buttonClass(routesNames.about)">
           <HelpCircle class="size-6" />
         </RouterLink>
       </nav>
@@ -55,6 +56,6 @@ const buttonClass = (routeName?: RouteRecordNameGeneric) => `flex justify-center
       </button>
     </div>
 
-    <WalletConnectButtonMobile class="size-[52px]"/>
+    <WalletConnectButtonMobile class="size-[52px]" />
   </header>
 </template>

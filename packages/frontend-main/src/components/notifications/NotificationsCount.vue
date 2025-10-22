@@ -3,10 +3,10 @@ import { useNotificationsCount } from '@/composables/useNotificationsCount';
 import { useWallet } from '@/composables/useWallet';
 
 import { formatCompactNumber } from '@/utility/text';
+
 const wallet = useWallet();
 
 const { data: count } = useNotificationsCount({ userAddress: wallet.address });
-
 </script>
 
 <template>

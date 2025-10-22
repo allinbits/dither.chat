@@ -1,25 +1,25 @@
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n';
 import { Check, ExternalLink } from 'lucide-vue-next';
-
-import ToastWrapper from './ToastWrapper.vue';
+import { useI18n } from 'vue-i18n';
 
 import { useConfigStore } from '@/stores/useConfigStore';
 
+import ToastWrapper from './ToastWrapper.vue';
+
 const props = defineProps<{
-    close: () => void;
-    txLabel: string;
-    txHash: string;
+  close: () => void;
+  txLabel: string;
+  txHash: string;
 }>();
 
 const { t } = useI18n();
 const configStore = useConfigStore();
 const explorerURL = configStore.envConfig.explorerUrl ?? 'https://testnet.explorer.allinbits.services/atomone-devnet-1/tx';
 
-const openExplorer = (event: MouseEvent) => {
-    event.stopPropagation(); // Keep the toast open when clicking the link
-    window.open(`${explorerURL}/${props.txHash}`, '_blank');
-};
+function openExplorer(event: MouseEvent) {
+  event.stopPropagation(); // Keep the toast open when clicking the link
+  window.open(`${explorerURL}/${props.txHash}`, '_blank');
+}
 </script>
 
 <template>

@@ -1,6 +1,7 @@
-import { createHash, randomBytes } from 'crypto';
-
 import type { Posts } from '@atomone/dither-api-types';
+
+import { createHash, randomBytes } from 'node:crypto';
+import process from 'node:process';
 
 import { Secp256k1HdWallet } from '@cosmjs/amino';
 import { toBech32 } from '@cosmjs/encoding';
@@ -9,162 +10,162 @@ import { makeADR36AminoSignDoc } from '@keplr-wallet/cosmos';
 let lastHeight = 1_000_000;
 
 export async function get<T>(endpoint: string, token?: string) {
-    const headers: Record<string, string> = {
-        'Content-Type': 'application/json',
-    };
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
 
-    if (token) {
-        headers['Cookie'] = `auth=${token}`;
-    }
+  if (token) {
+    headers.Cookie = `auth=${token}`;
+  }
 
-    const response = await fetch(`http://localhost:3000/v1/${endpoint}`, {
-        method: 'GET',
-        headers,
-    }).catch((err) => {
-        console.error(err);
-        return null;
-    });
+  const response = await fetch(`http://localhost:3000/v1/${endpoint}`, {
+    method: 'GET',
+    headers,
+  }).catch((err) => {
+    console.error(err);
+    return null;
+  });
 
-    if (!response?.ok) {
-        return null;
-    }
+  if (!response?.ok) {
+    return null;
+  }
 
-    const jsonData = await response.json();
-    return jsonData as T;
+  const jsonData = await response.json();
+  return jsonData as T;
 }
 
 export async function post<T = { status: number }>(
-    endpoint: string,
-    body: object,
-    token?: string,
+  endpoint: string,
+  body: object,
+  token?: string,
 ): Promise<T | null> {
-    const headers: Record<string, string> = {
-        'Content-Type': 'application/json',
-        'authorization': process.env.AUTH ?? 'whatever',
-    };
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    'authorization': process.env.AUTH ?? 'whatever',
+  };
 
-    if (token) {
-        headers['Cookie'] = `auth=${token}`;
-    }
+  if (token) {
+    headers.Cookie = `auth=${token}`;
+  }
 
-    const response = await fetch(`http://localhost:3000/v1/${endpoint}`, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({ ...body }),
-    }).catch((err) => {
-        console.error(err);
-        return null;
-    });
+  const response = await fetch(`http://localhost:3000/v1/${endpoint}`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ ...body }),
+  }).catch((err) => {
+    console.error(err);
+    return null;
+  });
 
-    if (!response?.ok) {
-        console.log(await response?.json());
-        return null;
-    }
+  if (!response?.ok) {
+    console.log(await response?.json());
+    return null;
+  }
 
-    const jsonData = (await response.json()) as { status: number };
-    if (jsonData.status && jsonData.status !== 200) {
-        return jsonData as T;
-    }
-
+  const jsonData = (await response.json()) as { status: number };
+  if (jsonData.status && jsonData.status !== 200) {
     return jsonData as T;
+  }
+
+  return jsonData as T;
 }
 
 export function getSha256Hash(input: string | Uint8Array): string {
-    const hash = createHash('sha256');
-    hash.update(input);
-    return hash.digest('hex');
+  const hash = createHash('sha256');
+  hash.update(input);
+  return hash.digest('hex');
 }
 
 export function getAtomOneAddress(): string {
-    const randomData = randomBytes(32);
-    const hash = createHash('sha256').update(randomData).digest();
-    const addressBytes = hash.slice(0, 20);
-    const encodedAddress = toBech32('atone', addressBytes);
-    return encodedAddress;
+  const randomData = randomBytes(32);
+  const hash = createHash('sha256').update(randomData).digest();
+  const addressBytes = hash.slice(0, 20);
+  const encodedAddress = toBech32('atone', addressBytes);
+  return encodedAddress;
 }
 
 export async function createWallet() {
-    const wallet = await Secp256k1HdWallet.generate(24, { prefix: 'atone' });
-    const accounts = await wallet.getAccounts();
-    return { mnemonic: wallet.mnemonic, publicKey: accounts[0].address };
+  const wallet = await Secp256k1HdWallet.generate(24, { prefix: 'atone' });
+  const accounts = await wallet.getAccounts();
+  return { mnemonic: wallet.mnemonic, publicKey: accounts[0].address };
 }
 
 export async function signADR36Document(mnemonic: string, messageToSign: string) {
-    const wallet = await Secp256k1HdWallet.fromMnemonic(mnemonic, { prefix: 'atone' });
-    const accounts = await wallet.getAccounts();
+  const wallet = await Secp256k1HdWallet.fromMnemonic(mnemonic, { prefix: 'atone' });
+  const accounts = await wallet.getAccounts();
 
-    const document = makeADR36AminoSignDoc(accounts[0].address, messageToSign);
-    return await wallet.signAmino(accounts[0].address, document);
+  const document = makeADR36AminoSignDoc(accounts[0].address, messageToSign);
+  return await wallet.signAmino(accounts[0].address, document);
 }
 
 export function getRandomHash() {
-    return getSha256Hash(randomBytes(256).toString());
+  return getSha256Hash(randomBytes(256).toString());
 }
 
 export function generateFakeData(memo: string, from_address: string, to_address: string) {
-    lastHeight++;
+  lastHeight++;
 
-    return {
-        hash: getSha256Hash(randomBytes(256).toString()),
-        height: lastHeight.toString(),
-        timestamp: '2025-04-16T19:46:42Z', // Doesn't matter, just need to store some timestamps
-        memo,
-        messages: [
-            {
-                '@type': '/cosmos.bank.v1beta1.MsgSend',
-                'from_address': from_address,
-                'to_address': to_address,
-                'amount': [{ denom: 'uatone', amount: '1' }],
-            },
-        ],
-    };
+  return {
+    hash: getSha256Hash(randomBytes(256).toString()),
+    height: lastHeight.toString(),
+    timestamp: '2025-04-16T19:46:42Z', // Doesn't matter, just need to store some timestamps
+    memo,
+    messages: [
+      {
+        '@type': '/cosmos.bank.v1beta1.MsgSend',
+        'from_address': from_address,
+        'to_address': to_address,
+        'amount': [{ denom: 'uatone', amount: '1' }],
+      },
+    ],
+  };
 }
 
 export function sleep(ms: number) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 export async function userLogin(wallet: { mnemonic: string; publicKey: string }) {
-    const body: typeof Posts.AuthCreateBody.static = {
-        address: wallet.publicKey,
-    };
+  const body: typeof Posts.AuthCreateBody.static = {
+    address: wallet.publicKey,
+  };
 
-    const response = (await post(`auth-create`, body, 'READ')) as { status: 200; id: number; message: string };
-    if (response?.status !== 200) {
-        return '';
-    }
+  const response = (await post(`auth-create`, body, 'READ')) as { status: 200; id: number; message: string };
+  if (response?.status !== 200) {
+    return '';
+  }
 
-    const signData = await signADR36Document(wallet.mnemonic, response.message);
-    const verifyBody: typeof Posts.AuthBody.static & { json: boolean } = {
-        id: response.id,
-        ...signData.signature,
-        json: true,
-    };
+  const signData = await signADR36Document(wallet.mnemonic, response.message);
+  const verifyBody: typeof Posts.AuthBody.static & { json: boolean } = {
+    id: response.id,
+    ...signData.signature,
+    json: true,
+  };
 
-    const responseVerify = (await post(`auth`, verifyBody, 'READ')) as { status: 200; bearer: string };
-    if (response?.status !== 200) {
-        return '';
-    }
+  const responseVerify = (await post(`auth`, verifyBody, 'READ')) as { status: 200; bearer: string };
+  if (response?.status !== 200) {
+    return '';
+  }
 
-    return responseVerify.bearer;
+  return responseVerify.bearer;
 }
 
 export async function createPost(msg = 'default content') {
-    const address = getAtomOneAddress();
-    const hash = getRandomHash();
+  const address = getAtomOneAddress();
+  const hash = getRandomHash();
 
-    const body: typeof Posts.PostBody.static = {
-        from: address,
-        hash: hash,
-        msg,
-        quantity: '1',
-        timestamp: '2025-04-16T19:46:42Z',
-    };
+  const body: typeof Posts.PostBody.static = {
+    from: address,
+    hash,
+    msg,
+    quantity: '1',
+    timestamp: '2025-04-16T19:46:42Z',
+  };
 
-    const response = await post(`post`, body);
-    if (response?.status !== 200) {
-        return undefined;
-    }
+  const response = await post(`post`, body);
+  if (response?.status !== 200) {
+    return undefined;
+  }
 
-    return { hash, address };
+  return { hash, address };
 };

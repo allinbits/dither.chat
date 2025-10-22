@@ -24,6 +24,12 @@ importers:
       eslint-plugin-format:
         specifier: ^1.0.2
         version: 1.0.2(eslint@9.37.0(jiti@2.6.1))
+      eslint-plugin-tailwindcss:
+        specifier: 4.0.0-beta.0
+        version: 4.0.0-beta.0(tailwindcss@4.1.14)
+      tailwindcss:
+        specifier: ^4.1.14
+        version: 4.1.14
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
@@ -2550,6 +2556,12 @@ packages:
     peerDependencies:
       eslint: '>=8.44.0'
 
+  eslint-plugin-tailwindcss@4.0.0-beta.0:
+    resolution: {integrity: sha512-WWCajZgQu38Sd67ZCl2W6i3MRzqB0d+H8s4qV9iB6lBJbsDOIpIlj6R1Fj2FXkoWErbo05pZnZYbCGIU9o/DsA==}
+    engines: {node: '>=18.12.0'}
+    peerDependencies:
+      tailwindcss: ^3.4.0 || ^4.0.0
+
   eslint-plugin-toml@0.12.0:
     resolution: {integrity: sha512-+/wVObA9DVhwZB1nG83D2OAQRrcQZXy+drqUnFJKymqnmbnbfg/UPmEMCKrJNcEboUGxUjYrJlgy+/Y930mURQ==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
@@ -4066,6 +4078,11 @@ packages:
   synckit@0.9.3:
     resolution: {integrity: sha512-JJoOEKTfL1urb1mDoEblhD9NhEbWmq9jHEMEnxoC4ujUaZ4itA8vKgwkFAyNClgxplLi9tsUKX+EduK0p/l7sg==}
     engines: {node: ^14.18.0 || >=16.0.0}
+
+  tailwind-api-utils@1.0.3:
+    resolution: {integrity: sha512-KpzUHkH1ug1sq4394SLJX38ZtpeTiqQ1RVyFTTSY2XuHsNSTWUkRo108KmyyrMWdDbQrLYkSHaNKj/a3bmA4sQ==}
+    peerDependencies:
+      tailwindcss: ^3.3.0 || ^4.0.0 || ^4.0.0-beta
 
   tailwind-merge@3.3.1:
     resolution: {integrity: sha512-gBXpgUm/3rp1lMZZrM/w7D8GKqshif0zAymAhbCyIt8KMe+0v9DQ7cdYLR4FHH/cKpdTXb+A/tKKU3eolfsI+g==}
@@ -7080,6 +7097,14 @@ snapshots:
       regexp-ast-analysis: 0.7.1
       scslre: 0.3.0
 
+  eslint-plugin-tailwindcss@4.0.0-beta.0(tailwindcss@4.1.14):
+    dependencies:
+      fast-glob: 3.3.3
+      postcss: 8.5.6
+      synckit: 0.11.11
+      tailwind-api-utils: 1.0.3(tailwindcss@4.1.14)
+      tailwindcss: 4.1.14
+
   eslint-plugin-toml@0.12.0(eslint@9.37.0(jiti@2.6.1)):
     dependencies:
       debug: 4.4.1
@@ -8839,6 +8864,13 @@ snapshots:
     dependencies:
       '@pkgr/core': 0.1.2
       tslib: 2.8.1
+
+  tailwind-api-utils@1.0.3(tailwindcss@4.1.14):
+    dependencies:
+      enhanced-resolve: 5.18.3
+      jiti: 2.6.1
+      local-pkg: 1.1.2
+      tailwindcss: 4.1.14
 
   tailwind-merge@3.3.1: {}
 

@@ -1,14 +1,12 @@
 <script lang="ts" setup>
+import { Button } from '@/components/ui/button';
 
+import {
+  PopoverContent,
+} from '@/components/ui/popover';
 import { useWallet } from '@/composables/useWallet';
 
-import { Button } from '@/components/ui/button';
-import {
-    PopoverContent,
-} from '@/components/ui/popover';
-
 const { signOut } = useWallet();
-
 </script>
 
 <template>

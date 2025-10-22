@@ -2,9 +2,9 @@
   "name": "@atomone/dither-api-types",
   "version": "1.8.0",
   "description": "",
+  "license": "GnoGPL",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
-  "license": "GnoGPL",
   "files": [
     "dist"
   ],
@@ -14,10 +14,10 @@
   "scripts": {
     "build": "tsc"
   },
-  "devDependencies": {
-    "typescript": "^5.9.3"
-  },
   "dependencies": {
     "elysia": "~1.2.25"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
   }
 }

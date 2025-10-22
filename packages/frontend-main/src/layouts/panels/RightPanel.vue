@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 import { useRouter } from 'vue-router';
 
 import FilterPhoton from '@/components/ui/filter/FilterPhoton.vue';

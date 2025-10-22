@@ -21,28 +21,27 @@ const wallet = useWallet();
 
 // Fetch balance when wallet state is loaded from storage
 onMounted(() => {
-    // Wait for next tick to ensure state is loaded from storage
-    nextTick(() => {
-        if (wallet.address.value) {
-            wallet.refreshAddress();
-            balanceFetcher.updateAddress(wallet.address.value);
-        }
-    });
+  // Wait for next tick to ensure state is loaded from storage
+  nextTick(() => {
+    if (wallet.address.value) {
+      wallet.refreshAddress();
+      balanceFetcher.updateAddress(wallet.address.value);
+    }
+  });
 });
-
 </script>
 
 <template>
   <RouterView />
-  <WalletConnectDialog/>
+  <WalletConnectDialog />
   <LikePostDialog />
   <DislikePostDialog />
   <NewPostDialog />
   <ReplyDialog />
-  <FlagPostDialog/>
-  <FollowDialog/>
-  <UnfollowDialog/>
-  <Sonner closeButton expand dismissible :visible-toasts="5"  />
+  <FlagPostDialog />
+  <FollowDialog />
+  <UnfollowDialog />
+  <Sonner close-button expand dismissible :visible-toasts="5" />
   <TipUserDialog />
   <ConfirmDialog />
   <InvalidDefaultAmountDialog />

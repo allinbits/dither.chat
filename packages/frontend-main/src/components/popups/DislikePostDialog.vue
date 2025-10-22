@@ -1,22 +1,22 @@
 <script lang="ts" setup>
 import type { Post } from 'api-main/types/feed';
 
+import { Decimal } from '@cosmjs/math';
 import { computed, ref } from 'vue';
 import { toast } from 'vue-sonner';
-import { Decimal } from '@cosmjs/math';
-
-import { useDislikePost } from '@/composables/useDislikePost';
-import { useTxDialog } from '@/composables/useTxDialog';
-
-import DialogDescription from '../ui/dialog/DialogDescription.vue';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+
 import InputPhoton from '@/components/ui/input/InputPhoton.vue';
+
+import { useDislikePost } from '@/composables/useDislikePost';
+import { useTxDialog } from '@/composables/useTxDialog';
 import { useConfigStore } from '@/stores/useConfigStore';
 import { fractionalDigits } from '@/utility/atomics';
 import { shorten } from '@/utility/text';
 import { showBroadcastingToast } from '@/utility/toast';
+import DialogDescription from '../ui/dialog/DialogDescription.vue';
 
 const isBalanceInputValid = ref(false);
 const { dislikePost, txError, txSuccess } = useDislikePost();
@@ -25,33 +25,32 @@ const configStore = useConfigStore();
 const amountAtomics = computed(() => configStore.config.defaultAmountEnabled ? configStore.config.defaultAmountAtomics : Decimal.fromUserInput(inputPhotonModel.value.toString(), fractionalDigits).atomics);
 
 const canSubmit = computed(() => {
-    return isBalanceInputValid.value;
+  return isBalanceInputValid.value;
 });
 
 function handleInputValidity(value: boolean) {
-    isBalanceInputValid.value = value;
+  isBalanceInputValid.value = value;
 }
 
 async function handleSubmit() {
-    if (!canSubmit.value || !dislike.value) {
-        return;
-    }
+  if (!canSubmit.value || !dislike.value) {
+    return;
+  }
 
-    const post = ref(dislike.value);
-    handleClose();
-    const toastId = showBroadcastingToast('Dislike');
+  const post = ref(dislike.value);
+  handleClose();
+  const toastId = showBroadcastingToast('Dislike');
 
-    try {
-        await dislikePost({ post, amountAtomics: amountAtomics.value });
-    }
-    finally {
-        toast.dismiss(toastId);
-    }
+  try {
+    await dislikePost({ post, amountAtomics: amountAtomics.value });
+  } finally {
+    toast.dismiss(toastId);
+  }
 }
 </script>
 
 <template>
-  <Dialog :open="isShown" @update:open="handleClose" v-if="isShown">
+  <Dialog v-if="isShown" :open="isShown" @update:open="handleClose">
     <DialogContent>
       <DialogTitle>{{ $t('components.PopupTitles.dislikePost') }}</DialogTitle>
       <DialogDescription>{{ shorten(dislike.hash) }}</DialogDescription>
