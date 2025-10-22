@@ -1,13 +1,13 @@
 import type { Post } from 'api-main/types/feed';
-
 import type { Ref } from 'vue';
+
 import { useMutation, useQueryClient } from '@tanstack/vue-query';
 import { ref } from 'vue';
 
 import { addAtomics } from '@/utility/atomics';
+
 import { post } from './usePost';
 import { useTxNotification } from './useTxNotification';
-
 import { useWallet } from './useWallet';
 
 interface DislikePostRequestMutation {

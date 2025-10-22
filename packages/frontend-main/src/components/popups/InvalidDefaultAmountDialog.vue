@@ -3,11 +3,10 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { Button } from '@/components/ui/button';
-
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
-
 import { useTxDialog } from '@/composables/useTxDialog';
 import { routesNames } from '@/router';
+
 import DialogDescription from '../ui/dialog/DialogDescription.vue';
 
 const router = useRouter();

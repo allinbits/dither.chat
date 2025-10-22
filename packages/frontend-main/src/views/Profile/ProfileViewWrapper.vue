@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import type { PopupState } from '@/composables/usePopups';
+
 import { Loader } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
-
 import { toast } from 'vue-sonner';
+
 import Button from '@/components/ui/button/Button.vue';
 import RouterLinkTab from '@/components/ui/tabs/RouterLinkTab.vue';
 import UserAvatarUsername from '@/components/users/UserAvatarUsername.vue';
@@ -12,15 +13,14 @@ import { useDefaultAmount } from '@/composables/useDefaultAmount';
 import { useFollowUser } from '@/composables/useFollowUser';
 import { useIsFollowing } from '@/composables/useIsFollowing';
 import { usePopups } from '@/composables/usePopups';
-
 import { useTipUser } from '@/composables/useTipUser';
-
 import { useUnfollowUser } from '@/composables/useUnfollowUser';
 import { useWallet } from '@/composables/useWallet';
 import MainLayout from '@/layouts/MainLayout.vue';
 import { useConfigStore } from '@/stores/useConfigStore';
 import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
 import { showBroadcastingToast } from '@/utility/toast';
+
 import ViewHeading from '../ViewHeading.vue';
 
 const wallet = useWallet();

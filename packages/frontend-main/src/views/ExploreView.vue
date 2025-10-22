@@ -3,12 +3,11 @@ import { CircleX, Loader } from 'lucide-vue-next';
 import { useRoute } from 'vue-router';
 
 import PostItem from '@/components/posts/PostItem.vue';
-
 import { Input } from '@/components/ui/input';
-
 import { useSearchPosts } from '@/composables/useSearchPosts';
 import MainLayout from '@/layouts/MainLayout.vue';
 import { cn } from '@/utility';
+
 import ViewHeading from './ViewHeading.vue';
 
 // NOTE: even now we have only posts search but we should separate feed vs search

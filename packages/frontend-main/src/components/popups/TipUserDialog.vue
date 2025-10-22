@@ -5,14 +5,13 @@ import { toast } from 'vue-sonner';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
-
 import InputPhoton from '@/components/ui/input/InputPhoton.vue';
 import { useTipUser } from '@/composables/useTipUser';
-
 import { useTxDialog } from '@/composables/useTxDialog';
 import { useConfigStore } from '@/stores/useConfigStore';
 import { fractionalDigits } from '@/utility/atomics';
 import { showBroadcastingToast } from '@/utility/toast';
+
 import DialogDescription from '../ui/dialog/DialogDescription.vue';
 import UserAvatarUsername from '../users/UserAvatarUsername.vue';
 

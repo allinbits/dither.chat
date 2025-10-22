@@ -10,14 +10,13 @@ import {
   DialogContent,
   DialogTitle,
 } from '@/components/ui/dialog';
-
 import InputPhoton from '@/components/ui/input/InputPhoton.vue';
 import { useTxDialog } from '@/composables/useTxDialog';
-
 import { useUnfollowUser } from '@/composables/useUnfollowUser';
 import { useConfigStore } from '@/stores/useConfigStore';
 import { fractionalDigits } from '@/utility/atomics';
 import { showBroadcastingToast } from '@/utility/toast';
+
 import DialogDescription from '../ui/dialog/DialogDescription.vue';
 import UserAvatarUsername from '../users/UserAvatarUsername.vue';
 

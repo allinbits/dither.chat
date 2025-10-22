@@ -2,7 +2,6 @@
 import { useRoute } from 'vue-router';
 
 import RouterLinkTab from '@/components/ui/tabs/RouterLinkTab.vue';
-
 import { useWallet } from '@/composables/useWallet';
 import MainLayout from '@/layouts/MainLayout.vue';
 

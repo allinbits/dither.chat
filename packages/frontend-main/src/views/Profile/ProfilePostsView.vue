@@ -3,7 +3,6 @@ import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 
 import PostsList from '@/components/posts/PostsList.vue';
-
 import { useUserPosts } from '@/composables/useUserPosts';
 
 import ProfileViewWrapper from './ProfileViewWrapper.vue';

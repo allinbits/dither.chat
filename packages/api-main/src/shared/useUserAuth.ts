@@ -1,11 +1,11 @@
 import { Buffer } from 'node:buffer';
-
 import { randomBytes } from 'node:crypto';
+
 import { encodeSecp256k1Pubkey, pubkeyToAddress } from '@cosmjs/amino';
 import { verifyADR36Amino } from '@keplr-wallet/cosmos';
 import { eq, lt } from 'drizzle-orm';
-
 import jwt from 'jsonwebtoken';
+
 import { getDatabase } from '../../drizzle/db';
 import { AuthRequests } from '../../drizzle/schema';
 import { useConfig } from '../config';

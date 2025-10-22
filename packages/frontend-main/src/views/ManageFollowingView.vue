@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import type { PopupState } from '@/composables/usePopups';
-import { Loader } from 'lucide-vue-next';
 
+import { Loader } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
+
 import Button from '@/components/ui/button/Button.vue';
 import UserAvatarUsername from '@/components/users/UserAvatarUsername.vue';
 import { useDefaultAmount } from '@/composables/useDefaultAmount';
 import { useFollowing } from '@/composables/useFollowing';
 import { usePopups } from '@/composables/usePopups';
-
 import { useUnfollowUser } from '@/composables/useUnfollowUser';
 import { useWallet } from '@/composables/useWallet';
 import MainLayout from '@/layouts/MainLayout.vue';

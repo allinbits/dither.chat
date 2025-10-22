@@ -1,17 +1,17 @@
 import type { InfiniteData } from '@tanstack/vue-query';
-
 import type { Post, ReplyWithParent } from 'api-main/types/feed';
 import type { Ref } from 'vue';
+
 import { Decimal } from '@cosmjs/math';
 import { useMutation, useQueryClient } from '@tanstack/vue-query';
 import { ref } from 'vue';
 
 import { fractionalDigits } from '@/utility/atomics';
 import { infiniteDataWithNewItem, newPost } from '@/utility/optimisticBuilders';
+
 import { post } from './usePost';
 import { replies } from './useReplies';
 import { useTxNotification } from './useTxNotification';
-
 import { userReplies } from './useUserReplies';
 import { useWallet } from './useWallet';
 

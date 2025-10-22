@@ -1,5 +1,6 @@
 import type { Following } from 'api-main/types/follows';
 import type { Ref } from 'vue';
+
 import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/vue-query';
 import { followingSchema } from 'api-main/types/follows';
 

@@ -1,5 +1,4 @@
 import type { Posts } from '@atomone/dither-api-types';
-
 import type { Cookie } from 'elysia';
 
 import { useConfig } from '../config';

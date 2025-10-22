@@ -3,7 +3,6 @@ import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 
 import RepliesGroupsList from '@/components/posts/RepliesGroupsList.vue';
-
 import { useUserReplies } from '@/composables/useUserReplies';
 
 import ProfileViewWrapper from './ProfileViewWrapper.vue';

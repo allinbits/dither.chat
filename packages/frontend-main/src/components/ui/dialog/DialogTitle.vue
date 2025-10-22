@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { DialogTitleProps } from 'reka-ui';
 import type { HTMLAttributes } from 'vue';
+
 import { DialogTitle, useForwardProps } from 'reka-ui';
 import { computed } from 'vue';
 

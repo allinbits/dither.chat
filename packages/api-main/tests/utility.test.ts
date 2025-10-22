@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
 import { getTransferMessage, getTransferQuantities } from '../src/utility';
-
 import { generateFakeData, getAtomOneAddress } from './shared';
 
 describe('utility tests', () => {

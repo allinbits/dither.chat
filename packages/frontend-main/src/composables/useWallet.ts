@@ -1,9 +1,10 @@
 import type { EncodeObject, OfflineDirectSigner, OfflineSigner } from '@cosmjs/proto-signing';
 import type { DeliverTxResponse, SignerData } from '@cosmjs/stargate';
 import type { OfflineAminoSigner } from '@keplr-wallet/types';
-
 import type { Ref } from 'vue';
+
 import type { DitherTypes } from '@/types';
+
 import { coins, SigningStargateClient } from '@cosmjs/stargate';
 import { getOfflineSigner } from '@cosmostation/cosmos-client';
 import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
@@ -12,9 +13,9 @@ import { ref, watch } from 'vue';
 
 import { useConfigStore } from '@/stores/useConfigStore';
 import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
-
 import { useWalletStateStore } from '@/stores/useWalletStateStore';
 import { getChainConfigLazy } from '@/utility/getChainConfigLazy';
+
 import { useBalanceFetcher } from './useBalanceFetcher';
 import { useSessionWallet } from './useSessionWallet';
 

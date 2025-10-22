@@ -1,12 +1,14 @@
 import type { Ref } from 'vue';
-import type { PopupState } from './usePopups';
-import { Decimal } from '@cosmjs/math';
 
+import type { PopupState } from './usePopups';
+
+import { Decimal } from '@cosmjs/math';
 import { computed, ref, watch } from 'vue';
+
 import { fractionalDigits } from '@/utility/atomics';
+
 import { useBalanceFetcher } from './useBalanceFetcher';
 import { usePopups } from './usePopups';
-
 import { useWallet } from './useWallet';
 
 export function useTxDialog<T>(dialogType: keyof PopupState, txSuccess: Ref<string | undefined>, txError: Ref<string | undefined>) {

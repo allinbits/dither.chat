@@ -1,4 +1,5 @@
 import type { Config } from '@atomone/chronostate/dist/types';
+
 import process from 'node:process';
 
 let config: Config & {

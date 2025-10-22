@@ -6,11 +6,10 @@ import {
   Popover,
   PopoverTrigger,
 } from '@/components/ui/popover';
-
 import UserAvatar from '@/components/users/UserAvatar.vue';
-
 import { useWallet } from '@/composables/useWallet';
 import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
+
 import WalletConnectPopoverContent from './WalletConnectPopoverContent.vue';
 
 const isConnecting = ref(false);

@@ -1,5 +1,6 @@
 import type { Post } from 'api-main/types/feed';
 import type { Ref } from 'vue';
+
 import { queryOptions, useQuery } from '@tanstack/vue-query';
 import { postSchema } from 'api-main/types/feed';
 

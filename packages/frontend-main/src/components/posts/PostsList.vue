@@ -8,7 +8,6 @@ import { computed } from 'vue';
 import { cn } from '@/utility';
 
 import Button from '../ui/button/Button.vue';
-
 import PostItem from './PostItem.vue';
 
 type PostsInfiniteQueryReturnType = UseInfiniteQueryReturnType<InfiniteData<Post[], unknown>, Error>;

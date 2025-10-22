@@ -7,15 +7,14 @@ import { toast } from 'vue-sonner';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
-
 import InputPhoton from '@/components/ui/input/InputPhoton.vue';
-
 import { useLikePost } from '@/composables/useLikePost';
 import { useTxDialog } from '@/composables/useTxDialog';
 import { useConfigStore } from '@/stores/useConfigStore';
 import { fractionalDigits } from '@/utility/atomics';
 import { shorten } from '@/utility/text';
 import { showBroadcastingToast } from '@/utility/toast';
+
 import DialogDescription from '../ui/dialog/DialogDescription.vue';
 
 const isBalanceInputValid = ref(false);

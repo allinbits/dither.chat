@@ -4,15 +4,13 @@ import type { Post } from 'api-main/types/feed';
 import { computed, ref } from 'vue';
 
 import { usePost } from '@/composables/usePost';
-
 import { cn } from '@/utility';
+
 import PostActions from '../posts/PostActions.vue';
 import PrettyTimestamp from '../posts/PrettyTimestamp.vue';
 import UserAvatar from '../users/UserAvatar.vue';
-
 import Username from '../users/Username.vue';
 import PostContent from './PostContent.vue';
-
 import PostMoreActions from './PostMoreActions.vue';
 
 const props = defineProps<{ post: Post; showTimeline?: boolean }>();

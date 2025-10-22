@@ -2,10 +2,10 @@
 import { useMediaQuery } from '@vueuse/core';
 
 import { breakpoints } from '@/utility/breakpoints';
+
 import MainLayoutMobile from './MainLayoutMobile.vue';
 import LeftPanel from './panels/LeftPanel.vue';
 import LeftPanelTablet from './panels/LeftPanelTablet.vue';
-
 import RightPanel from './panels/RightPanel.vue';
 
 const isMobile = useMediaQuery(`(max-width: ${breakpoints.md - 1}px)`);

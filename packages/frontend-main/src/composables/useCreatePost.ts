@@ -1,15 +1,15 @@
 import type { InfiniteData } from '@tanstack/vue-query';
-
 import type { Post } from 'api-main/types/feed';
+
 import { Decimal } from '@cosmjs/math';
 import { useMutation, useQueryClient } from '@tanstack/vue-query';
 import { ref } from 'vue';
 
 import { fractionalDigits } from '@/utility/atomics';
 import { infiniteDataWithNewItem, newPost } from '@/utility/optimisticBuilders';
+
 import { feed } from './useFeed';
 import { useTxNotification } from './useTxNotification';
-
 import { userPosts } from './useUserPosts';
 import { useWallet } from './useWallet';
 

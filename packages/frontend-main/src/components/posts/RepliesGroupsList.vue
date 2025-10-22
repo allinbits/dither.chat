@@ -8,7 +8,6 @@ import { computed } from 'vue';
 import { cn } from '@/utility';
 
 import Button from '../ui/button/Button.vue';
-
 import RepliesGroupItem from './RepliesGroupItem.vue';
 
 export interface RepliesGroup {

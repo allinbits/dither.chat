@@ -10,9 +10,7 @@ import PostMessage from '@/components/posts/PostMessage.vue';
 import PostMoreActions from '@/components/posts/PostMoreActions.vue';
 import PostsList from '@/components/posts/PostsList.vue';
 import PrettyTimestamp from '@/components/posts/PrettyTimestamp.vue';
-
 import Button from '@/components/ui/button/Button.vue';
-
 import InputPhoton from '@/components/ui/input/InputPhoton.vue';
 import Textarea from '@/components/ui/textarea/Textarea.vue';
 import UserAvatar from '@/components/users/UserAvatar.vue';
@@ -27,6 +25,7 @@ import { routesNames } from '@/router';
 import { useConfigStore } from '@/stores/useConfigStore';
 import { fractionalDigits } from '@/utility/atomics';
 import { showBroadcastingToast } from '@/utility/toast';
+
 import ViewHeading from './ViewHeading.vue';
 
 const wallet = useWallet();

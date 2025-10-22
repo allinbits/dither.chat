@@ -1,4 +1,5 @@
 import type { Ref } from 'vue';
+
 import { queryOptions, useQuery } from '@tanstack/vue-query';
 
 import { useConfigStore } from '@/stores/useConfigStore';

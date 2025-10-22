@@ -6,10 +6,10 @@ import { Ellipsis, Link2 } from 'lucide-vue-next';
 
 import Popover from '@/components/ui/popover/Popover.vue';
 import PopoverContent from '@/components/ui/popover/PopoverContent.vue';
-
 import PopoverTrigger from '@/components/ui/popover/PopoverTrigger.vue';
 import { useConfigStore } from '@/stores/useConfigStore';
 import { cn } from '@/utility';
+
 import Button from '../ui/button/Button.vue';
 import Icon from '../ui/icon/Icon.vue';
 

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { AvatarFallbackProps } from 'reka-ui';
 import type { HTMLAttributes } from 'vue';
+
 import { AvatarFallback } from 'reka-ui';
 import { computed } from 'vue';
 

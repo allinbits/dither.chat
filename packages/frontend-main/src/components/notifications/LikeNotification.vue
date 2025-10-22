@@ -2,7 +2,6 @@
 import type { Notification } from 'api-main/types/notifications';
 
 import PostMessage from '../posts/PostMessage.vue';
-
 import NotificationWrapper from './NotificationWrapper.vue';
 
 defineProps<{ notification: Notification }>();

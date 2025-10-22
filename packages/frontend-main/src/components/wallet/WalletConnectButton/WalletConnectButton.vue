@@ -2,15 +2,14 @@
 import { computed, ref } from 'vue';
 
 import { Button } from '@/components/ui/button';
-
 import {
   Popover,
   PopoverTrigger,
 } from '@/components/ui/popover';
-
 import UserAvatarUsername from '@/components/users/UserAvatarUsername.vue';
 import { useWallet } from '@/composables/useWallet';
 import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
+
 import WalletConnectPopoverContent from './WalletConnectPopoverContent.vue';
 
 const isConnecting = ref(false);

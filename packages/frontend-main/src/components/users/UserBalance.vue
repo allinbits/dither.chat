@@ -3,7 +3,6 @@ import { computed } from 'vue';
 
 import { useBalanceFetcher } from '@/composables/useBalanceFetcher';
 import { useWallet } from '@/composables/useWallet';
-
 import { fractionalDigits } from '@/utility/atomics';
 import { formatCompactAtomics } from '@/utility/text';
 

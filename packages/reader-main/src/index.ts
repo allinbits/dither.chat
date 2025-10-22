@@ -1,9 +1,12 @@
 import type { Action } from '@atomone/chronostate/dist/types';
+
 import type { MsgGeneric, MsgTransfer } from './types';
 import type { ResponseStatus } from './types/index';
 
 import process from 'node:process';
+
 import { ChronoState } from '@atomone/chronostate';
+
 import { useConfig } from './config/index';
 import { EclesiaClient } from './eclesia/client';
 import { MessageHandlers } from './messages/index';

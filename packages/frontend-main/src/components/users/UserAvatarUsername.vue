@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { cn } from '@/utility';
-import UserAvatar from './UserAvatar.vue';
 
+import UserAvatar from './UserAvatar.vue';
 import Username from './Username.vue';
 
 export interface UserAvatarUsernameProps {

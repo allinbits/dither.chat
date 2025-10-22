@@ -1,12 +1,13 @@
 import type { Post } from 'api-main/types/feed';
 import type { Ref } from 'vue';
+
 import { infiniteQueryOptions, useInfiniteQuery, useQueryClient } from '@tanstack/vue-query';
 import { postSchema } from 'api-main/types/feed';
 import { ref } from 'vue';
 
 import { useConfigStore } from '@/stores/useConfigStore';
-
 import { checkRowsSchema } from '@/utility/sanitize';
+
 import { post } from './usePost';
 
 const LIMIT = 15;

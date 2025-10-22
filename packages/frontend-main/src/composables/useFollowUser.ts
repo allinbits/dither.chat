@@ -1,16 +1,16 @@
 import type { InfiniteData } from '@tanstack/vue-query';
-
 import type { Following } from 'api-main/types/follows';
 import type { Ref } from 'vue';
+
 import { useMutation, useQueryClient } from '@tanstack/vue-query';
 import { ref } from 'vue';
 
 import { infiniteDataWithNewItem, newFollowing } from '@/utility/optimisticBuilders';
+
 import { following } from './useFollowing';
 import { followingPosts } from './useFollowingPosts';
 import { isFollowing } from './useIsFollowing';
 import { useTxNotification } from './useTxNotification';
-
 import { useWallet } from './useWallet';
 
 interface FollowUserRequestMutation {

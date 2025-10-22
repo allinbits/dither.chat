@@ -1,5 +1,7 @@
 import type { DeliverTxResponse } from '@cosmjs/stargate';
+
 import process from 'node:process';
+
 import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing';
 import { SigningStargateClient } from '@cosmjs/stargate';
 import dotenv from 'dotenv';

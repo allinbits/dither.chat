@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { RouteRecordNameGeneric } from 'vue-router';
+
 import { Bell, Feather, HelpCircle, House, Search, Settings, User } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
@@ -7,7 +8,6 @@ import { useRouter } from 'vue-router';
 import NotificationsCount from '@/components/notifications/NotificationsCount.vue';
 import { useDefaultAmount } from '@/composables/useDefaultAmount';
 import { usePopups } from '@/composables/usePopups';
-
 import { useWallet } from '@/composables/useWallet';
 import { routesNames } from '@/router';
 import { cn } from '@/utility';

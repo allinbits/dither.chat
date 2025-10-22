@@ -1,13 +1,13 @@
 import type { InfiniteData } from '@tanstack/vue-query';
-
 import type { Notification } from 'api-main/types/notifications';
+
 import { useMutation, useQueryClient } from '@tanstack/vue-query';
 import { ref } from 'vue';
 
 import { useConfigStore } from '@/stores/useConfigStore';
 import { infiniteDataWithoutItem } from '@/utility/optimisticBuilders';
-import { notifications } from './useNotifications';
 
+import { notifications } from './useNotifications';
 import { notificationsCount } from './useNotificationsCount';
 import { useWallet } from './useWallet';
 

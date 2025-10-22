@@ -1,4 +1,5 @@
 import type { Posts } from '@atomone/dither-api-types';
+
 import { desc, eq, sql } from 'drizzle-orm';
 
 import { getDatabase } from '../../drizzle/db';

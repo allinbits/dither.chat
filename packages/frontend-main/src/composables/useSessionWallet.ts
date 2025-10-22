@@ -1,12 +1,13 @@
 import type { SessionSigner } from 'stint-signer';
+
 import { AminoTypes, createAuthzAminoConverters, createFeegrantAminoConverters, GasPrice, SigningStargateClient } from '@cosmjs/stargate';
 import { consoleLogger, newSessionSigner } from 'stint-signer';
 import { ref } from 'vue';
 
 import { useConfigStore } from '@/stores/useConfigStore';
-
 import { useWalletStateStore } from '@/stores/useWalletStateStore';
 import { getChainConfigLazy } from '@/utility/getChainConfigLazy';
+
 import { useWallet } from './useWallet';
 
 const sessionSigner = ref<SessionSigner>();

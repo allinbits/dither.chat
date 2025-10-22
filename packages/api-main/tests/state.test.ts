@@ -3,7 +3,6 @@ import { assert, describe, it } from 'vitest';
 
 import { getDatabase } from '../drizzle/db';
 import { ReaderState } from '../drizzle/schema';
-
 import { post } from './shared';
 
 describe('update state', () => {

@@ -1,6 +1,6 @@
 import type { Notification } from 'api-main/types/notifications';
-
 import type { Ref } from 'vue';
+
 import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/vue-query';
 import { notificationSchema } from 'api-main/types/notifications';
 

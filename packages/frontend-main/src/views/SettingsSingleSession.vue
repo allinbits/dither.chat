@@ -2,7 +2,6 @@
 import { Loader } from 'lucide-vue-next';
 
 import Button from '@/components/ui/button/Button.vue';
-
 import { useSessionWallet } from '@/composables/useSessionWallet';
 import MainLayout from '@/layouts/MainLayout.vue';
 import ViewHeading from '@/views/ViewHeading.vue';

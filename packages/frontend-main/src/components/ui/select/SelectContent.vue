@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { SelectContentEmits, SelectContentProps } from 'reka-ui';
-
 import type { HTMLAttributes } from 'vue';
+
 import { reactiveOmit } from '@vueuse/core';
 import {
   SelectContent,

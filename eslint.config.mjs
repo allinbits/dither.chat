@@ -23,4 +23,21 @@ export default antfu({
 }).overrideRules({
   'no-console': 'off',
   'antfu/if-newline': 'off',
+  'perfectionist/sort-imports': ['error', {
+    groups: [
+      'type',
+      ['parent-type', 'sibling-type', 'index-type', 'internal-type'],
+      'builtin',
+      'external',
+      'internal',
+      ['parent', 'sibling', 'index'],
+      'side-effect',
+      'object',
+      'unknown',
+    ],
+    newlinesBetween: 'always',
+    order: 'asc',
+    type: 'natural',
+    internalPattern: ['^~/.+', '^@/.+'],
+  }],
 });

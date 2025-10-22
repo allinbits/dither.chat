@@ -4,9 +4,7 @@ import { computed } from 'vue';
 
 import DislikeNotification from '@/components/notifications/DislikeNotification.vue';
 import FlagNotification from '@/components/notifications/FlagNotification.vue';
-
 import FollowNotification from '@/components/notifications/FollowNotification.vue';
-
 import LikeNotification from '@/components/notifications/LikeNotification.vue';
 import ReplyNotification from '@/components/notifications/ReplyNotification.vue';
 import Button from '@/components/ui/button/Button.vue';
@@ -14,6 +12,7 @@ import { useNotifications } from '@/composables/useNotifications';
 import { useWallet } from '@/composables/useWallet';
 import MainLayout from '@/layouts/MainLayout.vue';
 import { cn } from '@/utility';
+
 import ViewHeading from './ViewHeading.vue';
 
 const wallet = useWallet();

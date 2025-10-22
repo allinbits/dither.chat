@@ -1,4 +1,5 @@
 import type { Static } from 'elysia';
+
 import { t } from 'elysia';
 
 export const AuthBodySchema = t.Object({

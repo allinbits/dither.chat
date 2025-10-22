@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { debouncedWatch, useColorMode } from '@vueuse/core';
-
 import JsonEditorVue from 'json-editor-vue';
-import NetworkSelector from '@/components/selects/NetworkSelector.vue';
 
+import NetworkSelector from '@/components/selects/NetworkSelector.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import MainLayout from '@/layouts/MainLayout.vue';
 import { useConfigStore } from '@/stores/useConfigStore';
 import { showInfoToast } from '@/utility/toast';
 import HeaderBack from '@/views/ViewHeading.vue';
+
 import 'vanilla-jsoneditor/themes/jse-theme-dark.css';
 
 const configStore = useConfigStore();

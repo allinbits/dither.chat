@@ -7,9 +7,7 @@ import { VisuallyHidden } from 'reka-ui';
 import { computed, ref } from 'vue';
 
 import { Button } from '@/components/ui/button';
-
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-
 import DialogDescription from '@/components/ui/dialog/DialogDescription.vue';
 import DialogTitle from '@/components/ui/dialog/DialogTitle.vue';
 import Icon from '@/components/ui/icon/Icon.vue';
@@ -19,6 +17,7 @@ import { getWalletHelp, useWallet, Wallets } from '@/composables/useWallet';
 import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
 import { getChainConfigLazy } from '@/utility/getChainConfigLazy';
 import { shorten } from '@/utility/text';
+
 import ConnectButton from './WalletExtensionButton.vue';
 
 const chainConfig = getChainConfigLazy();

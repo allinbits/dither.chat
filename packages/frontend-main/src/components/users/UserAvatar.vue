@@ -4,9 +4,9 @@ import type { UserAvatarUsernameProps } from './UserAvatarUsername.vue';
 import { useColorMode } from '@vueuse/core';
 
 import { cn } from '@/utility';
+
 import Avatar from '../ui/avatar/Avatar.vue';
 import AvatarFallback from '../ui/avatar/AvatarFallback.vue';
-
 import AvatarImage from '../ui/avatar/AvatarImage.vue';
 
 defineProps<UserAvatarUsernameProps>();

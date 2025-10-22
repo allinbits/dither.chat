@@ -5,13 +5,11 @@ import { Check } from 'lucide-vue-next';
 import { computed } from 'vue';
 
 import Button from '@/components/ui/button/Button.vue';
-
 import { useReadNotification } from '@/composables/useReadNotification';
+
 import PrettyTimestamp from '../posts/PrettyTimestamp.vue';
 import UserAvatar from '../users/UserAvatar.vue';
-
 import Username from '../users/Username.vue';
-
 import NotificationType from './NotificationType.vue';
 
 const props = defineProps<{ notification: Notification }>();

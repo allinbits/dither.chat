@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import PostsList from '@/components/posts/PostsList.vue';
 import { useFollowingPosts } from '@/composables/useFollowingPosts';
-
 import { useWallet } from '@/composables/useWallet';
 
 import HomeViewWrapper from './HomeViewWrapper.vue';

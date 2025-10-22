@@ -2,8 +2,8 @@
 import { ExternalLink } from 'lucide-vue-next';
 
 import Button from '@/components/ui/button/Button.vue';
-
 import MainLayout from '@/layouts/MainLayout.vue';
+
 import ViewHeading from './ViewHeading.vue';
 
 interface ActionItem {

@@ -1,5 +1,7 @@
 import process from 'node:process';
+
 import dotenv from 'dotenv';
+
 import { getClients } from './client';
 import { publishSomething } from './logic';
 

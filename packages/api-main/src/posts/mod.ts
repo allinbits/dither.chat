@@ -1,6 +1,6 @@
 import type { Posts } from '@atomone/dither-api-types';
-
 import type { Cookie } from 'elysia';
+
 import { and, eq, isNull, sql } from 'drizzle-orm';
 
 import { getDatabase } from '../../drizzle/db';

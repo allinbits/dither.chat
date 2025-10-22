@@ -4,7 +4,6 @@ import { assert, describe, it } from 'vitest';
 
 import { getDatabase } from '../drizzle/db';
 import { ModeratorTable } from '../drizzle/schema';
-
 import { createWallet, get, getAtomOneAddress, getRandomHash, post, signADR36Document } from './shared';
 
 describe('v1 - mod', { sequential: true }, () => {
