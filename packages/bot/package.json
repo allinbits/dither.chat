@@ -16,19 +16,22 @@
     "build-only": "vite build",
     "type-check": "vue-tsc --build --force",
     "lint": "eslint . --report-unused-disable-directives --max-warnings 0",
-    "lint:fix": "eslint . --report-unused-disable-directives --max-warnings 0 --fix"
+    "lint:fix": "eslint . --report-unused-disable-directives --max-warnings 0 --fix",
+    "ui:add": "pnpm dlx shadcn-vue@latest add"
   },
   "dependencies": {
+    "@tailwindcss/vite": "^4.1.14",
     "@tma.js/sdk-vue": "^1.0.6",
     "@tonconnect/ui": "^2.3.1",
-    "@tailwindcss/vite": "^4.1.14",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "eruda": "^3.4.3",
+    "lucide-react": "^0.546.0",
     "lucide-vue-next": "^0.507.0",
     "reka-ui": "^2.5.1",
     "tailwind-merge": "^3.3.1",
     "tailwindcss": "^4.1.14",
+    "tailwindcss-animate": "^1.0.7",
     "tw-animate-css": "^1.4.0",
     "vue": "^3.5.22",
     "vue-router": "^4.6.3"
