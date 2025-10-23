@@ -3,6 +3,7 @@ import { useRouter } from 'vue-router';
 import { useFeed } from '~/composables/useFeed';
 import PostsList from '~/components/PostsList.vue';
 import AppPage from '~/components/AppPage.vue';
+import { SmartphoneIcon } from 'lucide-vue-next';
 
 const router = useRouter();
 const query = useFeed();
@@ -31,7 +32,13 @@ const handleViewPost = (hash: string) => {
 </script>
 
 <template>
-  <AppPage title="📱 Dither Feed" :back="false">
+  <AppPage :title="`Dither Feed`" :back="false">
+    <template #title>
+      <div class="flex items-center gap-2">
+        <SmartphoneIcon class="w-5 h-5" />
+        Dither Feed
+      </div>
+    </template>
     <div class="feed-page">
       <div class="feed-page__header">
         <h2 class="feed-page__title">Latest Posts</h2>

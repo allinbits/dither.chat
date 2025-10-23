@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import type { Post } from '~/composables/useDitherAPI';
 import { usePostInteractions } from '~/composables/useDitherAPI';
 import { Button, Card, CardContent, CardHeader } from '~/components/ui';
+import { UserIcon, ClockIcon, GemIcon, ThumbsUpIcon, ThumbsDownIcon, MessageCircleIcon, LinkIcon } from 'lucide-vue-next';
 
 interface Props {
   post: Post;
@@ -90,38 +91,38 @@ const truncatedContent = computed(() => {
       
       <div class="flex flex-wrap gap-3 text-sm text-muted-foreground">
         <div v-if="showAuthor" class="flex items-center gap-1">
-          <span>👤</span>
+          <UserIcon class="w-4 h-4" />
           <Button variant="link" size="sm" @click="handleViewAuthor">
             {{ post.author.substring(0, 8) }}...{{ post.author.substring(post.author.length - 4) }}
           </Button>
         </div>
         
         <div class="flex items-center gap-1">
-          <span>⏰</span>
+          <ClockIcon class="w-4 h-4" />
           {{ formatTime(post.timestamp) }}
         </div>
         
         <div class="flex items-center gap-1">
-          <span>💎</span>
+          <GemIcon class="w-4 h-4" />
           {{ formatQuantity(post.quantity) }}
         </div>
       </div>
       
       <div class="flex gap-4 text-sm text-muted-foreground">
         <div class="flex items-center gap-1">
-          <span>👍</span>
+          <ThumbsUpIcon class="w-4 h-4" />
           {{ post.likes }}
         </div>
         <div class="flex items-center gap-1">
-          <span>👎</span>
+          <ThumbsDownIcon class="w-4 h-4" />
           {{ post.dislikes }}
         </div>
         <div class="flex items-center gap-1">
-          <span>💬</span>
+          <MessageCircleIcon class="w-4 h-4" />
           {{ post.replies }}
         </div>
         <div class="flex items-center gap-1">
-          <span>🔗</span>
+          <LinkIcon class="w-4 h-4" />
           <Button variant="link" size="sm" @click="handleViewPost">
             {{ post.hash.substring(0, 8) }}...
           </Button>
@@ -138,7 +139,8 @@ const truncatedContent = computed(() => {
           :disabled="loading"
           class="bg-green-500 hover:bg-green-600"
         >
-          👍 Like
+          <ThumbsUpIcon class="w-4 h-4 mr-1" />
+          Like
         </Button>
         <Button 
           variant="destructive"
@@ -146,7 +148,8 @@ const truncatedContent = computed(() => {
           @click="handleDislike"
           :disabled="loading"
         >
-          👎 Dislike
+          <ThumbsDownIcon class="w-4 h-4 mr-1" />
+          Dislike
         </Button>
         <Button 
           variant="secondary"
@@ -154,7 +157,8 @@ const truncatedContent = computed(() => {
           @click="handleReply"
           class="bg-orange-500 hover:bg-orange-600"
         >
-          💬 Reply
+          <MessageCircleIcon class="w-4 h-4 mr-1" />
+          Reply
         </Button>
         <Button 
           variant="outline"
@@ -162,7 +166,8 @@ const truncatedContent = computed(() => {
           @click="handleViewAuthor"
           class="bg-purple-500 hover:bg-purple-600 text-white border-purple-500"
         >
-          👤 Author
+          <UserIcon class="w-4 h-4 mr-1" />
+          Author
         </Button>
       </div>
     </CardContent>

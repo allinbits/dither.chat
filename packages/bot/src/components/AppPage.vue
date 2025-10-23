@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
 import { Button } from '~/components/ui';
+import { HomeIcon } from 'lucide-vue-next';
 
 interface Props {
   title: string;
@@ -28,7 +29,9 @@ const goHome = () => {
     <!-- Header with navigation -->
     <div class="page__header">
       <div class="page__title-section">
-        <h1 class="page__title">{{ title }}</h1>
+        <h1 class="page__title">
+          <slot name="title">{{ title }}</slot>
+        </h1>
         <div v-if="disclaimer" class="page__disclaimer">{{ disclaimer }}</div>
       </div>
       
@@ -49,7 +52,8 @@ const goHome = () => {
           size="sm"
           class="page__nav-button"
         >
-          🏠 Home
+          <HomeIcon class="w-4 h-4 mr-1" />
+          Home
         </Button>
       </div>
     </div>

@@ -1,6 +1,7 @@
 <script lang="ts">
 import type { RGB } from '@tma.js/sdk-vue';
 import type { Component } from 'vue';
+import { CheckIcon, XIcon } from 'lucide-vue-next';
 
 export interface DisplayDataRow {
   title: string;
@@ -18,12 +19,12 @@ import AppRGB from './AppRGB.vue';
 
 defineProps<DisplayDataProps>();
 
-function mapValueToString(value?: boolean | string) {
+function mapValueToComponent(value?: boolean | string) {
   switch (value) {
     case true:
-      return '✔️';
+      return CheckIcon;
     case false:
-      return '❌';
+      return XIcon;
     case undefined:
       return 'empty';
     default:
@@ -39,7 +40,8 @@ function mapValueToString(value?: boolean | string) {
       <span class="display-data__line-value">
                 <component v-if="typeof row.value === 'object'" :is="row.value" />
                 <AppRGB v-else-if="typeof row.value === 'string' && isRGB(row.value)" :color="row.value" />
-                <span v-else>{{ mapValueToString(row.value as boolean | string | undefined) }}</span>
+                <component v-else-if="typeof mapValueToComponent(row.value as boolean | string | undefined) === 'function'" :is="mapValueToComponent(row.value as boolean | string | undefined)" class="w-4 h-4" />
+                <span v-else>{{ mapValueToComponent(row.value as boolean | string | undefined) }}</span>
             </span>
     </div>
   </div>

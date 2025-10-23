@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router';
 import { useSearch } from '~/composables/useDitherAPI';
 import PostCard from '~/components/PostCard.vue';
 import AppPage from '~/components/AppPage.vue';
+import { SearchIcon, XIcon, AlertCircleIcon } from 'lucide-vue-next';
 
 const router = useRouter();
 const { results, loading, error, search, clearResults } = useSearch();
@@ -58,7 +59,13 @@ watch(searchQuery, (newQuery) => {
 </script>
 
 <template>
-  <AppPage title="🔍 Search Posts" :back="true">
+  <AppPage title="Search Posts" :back="true">
+    <template #title>
+      <div class="flex items-center gap-2">
+        <SearchIcon class="w-5 h-5" />
+        Search Posts
+      </div>
+    </template>
     <div class="search-page">
       <div class="search-page__input-container">
         <input
@@ -74,19 +81,22 @@ watch(searchQuery, (newQuery) => {
           class="search-page__clear"
           @click="handleClear"
         >
-          ✕
+          <XIcon class="w-4 h-4" />
         </button>
         <button 
           class="search-page__search"
           @click="handleSearch"
           :disabled="!searchQuery.trim() || loading"
         >
-          🔍
+          <SearchIcon class="w-4 h-4" />
         </button>
       </div>
 
       <div v-if="error" class="search-page__error">
-        <p>❌ {{ error }}</p>
+        <div class="flex items-center gap-2">
+          <AlertCircleIcon class="w-4 h-4" />
+          <p>{{ error }}</p>
+        </div>
         <button @click="handleSearch" class="search-page__retry">
           Try Again
         </button>

@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router';
 import AppPage from '~/components/AppPage.vue';
 import { Card, CardContent, CardHeader, Button, Badge } from '~/components/ui';
 import { retrieveLaunchParams, initData, useSignal } from '@tma.js/sdk-vue';
+import { SmartphoneIcon, SearchIcon, LinkIcon, UserIcon, ZapIcon, BarChart3Icon } from 'lucide-vue-next';
 
 // Router for navigation
 const router = useRouter();
@@ -89,7 +90,7 @@ const navigateToUser = () => {
         <!-- Feed Navigation -->
         <Card class="cursor-pointer hover:shadow-md transition-shadow" @click="navigateToFeed">
           <CardContent class="p-4 text-center">
-            <div class="text-2xl mb-2">📱</div>
+            <div class="text-2xl mb-2"><SmartphoneIcon class="w-8 h-8 mx-auto" /></div>
             <h3 class="font-semibold text-sm">Feed</h3>
             <p class="text-xs text-muted-foreground">Latest posts</p>
           </CardContent>
@@ -98,7 +99,7 @@ const navigateToUser = () => {
         <!-- Search Navigation -->
         <Card class="cursor-pointer hover:shadow-md transition-shadow" @click="navigateToSearch">
           <CardContent class="p-4 text-center">
-            <div class="text-2xl mb-2">🔍</div>
+            <div class="text-2xl mb-2"><SearchIcon class="w-8 h-8 mx-auto" /></div>
             <h3 class="font-semibold text-sm">Search</h3>
             <p class="text-xs text-muted-foreground">Find content</p>
           </CardContent>
@@ -107,7 +108,7 @@ const navigateToUser = () => {
         <!-- Wallet Navigation -->
         <Card class="cursor-pointer hover:shadow-md transition-shadow" @click="navigateToWallet">
           <CardContent class="p-4 text-center">
-            <div class="text-2xl mb-2">🔗</div>
+            <div class="text-2xl mb-2"><LinkIcon class="w-8 h-8 mx-auto" /></div>
             <h3 class="font-semibold text-sm">Wallet</h3>
             <p class="text-xs text-muted-foreground">Connect wallet</p>
           </CardContent>
@@ -116,7 +117,7 @@ const navigateToUser = () => {
         <!-- User Navigation -->
         <Card class="cursor-pointer hover:shadow-md transition-shadow" @click="navigateToUser">
           <CardContent class="p-4 text-center">
-            <div class="text-2xl mb-2">👤</div>
+            <div class="text-2xl mb-2"><UserIcon class="w-8 h-8 mx-auto" /></div>
             <h3 class="font-semibold text-sm">Profile</h3>
             <p class="text-xs text-muted-foreground">User profiles</p>
           </CardContent>
@@ -126,7 +127,10 @@ const navigateToUser = () => {
       <!-- Quick Actions -->
       <Card class="w-full max-w-md mx-auto">
         <CardHeader>
-          <h3 class="text-lg font-semibold text-foreground">⚡ Quick Actions</h3>
+          <h3 class="text-lg font-semibold text-foreground flex items-center gap-2">
+            <ZapIcon class="w-5 h-5" />
+            Quick Actions
+          </h3>
         </CardHeader>
         <CardContent class="space-y-3">
           <Button 
@@ -134,21 +138,24 @@ const navigateToUser = () => {
             class="w-full justify-start"
             variant="outline"
           >
-            📱 View Latest Posts
+            <SmartphoneIcon class="w-4 h-4 mr-2" />
+            View Latest Posts
           </Button>
           <Button 
             @click="navigateToSearch" 
             class="w-full justify-start"
             variant="outline"
           >
-            🔍 Search Content
+            <SearchIcon class="w-4 h-4 mr-2" />
+            Search Content
           </Button>
           <Button 
             @click="navigateToWallet" 
             class="w-full justify-start"
             variant="outline"
           >
-            🔗 Connect Wallet
+            <LinkIcon class="w-4 h-4 mr-2" />
+            Connect Wallet
           </Button>
         </CardContent>
       </Card>
@@ -156,7 +163,10 @@ const navigateToUser = () => {
       <!-- Status Section -->
       <Card class="w-full max-w-md mx-auto">
         <CardHeader>
-          <h3 class="text-lg font-semibold text-foreground">📊 Status</h3>
+          <h3 class="text-lg font-semibold text-foreground flex items-center gap-2">
+            <BarChart3Icon class="w-5 h-5" />
+            Status
+          </h3>
         </CardHeader>
         <CardContent class="space-y-3">
           <div class="flex items-center justify-between">
