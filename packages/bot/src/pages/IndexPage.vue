@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import AppPage from '@/components/AppPage.vue';
-import { Card, CardContent, CardHeader, Badge } from '@/components/ui';
+import AppPage from '~/components/AppPage.vue';
+import { Card, CardContent, CardHeader, Badge } from '~/components/ui';
 import { retrieveLaunchParams, initData, useSignal } from '@tma.js/sdk-vue';
 
 // TMA.js SDK integration - basic info display

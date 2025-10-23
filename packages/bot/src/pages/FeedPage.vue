@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { useFeed } from '@/composables/useDitherAPI';
-import PostCard from '@/components/PostCard.vue';
-import AppPage from '@/components/AppPage.vue';
+import { useFeed } from '~/composables/useDitherAPI';
+import PostCard from '~/components/PostCard.vue';
+import AppPage from '~/components/AppPage.vue';
 
 const router = useRouter();
 const { posts, loading, error, hasMore, loadFeed, refreshFeed } = useFeed();

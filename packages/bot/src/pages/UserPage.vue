@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { onMounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { useUser } from '@/composables/useDitherAPI';
-import PostCard from '@/components/PostCard.vue';
-import AppPage from '@/components/AppPage.vue';
+import { useUser } from '~/composables/useDitherAPI';
+import PostCard from '~/components/PostCard.vue';
+import AppPage from '~/components/AppPage.vue';
 
 const route = useRoute();
 const router = useRouter();

@@ -64,7 +64,7 @@ _Medium Impact + High Effort_
 
 ```typescript
 // Dither API integration
-import { useDitherAPI } from "@/composables/useDitherAPI";
+import { useDitherAPI } from "~/composables/useDitherAPI";
 
 // Feed component
 const { posts, loading, error } = useDitherAPI.getFeed({ limit: 10 });
@@ -111,7 +111,7 @@ const { connectWallet, disconnectWallet, isConnected } = useWallet();
 </template>
 
 <script setup lang="ts">
-import { useDitherAPI } from "@/composables/useDitherAPI";
+import { useDitherAPI } from "~/composables/useDitherAPI";
 const { posts, loading, error, loadMore } = useDitherAPI.useFeed();
 </script>
 ```

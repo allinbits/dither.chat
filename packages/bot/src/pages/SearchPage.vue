@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import { useSearch } from '@/composables/useDitherAPI';
-import PostCard from '@/components/PostCard.vue';
-import AppPage from '@/components/AppPage.vue';
+import { useSearch } from '~/composables/useDitherAPI';
+import PostCard from '~/components/PostCard.vue';
+import AppPage from '~/components/AppPage.vue';
 
 const router = useRouter();
 const { results, loading, error, search, clearResults } = useSearch();

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import type { Post } from '@/composables/useDitherAPI';
-import { usePostInteractions } from '@/composables/useDitherAPI';
-import { Button, Card, CardContent, CardHeader } from '@/components/ui';
+import type { Post } from '~/composables/useDitherAPI';
+import { usePostInteractions } from '~/composables/useDitherAPI';
+import { Button, Card, CardContent, CardHeader } from '~/components/ui';
 
 interface Props {
   post: Post;

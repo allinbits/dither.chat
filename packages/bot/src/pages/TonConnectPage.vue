@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { TonConnectButton, useTonWallet } from '@/tonconnect';
-import AppDisplayData, { type DisplayDataRow } from '@/components/AppDisplayData.vue';
-import AppLink from '@/components/AppLink.vue';
-import AppPage from '@/components/AppPage.vue';
+import { TonConnectButton, useTonWallet } from '~/tonconnect';
+import AppDisplayData, { type DisplayDataRow } from '~/components/AppDisplayData.vue';
+import AppLink from '~/components/AppLink.vue';
+import AppPage from '~/components/AppPage.vue';
 
 const { wallet } = useTonWallet();
 

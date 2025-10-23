@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { initData, useSignal, type User } from '@tma.js/sdk-vue';
-import AppLink from '@/components/AppLink.vue';
-import AppPage from '@/components/AppPage.vue';
-import AppDisplayData, { type DisplayDataRow } from '@/components/AppDisplayData.vue';
+import AppLink from '~/components/AppLink.vue';
+import AppPage from '~/components/AppPage.vue';
+import AppDisplayData, { type DisplayDataRow } from '~/components/AppDisplayData.vue';
 
 const initDataRef = useSignal(initData.state);
 const initDataRaw = useSignal(initData.raw);
