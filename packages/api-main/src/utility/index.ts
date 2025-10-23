@@ -1,6 +1,6 @@
 import type * as T from '../types/index';
 
-import Buffer from 'node:buffer';
+import { Buffer } from 'node:buffer';
 import crypto from 'node:crypto';
 
 import { sql } from 'drizzle-orm';
