@@ -7,8 +7,11 @@
   "scripts": {
     "deploy": "gh-pages -d dist",
     "dev": "vite",
+    "deploy:telegram": "pnpm dlx @telegram-apps/mate@latest deploy upload",
+    "deploy:telegram:info": "pnpm dlx @telegram-apps/mate@latest deploy info",
     "dev:https": "cross-env HTTPS=true vite",
     "build": "run-p type-check \"build-only {@}\" --",
+    "build:production": "cross-env NODE_ENV=production vite build",
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --build --force",

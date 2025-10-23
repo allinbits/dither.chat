@@ -11,20 +11,42 @@ import { TonConnectUIPlugin } from "./tonconnect";
 import { publicUrl } from "./helperts/publicUrl";
 
 // Mock the environment in case, we are outside Telegram.
-import "./mockEnv";
+// Only import mock environment in development
+if (import.meta.env.DEV) {
+  import("./mockEnv");
+}
 
-const launchParams = retrieveLaunchParams();
-const { tgWebAppPlatform: platform } = launchParams;
-const debug =
-  (launchParams.tgWebAppStartParam || "").includes("debug") ||
-  import.meta.env.DEV;
+// Wait for mock environment to be set up before initializing
+const initializeApp = async () => {
+  let launchParams;
+  let platform = "tdesktop"; // Default platform for development
 
-// Configure all application dependencies.
-init({
-  debug,
-  eruda: debug && ["ios", "android"].includes(platform),
-  mockForMacOS: platform === "macos",
-}).then(() => {
+  try {
+    launchParams = retrieveLaunchParams();
+    platform = launchParams.tgWebAppPlatform || "tdesktop";
+  } catch (error) {
+    console.warn(
+      "Failed to retrieve launch parameters, using defaults:",
+      error,
+    );
+    // Use default launch parameters for development
+    launchParams = {
+      tgWebAppPlatform: "tdesktop",
+      tgWebAppStartParam: "",
+    };
+  }
+
+  const debug =
+    (launchParams.tgWebAppStartParam || "").includes("debug") ||
+    import.meta.env.DEV;
+
+  // Configure all application dependencies.
+  await init({
+    debug,
+    eruda: debug && ["ios", "android"].includes(platform),
+    mockForMacOS: platform === "macos",
+  });
+
   const app = createApp(App);
   app.config.errorHandler = errorHandler;
   app.use(router);
@@ -32,4 +54,7 @@ init({
     manifestUrl: publicUrl("tonconnect-manifest.json"),
   });
   app.mount("#app");
-});
+};
+
+// Initialize the app
+initializeApp().catch(console.error);

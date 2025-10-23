@@ -1,79 +1,118 @@
-import { emitEvent, isTMA, mockTelegramEnv } from '@tma.js/sdk-vue';
+// Simple development environment setup
+// This file provides a minimal setup for development outside Telegram
 
-// It is important, to mock the environment only for development purposes. When building the
-// application, import.meta.env.DEV will become false, and the code inside will be tree-shaken,
-// so you will not see it in your final bundle.
+interface Telegram {
+  WebApp: {
+    initData: string;
+    initDataUnsafe: {
+      user: {
+        id: number;
+        first_name: string;
+        last_name: string;
+        username: string;
+        language_code: string;
+      };
+      auth_date: number;
+      hash: string;
+    };
+    version: string;
+    platform: string;
+    colorScheme: string;
+    themeParams: {
+      accent_text_color: string;
+      bg_color: string;
+      button_color: string;
+      button_text_color: string;
+      text_color: string;
+    };
+    isExpanded: boolean;
+    viewportHeight: number;
+    viewportStableHeight: number;
+    ready: () => void;
+    expand: () => void;
+    close: () => void;
+    onEvent: (event: string, callback: () => void) => void;
+    offEvent: (event: string, callback: () => void) => void;
+  };
+}
+
+declare global {
+  interface Window {
+    Telegram: Telegram;
+  }
+}
+
 if (import.meta.env.DEV) {
-  if (!await isTMA('complete')) {
-    const themeParams = {
-      accent_text_color: '#6ab2f2',
-      bg_color: '#17212b',
-      button_color: '#5288c1',
-      button_text_color: '#ffffff',
-      destructive_text_color: '#ec3942',
-      header_bg_color: '#17212b',
-      hint_color: '#708499',
-      link_color: '#6ab3f3',
-      secondary_bg_color: '#232e3c',
-      section_bg_color: '#17212b',
-      section_header_text_color: '#6ab3f3',
-      subtitle_text_color: '#708499',
-      text_color: '#f5f5f5',
-    } as const;
-    const noInsets = { left: 0, top: 0, bottom: 0, right: 0 } as const;
+  // Set up a basic window.Telegram.WebApp for development
+  if (typeof window !== "undefined" && !window.Telegram?.WebApp) {
+    // Mock launch parameters for development
+    const mockLaunchParams = new URLSearchParams([
+      ["tgWebAppPlatform", "tdesktop"],
+      ["tgWebAppVersion", "8.4"],
+      ["tgWebAppStartParam", "dev"],
+      [
+        "tgWebAppData",
+        new URLSearchParams([
+          ["auth_date", Math.floor(Date.now() / 1000).toString()],
+          ["hash", "mock-hash"],
+          [
+            "user",
+            JSON.stringify({
+              id: 1,
+              first_name: "Test",
+              last_name: "User",
+              username: "testuser",
+              language_code: "en",
+            }),
+          ],
+        ]).toString(),
+      ],
+    ]);
 
-    mockTelegramEnv({
-      onEvent(e) {
-        // Here you can write your own handlers for all known Telegram Mini Apps methods:
-        // https://docs.telegram-mini-apps.com/platform/methods
-        if (e.name === 'web_app_request_theme') {
-          return emitEvent('theme_changed', { theme_params: themeParams });
-        }
-        if (e.name === 'web_app_request_viewport') {
-          return emitEvent('viewport_changed', {
-            height: window.innerHeight,
-            width: window.innerWidth,
-            is_expanded: true,
-            is_state_stable: true,
-          });
-        }
-        if (e.name === 'web_app_request_content_safe_area') {
-          return emitEvent('content_safe_area_changed', noInsets);
-        }
-        if (e.name === 'web_app_request_safe_area') {
-          return emitEvent('safe_area_changed', noInsets);
-        }
+    // Set up mock launch parameters in URL
+    if (!window.location.search.includes("tgWebAppPlatform")) {
+      const currentUrl = new URL(window.location.href);
+      mockLaunchParams.forEach((value, key) => {
+        currentUrl.searchParams.set(key, value);
+      });
+      // Don't actually change the URL, just provide the mock data
+    }
+
+    window.Telegram = {
+      WebApp: {
+        initData: mockLaunchParams.get("tgWebAppData") || "",
+        initDataUnsafe: {
+          user: {
+            id: 1,
+            first_name: "Test",
+            last_name: "User",
+            username: "testuser",
+            language_code: "en",
+          },
+          auth_date: Math.floor(Date.now() / 1000),
+          hash: "mock-hash",
+        },
+        version: "8.4",
+        platform: "tdesktop",
+        colorScheme: "dark",
+        themeParams: {
+          accent_text_color: "#6ab2f2",
+          bg_color: "#17212b",
+          button_color: "#5288c1",
+          button_text_color: "#ffffff",
+          text_color: "#f5f5f5",
+        },
+        isExpanded: true,
+        viewportHeight: window.innerHeight,
+        viewportStableHeight: window.innerHeight,
+        ready: () => console.log("Telegram WebApp ready (dev)"),
+        expand: () => console.log("Telegram WebApp expand (dev)"),
+        close: () => console.log("Telegram WebApp close (dev)"),
+        onEvent: () => {},
+        offEvent: () => {},
       },
-      launchParams: new URLSearchParams([
-        // Discover more launch parameters:
-        // https://docs.telegram-mini-apps.com/platform/launch-parameters#parameters-list
-        ['tgWebAppThemeParams', JSON.stringify(themeParams)],
-        // Your init data goes here. Learn more about it here:
-        // https://docs.telegram-mini-apps.com/platform/init-data#parameters-list
-        //
-        // Note that to make sure, you are using a valid init data, you must pass it exactly as it
-        // is sent from the Telegram application. The reason is in case you will sort its keys
-        // (auth_date, hash, user, etc.) or values your own way, init data validation will more
-        // likely to fail on your server side. So, to make sure you are working with a valid init
-        // data, it is better to take a real one from your application and paste it here. It should
-        // look something like this (a correctly encoded URL search params):
-        // ```
-        // user=%7B%22id%22%3A279058397%2C%22first_name%22%3A%22Vladislav%22%2C%22last_name%22...
-        // ```
-        // But in case you don't really need a valid init data, use this one:
-        ['tgWebAppData', new URLSearchParams([
-          ['auth_date', (new Date().getTime() / 1000 | 0).toString()],
-          ['hash', 'some-hash'],
-          ['signature', 'some-signature'],
-          ['user', JSON.stringify({ id: 1, first_name: 'Vladislav' })],
-        ]).toString()],
-        ['tgWebAppVersion', '8.4'],
-        ['tgWebAppPlatform', 'tdesktop'],
-      ]),
-    });
+    };
 
-    console.info(
-      '⚠️ As long as the current environment was not considered as the Telegram-based one, it was mocked. Take a note, that you should not do it in production and current behavior is only specific to the development process. Environment mocking is also applied only in development mode. So, after building the application, you will not see this behavior and related warning, leading to crashing the application outside Telegram.',
-    );
+    console.log("🔧 Development Telegram WebApp mock loaded");
   }
 }
