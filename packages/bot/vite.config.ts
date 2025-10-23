@@ -1,4 +1,4 @@
-import path from "node:path";
+import { fileURLToPath, URL } from "node:url";
 
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig, type PluginOption } from "vite";
@@ -20,8 +20,8 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
-      "~": path.resolve(__dirname, "./src"),
+      "@": fileURLToPath(new URL("./src", import.meta.url)),
+      "~": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },
   publicDir: "./public",
