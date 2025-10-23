@@ -4,6 +4,8 @@ import { useRoute, useRouter } from 'vue-router';
 import { useUser } from '~/composables/useDitherAPI';
 import PostCard from '~/components/PostCard.vue';
 import AppPage from '~/components/AppPage.vue';
+import { Button, Card, CardContent, CardHeader } from '~/components/ui';
+import { UserIcon, CalendarIcon, ShareIcon } from 'lucide-vue-next';
 
 const route = useRoute();
 const router = useRouter();
@@ -53,282 +55,113 @@ onMounted(() => {
 
 <template>
   <AppPage :title="`👤 User Profile`" :back="true">
-    <div class="user-page">
-      <div v-if="error" class="user-page__error">
-        <p>❌ {{ error }}</p>
-        <button @click="loadUser(userAddress)" class="user-page__retry">
+    <div class="w-full">
+      <!-- Error State -->
+      <div v-if="error" class="text-center p-5 bg-red-50 border border-red-200 rounded-lg mb-4">
+        <p class="text-red-700 mb-3">❌ {{ error }}</p>
+        <Button @click="loadUser(userAddress)" variant="destructive" size="sm">
           Try Again
-        </button>
+        </Button>
       </div>
 
-      <div v-else-if="loading" class="user-page__loading">
+      <!-- Loading State -->
+      <div v-else-if="loading" class="text-center py-10 text-muted-foreground">
         <p>Loading user profile...</p>
       </div>
 
-      <div v-else-if="user" class="user-page__content">
-        <div class="user-page__profile">
-          <div class="user-page__avatar">
-            <div class="user-page__avatar-placeholder">
-              {{ user.username ? user.username.charAt(0).toUpperCase() : '👤' }}
+      <!-- User Content -->
+      <div v-else-if="user" class="space-y-6">
+        <!-- Profile Card -->
+        <Card>
+          <CardContent class="p-6">
+            <div class="flex items-center gap-4">
+              <div class="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-2xl font-bold">
+                {{ user.username ? user.username.charAt(0).toUpperCase() : '👤' }}
+              </div>
+              <div class="flex-1 min-w-0">
+                <h2 class="text-xl font-semibold text-foreground truncate">
+                  {{ user.username || formatAddress(user.address) }}
+                </h2>
+                <p class="text-sm text-muted-foreground font-mono">
+                  {{ formatAddress(user.address) }}
+                </p>
+                <div class="flex items-center gap-1 mt-1">
+                  <CalendarIcon class="w-3 h-3 text-muted-foreground" />
+                  <p class="text-xs text-muted-foreground">
+                    Joined {{ formatDate(user.joinedAt) }}
+                  </p>
+                </div>
+              </div>
             </div>
-          </div>
-          
-          <div class="user-page__info">
-            <h2 class="user-page__username">
-              {{ user.username || formatAddress(user.address) }}
-            </h2>
-            <p class="user-page__address">{{ formatAddress(user.address) }}</p>
-            <p class="user-page__joined">
-              Joined {{ formatDate(user.joinedAt) }}
-            </p>
-          </div>
+          </CardContent>
+        </Card>
+
+        <!-- Stats Card -->
+        <Card>
+          <CardContent class="p-6">
+            <div class="grid grid-cols-3 gap-4 text-center">
+              <div>
+                <div class="text-2xl font-bold text-foreground">{{ user.posts }}</div>
+                <div class="text-xs text-muted-foreground uppercase tracking-wide">Posts</div>
+              </div>
+              <div>
+                <div class="text-2xl font-bold text-foreground">{{ user.followers }}</div>
+                <div class="text-xs text-muted-foreground uppercase tracking-wide">Followers</div>
+              </div>
+              <div>
+                <div class="text-2xl font-bold text-foreground">{{ user.following }}</div>
+                <div class="text-xs text-muted-foreground uppercase tracking-wide">Following</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <!-- Actions -->
+        <div class="flex gap-3">
+          <Button class="flex-1" variant="default">
+            <UserIcon class="w-4 h-4 mr-2" />
+            Follow
+          </Button>
+          <Button class="flex-1" variant="outline">
+            <ShareIcon class="w-4 h-4 mr-2" />
+            Share Profile
+          </Button>
         </div>
 
-        <div class="user-page__stats">
-          <div class="user-page__stat">
-            <div class="user-page__stat-number">{{ user.posts }}</div>
-            <div class="user-page__stat-label">Posts</div>
-          </div>
-          <div class="user-page__stat">
-            <div class="user-page__stat-number">{{ user.followers }}</div>
-            <div class="user-page__stat-label">Followers</div>
-          </div>
-          <div class="user-page__stat">
-            <div class="user-page__stat-number">{{ user.following }}</div>
-            <div class="user-page__stat-label">Following</div>
-          </div>
-        </div>
-
-        <div class="user-page__actions">
-          <button class="user-page__action user-page__action--follow">
-            👤 Follow
-          </button>
-          <button class="user-page__action user-page__action--share">
-            🔗 Share Profile
-          </button>
-        </div>
-
-        <div class="user-page__posts">
-          <h3 class="user-page__posts-title">Recent Posts</h3>
-          
-          <div v-if="userPosts.length === 0" class="user-page__no-posts">
-            <p>No posts yet</p>
-          </div>
-          
-          <div v-else class="user-page__posts-list">
-            <PostCard
-              v-for="post in userPosts"
-              :key="post.hash"
-              :post="post"
-              :show-author="false"
-              @like="handleLike"
-              @dislike="handleDislike"
-              @reply="handleReply"
-              @view-author="handleViewAuthor"
-              @view-post="handleViewPost"
-            />
-          </div>
-        </div>
+        <!-- Posts Section -->
+        <Card>
+          <CardHeader>
+            <h3 class="text-lg font-semibold text-foreground">Recent Posts</h3>
+          </CardHeader>
+          <CardContent>
+            <div v-if="userPosts.length === 0" class="text-center py-8 text-muted-foreground">
+              <p>No posts yet</p>
+            </div>
+            <div v-else class="space-y-3">
+              <PostCard
+                v-for="post in userPosts"
+                :key="post.hash"
+                :post="post"
+                :show-author="false"
+                @like="handleLike"
+                @dislike="handleDislike"
+                @reply="handleReply"
+                @view-author="handleViewAuthor"
+                @view-post="handleViewPost"
+              />
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
-      <div v-else class="user-page__not-found">
-        <p>User not found</p>
-        <button @click="router.back()" class="user-page__back">
+      <!-- Not Found -->
+      <div v-else class="text-center py-10 text-muted-foreground">
+        <p class="mb-4">User not found</p>
+        <Button @click="router.back()" variant="outline">
           Go Back
-        </button>
+        </Button>
       </div>
     </div>
   </AppPage>
 </template>
 
-<style scoped>
-.user-page {
-  max-width: 100%;
-}
-
-.user-page__error {
-  text-align: center;
-  padding: 20px;
-  background: #ffebee;
-  border: 1px solid #f44336;
-  border-radius: 8px;
-  margin-bottom: 16px;
-}
-
-.user-page__error p {
-  margin: 0 0 12px 0;
-  color: #d32f2f;
-}
-
-.user-page__retry {
-  background: #f44336;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 8px 16px;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-.user-page__loading {
-  text-align: center;
-  padding: 40px 20px;
-  color: var(--tg-theme-hint-color, #666666);
-}
-
-.user-page__profile {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 20px;
-  padding: 16px;
-  background: var(--tg-theme-bg-color, #ffffff);
-  border: 1px solid var(--tg-theme-hint-color, #e0e0e0);
-  border-radius: 12px;
-}
-
-.user-page__avatar {
-  flex-shrink: 0;
-}
-
-.user-page__avatar-placeholder {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background: var(--tg-theme-button-color, #007aff);
-  color: var(--tg-theme-button-text-color, #ffffff);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  font-weight: bold;
-}
-
-.user-page__info {
-  flex: 1;
-  min-width: 0;
-}
-
-.user-page__username {
-  margin: 0 0 4px 0;
-  font-size: 20px;
-  font-weight: bold;
-  color: var(--tg-theme-text-color, #000000);
-  word-break: break-all;
-}
-
-.user-page__address {
-  margin: 0 0 4px 0;
-  font-size: 14px;
-  color: var(--tg-theme-hint-color, #666666);
-  font-family: monospace;
-}
-
-.user-page__joined {
-  margin: 0;
-  font-size: 12px;
-  color: var(--tg-theme-hint-color, #666666);
-}
-
-.user-page__stats {
-  display: flex;
-  justify-content: space-around;
-  margin-bottom: 20px;
-  padding: 16px;
-  background: var(--tg-theme-bg-color, #ffffff);
-  border: 1px solid var(--tg-theme-hint-color, #e0e0e0);
-  border-radius: 12px;
-}
-
-.user-page__stat {
-  text-align: center;
-}
-
-.user-page__stat-number {
-  font-size: 24px;
-  font-weight: bold;
-  color: var(--tg-theme-text-color, #000000);
-  margin-bottom: 4px;
-}
-
-.user-page__stat-label {
-  font-size: 12px;
-  color: var(--tg-theme-hint-color, #666666);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.user-page__actions {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 20px;
-}
-
-.user-page__action {
-  flex: 1;
-  background: var(--tg-theme-button-color, #007aff);
-  color: var(--tg-theme-button-text-color, #ffffff);
-  border: none;
-  border-radius: 8px;
-  padding: 12px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: opacity 0.2s;
-}
-
-.user-page__action:hover {
-  opacity: 0.8;
-}
-
-.user-page__action--follow {
-  background: #4caf50;
-}
-
-.user-page__action--share {
-  background: #ff9800;
-}
-
-.user-page__posts {
-  margin-top: 20px;
-}
-
-.user-page__posts-title {
-  margin: 0 0 16px 0;
-  font-size: 18px;
-  color: var(--tg-theme-text-color, #000000);
-}
-
-.user-page__no-posts {
-  text-align: center;
-  padding: 40px 20px;
-  color: var(--tg-theme-hint-color, #666666);
-}
-
-.user-page__not-found {
-  text-align: center;
-  padding: 40px 20px;
-  color: var(--tg-theme-hint-color, #666666);
-}
-
-.user-page__back {
-  background: var(--tg-theme-button-color, #007aff);
-  color: var(--tg-theme-button-text-color, #ffffff);
-  border: none;
-  border-radius: 8px;
-  padding: 12px 24px;
-  font-size: 16px;
-  cursor: pointer;
-  margin-top: 16px;
-}
-
-@media (max-width: 480px) {
-  .user-page__profile {
-    flex-direction: column;
-    text-align: center;
-  }
-  
-  .user-page__actions {
-    flex-direction: column;
-  }
-}
-</style>

@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router';
 import { useSearch } from '~/composables/useDitherAPI';
 import PostCard from '~/components/PostCard.vue';
 import AppPage from '~/components/AppPage.vue';
+import { Input, Button } from '~/components/ui';
 import { SearchIcon, XIcon, AlertCircleIcon } from 'lucide-vue-next';
 
 const router = useRouter();
@@ -66,58 +67,70 @@ watch(searchQuery, (newQuery) => {
         Search Posts
       </div>
     </template>
-    <div class="search-page">
-      <div class="search-page__input-container">
-        <input
+    <div class="w-full">
+      <!-- Search Input -->
+      <div class="relative mb-5">
+        <Input
           ref="searchInput"
           v-model="searchQuery"
           type="text"
           placeholder="Search posts, users, or content..."
-          class="search-page__input"
+          class="w-full pr-20"
           @keyup.enter="handleSearch"
         />
-        <button 
+        <Button 
           v-if="searchQuery"
-          class="search-page__clear"
+          variant="ghost"
+          size="icon"
+          class="absolute right-12 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
           @click="handleClear"
         >
           <XIcon class="w-4 h-4" />
-        </button>
-        <button 
-          class="search-page__search"
+        </Button>
+        <Button 
+          variant="ghost"
+          size="icon"
+          class="absolute right-2 top-1/2 transform -translate-y-1/2 text-primary hover:text-primary/80"
           @click="handleSearch"
           :disabled="!searchQuery.trim() || loading"
         >
           <SearchIcon class="w-4 h-4" />
-        </button>
+        </Button>
       </div>
 
-      <div v-if="error" class="search-page__error">
-        <div class="flex items-center gap-2">
-          <AlertCircleIcon class="w-4 h-4" />
-          <p>{{ error }}</p>
+      <!-- Error State -->
+      <div v-if="error" class="text-center p-5 bg-red-50 border border-red-200 rounded-lg mb-4">
+        <div class="flex items-center justify-center gap-2 mb-3">
+          <AlertCircleIcon class="w-4 h-4 text-red-500" />
+          <p class="text-red-700">{{ error }}</p>
         </div>
-        <button @click="handleSearch" class="search-page__retry">
+        <Button 
+          @click="handleSearch" 
+          variant="destructive"
+          size="sm"
+        >
           Try Again
-        </button>
+        </Button>
       </div>
 
-      <div v-else-if="loading" class="search-page__loading">
+      <!-- Loading State -->
+      <div v-else-if="loading" class="text-center py-10 text-gray-500">
         <p>Searching...</p>
       </div>
 
-      <div v-else-if="results" class="search-page__results">
-        <div class="search-page__results-header">
-          <h3>Search Results for "{{ results.query }}"</h3>
-          <p>{{ results.total }} posts found</p>
+      <!-- Results -->
+      <div v-else-if="results" class="w-full">
+        <div class="mb-4 pb-3 border-b border-gray-200">
+          <h3 class="text-lg font-semibold text-gray-900 mb-1">Search Results for "{{ results.query }}"</h3>
+          <p class="text-sm text-gray-500">{{ results.total }} posts found</p>
         </div>
 
-        <div v-if="results.posts.length === 0" class="search-page__no-results">
-          <p>No posts found for "{{ results.query }}"</p>
-          <p>Try different keywords or check your spelling.</p>
+        <div v-if="results.posts.length === 0" class="text-center py-10 text-gray-500">
+          <p class="mb-2">No posts found for "{{ results.query }}"</p>
+          <p class="text-sm">Try different keywords or check your spelling.</p>
         </div>
 
-        <div v-else class="search-page__posts">
+        <div v-else class="space-y-3">
           <PostCard
             v-for="post in results.posts"
             :key="post.hash"
@@ -131,35 +144,44 @@ watch(searchQuery, (newQuery) => {
         </div>
       </div>
 
-      <div v-else class="search-page__placeholder">
-        <p>Enter a search term to find posts</p>
-        <div class="search-page__suggestions">
-          <h4>Popular searches:</h4>
-          <div class="search-page__suggestion-tags">
-            <button 
-              class="search-page__suggestion-tag"
+      <!-- Placeholder -->
+      <div v-else class="text-center py-10 text-gray-500">
+        <p class="mb-5">Enter a search term to find posts</p>
+        <div class="mt-5">
+          <h4 class="text-base font-medium text-gray-900 mb-3">Popular searches:</h4>
+          <div class="flex flex-wrap gap-2 justify-center">
+            <Button 
+              variant="default"
+              size="sm"
+              class="rounded-full"
               @click="searchQuery = 'blockchain'"
             >
               blockchain
-            </button>
-            <button 
-              class="search-page__suggestion-tag"
+            </Button>
+            <Button 
+              variant="default"
+              size="sm"
+              class="rounded-full"
               @click="searchQuery = 'defi'"
             >
               defi
-            </button>
-            <button 
-              class="search-page__suggestion-tag"
+            </Button>
+            <Button 
+              variant="default"
+              size="sm"
+              class="rounded-full"
               @click="searchQuery = 'cosmos'"
             >
               cosmos
-            </button>
-            <button 
-              class="search-page__suggestion-tag"
+            </Button>
+            <Button 
+              variant="default"
+              size="sm"
+              class="rounded-full"
               @click="searchQuery = 'dither'"
             >
               dither
-            </button>
+            </Button>
           </div>
         </div>
       </div>
@@ -167,148 +189,3 @@ watch(searchQuery, (newQuery) => {
   </AppPage>
 </template>
 
-<style scoped>
-.search-page {
-  max-width: 100%;
-}
-
-.search-page__input-container {
-  position: relative;
-  margin-bottom: 20px;
-}
-
-.search-page__input {
-  width: 100%;
-  padding: 12px 40px 12px 16px;
-  border: 2px solid var(--tg-theme-hint-color, #e0e0e0);
-  border-radius: 8px;
-  font-size: 16px;
-  background: var(--tg-theme-bg-color, #ffffff);
-  color: var(--tg-theme-text-color, #000000);
-  box-sizing: border-box;
-}
-
-.search-page__input:focus {
-  outline: none;
-  border-color: var(--tg-theme-button-color, #007aff);
-}
-
-.search-page__clear,
-.search-page__search {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 16px;
-  padding: 4px;
-}
-
-.search-page__clear {
-  right: 40px;
-  color: var(--tg-theme-hint-color, #666666);
-}
-
-.search-page__search {
-  right: 8px;
-  color: var(--tg-theme-button-color, #007aff);
-}
-
-.search-page__search:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.search-page__error {
-  text-align: center;
-  padding: 20px;
-  background: #ffebee;
-  border: 1px solid #f44336;
-  border-radius: 8px;
-  margin-bottom: 16px;
-}
-
-.search-page__error p {
-  margin: 0 0 12px 0;
-  color: #d32f2f;
-}
-
-.search-page__retry {
-  background: #f44336;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 8px 16px;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-.search-page__loading {
-  text-align: center;
-  padding: 40px 20px;
-  color: var(--tg-theme-hint-color, #666666);
-}
-
-.search-page__results-header {
-  margin-bottom: 16px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--tg-theme-hint-color, #e0e0e0);
-}
-
-.search-page__results-header h3 {
-  margin: 0 0 4px 0;
-  font-size: 18px;
-  color: var(--tg-theme-text-color, #000000);
-}
-
-.search-page__results-header p {
-  margin: 0;
-  font-size: 14px;
-  color: var(--tg-theme-hint-color, #666666);
-}
-
-.search-page__no-results {
-  text-align: center;
-  padding: 40px 20px;
-  color: var(--tg-theme-hint-color, #666666);
-}
-
-.search-page__placeholder {
-  text-align: center;
-  padding: 40px 20px;
-  color: var(--tg-theme-hint-color, #666666);
-}
-
-.search-page__suggestions {
-  margin-top: 20px;
-}
-
-.search-page__suggestions h4 {
-  margin: 0 0 12px 0;
-  font-size: 16px;
-  color: var(--tg-theme-text-color, #000000);
-}
-
-.search-page__suggestion-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  justify-content: center;
-}
-
-.search-page__suggestion-tag {
-  background: var(--tg-theme-button-color, #007aff);
-  color: var(--tg-theme-button-text-color, #ffffff);
-  border: none;
-  border-radius: 16px;
-  padding: 6px 12px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: opacity 0.2s;
-}
-
-.search-page__suggestion-tag:hover {
-  opacity: 0.8;
-}
-</style>
