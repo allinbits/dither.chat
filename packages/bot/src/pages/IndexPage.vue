@@ -1,18 +1,36 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import AppPage from '@/components/AppPage.vue';
 import { Card, CardContent, CardHeader, Badge } from '@/components/ui';
-import { retrieveLaunchParams } from '@tma.js/sdk-vue';
+import { retrieveLaunchParams, initData, useSignal } from '@tma.js/sdk-vue';
 
 // TMA.js SDK integration - basic info display
 const launchParams = retrieveLaunchParams();
 const platform = launchParams.tgWebAppPlatform || 'unknown';
 const version = launchParams.tgWebAppVersion || 'unknown';
 
+// Get user information using the correct pattern
+const initDataRef = useSignal(initData.state);
+
 // Platform info
 const platformInfo = {
   platform: platform.charAt(0).toUpperCase() + platform.slice(1),
   version
 };
+
+// User information
+const userInfo = computed(() => {
+  const user = initDataRef.value?.user;
+  if (!user) return null;
+  
+  return {
+    name: user.first_name + (user.last_name ? ` ${user.last_name}` : ''),
+    username: user.username,
+    id: user.id,
+    language: user.language_code,
+    isPremium: user.is_premium
+  };
+});
 </script>
 
 <template>
@@ -35,6 +53,35 @@ const platformInfo = {
           <p class="text-sm text-muted-foreground">
             More features coming soon...
           </p>
+        </CardContent>
+      </Card>
+
+      <!-- Telegram User Info -->
+      <Card v-if="userInfo" class="w-full max-w-md mx-auto">
+        <CardHeader>
+          <h3 class="text-lg font-semibold text-foreground">👤 Telegram User</h3>
+        </CardHeader>
+        <CardContent class="space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-muted-foreground">Name:</span>
+            <span class="text-sm font-medium">{{ userInfo.name }}</span>
+          </div>
+          <div v-if="userInfo.username" class="flex items-center justify-between">
+            <span class="text-sm text-muted-foreground">Username:</span>
+            <span class="text-sm font-medium">@{{ userInfo.username }}</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-muted-foreground">ID:</span>
+            <span class="text-sm font-medium">{{ userInfo.id }}</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-muted-foreground">Language:</span>
+            <Badge variant="secondary">{{ userInfo.language }}</Badge>
+          </div>
+          <div v-if="userInfo.isPremium" class="flex items-center justify-between">
+            <span class="text-sm text-muted-foreground">Premium:</span>
+            <Badge variant="default">⭐ Premium</Badge>
+          </div>
         </CardContent>
       </Card>
 
