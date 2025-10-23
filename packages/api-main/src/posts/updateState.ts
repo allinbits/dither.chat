@@ -1,7 +1,7 @@
 import { getDatabase } from '../../drizzle/db';
 import { ReaderState } from '../../drizzle/schema';
 
-export async function UpdateState(body: { last_block: string }, headers: Record<string, string | undefined>) {
+export async function UpdateState(body: { last_block: string }) {
     try {
         await getDatabase()
             .insert(ReaderState)

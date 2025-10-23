@@ -16,7 +16,7 @@ const statementAddFollower = getDatabase()
     .onConflictDoNothing()
     .prepare('stmnt_add_follower');
 
-export async function Follow(body: typeof Posts.FollowBody.static, headers: Record<string, string | undefined>) {
+export async function Follow(body: typeof Posts.FollowBody.static) {
     if (body.hash.length !== 64) {
         return { status: 400, error: 'Provided hash is not valid for follow' };
     }

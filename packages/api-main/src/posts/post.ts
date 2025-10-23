@@ -17,7 +17,7 @@ const statement = getDatabase()
     .onConflictDoNothing()
     .prepare('stmnt_post');
 
-export async function Post(body: typeof Posts.PostBody.static, headers: Record<string, string | undefined>) {
+export async function Post(body: typeof Posts.PostBody.static) {
     try {
         if (body.msg.length >= 512) {
             return { status: 400, error: 'message is too long' };

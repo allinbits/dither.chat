@@ -4,7 +4,7 @@ import { and, eq } from 'drizzle-orm';
 import { getDatabase } from '../../drizzle/db';
 import { FeedTable } from '../../drizzle/schema';
 
-export async function PostRemove(body: typeof Posts.PostRemoveBody.static, headers: Record<string, string | undefined>) {
+export async function PostRemove(body: typeof Posts.PostRemoveBody.static) {
     try {
         const selectResults = await getDatabase()
             .select()

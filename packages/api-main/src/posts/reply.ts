@@ -28,7 +28,7 @@ const statementAddReplyCount = getDatabase()
     .where(eq(FeedTable.hash, sql.placeholder('post_hash')))
     .prepare('stmnt_add_reply_count');
 
-export async function Reply(body: typeof Posts.ReplyBody.static, headers: Record<string, string | undefined>) {
+export async function Reply(body: typeof Posts.ReplyBody.static) {
     if (body.post_hash.length !== 64) {
         return { status: 400, error: 'Provided post_hash is not valid for reply' };
     }

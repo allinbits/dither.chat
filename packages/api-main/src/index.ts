@@ -6,7 +6,7 @@ import { useConfig } from './config';
 import { authRoutes } from './routes/auth';
 import { moderatorRoutes } from './routes/moderator';
 import { publicRoutes } from './routes/public';
-import { indexerRoutes } from './routes/reader';
+import { readerRoutes } from './routes/reader';
 import { userRoutes } from './routes/user';
 
 const config = useConfig();
@@ -16,7 +16,7 @@ export function start() {
     app.use(cors());
     app.use(publicRoutes);
     app.use(authRoutes);
-    app.use(indexerRoutes);
+    app.use(readerRoutes);
     app.use(userRoutes);
     app.use(moderatorRoutes);
 
