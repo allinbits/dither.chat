@@ -1,8 +1,8 @@
 import { Posts } from '@atomone/dither-api-types';
 import { Elysia, t } from 'elysia';
 
-import * as PostRequests from '../posts/index';
 import { readerAuthMiddleware } from '../middleware/readerAuth';
+import * as PostRequests from '../posts/index';
 
 /**
  * Routes that require reader/indexer authorization
