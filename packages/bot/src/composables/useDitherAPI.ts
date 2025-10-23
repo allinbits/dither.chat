@@ -1,15 +1,23 @@
 import { ref, computed } from "vue";
 
-// Types for Dither API responses
+// Types for Dither API responses - matching database schema
 export interface Post {
   hash: string;
-  content: string;
+  post_hash?: string | null;
   author: string;
   timestamp: string;
+  message: string;
   quantity: string;
-  likes: number;
   replies: number;
+  likes: number;
   dislikes: number;
+  flags: number;
+  likes_burnt: string;
+  dislikes_burnt: string;
+  flags_burnt: string;
+  removed_hash?: string | null;
+  removed_at?: string | null;
+  removed_by?: string | null;
 }
 
 export interface User {

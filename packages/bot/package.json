@@ -20,6 +20,7 @@
     "ui:add": "pnpm dlx shadcn-vue@latest add"
   },
   "dependencies": {
+    "@tanstack/vue-query": "^5.90.3",
     "@tailwindcss/vite": "^4.1.14",
     "@tma.js/sdk-vue": "^1.0.6",
     "@tonconnect/ui": "^2.3.1",

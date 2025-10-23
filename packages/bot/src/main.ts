@@ -2,6 +2,7 @@ import "./style.css";
 
 import { createApp } from "vue";
 import { retrieveLaunchParams } from "@tma.js/sdk-vue";
+import { VueQueryPlugin } from "@tanstack/vue-query";
 
 import App from "./App.vue";
 import router from "./router";
@@ -11,7 +12,7 @@ import { TonConnectUIPlugin } from "./tonconnect";
 import { publicUrl } from "./lib/publicUrl";
 
 // Ensure dark mode is the default
-document.documentElement.classList.add('dark');
+document.documentElement.classList.add("dark");
 
 // Mock the environment in case, we are outside Telegram.
 // Only import mock environment in development
@@ -53,6 +54,7 @@ const initializeApp = async () => {
   const app = createApp(App);
   app.config.errorHandler = errorHandler;
   app.use(router);
+  app.use(VueQueryPlugin);
   app.use(TonConnectUIPlugin, {
     manifestUrl: publicUrl("tonconnect-manifest.json"),
   });

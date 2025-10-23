@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { useFeed } from '~/composables/useDitherAPI';
-import PostCard from '~/components/PostCard.vue';
+import { useFeed } from '~/composables/useFeed';
+import PostsList from '~/components/PostsList.vue';
 import AppPage from '~/components/AppPage.vue';
 
 const router = useRouter();
-const { posts, loading, error, hasMore, loadFeed, refreshFeed } = useFeed();
+const query = useFeed();
 
 const handleLike = (hash: string) => {
   console.log('Liked post:', hash);
@@ -29,20 +28,6 @@ const handleViewAuthor = (address: string) => {
 const handleViewPost = (hash: string) => {
   router.push({ name: 'post', params: { hash } });
 };
-
-const loadMore = () => {
-  if (hasMore.value && !loading.value) {
-    loadFeed(10, false);
-  }
-};
-
-const handleRefresh = () => {
-  refreshFeed();
-};
-
-onMounted(() => {
-  loadFeed(10, true);
-});
 </script>
 
 <template>
@@ -50,58 +35,16 @@ onMounted(() => {
     <div class="feed-page">
       <div class="feed-page__header">
         <h2 class="feed-page__title">Latest Posts</h2>
-        <button 
-          class="feed-page__refresh"
-          @click="handleRefresh"
-          :disabled="loading"
-        >
-          🔄 Refresh
-        </button>
       </div>
 
-      <div v-if="error" class="feed-page__error">
-        <p>❌ {{ error }}</p>
-        <button @click="handleRefresh" class="feed-page__retry">
-          Try Again
-        </button>
-      </div>
-
-      <div v-else-if="loading && posts.length === 0" class="feed-page__loading">
-        <p>Loading posts...</p>
-      </div>
-
-      <div v-else-if="posts.length === 0" class="feed-page__empty">
-        <p>No posts found. Be the first to post!</p>
-      </div>
-
-      <div v-else class="feed-page__posts">
-        <PostCard
-          v-for="post in posts"
-          :key="post.hash"
-          :post="post"
-          @like="handleLike"
-          @dislike="handleDislike"
-          @reply="handleReply"
-          @view-author="handleViewAuthor"
-          @view-post="handleViewPost"
-        />
-        
-        <div v-if="loading" class="feed-page__loading-more">
-          <p>Loading more posts...</p>
-        </div>
-        
-        <button 
-          v-else-if="hasMore"
-          class="feed-page__load-more"
-          @click="loadMore"
-        >
-          Load More Posts
-        </button>
-        
-        <div v-else class="feed-page__end">
-          <p>You've reached the end of the feed!</p>
-        </div>
-      </div>
+      <PostsList 
+        :query="query"
+        @like="handleLike"
+        @dislike="handleDislike"
+        @reply="handleReply"
+        @view-author="handleViewAuthor"
+        @view-post="handleViewPost"
+      />
     </div>
   </AppPage>
 </template>

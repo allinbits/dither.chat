@@ -76,10 +76,10 @@ const handleViewPost = () => {
 };
 
 const truncatedContent = computed(() => {
-  if (props.compact && props.post.content.length > 100) {
-    return props.post.content.substring(0, 100) + '...';
+  if (props.compact && props.post.message.length > 100) {
+    return props.post.message.substring(0, 100) + '...';
   }
-  return props.post.content;
+  return props.post.message;
 });
 </script>
 
