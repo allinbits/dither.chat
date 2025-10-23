@@ -1,3 +1,5 @@
+import "./style.css";
+
 import { createApp } from "vue";
 import { retrieveLaunchParams } from "@tma.js/sdk-vue";
 import { VueQueryPlugin } from "@tanstack/vue-query";
@@ -8,8 +10,6 @@ import { errorHandler } from "./errorHandler";
 import { init } from "./init";
 import { TonConnectUIPlugin } from "./tonconnect";
 import { publicUrl } from "./lib/publicUrl";
-
-import "./style.css";
 
 // Ensure dark mode is the default
 document.documentElement.classList.add("dark");

@@ -2,9 +2,9 @@
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 import AppPage from '~/components/AppPage.vue';
-import { Card, CardContent, CardHeader, Badge } from '~/components/ui';
+import { Card, CardContent, CardHeader, Button, Badge } from '~/components/ui';
 import { retrieveLaunchParams, initData, useSignal } from '@tma.js/sdk-vue';
-import { SmartphoneIcon, SearchIcon, LinkIcon, UserIcon, BarChart3Icon } from 'lucide-vue-next';
+import { SmartphoneIcon, SearchIcon, LinkIcon, UserIcon, ZapIcon, BarChart3Icon } from 'lucide-vue-next';
 
 // Router for navigation
 const router = useRouter();
