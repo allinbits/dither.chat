@@ -8,7 +8,7 @@ import mkcert from "vite-plugin-mkcert";
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: "/ditherbot",
+  base: process.env.NODE_ENV === "production" ? "/" : "/ditherbot",
   plugins: [
     vue() as PluginOption,
     vueDevTools(),
