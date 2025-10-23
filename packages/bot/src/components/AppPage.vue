@@ -30,15 +30,15 @@ const goHome = () => {
     <div class="page__header">
       <div class="page__title-section">
         <h1 class="page__title">
-          <slot name="title">{{ title }}</slot>
+          <slot name="title">{{ props.title }}</slot>
         </h1>
-        <div v-if="disclaimer" class="page__disclaimer">{{ disclaimer }}</div>
+        <div v-if="props.disclaimer" class="page__disclaimer">{{ props.disclaimer }}</div>
       </div>
       
       <!-- Navigation buttons -->
       <div class="page__nav">
         <Button 
-          v-if="back" 
+          v-if="props.back" 
           @click="goBack" 
           variant="outline" 
           size="sm"
