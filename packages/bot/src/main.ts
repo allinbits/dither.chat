@@ -8,7 +8,7 @@ import router from "./router";
 import { errorHandler } from "./errorHandler";
 import { init } from "./init";
 import { TonConnectUIPlugin } from "./tonconnect";
-import { publicUrl } from "./helperts/publicUrl";
+import { publicUrl } from "./lib/publicUrl";
 
 // Mock the environment in case, we are outside Telegram.
 // Only import mock environment in development
