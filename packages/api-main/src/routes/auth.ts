@@ -1,4 +1,4 @@
-import { Gets, Posts } from '@atomone/dither-api-types';
+import { Posts } from '@atomone/dither-api-types';
 import { Elysia, t } from 'elysia';
 
 import * as GetRequests from '../gets/index';
