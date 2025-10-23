@@ -1,13 +1,12 @@
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Roboto', 'Oxygen',
-  'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-  sans-serif;
+  font-family: "Inter", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  line-height: 1.5;
+  line-height: normal;
 
-  background: var(--tg-theme-secondary-bg-color, white);
-  color: var(--tg-theme-text-color, black);
+  /* Use our design tokens as primary, fallback to Telegram theme */
+  background: var(--background, var(--tg-theme-secondary-bg-color, #252525));
+  color: var(--foreground, var(--tg-theme-text-color, #fafafa));
 }
 
 blockquote {

@@ -10,6 +10,9 @@ import { init } from "./init";
 import { TonConnectUIPlugin } from "./tonconnect";
 import { publicUrl } from "./lib/publicUrl";
 
+// Ensure dark mode is the default
+document.documentElement.classList.add('dark');
+
 // Mock the environment in case, we are outside Telegram.
 // Only import mock environment in development
 if (import.meta.env.DEV) {
