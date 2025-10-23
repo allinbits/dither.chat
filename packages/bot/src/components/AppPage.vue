@@ -3,16 +3,6 @@ import { useRouter } from 'vue-router';
 import { Button } from '~/components/ui';
 import { HomeIcon } from 'lucide-vue-next';
 
-interface Props {
-  title: string;
-  disclaimer?: string;
-  back?: boolean;
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  back: true
-});
-
 const router = useRouter();
 
 const goBack = () => {
