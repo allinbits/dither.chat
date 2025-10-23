@@ -2,11 +2,11 @@ body {
   font-family: "Inter", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  line-height: 1.5;
+  line-height: normal;
 
-  /* Telegram theme integration with fallbacks */
-  background: var(--tg-theme-bg-color, var(--background, #17212b));
-  color: var(--tg-theme-text-color, var(--foreground, #ffffff));
+  /* Use our design tokens as primary, fallback to Telegram theme */
+  background: var(--background, var(--tg-theme-secondary-bg-color, #252525));
+  color: var(--foreground, var(--tg-theme-text-color, #fafafa));
 }
 
 blockquote {
