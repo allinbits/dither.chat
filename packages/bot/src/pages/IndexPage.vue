@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import { useRouter } from 'vue-router';
 import AppPage from '~/components/AppPage.vue';
-import { Card, CardContent, CardHeader, Badge } from '~/components/ui';
+import { Card, CardContent, CardHeader, Button, Badge } from '~/components/ui';
 import { retrieveLaunchParams, initData, useSignal } from '@tma.js/sdk-vue';
+
+// Router for navigation
+const router = useRouter();
 
 // TMA.js SDK integration - basic info display
 const launchParams = retrieveLaunchParams();
@@ -31,6 +35,24 @@ const userInfo = computed(() => {
     isPremium: user.is_premium
   };
 });
+
+// Navigation handlers
+const navigateToFeed = () => {
+  router.push('/feed');
+};
+
+const navigateToSearch = () => {
+  router.push('/search');
+};
+
+const navigateToWallet = () => {
+  router.push('/ton-connect');
+};
+
+const navigateToUser = () => {
+  // For demo purposes, navigate to a sample user
+  router.push('/user/cosmos1abc123def456ghi789jkl012mno345pqr678stu901vwx234yz');
+};
 </script>
 
 <template>
@@ -45,77 +67,129 @@ const userInfo = computed(() => {
             </div>
             <h1 class="text-3xl font-bold text-foreground mb-2">Welcome to Dither!</h1>
             <p class="text-muted-foreground leading-relaxed">
-              Your gateway to the decentralized social network.
+              Access the Dither decentralized social network through Telegram.
             </p>
           </div>
         </CardHeader>
-        <CardContent class="text-center">
-          <p class="text-sm text-muted-foreground">
-            More features coming soon...
-          </p>
-        </CardContent>
-      </Card>
-
-      <!-- Telegram User Info -->
-      <Card v-if="userInfo" class="w-full max-w-md mx-auto">
-        <CardHeader>
-          <h3 class="text-lg font-semibold text-foreground">👤 Telegram User</h3>
-        </CardHeader>
-        <CardContent class="space-y-3">
-          <div class="flex items-center justify-between">
-            <span class="text-sm text-muted-foreground">Name:</span>
-            <span class="text-sm font-medium">{{ userInfo.name }}</span>
-          </div>
-          <div v-if="userInfo.username" class="flex items-center justify-between">
-            <span class="text-sm text-muted-foreground">Username:</span>
-            <span class="text-sm font-medium">@{{ userInfo.username }}</span>
-          </div>
-          <div class="flex items-center justify-between">
-            <span class="text-sm text-muted-foreground">ID:</span>
-            <span class="text-sm font-medium">{{ userInfo.id }}</span>
-          </div>
-          <div class="flex items-center justify-between">
-            <span class="text-sm text-muted-foreground">Language:</span>
-            <Badge variant="secondary">{{ userInfo.language }}</Badge>
-          </div>
-          <div v-if="userInfo.isPremium" class="flex items-center justify-between">
-            <span class="text-sm text-muted-foreground">Premium:</span>
-            <Badge variant="default">⭐ Premium</Badge>
+        <CardContent class="text-center space-y-4">
+          <div class="text-sm text-muted-foreground">
+            <p class="mb-2">🚀 Quick Start:</p>
+            <ul class="text-left space-y-1">
+              <li>• Browse latest posts</li>
+              <li>• Search for content</li>
+              <li>• Connect your wallet</li>
+              <li>• Interact with posts</li>
+            </ul>
           </div>
         </CardContent>
       </Card>
 
-      <!-- Platform Info -->
+      <!-- Navigation Cards -->
+      <div class="grid grid-cols-2 gap-4 max-w-md mx-auto">
+        <!-- Feed Navigation -->
+        <Card class="cursor-pointer hover:shadow-md transition-shadow" @click="navigateToFeed">
+          <CardContent class="p-4 text-center">
+            <div class="text-2xl mb-2">📱</div>
+            <h3 class="font-semibold text-sm">Feed</h3>
+            <p class="text-xs text-muted-foreground">Latest posts</p>
+          </CardContent>
+        </Card>
+
+        <!-- Search Navigation -->
+        <Card class="cursor-pointer hover:shadow-md transition-shadow" @click="navigateToSearch">
+          <CardContent class="p-4 text-center">
+            <div class="text-2xl mb-2">🔍</div>
+            <h3 class="font-semibold text-sm">Search</h3>
+            <p class="text-xs text-muted-foreground">Find content</p>
+          </CardContent>
+        </Card>
+
+        <!-- Wallet Navigation -->
+        <Card class="cursor-pointer hover:shadow-md transition-shadow" @click="navigateToWallet">
+          <CardContent class="p-4 text-center">
+            <div class="text-2xl mb-2">🔗</div>
+            <h3 class="font-semibold text-sm">Wallet</h3>
+            <p class="text-xs text-muted-foreground">Connect wallet</p>
+          </CardContent>
+        </Card>
+
+        <!-- User Navigation -->
+        <Card class="cursor-pointer hover:shadow-md transition-shadow" @click="navigateToUser">
+          <CardContent class="p-4 text-center">
+            <div class="text-2xl mb-2">👤</div>
+            <h3 class="font-semibold text-sm">Profile</h3>
+            <p class="text-xs text-muted-foreground">User profiles</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      <!-- Quick Actions -->
       <Card class="w-full max-w-md mx-auto">
         <CardHeader>
-          <h3 class="text-lg font-semibold text-foreground">📱 Platform</h3>
+          <h3 class="text-lg font-semibold text-foreground">⚡ Quick Actions</h3>
         </CardHeader>
         <CardContent class="space-y-3">
+          <Button 
+            @click="navigateToFeed" 
+            class="w-full justify-start"
+            variant="outline"
+          >
+            📱 View Latest Posts
+          </Button>
+          <Button 
+            @click="navigateToSearch" 
+            class="w-full justify-start"
+            variant="outline"
+          >
+            🔍 Search Content
+          </Button>
+          <Button 
+            @click="navigateToWallet" 
+            class="w-full justify-start"
+            variant="outline"
+          >
+            🔗 Connect Wallet
+          </Button>
+        </CardContent>
+      </Card>
+
+      <!-- Status Section -->
+      <Card class="w-full max-w-md mx-auto">
+        <CardHeader>
+          <h3 class="text-lg font-semibold text-foreground">📊 Status</h3>
+        </CardHeader>
+        <CardContent class="space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-muted-foreground">Telegram:</span>
+            <Badge variant="default">✅ Connected</Badge>
+          </div>
           <div class="flex items-center justify-between">
             <span class="text-sm text-muted-foreground">Platform:</span>
             <Badge variant="outline">{{ platformInfo.platform }}</Badge>
           </div>
+          <div v-if="userInfo" class="flex items-center justify-between">
+            <span class="text-sm text-muted-foreground">User:</span>
+            <span class="text-sm font-medium">{{ userInfo.name }}</span>
+          </div>
           <div class="flex items-center justify-between">
-            <span class="text-sm text-muted-foreground">Version:</span>
-            <span class="text-sm font-medium">{{ platformInfo.version }}</span>
+            <span class="text-sm text-muted-foreground">Dither API:</span>
+            <Badge variant="secondary">🔄 Connecting...</Badge>
           </div>
         </CardContent>
       </Card>
 
-      <!-- TMA.js SDK Status -->
+      <!-- Help Section -->
       <Card class="w-full max-w-md mx-auto">
         <CardHeader>
-          <h3 class="text-lg font-semibold text-foreground">🔧 TMA.js SDK</h3>
+          <h3 class="text-lg font-semibold text-foreground">💡 Help</h3>
         </CardHeader>
-        <CardContent class="space-y-3">
-          <div class="flex items-center justify-between">
-            <span class="text-sm text-muted-foreground">Status:</span>
-            <Badge variant="default">✅ Connected</Badge>
-          </div>
-          <div class="flex items-center justify-between">
-            <span class="text-sm text-muted-foreground">Integration:</span>
-            <span class="text-sm font-medium">Basic</span>
-          </div>
+        <CardContent class="space-y-2">
+          <p class="text-sm text-muted-foreground">
+            Use the navigation cards above to explore Dither features.
+          </p>
+          <p class="text-sm text-muted-foreground">
+            Connect your wallet to interact with posts and create content.
+          </p>
         </CardContent>
       </Card>
     </div>

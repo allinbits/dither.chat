@@ -11,6 +11,33 @@ A comprehensive Telegram bot that provides seamless access to the Dither decentr
 - **Integration**: Native Telegram experience with blockchain power
 - **Onboarding**: Gateway for new users to discover Dither
 
+## Current Status (Updated)
+
+**MVP Progress: 60% Complete**
+
+**✅ Implemented:**
+
+- Vue 3 + TypeScript framework with TMA.js integration
+- Complete UI component library (shadcn/ui)
+- Navigation system with router configuration
+- TON Connect wallet integration
+- API composables (useDitherAPI, useFeed, useSearch, useUser, useAuth)
+- All pages created (FeedPage, SearchPage, UserPage, TonConnectPage)
+
+**❌ Critical Missing:**
+
+- Dither API backend connection
+- Cosmos wallet integration with Dither protocol
+- Mock data for development/testing
+- Real data display in pages
+
+**Next Steps:**
+
+1. Connect API composables to Dither backend
+2. Add development mock data
+3. Integrate Cosmos wallets with Dither protocol
+4. Test end-to-end functionality
+
 ## Target Audience & Use Cases
 
 ### Primary Users
@@ -612,39 +639,117 @@ ENCRYPTION_KEY=your_encryption_key
 - **Cache Scaling**: Redis cluster for high availability
 - **Load Balancing**: Distribute traffic across instances
 
-## Development Roadmap
+## Development Status & Roadmap
 
-### Phase 1: MVP (4-6 weeks)
+### Current Implementation (60% Complete)
 
-- [ ] Bot setup and basic commands
-- [ ] Feed reading functionality
-- [ ] Post viewing and search
-- [ ] Basic error handling
+**✅ Completed:**
+
+- [x] Vue 3 + TypeScript framework setup
+- [x] TMA.js SDK integration
+- [x] Router configuration with all routes
+- [x] Navigation system (AppPage with back/home buttons)
+- [x] UI components (shadcn/ui complete library)
+- [x] TON Connect wallet integration
+- [x] API composables (useDitherAPI, useFeed, useSearch, useUser, useAuth)
+- [x] All pages created (FeedPage, SearchPage, UserPage, TonConnectPage)
+- [x] Home screen with navigation cards and quick actions
+
+**🔄 In Progress:**
+
+- [ ] Dither API backend connection
+- [ ] Mock data for development
+- [ ] Cosmos wallet integration
+
+**❌ Not Started:**
+
+- [ ] Real data display in pages
+- [ ] Post interactions (like, reply, follow)
 - [ ] User authentication flow
-
-### Phase 2: Interaction (4-6 weeks)
-
-- [ ] Wallet connection integration
-- [ ] Mini App development
 - [ ] Transaction signing
-- [ ] Like/dislike functionality
-- [ ] Reply system
+- [ ] Error handling improvements
 
-### Phase 3: Social Features (4-6 weeks)
+### Next Phase (Week 1-2)
 
+**Critical Tasks:**
+
+1. **API Integration** (Days 1-3)
+   - Connect useDitherAPI composables to actual backend
+   - Test API endpoints and authentication
+   - Handle error states and loading
+
+2. **Mock Data** (Days 3-5)
+   - Create development mock data
+   - Test all pages with realistic data
+   - Ensure error handling works
+
+3. **Wallet Integration** (Days 5-7)
+   - Connect Cosmos wallets to Dither protocol
+   - Implement transaction signing
+   - Add balance display
+
+### Future Phases
+
+**Phase 2: Social Features (Weeks 3-4)**
+
+- [ ] Post interactions (like, dislike, reply)
 - [ ] Follow/unfollow system
-- [ ] User profiles
-- [ ] Notifications
-- [ ] Advanced search
-- [ ] Content moderation
+- [ ] User profiles and statistics
+- [ ] Real-time updates
 
-### Phase 4: Advanced Features (6-8 weeks)
+**Phase 3: Advanced Features (Weeks 5-6)**
 
 - [ ] Push notifications
-- [ ] Group integration
-- [ ] Analytics dashboard
-- [ ] Admin tools
+- [ ] Advanced search filters
+- [ ] Content moderation
 - [ ] Performance optimization
+
+## Development Setup
+
+### Quick Start
+
+```bash
+# Install dependencies
+cd packages/bot
+pnpm install
+
+# Start development server
+pnpm run dev
+
+# Build for production
+pnpm run build
+```
+
+### Environment Configuration
+
+```bash
+# Copy environment template
+cp env.example .env.local
+
+# Required variables
+VITE_DITHER_API_URL=https://api.dither.chat/v1
+VITE_DEBUG=true
+VITE_MOCK_API=false
+```
+
+### Available Scripts
+
+- `pnpm run dev` - Development server
+- `pnpm run build` - Production build
+- `pnpm run preview` - Preview production build
+- `pnpm run lint` - Code linting
+- `pnpm run type-check` - TypeScript checking
+
+### Project Structure
+
+```
+src/
+├── components/          # UI components (shadcn/ui)
+├── composables/         # Vue composables (useDitherAPI, useCosmosWallet)
+├── pages/              # Vue pages (FeedPage, SearchPage, UserPage)
+├── router/             # Vue Router configuration
+└── tonconnect/         # TON Connect integration
+```
 
 ## Success Metrics
 
