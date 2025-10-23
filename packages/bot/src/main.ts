@@ -10,8 +10,59 @@ import { init } from "./init";
 import { TonConnectUIPlugin } from "./tonconnect";
 import { publicUrl } from "./lib/publicUrl";
 
-// Ensure dark mode is the default
-document.documentElement.classList.add('dark');
+// Ensure dark mode is the default and Telegram theme integration
+document.documentElement.classList.add("dark");
+
+// Telegram theme integration
+const applyTelegramTheme = () => {
+  // Check if we're in Telegram environment
+  if (window.Telegram?.WebApp) {
+    const tg = window.Telegram.WebApp;
+
+    // Apply Telegram's color scheme
+    if (tg.themeParams) {
+      const root = document.documentElement;
+
+      // Apply Telegram theme colors as CSS custom properties
+      if (tg.themeParams.bg_color) {
+        root.style.setProperty("--tg-theme-bg-color", tg.themeParams.bg_color);
+      }
+      if (tg.themeParams.text_color) {
+        root.style.setProperty(
+          "--tg-theme-text-color",
+          tg.themeParams.text_color,
+        );
+      }
+      if (tg.themeParams.hint_color) {
+        root.style.setProperty(
+          "--tg-theme-hint-color",
+          tg.themeParams.hint_color,
+        );
+      }
+      if (tg.themeParams.link_color) {
+        root.style.setProperty(
+          "--tg-theme-link-color",
+          tg.themeParams.link_color,
+        );
+      }
+      if (tg.themeParams.button_color) {
+        root.style.setProperty(
+          "--tg-theme-button-color",
+          tg.themeParams.button_color,
+        );
+      }
+      if (tg.themeParams.button_text_color) {
+        root.style.setProperty(
+          "--tg-theme-button-text-color",
+          tg.themeParams.button_text_color,
+        );
+      }
+    }
+  }
+};
+
+// Apply theme immediately
+applyTelegramTheme();
 
 // Mock the environment in case, we are outside Telegram.
 // Only import mock environment in development
