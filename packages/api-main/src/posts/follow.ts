@@ -4,7 +4,6 @@ import { and, eq, isNotNull, sql } from 'drizzle-orm';
 import { getDatabase } from '../../drizzle/db';
 import { FollowsTable } from '../../drizzle/schema';
 import { notify } from '../shared/notify';
-import { isReaderAuthorizationValid } from '../utility';
 
 const statementAddFollower = getDatabase()
     .insert(FollowsTable)
@@ -18,10 +17,6 @@ const statementAddFollower = getDatabase()
     .prepare('stmnt_add_follower');
 
 export async function Follow(body: typeof Posts.FollowBody.static, headers: Record<string, string | undefined>) {
-    if (!isReaderAuthorizationValid(headers)) {
-        return { status: 401, error: 'Unauthorized to make write request' };
-    }
-
     if (body.hash.length !== 64) {
         return { status: 400, error: 'Provided hash is not valid for follow' };
     }
