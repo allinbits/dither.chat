@@ -75,7 +75,7 @@ jobs:
           pnpm test
 
   deploy-testnet:
-    needs: [detect-changes, test]
+    needs: [ detect-changes, test ]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.detect-changes.outputs.changed == 'true'
     runs-on: ubuntu-latest
     environment: testnet
@@ -92,3 +92,33 @@ jobs:
           flyctl deploy --remote-only --config ./fly.testnet.toml
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_API_MAIN }}
+
+  smoke-tests:
+    needs: [ deploy-testnet ]
+    if: needs.deploy-testnet.result == 'success'
+    uses: ./.github/workflows/smoke-tests.yml
+    secrets: inherit
+    with:
+      app_name: dither-testnet-api-main
+
+  notify:
+    needs: [ smoke-tests ]
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: appleboy/telegram-action@v1.0.1
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          message: |
+            🚨 **Smoke Tests Failed** 🚨
+            
+            🔗 Repository: ${{ github.repository }}
+            📝 Commit: ${{ github.event.commits[0].message }}
+            👤 Author: ${{ github.actor }}
+            ⛓️‍💥 App: dither-testnet-api-main
+            
+            ⚠️ **Failed Tests:**            
+            🔍 [View Logs](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            
+            Please investigate and fix ASAP! 🔧
