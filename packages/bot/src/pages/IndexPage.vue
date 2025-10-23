@@ -59,32 +59,6 @@ const navigateToUser = () => {
 <template>
   <AppPage title="🌐 Dither Bot" :back="false">
     <div class="min-h-screen p-4 space-y-6">
-      <!-- Welcome Card -->
-      <Card class="w-full max-w-md mx-auto">
-        <CardHeader class="text-center">
-          <div class="mb-4">
-            <div class="w-16 h-16 mx-auto mb-4 bg-primary/10 rounded-full flex items-center justify-center">
-              <span class="text-2xl">🌐</span>
-            </div>
-            <h1 class="text-3xl font-bold text-foreground mb-2">Welcome to Dither!</h1>
-            <p class="text-muted-foreground leading-relaxed">
-              Access the Dither decentralized social network through Telegram.
-            </p>
-          </div>
-        </CardHeader>
-        <CardContent class="text-center space-y-4">
-          <div class="text-sm text-muted-foreground">
-            <p class="mb-2">🚀 Quick Start:</p>
-            <ul class="text-left space-y-1">
-              <li>• Browse latest posts</li>
-              <li>• Search for content</li>
-              <li>• Connect your wallet</li>
-              <li>• Interact with posts</li>
-            </ul>
-          </div>
-        </CardContent>
-      </Card>
-
       <!-- Navigation Cards -->
       <div class="grid grid-cols-2 gap-4 max-w-md mx-auto">
         <!-- Feed Navigation -->
@@ -124,42 +98,6 @@ const navigateToUser = () => {
         </Card>
       </div>
 
-      <!-- Quick Actions -->
-      <Card class="w-full max-w-md mx-auto">
-        <CardHeader>
-          <h3 class="text-lg font-semibold text-foreground flex items-center gap-2">
-            <ZapIcon class="w-5 h-5" />
-            Quick Actions
-          </h3>
-        </CardHeader>
-        <CardContent class="space-y-3">
-          <Button 
-            @click="navigateToFeed" 
-            class="w-full justify-start"
-            variant="outline"
-          >
-            <SmartphoneIcon class="w-4 h-4 mr-2" />
-            View Latest Posts
-          </Button>
-          <Button 
-            @click="navigateToSearch" 
-            class="w-full justify-start"
-            variant="outline"
-          >
-            <SearchIcon class="w-4 h-4 mr-2" />
-            Search Content
-          </Button>
-          <Button 
-            @click="navigateToWallet" 
-            class="w-full justify-start"
-            variant="outline"
-          >
-            <LinkIcon class="w-4 h-4 mr-2" />
-            Connect Wallet
-          </Button>
-        </CardContent>
-      </Card>
-
       <!-- Status Section -->
       <Card class="w-full max-w-md mx-auto">
         <CardHeader>
@@ -185,21 +123,6 @@ const navigateToUser = () => {
             <span class="text-sm text-muted-foreground">Dither API:</span>
             <Badge variant="secondary">🔄 Connecting...</Badge>
           </div>
-        </CardContent>
-      </Card>
-
-      <!-- Help Section -->
-      <Card class="w-full max-w-md mx-auto">
-        <CardHeader>
-          <h3 class="text-lg font-semibold text-foreground">💡 Help</h3>
-        </CardHeader>
-        <CardContent class="space-y-2">
-          <p class="text-sm text-muted-foreground">
-            Use the navigation cards above to explore Dither features.
-          </p>
-          <p class="text-sm text-muted-foreground">
-            Connect your wallet to interact with posts and create content.
-          </p>
         </CardContent>
       </Card>
     </div>
