@@ -13,3 +13,5 @@ data/*
 .DS_Store
 .retype
 retype.manifest
+# Local Netlify folder
+.netlify
