@@ -1,11 +1,13 @@
+import type { Post } from '../types/feed.js';
+
 import { type Context, Markup, Telegraf } from 'telegraf';
+
 import { telegramConfig } from './config.js';
 import { logger } from './logger.js';
 import { compressHash, decompressHash } from './utils.js';
-import { Post } from '../types/feed.js';
 
 const telegramErrors = {
-    cannot_initiate: "Forbidden: bot can't initiate conversation with a user",
+    cannot_initiate: 'Forbidden: bot can\'t initiate conversation with a user',
 };
 
 const chatId = telegramConfig.telegram.chatId;
@@ -28,10 +30,11 @@ export async function sendMessageToChannel(post: Post) {
                     Markup.button.callback('👍', `like:${encodedHash}`),
                     Markup.button.callback('👎', `dislike:${encodedHash}`),
                 ],
-            ])
+            ]),
         );
         logger.info(`Message sent to Telegram for post hash: ${post.hash}`);
-    } catch (error) {
+    }
+    catch (error) {
         logger.error(`Failed to send message to Telegram: ${(error as Error).message}`);
         throw error;
     }
@@ -48,7 +51,7 @@ async function sendMessageToUser(userId: number, action: string, hash: string) {
     await bot.telegram.sendMessage(
         userId,
         message,
-        Markup.inlineKeyboard([Markup.button.url(`Sign ${actionLabel}`, buttonUrl)])
+        Markup.inlineKeyboard([Markup.button.url(`Sign ${actionLabel}`, buttonUrl)]),
     );
 }
 
@@ -59,18 +62,25 @@ bot.command('feed', async (ctx) => {
     await ctx.reply(`Join our Dither feed channel: @ditherbottest`);
 });
 
+bot.command('keplr', async (ctx) => {
+    await ctx.reply(`To link your wallet, please visit:`, Markup.inlineKeyboard([
+        Markup.button.url('Connect Wallet', `https://deeplink.keplr.app/web-browser?url=https://dither.chat`),
+    ]));
+});
+
 bot.help((ctx) => {
     const helpMessage = `
 Available commands:
 /feed - Get the Dither feed channel link
 /app - Open the Dither Web App
+/keplr - Link your Keplr wallet
   `.trim();
 
     ctx.reply(helpMessage);
 });
-bot.command('app', (ctx) => sendMiniAppLink(ctx, 'Open the Dither Web App below:'));
+bot.command('app', ctx => sendMiniAppLink(ctx, 'Open the Dither Web App below:'));
 
-bot.start((ctx) => sendMiniAppLink(ctx, 'Welcome to Dither! Open the Web App below to get started.'));
+bot.start(ctx => sendMiniAppLink(ctx, 'Welcome to Dither! Open the Web App below to get started.'));
 
 bot.on('callback_query', async (ctx) => {
     const data = (ctx.callbackQuery as any).data;
@@ -84,7 +94,8 @@ bot.on('callback_query', async (ctx) => {
 
     try {
         await sendMessageToUser(userId, action, hash);
-    } catch (error) {
+    }
+    catch (error) {
         const description = (error as any).description || (error as Error).message;
         logger.error(`Failed to send private message to user "${username}": ${description}`);
 
@@ -93,7 +104,7 @@ bot.on('callback_query', async (ctx) => {
                 `To use this feature, you must start our bot first. Please go to "${telegramConfig.telegram.botUsername}" and click "Start", then try again.`,
                 {
                     show_alert: true,
-                }
+                },
             );
         }
     }
@@ -102,7 +113,7 @@ bot.on('callback_query', async (ctx) => {
 async function sendMiniAppLink(ctx: Context, message: string) {
     await ctx.reply(
         message,
-        Markup.inlineKeyboard([Markup.button.webApp('Open Web App', telegramConfig.webApp.url)])
+        Markup.inlineKeyboard([Markup.button.webApp('Open Web App', telegramConfig.webApp.url)]),
     );
 }
 
@@ -118,6 +129,8 @@ export async function startBot() {
             command: 'app',
             description: 'Open the Dither Web App',
         },
+        { command: 'keplr', description: 'Link your Keplr wallet' },
+        { command: 'help', description: 'Show help information' },
     ]);
 
     bot.launch();
