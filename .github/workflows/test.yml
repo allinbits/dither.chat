@@ -42,6 +42,10 @@ jobs:
       - name: Install dependencies with pnpm
         run: pnpm install
 
+      - name: Build dependencies
+        working-directory: packages/api-main
+        run: pnpm build:deps
+
       - name: Setup database schema
         working-directory: packages/api-main
         run: pnpm db:push:force
