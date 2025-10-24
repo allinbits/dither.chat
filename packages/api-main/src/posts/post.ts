@@ -3,7 +3,7 @@ import { desc, eq, sql } from 'drizzle-orm';
 
 import { getDatabase } from '../../drizzle/db';
 import { AuditTable, FeedTable } from '../../drizzle/schema';
-import { isReaderAuthorizationValid, postToDiscord } from '../utility';
+import { postToDiscord } from '../utility';
 
 const statement = getDatabase()
     .insert(FeedTable)
@@ -17,11 +17,7 @@ const statement = getDatabase()
     .onConflictDoNothing()
     .prepare('stmnt_post');
 
-export async function Post(body: typeof Posts.PostBody.static, headers: Record<string, string | undefined>) {
-    if (!isReaderAuthorizationValid(headers)) {
-        return { status: 401, error: 'Unauthorized to make write request' };
-    }
-
+export async function Post(body: typeof Posts.PostBody.static) {
     try {
         if (body.msg.length >= 512) {
             return { status: 400, error: 'message is too long' };

@@ -7,7 +7,6 @@ import { useSharedQueries } from '../shared/useSharedQueries';
 
 const sharedQueries = useSharedQueries();
 import { notify } from '../shared/notify';
-import { isReaderAuthorizationValid } from '../utility';
 
 const statement = getDatabase()
     .insert(FlagsTable)
@@ -30,11 +29,7 @@ const statementAddFlagToPost = getDatabase()
     .where(eq(FeedTable.hash, sql.placeholder('post_hash')))
     .prepare('stmnt_add_flag_count_to_post');
 
-export async function Flag(body: typeof Posts.FlagBody.static, headers: Record<string, string | undefined>) {
-    if (!isReaderAuthorizationValid(headers)) {
-        return { status: 401, error: 'Unauthorized to make write request' };
-    }
-
+export async function Flag(body: typeof Posts.FlagBody.static) {
     if (body.post_hash.length !== 64) {
         return { status: 400, error: 'Provided post_hash is not valid for flag' };
     }

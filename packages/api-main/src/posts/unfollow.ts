@@ -3,7 +3,6 @@ import { and, eq, sql } from 'drizzle-orm';
 
 import { getDatabase } from '../../drizzle/db';
 import { FollowsTable } from '../../drizzle/schema';
-import { isReaderAuthorizationValid } from '../utility';
 
 const statementRemoveFollowing = getDatabase()
     .update(FollowsTable)
@@ -16,11 +15,7 @@ const statementRemoveFollowing = getDatabase()
     )
     .prepare('stmnt_remove_follower');
 
-export async function Unfollow(body: typeof Posts.UnfollowBody.static, headers: Record<string, string | undefined>) {
-    if (!isReaderAuthorizationValid(headers)) {
-        return { status: 401, error: 'Unauthorized to make write request' };
-    }
-
+export async function Unfollow(body: typeof Posts.UnfollowBody.static) {
     try {
         await statementRemoveFollowing.execute({ follower: body.from.toLowerCase(), following: body.address.toLowerCase(), removed_at: new Date(body.timestamp) });
         return { status: 200 };

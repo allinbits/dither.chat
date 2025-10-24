@@ -3,13 +3,8 @@ import { and, eq } from 'drizzle-orm';
 
 import { getDatabase } from '../../drizzle/db';
 import { FeedTable } from '../../drizzle/schema';
-import { isReaderAuthorizationValid } from '../utility';
 
-export async function PostRemove(body: typeof Posts.PostRemoveBody.static, headers: Record<string, string | undefined>) {
-    if (!isReaderAuthorizationValid(headers)) {
-        return { status: 401, error: 'Unauthorized to make write request' };
-    }
-
+export async function PostRemove(body: typeof Posts.PostRemoveBody.static) {
     try {
         const selectResults = await getDatabase()
             .select()

@@ -7,7 +7,7 @@ import { useSharedQueries } from '../shared/useSharedQueries';
 
 const sharedQueries = useSharedQueries();
 import { notify } from '../shared/notify';
-import { isReaderAuthorizationValid, postToDiscord } from '../utility';
+import { postToDiscord } from '../utility';
 
 const statement = getDatabase()
     .insert(FeedTable)
@@ -28,11 +28,7 @@ const statementAddReplyCount = getDatabase()
     .where(eq(FeedTable.hash, sql.placeholder('post_hash')))
     .prepare('stmnt_add_reply_count');
 
-export async function Reply(body: typeof Posts.ReplyBody.static, headers: Record<string, string | undefined>) {
-    if (!isReaderAuthorizationValid(headers)) {
-        return { status: 401, error: 'Unauthorized to make write request' };
-    }
-
+export async function Reply(body: typeof Posts.ReplyBody.static) {
     if (body.post_hash.length !== 64) {
         return { status: 400, error: 'Provided post_hash is not valid for reply' };
     }
