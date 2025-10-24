@@ -225,6 +225,9 @@ importers:
         specifier: ~1.2.25
         version: 1.2.25(@sinclair/typebox@0.34.41)(openapi-types@12.1.3)(typescript@5.9.3)
     devDependencies:
+      '@sinclair/typebox':
+        specifier: ^0.34.41
+        version: 0.34.41
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
@@ -235,8 +238,8 @@ importers:
         specifier: ^2.3.0
         version: 2.3.0
       '@atomone/dither-api-types':
-        specifier: ^1.8.0
-        version: 1.8.0(@sinclair/typebox@0.34.41)(openapi-types@12.1.3)(typescript@5.9.3)
+        specifier: workspace:*
+        version: link:../lib-api-types
       graphql:
         specifier: ^16.11.0
         version: 16.11.0
@@ -345,9 +348,6 @@ packages:
 
   '@atomone/chronostate@2.3.0':
     resolution: {integrity: sha512-rGlOUPtrW1qjqODM4iVECoR2GxueXWC0WXiglG1L5DE6CIEnPjSHsawLlwNPttEHU1Fx9CMPrPQgnaVwFlL86w==}
-
-  '@atomone/dither-api-types@1.8.0':
-    resolution: {integrity: sha512-6GeeiQvZfAKA4HN/RfJ6LDNsujU4ElprqE04BcslcGRdx8vwWqin1SdB7eEIsg+eHUjlFbPd9AlQan4o3vPeuw==}
 
   '@babel/helper-string-parser@7.27.1':
     resolution: {integrity: sha512-qMlSxKbpRlAridDExk92nSobyDdpPijUq2DW6oDnUqd0iOGxmQjyqhMIihI9+zv4LPyZdRje2cavWPbCbWm3eA==}
@@ -4686,14 +4686,6 @@ snapshots:
       tinyexec: 1.0.1
 
   '@atomone/chronostate@2.3.0': {}
-
-  '@atomone/dither-api-types@1.8.0(@sinclair/typebox@0.34.41)(openapi-types@12.1.3)(typescript@5.9.3)':
-    dependencies:
-      elysia: 1.2.25(@sinclair/typebox@0.34.41)(openapi-types@12.1.3)(typescript@5.9.3)
-    transitivePeerDependencies:
-      - '@sinclair/typebox'
-      - openapi-types
-      - typescript
 
   '@babel/helper-string-parser@7.27.1': {}
 

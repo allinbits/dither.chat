@@ -10,7 +10,7 @@ const { verifyAndCreate } = useUserAuth();
 const { JWT_STRICTNESS } = useConfig();
 const rateLimiter = useRateLimiter();
 
-export async function Auth(body: typeof Posts.AuthBody.static, auth: Cookie<string | undefined>, request: Request) {
+export async function Auth(body: Posts.AuthBody, auth: Cookie<string | undefined>, request: Request) {
   const ip = getRequestIP(request);
   const isLimited = await rateLimiter.isLimited(ip);
   if (isLimited) {

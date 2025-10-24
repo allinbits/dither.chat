@@ -5,7 +5,7 @@ import { and, desc, gte, ilike, inArray, isNull, or, sql } from 'drizzle-orm';
 import { getDatabase } from '../../drizzle/db';
 import { FeedTable } from '../../drizzle/schema';
 
-export async function Search(query: typeof Gets.SearchQuery.static) {
+export async function Search(query: Gets.SearchQuery) {
   try {
     const processedQuery = query.text
       .trim()

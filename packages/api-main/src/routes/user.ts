@@ -8,11 +8,11 @@ import * as GetRequests from '../gets/index';
  */
 export const userRoutes = new Elysia()
   .get('/notifications', ({ query, cookie: { auth } }) => GetRequests.Notifications(query, auth), {
-    query: Gets.NotificationsQuery,
+    query: Gets.NotificationsQuerySchema,
   })
   .get('/notifications-count', ({ query, cookie: { auth } }) => GetRequests.NotificationsCount(query, auth), {
-    query: Gets.NotificationsCountQuery,
+    query: Gets.NotificationsCountQuerySchema,
   })
   .post('/notification-read', ({ query, cookie: { auth } }) => GetRequests.ReadNotification(query, auth), {
-    query: Gets.ReadNotificationQuery,
+    query: Gets.ReadNotificationQuerySchema,
   });

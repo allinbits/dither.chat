@@ -15,7 +15,7 @@ const getNotificationsStatement = getDatabase()
   .offset(sql.placeholder('offset'))
   .prepare('stmnt_get_notifications');
 
-export async function Notifications(query: typeof Gets.NotificationsQuery.static, auth: Cookie<string | undefined>) {
+export async function Notifications(query: Gets.NotificationsQuery, auth: Cookie<string | undefined>) {
   const response = await verifyJWT(auth.value);
   if (typeof response === 'undefined') {
     return { status: 401, error: 'Unauthorized token proivided' };
@@ -55,7 +55,7 @@ const statementReadNotification = getDatabase()
   )
   .prepare('stmnt_read_notification');
 
-export async function ReadNotification(query: typeof Gets.ReadNotificationQuery.static, auth: Cookie<string | undefined>) {
+export async function ReadNotification(query: Gets.ReadNotificationQuery, auth: Cookie<string | undefined>) {
   const response = await verifyJWT(auth.value);
   if (typeof response === 'undefined') {
     return { status: 401, error: 'Unauthorized token proivided' };

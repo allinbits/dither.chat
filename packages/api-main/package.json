@@ -7,14 +7,15 @@
   "main": "dist/index.js",
   "scripts": {
     "start": "vite-node ./src/index.ts",
-    "build": "tsc",
+    "build": "pnpm build:deps && tsc",
+    "build:deps": "pnpm --filter {.}^... build",
     "test": "vitest --exclude tests/smoke",
     "test:smoke": "vitest run tests/smoke",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "db:push:force": "drizzle-kit push --force",
-    "push-and-start": "drizzle-kit push --force && pnpm start"
+    "push-and-start": "drizzle-kit push --force && build:deps && pnpm start"
   },
   "dependencies": {
     "@atomone/chronostate": "^2.3.0",

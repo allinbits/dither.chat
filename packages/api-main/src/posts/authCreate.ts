@@ -7,7 +7,7 @@ import { getRequestIP } from '../utility';
 const { add } = useUserAuth();
 const rateLimiter = useRateLimiter();
 
-export async function AuthCreate(body: typeof Posts.AuthCreateBody.static, request: Request) {
+export async function AuthCreate(body: Posts.AuthCreateBody, request: Request) {
   const ip = getRequestIP(request);
   const isLimited = await rateLimiter.isLimited(ip);
   if (isLimited) {

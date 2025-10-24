@@ -18,7 +18,7 @@ const getNotificationsCountStatement = getDatabase()
   )
   .prepare('stmnt_get_notifications_count');
 
-export async function NotificationsCount(_query: typeof Gets.NotificationsCountQuery.static, auth: Cookie<string | undefined>) {
+export async function NotificationsCount(_query: Gets.NotificationsCountQuery, auth: Cookie<string | undefined>) {
   const response = await verifyJWT(auth.value);
   if (typeof response === 'undefined') {
     return { status: 401, error: 'Unauthorized token proivided' };

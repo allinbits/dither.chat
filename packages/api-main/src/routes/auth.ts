@@ -9,7 +9,7 @@ import * as PostRequests from '../posts/index';
  */
 export const authRoutes = new Elysia()
   .get('/auth-verify', ({ cookie: { auth } }) => GetRequests.AuthVerify(auth))
-  .post('/auth-create', ({ body, request }) => PostRequests.AuthCreate(body, request), { body: Posts.AuthCreateBody })
+  .post('/auth-create', ({ body, request }) => PostRequests.AuthCreate(body, request), { body: Posts.AuthCreateBodySchema })
   .post('/auth', ({ body, cookie: { auth }, request }) => PostRequests.Auth(body, auth, request), {
     body: t.Object({
       id: t.Number(),

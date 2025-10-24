@@ -10,14 +10,14 @@ import * as PostRequests from '../posts/index';
  */
 export const readerRoutes = new Elysia()
   .onBeforeHandle(readerAuthMiddleware)
-  .post('/post', ({ body }) => PostRequests.Post(body), { body: Posts.PostBody })
-  .post('/reply', ({ body }) => PostRequests.Reply(body), { body: Posts.ReplyBody })
-  .post('/follow', ({ body }) => PostRequests.Follow(body), { body: Posts.FollowBody })
-  .post('/unfollow', ({ body }) => PostRequests.Unfollow(body), { body: Posts.UnfollowBody })
-  .post('/like', ({ body }) => PostRequests.Like(body), { body: Posts.LikeBody })
-  .post('/dislike', ({ body }) => PostRequests.Dislike(body), { body: Posts.DislikeBody })
-  .post('/flag', ({ body }) => PostRequests.Flag(body), { body: Posts.FlagBody })
-  .post('/post-remove', ({ body }) => PostRequests.PostRemove(body), { body: Posts.PostRemoveBody })
+  .post('/post', ({ body }) => PostRequests.Post(body), { body: Posts.PostBodySchema })
+  .post('/reply', ({ body }) => PostRequests.Reply(body), { body: Posts.ReplyBodySchema })
+  .post('/follow', ({ body }) => PostRequests.Follow(body), { body: Posts.FollowBodySchema })
+  .post('/unfollow', ({ body }) => PostRequests.Unfollow(body), { body: Posts.UnfollowBodySchema })
+  .post('/like', ({ body }) => PostRequests.Like(body), { body: Posts.LikeBodySchema })
+  .post('/dislike', ({ body }) => PostRequests.Dislike(body), { body: Posts.DislikeBodySchema })
+  .post('/flag', ({ body }) => PostRequests.Flag(body), { body: Posts.FlagBodySchema })
+  .post('/post-remove', ({ body }) => PostRequests.PostRemove(body), { body: Posts.PostRemoveBodySchema })
   .post('/update-state', ({ body }) => PostRequests.UpdateState(body), {
     body: t.Object({ last_block: t.String() }),
   });

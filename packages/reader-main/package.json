@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@atomone/chronostate": "^2.3.0",
-    "@atomone/dither-api-types": "^1.8.0",
+    "@atomone/dither-api-types": "workspace:*",
     "graphql": "^16.11.0",
     "graphql-request": "^6.1.0",
     "tsx": "^4.20.6"

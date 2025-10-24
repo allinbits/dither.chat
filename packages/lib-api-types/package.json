@@ -18,6 +18,7 @@
     "elysia": "~1.2.25"
   },
   "devDependencies": {
+    "@sinclair/typebox": "^0.34.41",
     "typescript": "^5.9.3"
   }
 }

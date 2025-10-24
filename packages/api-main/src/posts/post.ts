@@ -18,7 +18,7 @@ const statement = getDatabase()
   .onConflictDoNothing()
   .prepare('stmnt_post');
 
-export async function Post(body: typeof Posts.PostBody.static) {
+export async function Post(body: Posts.PostBody) {
   try {
     if (body.msg.length >= 512) {
       return { status: 400, error: 'message is too long' };
@@ -43,7 +43,7 @@ export async function Post(body: typeof Posts.PostBody.static) {
   }
 }
 
-async function removePostIfBanned(body: typeof Posts.PostBody.static) {
+async function removePostIfBanned(body: Posts.PostBody) {
   const [lastAuditOnUser] = await getDatabase()
     .select()
     .from(AuditTable)

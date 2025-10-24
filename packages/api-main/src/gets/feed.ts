@@ -20,7 +20,7 @@ const statement = getDatabase()
   .orderBy(desc(FeedTable.timestamp))
   .prepare('stmnt_get_feed');
 
-export async function Feed(query: typeof Gets.FeedQuery.static) {
+export async function Feed(query: Gets.FeedQuery) {
   if (query.count) {
     try {
       return await getDatabase().select({ count: count() }).from(FeedTable);

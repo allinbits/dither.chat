@@ -16,11 +16,11 @@ export function getTransferMessage(messages: Array<T.MsgGeneric>) {
     return null;
   }
 
-  return msgTransfer as T.MsgTransfer;
+  return msgTransfer as unknown as T.MsgTransfer;
 }
 
 export function getTransferQuantities(messages: Array<T.MsgGeneric>, denom = 'uatone') {
-  const msgTransfers = messages.filter(msg => msg['@type'] === '/cosmos.bank.v1beta1.MsgSend') as T.MsgTransfer[];
+  const msgTransfers = messages.filter(msg => msg['@type'] === '/cosmos.bank.v1beta1.MsgSend') as unknown as T.MsgTransfer[];
   let amount = BigInt('0');
 
   for (const msg of msgTransfers) {

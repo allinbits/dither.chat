@@ -31,7 +31,7 @@ const statementAddLikeToPost = getDatabase()
   .where(eq(FeedTable.hash, sql.placeholder('post_hash')))
   .prepare('stmnt_add_like_count_to_post');
 
-export async function Like(body: typeof Posts.LikeBody.static) {
+export async function Like(body: Posts.LikeBody) {
   if (body.post_hash.length !== 64) {
     return { status: 400, error: 'Provided post_hash is not valid for like' };
   }

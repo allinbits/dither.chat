@@ -17,7 +17,7 @@ const statementGetReply = getDatabase()
   .where(and(isNull(FeedTable.removed_at), eq(FeedTable.hash, sql.placeholder('hash')), eq(FeedTable.post_hash, sql.placeholder('post_hash'))))
   .prepare('stmnt_get_reply');
 
-export async function Post(query: typeof Gets.PostQuery.static) {
+export async function Post(query: Gets.PostQuery) {
   try {
     if (query.post_hash) {
       const results = await statementGetReply.execute({ hash: query.hash, post_hash: query.post_hash });

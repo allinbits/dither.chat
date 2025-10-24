@@ -9,14 +9,14 @@ import * as PostRequests from '../posts/index';
  */
 export const moderatorRoutes = new Elysia({ prefix: '/mod' })
   .post('/post-remove', ({ body, cookie: { auth } }) => PostRequests.ModRemovePost(body, auth), {
-    body: Posts.ModRemovePostBody,
+    body: Posts.ModRemovePostBodySchema,
   })
   .post('/post-restore', ({ body, cookie: { auth } }) => PostRequests.ModRestorePost(body, auth), {
-    body: Posts.ModRemovePostBody,
+    body: Posts.ModRemovePostBodySchema,
   })
   .post('/ban', ({ body, cookie: { auth } }) => PostRequests.ModBan(body, auth), {
-    body: Posts.ModBanBody,
+    body: Posts.ModBanBodySchema,
   })
   .post('/unban', ({ body, cookie: { auth } }) => PostRequests.ModUnban(body, auth), {
-    body: Posts.ModBanBody,
+    body: Posts.ModBanBodySchema,
   });

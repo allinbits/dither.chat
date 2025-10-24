@@ -15,7 +15,7 @@ const statement = getDatabase()
   .orderBy(desc(LikesTable.timestamp))
   .prepare('stmnt_get_likes');
 
-export async function Likes(query: typeof Gets.LikesQuery.static) {
+export async function Likes(query: Gets.LikesQuery) {
   if (!query.hash) {
     return {
       status: 400,

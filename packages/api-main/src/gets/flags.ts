@@ -15,7 +15,7 @@ const statement = getDatabase()
   .orderBy(desc(FlagsTable.timestamp))
   .prepare('stmnt_get_flags');
 
-export async function Flags(query: typeof Gets.FlagsQuery.static) {
+export async function Flags(query: Gets.FlagsQuery) {
   if (!query.hash) {
     return {
       status: 400,

@@ -16,7 +16,7 @@ const statementRemoveFollowing = getDatabase()
   )
   .prepare('stmnt_remove_follower');
 
-export async function Unfollow(body: typeof Posts.UnfollowBody.static) {
+export async function Unfollow(body: Posts.UnfollowBody) {
   try {
     await statementRemoveFollowing.execute({ follower: body.from.toLowerCase(), following: body.address.toLowerCase(), removed_at: new Date(body.timestamp) });
     return { status: 200 };

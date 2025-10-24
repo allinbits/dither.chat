@@ -19,7 +19,7 @@ const statement = getDatabase()
   .orderBy(desc(FeedTable.timestamp))
   .prepare('stmnt_get_posts');
 
-export async function Posts(query: typeof Gets.PostsQuery.static) {
+export async function Posts(query: Gets.PostsQuery) {
   let limit = typeof query.limit !== 'undefined' ? Number(query.limit) : 100;
   const offset = typeof query.offset !== 'undefined' ? Number(query.offset) : 0;
   const minQuantity = typeof query.minQuantity !== 'undefined' ? query.minQuantity : '0';
@@ -62,7 +62,7 @@ const followingPostsStatement = getDatabase()
   .offset(sql.placeholder('offset'))
   .prepare('stmnt_posts_from_following');
 
-export async function FollowingPosts(query: typeof Gets.PostsQuery.static) {
+export async function FollowingPosts(query: Gets.PostsQuery) {
   let limit = typeof query.limit !== 'undefined' ? Number(query.limit) : 100;
   const offset = typeof query.offset !== 'undefined' ? Number(query.offset) : 0;
   const minQuantity = typeof query.minQuantity !== 'undefined' ? query.minQuantity : '0';

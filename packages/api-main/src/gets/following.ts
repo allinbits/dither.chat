@@ -14,7 +14,7 @@ const statementGetFollowing = getDatabase()
   .orderBy(desc(FollowsTable.timestamp))
   .prepare('stmnt_get_following');
 
-export async function Following(query: typeof Gets.FollowingQuery.static) {
+export async function Following(query: Gets.FollowingQuery) {
   let limit = typeof query.limit !== 'undefined' ? Number(query.limit) : 100;
   const offset = typeof query.offset !== 'undefined' ? Number(query.offset) : 0;
 
