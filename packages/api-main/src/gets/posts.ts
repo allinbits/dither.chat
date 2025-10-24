@@ -11,7 +11,7 @@ const statement = getDatabase()
         eq(FeedTable.author, sql.placeholder('author')),
         isNull(FeedTable.removed_at),
         isNull(FeedTable.post_hash), // Do not return replies
-        gte(FeedTable.quantity, sql.placeholder('minQuantity')),
+        gte(sql`CAST(${FeedTable.quantity} AS NUMERIC)`, sql`CAST(${sql.placeholder('minQuantity')} AS NUMERIC)`),
     ))
     .limit(sql.placeholder('limit'))
     .offset(sql.placeholder('offset'))
@@ -57,7 +57,7 @@ const followingPostsStatement = getDatabase()
         ),
         isNull(FeedTable.post_hash),
         isNull(FeedTable.removed_at),
-        gte(FeedTable.quantity, sql.placeholder('minQuantity')),
+        gte(sql`CAST(${FeedTable.quantity} AS NUMERIC)`, sql`CAST(${sql.placeholder('minQuantity')} AS NUMERIC)`),
     ))
     .orderBy(desc(FeedTable.timestamp))
     .limit(sql.placeholder('limit'))

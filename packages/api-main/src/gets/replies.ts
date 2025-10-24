@@ -11,7 +11,7 @@ const statement = getDatabase()
     .where(and(
         eq(FeedTable.post_hash, sql.placeholder('hash')),
         isNull(FeedTable.removed_at),
-        gte(FeedTable.quantity, sql.placeholder('minQuantity')),
+        gte(sql`CAST(${FeedTable.quantity} AS NUMERIC)`, sql`CAST(${sql.placeholder('minQuantity')} AS NUMERIC)`),
     ))
     .limit(sql.placeholder('limit'))
     .offset(sql.placeholder('offset'))
@@ -58,7 +58,7 @@ const getUserRepliesWithParent = getDatabase()
     .where(and(
         eq(feed.author, sql.placeholder('author')),
         isNotNull(feed.post_hash),
-        gte(feed.quantity, sql.placeholder('minQuantity')),
+        gte(sql`CAST(${feed.quantity} AS NUMERIC)`, sql`CAST(${sql.placeholder('minQuantity')} AS NUMERIC)`),
     ))
     .orderBy(desc(feed.timestamp))
     .limit(sql.placeholder('limit'))

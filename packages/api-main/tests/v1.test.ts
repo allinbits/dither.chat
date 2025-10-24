@@ -2,7 +2,7 @@ import type { Posts } from '@atomone/dither-api-types';
 
 import { assert, describe, it } from 'vitest';
 
-import { createPost, get, getAtomOneAddress, getRandomHash, post } from './shared';
+import { createPost, createWallet, get, getAtomOneAddress, getRandomHash, post } from './shared';
 
 describe('v1', { sequential: true }, async () => {
     const addressUserA = getAtomOneAddress();
@@ -70,6 +70,35 @@ describe('v1', { sequential: true }, async () => {
             response && Array.isArray(response.rows) && response.rows.length >= 1,
             'feed result was not an array type',
         );
+    });
+
+    it('GET - /posts with minQuantity filter (Photon bug fix)', async () => {
+        const wallet = await createWallet();
+        
+        // Create posts with different quantities
+        await post(`post`, {
+            from: wallet.publicKey,
+            hash: getRandomHash(),
+            msg: 'low value post',
+            quantity: '100',
+            timestamp: '2025-04-16T19:46:42Z',
+        } as typeof Posts.PostBody.static);
+        
+        await post(`post`, {
+            from: wallet.publicKey,
+            hash: getRandomHash(),
+            msg: 'high value post',
+            quantity: '1000000',
+            timestamp: '2025-04-16T19:46:43Z',
+        } as typeof Posts.PostBody.static);
+        
+        // Test numeric comparison works correctly
+        const response = await get<{ status: number; rows: { message: string; quantity: string }[] }>(
+            `posts?address=${wallet.publicKey}&minQuantity=500000`,
+        );
+        assert.isOk(response?.status === 200);
+        assert.lengthOf(response.rows, 1);
+        assert.equal(response.rows[0].message, 'high value post');
     });
 
     // Likes
