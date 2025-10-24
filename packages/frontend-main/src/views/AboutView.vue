@@ -3,7 +3,7 @@ import { ExternalLink } from 'lucide-vue-next';
 
 import ViewHeading from './ViewHeading.vue';
 
-import TMADebug from '@/components/tma/TMADebug.vue';
+import TMAInfo from '@/components/tma/TMAInfo.vue';
 import Button from '@/components/ui/button/Button.vue';
 import MainLayout from '@/layouts/MainLayout.vue';
 
@@ -63,8 +63,8 @@ const handleActionClick = (url: string) => {
           </Button>
         </div>
 
-        <!-- TMA Debug Info -->
-        <TMADebug />
+        <!-- TMA Info -->
+        <TMAInfo />
 
         <div class="flex flex-col justify-end items-center gap-8 px-5 py-8 flex-1">
           <!-- Aib logo -->
