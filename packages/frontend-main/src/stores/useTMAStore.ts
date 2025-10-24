@@ -1,4 +1,4 @@
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import {
     init as initSDK,
     type InitData,
@@ -47,7 +47,7 @@ export const useTMAStore = defineStore('tmaStore', () => {
         }
         catch (err) {
             const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-            console.warn('TMA SDK initialization failed:', err);
+            debugLogs.value.push(errorMessage);
             error.value = errorMessage;
         }
     };
@@ -60,7 +60,7 @@ export const useTMAStore = defineStore('tmaStore', () => {
     };
 
     return {
-        isAvailable: typeof window !== 'undefined' && Boolean(window.Telegram?.WebApp),
+        isAvailable: computed(() => typeof window !== 'undefined' && Boolean(window.Telegram?.WebApp)),
         isInitialized,
         launchParams,
         initData: initDataRef,

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
-import { ChevronDown, ChevronRight, Globe, Smartphone, User } from 'lucide-vue-next';
+import { ChevronDown, ChevronRight, Globe, Smartphone } from 'lucide-vue-next';
+
+import TelegramLogo from './telegram-logo.svg';
 
 import { useTMAStore } from '@/stores/useTMAStore';
 
@@ -23,7 +25,6 @@ const tmaInfo = computed(() => {
         userId: user?.id?.toString() || 'Unknown',
         platform: params?.tgWebAppPlatform || 'Unknown',
         version: params?.tgWebAppVersion || 'Unknown',
-        isAvailable: tmaStore.isAvailable,
         isInitialized: tmaStore.isInitialized,
         hasError: !!tmaStore.error,
         error: tmaStore.error,
@@ -36,7 +37,7 @@ const toggleExpanded = () => {
 </script>
 
 <template>
-  <div class="border rounded-lg bg-background" v-if="tmaInfo.isInitialized">
+  <div class="border-y md:border-x md:rounded-lg bg-background" v-if="tmaInfo.isInitialized">
     <!-- Summary -->
     <button
       @click="toggleExpanded"
@@ -44,11 +45,11 @@ const toggleExpanded = () => {
     >
       <div class="flex items-center gap-3">
         <div class="flex items-center gap-2">
-          <User class="w-4 h-4 text-muted-foreground" />
+          <TelegramLogo class="size-4" />
           <span class="font-medium">{{ tmaInfo.userName }}</span>
         </div>
         <div class="flex items-center gap-1 text-sm text-muted-foreground">
-          <Smartphone class="w-3 h-3" />
+          <Smartphone class="size-3" />
           <span>{{ tmaInfo.platform }}</span>
         </div>
       </div>
@@ -58,23 +59,13 @@ const toggleExpanded = () => {
           class="w-2 h-2 bg-destructive rounded-full"
           title="Error detected"
         />
-        <div
-          v-else-if="tmaInfo.isAvailable"
-          class="w-2 h-2 bg-green-500 rounded-full"
-          title="Telegram WebApp available"
-        />
-        <div
-          v-else
-          class="w-2 h-2 bg-muted-foreground rounded-full"
-          title="Telegram WebApp not available"
-        />
         <ChevronDown
           v-if="isExpanded"
-          class="w-4 h-4 text-muted-foreground transition-transform"
+          class="size-4 text-muted-foreground transition-transform"
         />
         <ChevronRight
           v-else
-          class="w-4 h-4 text-muted-foreground transition-transform"
+          class="size-4 text-muted-foreground transition-transform"
         />
       </div>
     </button>
@@ -93,7 +84,7 @@ const toggleExpanded = () => {
         <div class="flex justify-between">
           <span class="text-muted-foreground">Platform:</span>
           <span class="flex items-center gap-1">
-            <Smartphone class="w-3 h-3" />
+            <Smartphone class="size-3" />
             {{ tmaInfo.platform }}
           </span>
         </div>
@@ -101,7 +92,7 @@ const toggleExpanded = () => {
         <div class="flex justify-between">
           <span class="text-muted-foreground">Version:</span>
           <span class="flex items-center gap-1">
-            <Globe class="w-3 h-3" />
+            <Globe class="size-3" />
             {{ tmaInfo.version }}
           </span>
         </div>
@@ -110,12 +101,12 @@ const toggleExpanded = () => {
           <span class="text-muted-foreground">Status:</span>
           <span
             :class="{
-              'text-green-600': tmaInfo.isAvailable && !tmaInfo.hasError,
+              'text-green-600': tmaInfo.isInitialized && !tmaInfo.hasError,
               'text-destructive': tmaInfo.hasError,
-              'text-muted-foreground': !tmaInfo.isAvailable
+              'text-muted-foreground': !tmaInfo.isInitialized
             }"
           >
-            {{ tmaInfo.hasError ? 'Error' : tmaInfo.isAvailable ? 'Connected' : 'Not Available' }}
+            {{ tmaInfo.hasError ? 'Error' : 'Connected' }}
           </span>
         </div>
 
