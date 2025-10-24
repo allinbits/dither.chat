@@ -1,6 +1,6 @@
 [build]
-publish = "./packages/bot/dist"
-command = "NODE_ENV=production pnpm -F ./packages/bot build"
+publish = "./packages/frontend-main/dist"
+command = "NODE_ENV=production pnpm -F ./packages/frontend-main build"
 
 # Headers for Telegram Mini App
 [[headers]]
