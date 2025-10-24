@@ -2,8 +2,8 @@ name: Smoke Tests
 
 on:
   workflow_call:
-    app_name:
-      tag:
+    inputs:
+      app_name:
         required: true
         type: string
 
