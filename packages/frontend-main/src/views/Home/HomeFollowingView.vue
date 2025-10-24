@@ -1,17 +1,16 @@
 <script setup lang="ts">
-
+import PostsList from '@/components/posts/PostsList.vue';
 import { useFollowingPosts } from '@/composables/useFollowingPosts';
 import { useWallet } from '@/composables/useWallet';
 
 import HomeViewWrapper from './HomeViewWrapper.vue';
 
-import PostsList from '@/components/posts/PostsList.vue';
 const wallet = useWallet();
 const postsQuery = useFollowingPosts({ userAddress: wallet.address });
 </script>
 
 <template>
   <HomeViewWrapper>
-    <PostsList :query="postsQuery" :emptyText="$t('components.FollowingList.empty')" />
+    <PostsList :query="postsQuery" :empty-text="$t('components.FollowingList.empty')" />
   </HomeViewWrapper>
 </template>

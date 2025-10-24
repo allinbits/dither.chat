@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 
 defineProps<{ disabled?: boolean }>();
 </script>
+
 <template>
   <Button
     class="w-full"

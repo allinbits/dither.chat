@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import { type SelectRootEmits, type SelectRootProps, useForwardPropsEmits } from 'reka-ui';
+import type { SelectRootEmits, SelectRootProps } from 'reka-ui';
+
+import { useForwardPropsEmits } from 'reka-ui';
 
 import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from '@/components/ui/select';
 import { envConfigs } from '@/env-config';
 
@@ -17,7 +19,6 @@ const emits = defineEmits<SelectRootEmits>();
 const forwarded = useForwardPropsEmits(props, emits);
 
 const availableNetworks = Object.keys(envConfigs);
-
 </script>
 
 <template>
@@ -33,5 +34,4 @@ const availableNetworks = Object.keys(envConfigs);
       </SelectGroup>
     </SelectContent>
   </Select>
-
 </template>

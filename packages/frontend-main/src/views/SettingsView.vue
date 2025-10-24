@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ChevronRight } from 'lucide-vue-next';
 
-import ViewHeading from './ViewHeading.vue';
-
 import Button from '@/components/ui/button/Button.vue';
 import MainLayout from '@/layouts/MainLayout.vue';
+
+import ViewHeading from './ViewHeading.vue';
 </script>
 
 <template>

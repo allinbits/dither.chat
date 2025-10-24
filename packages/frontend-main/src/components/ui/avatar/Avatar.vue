@@ -6,7 +6,7 @@ import { AvatarRoot } from 'reka-ui';
 import { cn } from '@/utility';
 
 const props = defineProps<{
-    class?: HTMLAttributes['class'];
+  class?: HTMLAttributes['class'];
 }>();
 </script>
 

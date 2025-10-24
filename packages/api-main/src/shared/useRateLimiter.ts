@@ -13,113 +13,110 @@ let cleanupInterval: NodeJS.Timeout | null = null;
 let isCleaningUp = false;
 
 async function cleanup() {
-    if (isCleaningUp) {
-        return;
-    }
+  if (isCleaningUp) {
+    return;
+  }
 
-    isCleaningUp = true;
-    try {
-        const now = Date.now();
-        const threshold = now - MAX_REQUEST_TIME_MS;
-        const result = await getDatabase()
-            .delete(rateLimits)
-            .where(
-                lt(rateLimits.lastRequest, sql`${threshold}`),
-            )
-            .execute();
+  isCleaningUp = true;
+  try {
+    const now = Date.now();
+    const threshold = now - MAX_REQUEST_TIME_MS;
+    const result = await getDatabase()
+      .delete(rateLimits)
+      .where(
+        lt(rateLimits.lastRequest, sql`${threshold}`),
+      )
+      .execute();
 
-        if (result.rowCount && result.rowCount > 0) {
-            console.log(`Cleaned Up Requests | Count: ${result.rowCount}`);
-        }
+    if (result.rowCount && result.rowCount > 0) {
+      console.log(`Cleaned Up Requests | Count: ${result.rowCount}`);
     }
-    catch (err) {
-        console.error('Error during database cleanup:', err);
-    }
-    finally {
-        isCleaningUp = false;
-    }
+  } catch (err) {
+    console.error('Error during database cleanup:', err);
+  } finally {
+    isCleaningUp = false;
+  }
 }
 
 export function useRateLimiter() {
-    if (!cleanupInterval) {
-        cleanupInterval = setInterval(cleanup, TIME_BETWEEN_CLEANUP_MS);
-        // Ensure the process doesn't hang on this interval
-        if (cleanupInterval.unref) {
-            cleanupInterval.unref();
-        }
+  if (!cleanupInterval) {
+    cleanupInterval = setInterval(cleanup, TIME_BETWEEN_CLEANUP_MS);
+    // Ensure the process doesn't hang on this interval
+    if (cleanupInterval.unref) {
+      cleanupInterval.unref();
+    }
+  }
+
+  /**
+   * Updates the request count for a given IP address.
+   * @param ip The IP address of the user.
+   */
+  async function update(ip: string) {
+    const now = Date.now();
+
+    // Use a transaction to ensure atomicity
+    await getDatabase().transaction(async (tx) => {
+      const existingRecord = await tx
+        .select()
+        .from(rateLimits)
+        .where(eq(rateLimits.ip, ip))
+        .limit(1)
+        .execute();
+
+      if (existingRecord.length > 0) {
+        // If a record exists, update it.
+        await tx
+          .update(rateLimits)
+          .set({
+            requests: sql`${rateLimits.requests} + 1`,
+            lastRequest: now,
+          })
+          .where(eq(rateLimits.ip, ip))
+          .execute();
+      } else {
+        // If no record exists, insert a new one.
+        await tx
+          .insert(rateLimits)
+          .values({
+            ip,
+            requests: 1,
+            lastRequest: now,
+          })
+          .execute();
+      }
+    });
+  }
+
+  /**
+   * Checks if a given IP address is limited.
+   * @param ip The IP address of the user.
+   * @returns True if the IP is limited, otherwise false.
+   */
+  async function isLimited(ip: string): Promise<boolean> {
+    const now = Date.now();
+    const record = await getDatabase()
+      .select()
+      .from(rateLimits)
+      .where(
+        and(
+          eq(rateLimits.ip, ip),
+          gt(rateLimits.lastRequest, now - MAX_REQUEST_TIME_MS),
+        ),
+      )
+      .limit(1)
+      .execute();
+
+    if (record.length === 0) {
+      // No record, so it's not limited
+      return false;
     }
 
-    /**
-     * Updates the request count for a given IP address.
-     * @param ip The IP address of the user.
-     */
-    async function update(ip: string) {
-        const now = Date.now();
+    const { requests } = record[0];
+    return requests >= MAX_REQUESTS;
+  }
 
-        // Use a transaction to ensure atomicity
-        await getDatabase().transaction(async (tx) => {
-            const existingRecord = await tx
-                .select()
-                .from(rateLimits)
-                .where(eq(rateLimits.ip, ip))
-                .limit(1)
-                .execute();
-
-            if (existingRecord.length > 0) {
-                // If a record exists, update it.
-                await tx
-                    .update(rateLimits)
-                    .set({
-                        requests: sql`${rateLimits.requests} + 1`,
-                        lastRequest: now,
-                    })
-                    .where(eq(rateLimits.ip, ip))
-                    .execute();
-            }
-            else {
-                // If no record exists, insert a new one.
-                await tx
-                    .insert(rateLimits)
-                    .values({
-                        ip: ip,
-                        requests: 1,
-                        lastRequest: now,
-                    })
-                    .execute();
-            }
-        });
-    }
-
-    /**
-     * Checks if a given IP address is limited.
-     * @param ip The IP address of the user.
-     * @returns True if the IP is limited, otherwise false.
-     */
-    async function isLimited(ip: string): Promise<boolean> {
-        const now = Date.now();
-        const record = await getDatabase()
-            .select()
-            .from(rateLimits)
-            .where(
-                and(
-                    eq(rateLimits.ip, ip),
-                    gt(rateLimits.lastRequest, now - MAX_REQUEST_TIME_MS),
-                ),
-            )
-            .limit(1)
-            .execute();
-
-        if (record.length === 0) {
-            // No record, so it's not limited
-            return false;
-        }
-
-        const { requests } = record[0];
-        return requests >= MAX_REQUESTS;
-    }
-
-    return {
-        update,
-        isLimited,
-    };
+  return {
+    update,
+    isLimited,
+  };
 }

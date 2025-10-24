@@ -25,7 +25,7 @@ jobs:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_API_MAIN }}
 
   smoke-tests:
-    needs: [ deploy-mainnet ]
+    needs: [deploy-mainnet]
     if: needs.deploy-mainnet.result == 'success'
     uses: ./.github/workflows/smoke-tests.yml
     secrets: inherit
@@ -33,7 +33,7 @@ jobs:
       app_name: dither-mainnet-api-main
 
   notify:
-    needs: [ smoke-tests ]
+    needs: [smoke-tests]
     if: failure()
     runs-on: ubuntu-latest
     steps:
@@ -43,13 +43,13 @@ jobs:
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           message: |
             🚨 **Smoke Tests Failed** 🚨
-            
+
             🔗 Repository: ${{ github.repository }}
             📝 Commit: ${{ github.event.commits[0].message }}
             👤 Author: ${{ github.actor }}
             ⛓️‍💥 App: dither-mainnet-api-main
-            
-            ⚠️ **Failed Tests:**            
+
+            ⚠️ **Failed Tests:**
             🔍 [View Logs](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
-            
+
             Please investigate and fix ASAP! 🔧

@@ -1,24 +1,25 @@
 {
   "name": "api-feed",
+  "type": "module",
   "version": "1.0.0",
   "description": "",
   "author": "stuyk",
   "main": "dist/index.js",
-  "type": "module",
   "scripts": {
     "start": "vite-node ./src/index.ts",
-    "build": "tsc",
+    "build": "pnpm build:deps && tsc",
+    "build:deps": "pnpm --filter {.}^... build",
     "test": "vitest --exclude tests/smoke",
     "test:smoke": "vitest run tests/smoke",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "db:push:force": "drizzle-kit push --force",
-    "push-and-start": "drizzle-kit push --force && pnpm start"
+    "push-and-start": "drizzle-kit push --force && build:deps && pnpm start"
   },
   "dependencies": {
     "@atomone/chronostate": "^2.3.0",
-    "@atomone/dither-api-types": "^1.8.0",
+    "@atomone/dither-api-types": "workspace:*",
     "@cosmjs/crypto": "^0.33.1",
     "@cosmjs/encoding": "^0.33.1",
     "@elysiajs/cors": "~1.2.0",
@@ -37,17 +38,10 @@
   "devDependencies": {
     "@cosmjs/amino": "^0.33.1",
     "@types/jsonwebtoken": "^9.0.10",
-    "@types/node": "^22.18.10",
     "@types/pg": "^8.15.5",
     "drizzle-kit": "^0.31.5",
     "tsx": "^4.20.6",
     "vite-node": "^3.2.4",
     "vitest": "^3.2.4"
-  },
-  "prettier": {
-    "tabWidth": 4,
-    "singleQuote": true,
-    "semi": true,
-    "printWidth": 120
   }
 }

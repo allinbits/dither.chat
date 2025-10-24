@@ -1,41 +1,41 @@
-import { computed, type Ref, ref, watch } from 'vue';
-import { Decimal } from '@cosmjs/math';
+import type { Ref } from 'vue';
 
-import { useBalanceFetcher } from './useBalanceFetcher';
-import { type PopupState, usePopups } from './usePopups';
-import { useWallet } from './useWallet';
+import type { PopupState } from './usePopups';
+
+import { Decimal } from '@cosmjs/math';
+import { computed, ref, watch } from 'vue';
 
 import { fractionalDigits } from '@/utility/atomics';
 
-export const useTxDialog = <T>(
-    dialogType: keyof PopupState,
-    txSuccess: Ref<string | undefined>,
-    txError: Ref<string | undefined>,
-) => {
-    const inputPhotonModel = ref(Decimal.fromAtomics('1', fractionalDigits).toFloatApproximation());
-    const wallet = useWallet();
-    const balanceFetcher = useBalanceFetcher();
-    const popups = usePopups();
-    const popupState = computed(() => popups.state[dialogType]) as Ref<T>;
-    const isShown = computed(() => !!popupState.value);
+import { useBalanceFetcher } from './useBalanceFetcher';
+import { usePopups } from './usePopups';
+import { useWallet } from './useWallet';
 
-    const handleClose = () => {
-        popups.state[dialogType] = null;
-        txError.value = undefined;
-        txSuccess.value = undefined;
-    };
+export function useTxDialog<T>(dialogType: keyof PopupState, txSuccess: Ref<string | undefined>, txError: Ref<string | undefined>) {
+  const inputPhotonModel = ref(Decimal.fromAtomics('1', fractionalDigits).toFloatApproximation());
+  const wallet = useWallet();
+  const balanceFetcher = useBalanceFetcher();
+  const popups = usePopups();
+  const popupState = computed(() => popups.state[dialogType]) as Ref<T>;
+  const isShown = computed(() => !!popupState.value);
 
-    watch([wallet.loggedIn, wallet.address], async () => {
-        if (!wallet.loggedIn.value || !wallet.address.value) {
-            return;
-        }
-        balanceFetcher.updateAddress(wallet.address.value);
-    });
+  const handleClose = () => {
+    popups.state[dialogType] = null;
+    txError.value = undefined;
+    txSuccess.value = undefined;
+  };
 
-    return {
-        isShown,
-        popupState,
-        inputPhotonModel,
-        handleClose,
-    };
-};
+  watch([wallet.loggedIn, wallet.address], async () => {
+    if (!wallet.loggedIn.value || !wallet.address.value) {
+      return;
+    }
+    balanceFetcher.updateAddress(wallet.address.value);
+  });
+
+  return {
+    isShown,
+    popupState,
+    inputPhotonModel,
+    handleClose,
+  };
+}
