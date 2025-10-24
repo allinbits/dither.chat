@@ -1,13 +1,11 @@
 <script setup lang="ts">
-import { ExternalLink } from "lucide-vue-next";
+import { ExternalLink } from 'lucide-vue-next';
 
-import ViewHeading from "./ViewHeading.vue";
+import TMAInfo from '@/components/tma/TMAInfo.vue';
+import Button from '@/components/ui/button/Button.vue';
+import MainLayout from '@/layouts/MainLayout.vue';
 
-import TMAInfo from "@/components/tma/TMAInfo.vue";
-import Button from "@/components/ui/button/Button.vue";
-import MainLayout from "@/layouts/MainLayout.vue";
-
-import ViewHeading from "./ViewHeading.vue";
+import ViewHeading from './ViewHeading.vue';
 
 interface ActionItem {
   id: string;
@@ -17,24 +15,24 @@ interface ActionItem {
 
 const actions: ActionItem[] = [
   {
-    id: "docs",
-    labelKey: "components.About.docs",
-    url: "https://docs.dither.chat",
+    id: 'docs',
+    labelKey: 'components.About.docs',
+    url: 'https://docs.dither.chat',
   },
   {
-    id: "privacy-policy",
-    labelKey: "components.About.privacyPolicy",
-    url: "https://docs.dither.chat/policies/privacy-policy",
+    id: 'privacy-policy',
+    labelKey: 'components.About.privacyPolicy',
+    url: 'https://docs.dither.chat/policies/privacy-policy',
   },
   {
-    id: "terms-and-conditions",
-    labelKey: "components.About.termsAndConditions",
-    url: "https://docs.dither.chat/policies/terms-of-service",
+    id: 'terms-and-conditions',
+    labelKey: 'components.About.termsAndConditions',
+    url: 'https://docs.dither.chat/policies/terms-of-service',
   },
 ];
 
 function handleActionClick(url: string) {
-  window.open(url, "_blank");
+  window.open(url, '_blank');
 }
 </script>
 

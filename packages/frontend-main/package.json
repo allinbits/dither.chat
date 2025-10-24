@@ -16,6 +16,7 @@
     "@sinclair/typebox": "^0.34.41",
     "@tailwindcss/vite": "^4.1.14",
     "@tanstack/vue-query": "^5.90.3",
+    "@tma.js/sdk-vue": "^1.0.8",
     "@vueuse/core": "^13.9.0",
     "bech32": "^2.0.0",
     "bignumber.js": "^9.3.1",

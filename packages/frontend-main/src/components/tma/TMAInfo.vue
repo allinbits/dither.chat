@@ -1,47 +1,47 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
 import { ChevronDown, ChevronRight, Globe, Smartphone } from 'lucide-vue-next';
-
-import TelegramLogo from './telegram-logo.svg';
+import { computed, onMounted, ref } from 'vue';
 
 import { useTMAStore } from '@/stores/useTMAStore';
+
+import TelegramLogo from './telegram-logo.svg';
 
 const tmaStore = useTMAStore();
 const isExpanded = ref(false);
 
 onMounted(async () => {
-    if (!tmaStore.isInitialized) {
-        await tmaStore.initialize();
-    }
+  if (!tmaStore.isInitialized) {
+    await tmaStore.initialize();
+  }
 });
 
 const tmaInfo = computed(() => {
-    const params = tmaStore.launchParams;
-    const initData = tmaStore.initData;
-    const user = initData?.user;
+  const params = tmaStore.launchParams;
+  const initData = tmaStore.initData;
+  const user = initData?.user;
 
-    return {
-        userName: user?.first_name ? `${user.first_name} ${user.last_name || ''}`.trim() : 'Unknown User',
-        userId: user?.id?.toString() || 'Unknown',
-        platform: params?.tgWebAppPlatform || 'Unknown',
-        version: params?.tgWebAppVersion || 'Unknown',
-        isInitialized: tmaStore.isInitialized,
-        hasError: !!tmaStore.error,
-        error: tmaStore.error,
-    };
+  return {
+    userName: user?.first_name ? `${user.first_name} ${user.last_name || ''}`.trim() : 'Unknown User',
+    userId: user?.id?.toString() || 'Unknown',
+    platform: params?.tgWebAppPlatform || 'Unknown',
+    version: params?.tgWebAppVersion || 'Unknown',
+    isInitialized: tmaStore.isInitialized,
+    hasError: !!tmaStore.error,
+    error: tmaStore.error,
+  };
 });
 
-const toggleExpanded = () => {
-    isExpanded.value = !isExpanded.value;
-};
+function toggleExpanded() {
+  isExpanded.value = !isExpanded.value;
+}
 </script>
 
 <template>
-  <div class="border-y md:border-x md:rounded-lg bg-background" v-if="tmaInfo.isInitialized">
+  <div v-if="tmaInfo.isInitialized" class="border-y md:border-x md:rounded-lg bg-background">
     <!-- Summary -->
     <button
-      @click="toggleExpanded"
       class="w-full flex items-center justify-between p-4 text-left hover:bg-accent/50 transition-colors"
+      @click="toggleExpanded"
     >
       <div class="flex items-center gap-3">
         <div class="flex items-center gap-2">
@@ -103,7 +103,7 @@ const toggleExpanded = () => {
             :class="{
               'text-green-600': tmaInfo.isInitialized && !tmaInfo.hasError,
               'text-destructive': tmaInfo.hasError,
-              'text-muted-foreground': !tmaInfo.isInitialized
+              'text-muted-foreground': !tmaInfo.isInitialized,
             }"
           >
             {{ tmaInfo.hasError ? 'Error' : 'Connected' }}
@@ -111,8 +111,12 @@ const toggleExpanded = () => {
         </div>
 
         <div v-if="tmaInfo.hasError" class="mt-2 p-2 bg-destructive/10 border border-destructive/20 rounded text-xs">
-          <div class="font-medium text-destructive mb-1">Error Details:</div>
-          <div class="font-mono">{{ tmaInfo.error }}</div>
+          <div class="font-medium text-destructive mb-1">
+            Error Details:
+          </div>
+          <div class="font-mono">
+            {{ tmaInfo.error }}
+          </div>
         </div>
       </div>
     </div>
