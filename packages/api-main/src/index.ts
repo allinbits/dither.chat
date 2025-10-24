@@ -13,7 +13,7 @@ import { startBot as startTelegramBot } from './telegram/bot';
 const config = useConfig();
 const app = new Elysia({ adapter: node(), prefix: '/v1' });
 
-export async function start() {
+export function start() {
     app.use(cors());
     app.use(publicRoutes);
     app.use(authRoutes);
