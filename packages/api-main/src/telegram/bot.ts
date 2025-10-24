@@ -2,9 +2,7 @@ import { type Context, Markup, Telegraf } from 'telegraf';
 import { telegramConfig } from './config.js';
 import { logger } from './logger.js';
 import { compressHash, decompressHash } from './utils.js';
-
-// TODO: Define proper PostRecord type
-type PostRecord = any;
+import { Post } from '../types/feed.js';
 
 const telegramErrors = {
     cannot_initiate: "Forbidden: bot can't initiate conversation with a user",
@@ -16,7 +14,7 @@ const bot = new Telegraf(telegramConfig.telegram.botToken);
 /**
  * Send a message to the Telegram channel with action buttons.
  */
-export async function sendMessageToChannel(post: PostRecord) {
+export async function sendMessageToChannel(post: Post) {
     const text = `From: ${post.author}\n\n${post.message}`;
     const encodedHash = compressHash(post.hash);
 
@@ -129,7 +127,7 @@ export async function startBot() {
     process.once('SIGTERM', () => bot.stop('SIGTERM'));
 }
 
-export async function stopBot() {
-    await bot.stop();
+export function stopBot() {
+    bot.stop();
     logger.info('Telegram bot stopped');
 }
