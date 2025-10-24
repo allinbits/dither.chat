@@ -1,22 +1,21 @@
 <script lang="ts" setup>
+import { Decimal } from '@cosmjs/math';
 import { computed, ref } from 'vue';
 import { toast } from 'vue-sonner';
-import { Decimal } from '@cosmjs/math';
-
-import { useConfirmDialog } from '@/composables/useConfirmDialog';
-import { useCreatePost } from '@/composables/useCreatePost';
-import { useTxDialog } from '@/composables/useTxDialog';
 
 import
 { Button }
-    from '@/components/ui/button';
+  from '@/components/ui/button';
 import {
-    Dialog,
-    DialogContent,
-    DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogTitle,
 } from '@/components/ui/dialog';
 import InputPhoton from '@/components/ui/input/InputPhoton.vue';
 import { Textarea } from '@/components/ui/textarea';
+import { useConfirmDialog } from '@/composables/useConfirmDialog';
+import { useCreatePost } from '@/composables/useCreatePost';
+import { useTxDialog } from '@/composables/useTxDialog';
 import { useConfigStore } from '@/stores/useConfigStore';
 import { fractionalDigits } from '@/utility/atomics';
 import { showBroadcastingToast } from '@/utility/toast';
@@ -33,49 +32,48 @@ const configStore = useConfigStore();
 const amountAtomics = computed(() => configStore.config.defaultAmountEnabled ? configStore.config.defaultAmountAtomics : Decimal.fromUserInput(inputPhotonModel.value.toString(), fractionalDigits).atomics);
 
 function handleInputValidity(value: boolean) {
-    isBalanceInputValid.value = value;
+  isBalanceInputValid.value = value;
 }
 
 const canSubmit = computed(() => {
-    return isBalanceInputValid.value && message.value.length > 0;
+  return isBalanceInputValid.value && message.value.length > 0;
 });
 
-const handleCloseWithSaveDraft = () => {
-    handleClose();
+function handleCloseWithSaveDraft() {
+  handleClose();
 
-    if (!message.value.length) {
-        return;
-    }
+  if (!message.value.length) {
+    return;
+  }
 
-    showConfirmDialog({
-        title: 'Save to draft ?',
-        description: 'Your post will be saved to draft and you can continue editing it later.',
-        onCancel: () => {
-            message.value = '';
-        },
-    });
-};
+  showConfirmDialog({
+    title: 'Save to draft ?',
+    description: 'Your post will be saved to draft and you can continue editing it later.',
+    onCancel: () => {
+      message.value = '';
+    },
+  });
+}
 
 async function handleSubmit() {
-    if (!canSubmit.value) {
-        return;
-    }
+  if (!canSubmit.value) {
+    return;
+  }
 
-    const msgValue = message.value;
-    message.value = '';
-    handleClose();
+  const msgValue = message.value;
+  message.value = '';
+  handleClose();
 
-    const toastId = showBroadcastingToast('Post');
+  const toastId = showBroadcastingToast('Post');
 
-    try {
-        await createPost({
-            message: msgValue,
-            amountAtomics: amountAtomics.value,
-        });
-    }
-    finally {
-        toast.dismiss(toastId);
-    }
+  try {
+    await createPost({
+      message: msgValue,
+      amountAtomics: amountAtomics.value,
+    });
+  } finally {
+    toast.dismiss(toastId);
+  }
 }
 </script>
 
@@ -85,11 +83,11 @@ async function handleSubmit() {
       <DialogContent>
         <DialogTitle>{{ $t('components.PopupTitles.newPost') }}</DialogTitle>
 
-        <Textarea :placeholder="$t('placeholders.post')" v-model="message" :maxlength="MAX_CHARS" />
+        <Textarea v-model="message" :placeholder="$t('placeholders.post')" :maxlength="MAX_CHARS" />
 
         <!-- Transaction Form -->
         <div class="flex flex-col w-full gap-4">
-          <InputPhoton v-if="!configStore.config.defaultAmountEnabled" v-model="inputPhotonModel" @on-validity-change="handleInputValidity"/>
+          <InputPhoton v-if="!configStore.config.defaultAmountEnabled" v-model="inputPhotonModel" @on-validity-change="handleInputValidity" />
           <Button class="w-full" :disabled="!canSubmit" @click="handleSubmit">
             {{ $t('components.Button.submit') }}
           </Button>

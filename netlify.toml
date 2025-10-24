@@ -1,16 +1,7 @@
 [build]
 publish = "./packages/frontend-main/dist"
-command = "NODE_ENV=production pnpm -F ./packages/frontend-main build"
+command = "pnpm -F ./packages/frontend-main build"
 
-# Headers for Telegram Mini App
-[[headers]]
-for = "/*"
-[headers.values]
-X-Frame-Options = "SAMEORIGIN"
-X-Content-Type-Options = "nosniff"
-Referrer-Policy = "strict-origin-when-cross-origin"
-
-# SPA routing - redirect all routes to index.html
 [[redirects]]
 from = "/*"
 to = "/index.html"

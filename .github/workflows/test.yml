@@ -12,7 +12,6 @@ on:
 jobs:
   api-main-test:
     runs-on: ubuntu-latest
-    
     services:
       postgres:
         image: postgres:15
@@ -38,18 +37,24 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
-          cache: 'pnpm'
+          cache: pnpm
 
       - name: Install dependencies with pnpm
         run: pnpm install
 
+      - name: Build dependencies
+        working-directory: packages/api-main
+        run: pnpm build:deps
+
       - name: Setup database schema
-        run: cd packages/api-main && pnpm db:push:force
+        working-directory: packages/api-main
+        run: pnpm db:push:force
         env:
           PG_URI: postgresql://default:password@localhost:5432/postgres
 
       - name: Run tests
-        run: cd packages/api-main && pnpm test
+        working-directory: packages/api-main
+        run: pnpm test
         env:
           NODE_OPTIONS: --experimental-global-webcrypto
           PG_URI: postgresql://default:password@localhost:5432/postgres

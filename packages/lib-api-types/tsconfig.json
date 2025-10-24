@@ -1,19 +1,19 @@
 {
-    "compilerOptions": {
-        "target": "ESNext",
-        "module": "ESNext",
-        "moduleResolution": "Bundler",
-        "lib": ["ESNext", "DOM"],
-        "outDir": "./dist",
-        "strict": true,
-        "checkJs": false,
-        "esModuleInterop": true,
-        "skipLibCheck": true,
-        "forceConsistentCasingInFileNames": true,
-        "rootDir": ".",
-        "declaration": true,
-        "noImplicitAny": true,
-    },
-    "include": ["src", "drizzle.config.ts", "db", "drizzle/schema.ts", "drizzle/db.ts"],
-    "exclude": ["node_modules", "dist"]
+  "compilerOptions": {
+    "target": "ESNext",
+    "lib": ["ESNext", "DOM"],
+    "rootDir": ".",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "checkJs": false,
+    "strict": true,
+    "noImplicitAny": true,
+    "declaration": true,
+    "outDir": "./dist",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true
+  },
+  "include": ["src", "drizzle.config.ts", "db", "drizzle/schema.ts", "drizzle/db.ts"],
+  "exclude": ["node_modules", "dist"]
 }

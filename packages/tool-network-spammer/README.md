@@ -25,15 +25,16 @@ mock-tools/
 ```
 
 ## Next Steps
-- integrate several clients ✅ 
-- integrate a different logic to generate messages not LoremIpsum but maybe some fun facts API, News API to give more natural data for test 
+
+- integrate several clients ✅
+- integrate a different logic to generate messages not LoremIpsum but maybe some fun facts API, News API to give more natural data for test
 
 ## Usage
 
-```ts
+```bash
 pnpm install
 ```
 
-```
+```bash
 pnpm dev
 ```

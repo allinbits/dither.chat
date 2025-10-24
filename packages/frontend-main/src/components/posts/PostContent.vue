@@ -1,39 +1,39 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
 
-import PostMessage from './PostMessage.vue';
-
 import Button from '@/components/ui/button/Button.vue';
+
+import PostMessage from './PostMessage.vue';
 
 const props = defineProps<{ message: string }>();
 const isEmbedToggled = ref(false);
 
 function extractImageURL(msg: string) {
-    const regex = /(https?:\/\/[^\s]+\.(?:jpg|jpeg|png|gif))/i;
-    const match = msg.match(regex);
+  const regex = /(https?:\/\/\S+\.(?:jpg|jpeg|png|gif))/i;
+  const match = msg.match(regex);
 
-    if (match && match[1]) {
-        return match[1];
-    }
-    return null;
+  if (match && match[1]) {
+    return match[1];
+  }
+  return null;
 }
 
 const hasImage = computed(() => {
-    return extractImageURL(props.message) !== null;
+  return extractImageURL(props.message) !== null;
 });
 
 const imageUrl = computed(() => {
-    return extractImageURL(props.message) ?? '';
+  return extractImageURL(props.message) ?? '';
 });
 
-const youtubeRegex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/g;
+const youtubeRegex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/g;
 const youtubeLink = computed(() => {
-    const regex = youtubeRegex.exec(props.message);
-    if (!regex || !regex[1]) {
-        return undefined;
-    }
+  const regex = youtubeRegex.exec(props.message);
+  if (!regex || !regex[1]) {
+    return undefined;
+  }
 
-    return `https://www.youtube.com/embed/${regex[1]}`;
+  return `https://www.youtube.com/embed/${regex[1]}`;
 });
 </script>
 
@@ -42,15 +42,15 @@ const youtubeLink = computed(() => {
     <PostMessage :message="props.message" />
 
     <div v-if="hasImage" class="flex flex-col gap-2 cursor-default" @click.stop="() => {}">
-      <Button class="w-full text-sm" @click.stop="isEmbedToggled = true" v-if="!isEmbedToggled" size="xs" variant="outline">
+      <Button v-if="!isEmbedToggled" class="w-full text-sm" size="xs" variant="outline" @click.stop="isEmbedToggled = true">
         {{ $t('components.Button.showImage') }}
       </Button>
       <template v-else>
-        <Button class="w-full text-sm" @click.stop="isEmbedToggled = false" size="xs" variant="outline">
+        <Button class="w-full text-sm" size="xs" variant="outline" @click.stop="isEmbedToggled = false">
           {{ $t('components.Button.hideImage') }}
         </Button>
         <div class="flex flex-col">
-          <img  alt="embedded content" class="rounded" :src="imageUrl" />
+          <img alt="embedded content" class="rounded" :src="imageUrl">
         </div>
       </template>
     </div>
@@ -62,6 +62,6 @@ const youtubeLink = computed(() => {
       title="YouTube Video"
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
       allowfullscreen
-    ></iframe>
+    />
   </div>
 </template>

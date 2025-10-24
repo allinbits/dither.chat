@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import 'vanilla-jsoneditor/themes/jse-theme-dark.css';
-
 import { debouncedWatch, useColorMode } from '@vueuse/core';
 import JsonEditorVue from 'json-editor-vue';
 
@@ -12,11 +10,13 @@ import { useConfigStore } from '@/stores/useConfigStore';
 import { showInfoToast } from '@/utility/toast';
 import HeaderBack from '@/views/ViewHeading.vue';
 
+import 'vanilla-jsoneditor/themes/jse-theme-dark.css';
+
 const configStore = useConfigStore();
 const mode = useColorMode();
 
 debouncedWatch(configStore.config, () => {
-    showInfoToast('Settings Updated', 'Config automatically updated');
+  showInfoToast('Settings Updated', 'Config automatically updated');
 }, { debounce: 1000 });
 </script>
 
@@ -52,11 +52,11 @@ debouncedWatch(configStore.config, () => {
         <JsonEditorVue
           v-model="configStore.envConfig.chainConfig"
           :class="[mode === 'dark' ? 'jse-theme-dark' : 'jse-theme-light']"
-          :mainMenuBar="false"
-          :navigationBar="false"
-          :statusBar="false"
-          :askToFormat="false"
-          :readOnly="false"
+          :main-menu-bar="false"
+          :navigation-bar="false"
+          :status-bar="false"
+          :ask-to-format="false"
+          :read-only="false"
         />
       </div>
 
@@ -65,7 +65,6 @@ debouncedWatch(configStore.config, () => {
           Reset
         </Button>
       </div>
-
     </div>
   </MainLayout>
 </template>

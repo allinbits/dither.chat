@@ -1,48 +1,50 @@
-import { type Ref, ref } from 'vue';
+import type { Ref } from 'vue';
+
 import { useMutation } from '@tanstack/vue-query';
+import { ref } from 'vue';
 
 import { useTxNotification } from './useTxNotification';
 import { useWallet } from './useWallet';
 
 interface TipUserRequestMutation {
-    userAddress: Ref<string>;
-    amountAtomics: string;
+  userAddress: Ref<string>;
+  amountAtomics: string;
 }
 
 export function useTipUser() {
-    const wallet = useWallet();
-    const txError = ref<string>();
-    const txSuccess = ref<string>();
-    const isToastShown = ref(false);
-    useTxNotification('Tip', txSuccess, txError);
+  const wallet = useWallet();
+  const txError = ref<string>();
+  const txSuccess = ref<string>();
+  const isToastShown = ref(false);
+  useTxNotification('Tip', txSuccess, txError);
 
-    const { mutateAsync } = useMutation({
-        mutationFn: async ({ userAddress, amountAtomics }: TipUserRequestMutation) => {
-            txError.value = undefined;
-            txSuccess.value = undefined;
-            isToastShown.value = true;
+  const { mutateAsync } = useMutation({
+    mutationFn: async ({ userAddress, amountAtomics }: TipUserRequestMutation) => {
+      txError.value = undefined;
+      txSuccess.value = undefined;
+      isToastShown.value = true;
 
-            const result = await wallet.dither.tipUser(userAddress.value, amountAtomics);
-            if (!result.broadcast) {
-                txError.value = result.msg;
-                throw new Error(result.msg);
-            }
-            txSuccess.value = result.tx?.transactionHash;
-            return txSuccess.value;
-        },
-        // TODO: To be implemented when integrating with useUserTips
-        onMutate: async (_) => {},
-        onSuccess: () => {},
-        onError: () => {},
-        onSettled: () => {
-            isToastShown.value = false;
-        },
-        retry: false,
-    });
+      const result = await wallet.dither.tipUser(userAddress.value, amountAtomics);
+      if (!result.broadcast) {
+        txError.value = result.msg;
+        throw new Error(result.msg);
+      }
+      txSuccess.value = result.tx?.transactionHash;
+      return txSuccess.value;
+    },
+    // TODO: To be implemented when integrating with useUserTips
+    onMutate: async (_) => {},
+    onSuccess: () => {},
+    onError: () => {},
+    onSettled: () => {
+      isToastShown.value = false;
+    },
+    retry: false,
+  });
 
-    return {
-        tipUser: mutateAsync,
-        txError,
-        txSuccess,
-    };
+  return {
+    tipUser: mutateAsync,
+    txError,
+    txSuccess,
+  };
 }

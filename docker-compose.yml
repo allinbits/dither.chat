@@ -10,11 +10,11 @@ services:
       POSTGRES_USER: default
       POSTGRES_PASSWORD: password
     ports:
-      - "5432:5432"
+      - '5432:5432'
     volumes:
       - ./data/postgres_data:/var/lib/postgresql/18/data
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "default"]
+      test: [CMD, pg_isready, -U, default]
       interval: 10s
       timeout: 5s
       retries: 3
@@ -24,7 +24,7 @@ services:
   # REST Services
   # ================================
   api-main:
-    container_name: "api-main"
+    container_name: api-main
     build: ./packages/api-main
     image: ditherchat/api-main
     restart: always
@@ -32,12 +32,12 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      PG_URI: "postgresql://default:password@postgres:5432/postgres"
-      AUTH: "dev"
+      PG_URI: 'postgresql://default:password@postgres:5432/postgres'
+      AUTH: dev
     ports:
       - 3000:3000
     healthcheck:
-      test: "curl http://localhost:3000/v1/health  || exit 1"
+      test: 'curl http://localhost:3000/v1/health  || exit 1'
       interval: 5s
       timeout: 3s
       retries: 30
@@ -47,24 +47,24 @@ services:
   # ChronoSync Service
   # ================================
   reader-main:
-    container_name: "reader-main"
+    container_name: reader-main
     build: ./packages/reader-main
     image: ditherchat/reader-main
     restart: always
-    command: ["pnpm", "start"]
+    command: [pnpm, start]
     depends_on:
       postgres:
         condition: service_healthy
       api-main:
         condition: service_healthy
     environment:
-      API_URLS: "https://atomone-testnet-1-api.allinbits.services"
-      START_BLOCK: "1979480"
+      API_URLS: 'https://atomone-testnet-1-api.allinbits.services'
+      START_BLOCK: '1979480'
       BATCH_SIZE: 500
-      MEMO_PREFIX: "dither."
-      RECEIVER: "atone1uq6zjslvsa29cy6uu75y8txnl52mw06j6fzlep"
-      API_ROOT: "http://api-main:3000/v1"
-      AUTH: "dev"
+      MEMO_PREFIX: dither.
+      RECEIVER: atone1uq6zjslvsa29cy6uu75y8txnl52mw06j6fzlep
+      API_ROOT: 'http://api-main:3000/v1'
+      AUTH: dev
       # Uncomment to enable fast sync
       # ECLESIA_GRAPHQL_ENDPOINT: "https://graphql-atomone-testnet-1.allinbits.services/v1/graphql"
       # ECLESIA_GRAPHQL_SECRET: ""
@@ -84,4 +84,3 @@ services:
   #   depends_on:
   #     - postgres
   #     - api-main
-

@@ -1,7 +1,9 @@
 <script lang="ts" setup>
-import 'vue-sonner/style.css'; // vue-sonner v2 requires this import
+import type { ToasterProps } from 'vue-sonner';
 
-import { Toaster as Sonner, type ToasterProps } from 'vue-sonner';
+import { Toaster as Sonner } from 'vue-sonner';
+
+import 'vue-sonner/style.css'; // vue-sonner v2 requires this import
 
 const props = defineProps<ToasterProps>();
 </script>
