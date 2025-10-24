@@ -109,6 +109,11 @@ async function sendMiniAppLink(ctx: Context, message: string) {
 }
 
 export async function startBot() {
+    if (!telegramConfig.telegram.botToken) {
+        logger.warn('Telegram bot token is not set. Skipping bot startup.');
+        return;
+    }
+
     await bot.telegram.setMyCommands([
         { command: 'feed', description: 'Get the Dither feed channel link' },
         {
