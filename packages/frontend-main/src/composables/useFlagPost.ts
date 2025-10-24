@@ -23,9 +23,7 @@ export function useFlagPost(
     const isToastShown = ref(false);
     useTxNotification('Flag', txSuccess, txError);
 
-    const {
-        mutateAsync,
-    } = useMutation({
+    const { mutateAsync } = useMutation({
         mutationFn: async ({ post, amountAtomics }: FlagPostRequestMutation) => {
             txError.value = undefined;
             txSuccess.value = undefined;
@@ -45,34 +43,14 @@ export function useFlagPost(
                 return txSuccess.value;
             }
         },
-        onMutate: async (variables) => {
+        onSuccess: (_, variables) => {
             const postOpts = post({ hash: ref(variables.post.value.hash) });
-
-            await Promise.all([
-                queryClient.cancelQueries(postOpts),
-            ]);
-
-            const previousPost = queryClient.getQueryData(
-                postOpts.queryKey,
-            ) as Post | undefined;
-
-            return {
-                previousPost,
-            };
-        },
-        onSuccess: (_, variables, context) => {
-            const postOpts = post({ hash: ref(variables.post.value.hash) });
-            // Post with updated flags_burnt
-            const optimisticPost: Post
-                = context.previousPost
-                    ? { ...context.previousPost, flags_burnt: addAtomics((context.previousPost.flags_burnt ?? 0).toString(), variables.amountAtomics) }
-                    : { ...variables.post.value, flags_burnt: addAtomics((variables.post.value.flags_burnt ?? 0).toString(), variables.amountAtomics) };
-
-            queryClient.setQueryData(postOpts.queryKey, optimisticPost);
-        },
-        onError: (_, variables, context) => {
-            const postOpts = post({ hash: ref(variables.post.value.hash) });
-            queryClient.setQueryData(postOpts.queryKey, context?.previousPost);
+            // Update post's flags_burnt
+            queryClient.setQueryData<Post>(postOpts.queryKey, (current) => {
+                const currentFlagsBurnt = current?.flags_burnt ?? variables.post.value.flags_burnt ?? '0';
+                const newFlagsBurnt = addAtomics(currentFlagsBurnt, variables.amountAtomics);
+                return { ...(current ?? variables.post.value), flags_burnt: newFlagsBurnt };
+            });
         },
         onSettled: () => {
             isToastShown.value = false;

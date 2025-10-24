@@ -2,7 +2,7 @@ import type { Post, ReplyWithParent } from 'api-main/types/feed';
 
 import { type Ref, ref } from 'vue';
 import { Decimal } from '@cosmjs/math';
-import { type InfiniteData, useMutation, useQueryClient } from '@tanstack/vue-query';
+import { useMutation, useQueryClient } from '@tanstack/vue-query';
 
 import { post } from './usePost';
 import { replies } from './useReplies';
@@ -28,9 +28,7 @@ export function useCreateReply(
     const isToastShown = ref(false);
     useTxNotification('Reply', txSuccess, txError);
 
-    const {
-        mutateAsync,
-    } = useMutation({
+    const { mutateAsync } = useMutation({
         mutationFn: async ({ parentPost, message, amountAtomics }: CreateReplyRequestMutation) => {
             txError.value = undefined;
             txSuccess.value = undefined;
@@ -57,66 +55,38 @@ export function useCreateReply(
                 return txSuccess.value;
             }
         },
-        onMutate: async (variables) => {
-            const parentPostOpts = post({ hash: ref(variables.parentPost.value.hash) });
-            const repliesOpts = replies({ hash: ref(variables.parentPost.value.hash) });
-            const userRepliesOpts = userReplies({ userAddress: wallet.address });
-
-            await Promise.all([
-                queryClient.cancelQueries(parentPostOpts),
-                queryClient.cancelQueries(repliesOpts),
-                queryClient.cancelQueries(userRepliesOpts),
-            ]);
-
-            const previousParentPost = queryClient.getQueryData(
-                parentPostOpts.queryKey,
-            ) as Post | undefined;
-            const previousReplies = queryClient.getQueryData(
-                repliesOpts.queryKey,
-            ) as InfiniteData<Post[], unknown> | undefined;
-            const previousUserReplies = queryClient.getQueryData(
-                userRepliesOpts.queryKey,
-            ) as InfiniteData<ReplyWithParent[], unknown> | undefined;
-
-            return { previousParentPost, previousReplies, previousUserReplies };
-        },
-        onSuccess: (createdHash, variables, context) => {
+        onSuccess: (createdHash, variables) => {
             if (!createdHash) throw new Error('Error: No hash in TX');
 
             const parentPostOpts = post({ hash: ref(variables.parentPost.value.hash) });
             const repliesOpts = replies({ hash: ref(variables.parentPost.value.hash) });
             const userRepliesOpts = userReplies({ userAddress: wallet.address });
 
+            const previousParentPost = queryClient.getQueryData(parentPostOpts.queryKey);
+            const previousReplies = queryClient.getQueryData(repliesOpts.queryKey);
+            const previousUserReplies = queryClient.getQueryData(userRepliesOpts.queryKey);
+
             // Parent Post with updated replies count
-            const optimisticParentPost: Post
-                = context.previousParentPost
-                    ? { ...context.previousParentPost, replies: (context.previousParentPost.replies || 0) + 1 }
+            const newParentPost: Post
+                = previousParentPost
+                    ? { ...previousParentPost, replies: (previousParentPost.replies || 0) + 1 }
                     : { ...variables.parentPost.value, replies: (variables.parentPost.value.replies || 0) + 1 };
             // Created Post with parent hash as post_hash
-            const optimisticNewReply: Post = newPost({ message: variables.message, quantity: Decimal.fromAtomics(variables.amountAtomics, fractionalDigits).atomics, hash: createdHash, postHash: variables.parentPost.value.hash, author: wallet.address.value });
+            const newReply: Post = newPost({ message: variables.message, quantity: Decimal.fromAtomics(variables.amountAtomics, fractionalDigits).atomics, hash: createdHash, postHash: variables.parentPost.value.hash, author: wallet.address.value });
             // Created Post in ReplyWithParent
-            const optimisticNewUserReply: ReplyWithParent = {
+            const newUserReply: ReplyWithParent = {
                 reply: newPost(
                     { message: variables.message, quantity: Decimal.fromAtomics(variables.amountAtomics, fractionalDigits).atomics, hash: createdHash, postHash: variables.parentPost.value.hash, author: wallet.address.value },
                 ),
-                parent: optimisticParentPost,
+                parent: newParentPost,
             };
 
-            const newRepliesData = infiniteDataWithNewItem<Post>({ previousItems: context.previousReplies, newItem: optimisticNewReply });
-            const newUserRepliesData = infiniteDataWithNewItem<ReplyWithParent>({ previousItems: context.previousUserReplies, newItem: optimisticNewUserReply });
+            const newRepliesData = infiniteDataWithNewItem<Post>({ previousItems: previousReplies, newItem: newReply });
+            const newUserRepliesData = infiniteDataWithNewItem<ReplyWithParent>({ previousItems: previousUserReplies, newItem: newUserReply });
 
-            queryClient.setQueryData(parentPostOpts.queryKey, optimisticParentPost);
+            queryClient.setQueryData(parentPostOpts.queryKey, newParentPost);
             queryClient.setQueryData(repliesOpts.queryKey, newRepliesData);
             queryClient.setQueryData(userRepliesOpts.queryKey, newUserRepliesData);
-        },
-        onError: (_, variables, context) => {
-            const parentPostOpts = post({ hash: ref(variables.parentPost.value.hash) });
-            const repliesOpts = replies({ hash: ref(variables.parentPost.value.hash) });
-            const userRepliesOpts = userReplies({ userAddress: wallet.address });
-
-            queryClient.setQueryData(parentPostOpts.queryKey, context?.previousParentPost);
-            queryClient.setQueryData(repliesOpts.queryKey, context?.previousReplies);
-            queryClient.setQueryData(userRepliesOpts.queryKey, context?.previousUserReplies);
         },
         onSettled: () => {
             isToastShown.value = false;

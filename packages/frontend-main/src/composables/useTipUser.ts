@@ -30,10 +30,6 @@ export function useTipUser() {
             txSuccess.value = result.tx?.transactionHash;
             return txSuccess.value;
         },
-        // TODO: To be implemented when integrating with useUserTips
-        onMutate: async (_) => {},
-        onSuccess: () => {},
-        onError: () => {},
         onSettled: () => {
             isToastShown.value = false;
         },
