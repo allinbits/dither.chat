@@ -22,6 +22,7 @@ jobs:
           filters: |
             frontend-main:
               - 'packages/frontend-main/**'
+
   frontend-build-check:
     needs: detect-changes
     if: needs.detect-changes.outputs.changed == 'true'
@@ -43,6 +44,5 @@ jobs:
         run: pnpm install
 
       - name: Verify Build
-        run: |
-          cd packages/frontend-main
-          pnpm build
+        working-directory: ./packages/frontend-main
+        run: pnpm build

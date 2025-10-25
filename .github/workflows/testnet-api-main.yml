@@ -54,28 +54,25 @@ jobs:
         uses: docker/setup-docker-action@v4
 
       - name: Build API Types
-        run: |
-          cd ./packages/lib-api-types
-          pnpm build
+        working-directory: ./packages/lib-api-types
+        run: pnpm build
 
       - name: Run Docker Compose Up
-        run: |
-          cd ./packages/api-main
-          docker compose -f ./docker-compose-github.yml up --build -d --wait --wait-timeout 30
+        working-directory: ./packages/api-main
+        run: docker compose -f ./docker-compose-github.yml up --build -d --wait --wait-timeout 30
 
       - name: Push database migrations
+        working-directory: ./packages/api-main
         run: |
-          cd ./packages/api-main
           cp .env.example .env
           pnpm db:push:force
 
       - name: Run tests with pnpm
-        run: |
-          cd ./packages/api-main
-          pnpm test
+        working-directory: ./packages/api-main
+        run: pnpm test
 
   deploy-testnet:
-    needs: [detect-changes, test]
+    needs: [ detect-changes, test ]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.detect-changes.outputs.changed == 'true'
     runs-on: ubuntu-latest
     environment: testnet
@@ -87,22 +84,13 @@ jobs:
         uses: superfly/flyctl-actions/setup-flyctl@master
 
       - name: Deploy api-main to Fly.io
-        run: |
-          cd ./packages/api-main
-          flyctl deploy --remote-only --config ./fly.testnet.toml
+        working-directory: ./packages/api-main
+        run: flyctl deploy --remote-only --config ./fly.testnet.toml
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_API_MAIN }}
 
-  smoke-tests:
-    needs: [deploy-testnet]
-    if: needs.deploy-testnet.result == 'success'
-    uses: ./.github/workflows/smoke-tests.yml
-    secrets: inherit
-    with:
-      app_name: dither-testnet-api-main
-
   notify:
-    needs: [smoke-tests]
+    needs: [ deploy-testnet ]
     if: failure()
     runs-on: ubuntu-latest
     steps:
@@ -110,15 +98,24 @@ jobs:
         with:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          format: markdown
           message: |
-            🚨 **Smoke Tests Failed** 🚨
+            🚨 *bold \*Deploy API Testnet Failed* 🚨
 
             🔗 Repository: ${{ github.repository }}
             📝 Commit: ${{ github.event.commits[0].message }}
             👤 Author: ${{ github.actor }}
-            ⛓️‍💥 App: dither-testnet-api-main
+            ⛓️‍💥 App: ${{ inputs.app_name }}
 
-            ⚠️ **Failed Tests:**
+            ⚠️ *bold \*Failed Job:*
             🔍 [View Logs](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
 
             Please investigate and fix ASAP! 🔧
+
+  smoke-tests:
+    needs: [ deploy-testnet ]
+    if: needs.deploy-testnet.result == 'success'
+    uses: ./.github/workflows/smoke-tests.yml
+    secrets: inherit
+    with:
+      app_name: dither-testnet-api-main
