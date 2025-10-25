@@ -30,3 +30,26 @@ jobs:
         run: pnpm run test:smoke
         env:
           APP_NAME: ${{ inputs.app_name }}
+
+  notify:
+    needs: [ smoke-tests ]
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: appleboy/telegram-action@v1.0.1
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          format: markdown
+          message: |
+            🚨 *bold \*Smoke Tests Failed* 🚨
+
+            🔗 Repository: ${{ github.repository }}
+            📝 Commit: ${{ github.event.commits[0].message }}
+            👤 Author: ${{ github.actor }}
+            ⛓️‍💥 App: ${{ inputs.app_name }}
+
+            ⚠️ *bold \*Failed Tests:*
+            🔍 [View Logs](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+
+            Please investigate and fix ASAP! 🔧
