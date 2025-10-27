@@ -110,6 +110,18 @@ importers:
         specifier: ^3.2.4
         version: 3.2.4(@types/debug@4.1.12)(@types/node@22.18.10)(jiti@2.6.1)(lightningcss@1.30.1)(tsx@4.20.6)(yaml@2.8.1)
 
+  packages/feed-sync:
+    dependencies:
+      dotenv:
+        specifier: ^16.6.1
+        version: 16.6.1
+      pg:
+        specifier: ^8.16.3
+        version: 8.16.3
+      pg-logical-replication:
+        specifier: ^2.2.1
+        version: 2.2.1
+
   packages/frontend-main:
     dependencies:
       '@cosmjs/math':
@@ -2703,6 +2715,9 @@ packages:
     resolution: {integrity: sha512-kVscqXk4OCp68SZ0dkgEKVi6/8ij300KBWTJq32P/dYeWTSwK41WyTxalN1eRmA5Z9UU/LX9D7FWSmV9SAYx6g==}
     engines: {node: '>=0.10.0'}
 
+  eventemitter2@6.4.9:
+    resolution: {integrity: sha512-JEPTiaOt9f04oa6NOkc4aH+nVp5I3wEjpHbIPqfgCdD5v5bUzy7xQqwcVO2aDQgOWhI28da57HksMrzK9HlRxg==}
+
   eventemitter3@5.0.1:
     resolution: {integrity: sha512-GWkBvjiSZK87ELrYOSESUYeVIc9mvLLf/nXalMOS5dYrgZq9o5OVkbZAVM06CVxYsCwH9BDZFPlQTlPA1j4ahA==}
 
@@ -3672,6 +3687,10 @@ packages:
   pg-int8@1.0.1:
     resolution: {integrity: sha512-WCtabS6t3c8SkpDBUlb1kjOs7l66xsGdKpIPZsg4wR+B3+u9UAum2odSsF9tnvxg80h4ZxLWMy4pRjOsFIqQpw==}
     engines: {node: '>=4.0.0'}
+
+  pg-logical-replication@2.2.1:
+    resolution: {integrity: sha512-x6yo2MZxUdPIXUjgWC0w1m+T79otK/WG+/IDntTZR11cEBcBzk7BDgdRQDC0z6LuSlRiLmndYdgJERpE9OWjjA==}
+    engines: {node: '>=16.9.0'}
 
   pg-pool@3.10.1:
     resolution: {integrity: sha512-Tu8jMlcX+9d8+QVzKIvM/uJtp07PKr82IUOYEphaWcoBhIYkoHpLXN3qO59nAI11ripznDsEzEv8nUxBVWajGg==}
@@ -7321,6 +7340,8 @@ snapshots:
 
   esutils@2.0.3: {}
 
+  eventemitter2@6.4.9: {}
+
   eventemitter3@5.0.1: {}
 
   events@3.3.0: {}
@@ -8422,6 +8443,13 @@ snapshots:
   pg-connection-string@2.9.1: {}
 
   pg-int8@1.0.1: {}
+
+  pg-logical-replication@2.2.1:
+    dependencies:
+      eventemitter2: 6.4.9
+      pg: 8.16.3
+    transitivePeerDependencies:
+      - pg-native
 
   pg-pool@3.10.1(pg@8.16.3):
     dependencies:
