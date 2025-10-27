@@ -5,7 +5,6 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export interface Config {
-  PORT: number;
   PG_URI: string;
   PUBBLICATION_NAMES: string[];
   SLOT_NAME: string;
@@ -34,7 +33,6 @@ export function useConfig(): Config {
   }
 
   config = {
-    PORT: process.env.PORT ? Number.parseInt(process.env.PORT) : 3000,
     PG_URI: process.env.PG_URI,
     PUBBLICATION_NAMES: process.env.PUBLICATION_NAMES.split(','),
     SLOT_NAME: process.env.SLOT_NAME,
