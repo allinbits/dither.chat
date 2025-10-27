@@ -24,7 +24,7 @@ jobs:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_API_MAIN }}
 
   notify:
-    needs: [ deploy-mainnet ]
+    needs: [deploy-mainnet]
     if: failure()
     runs-on: ubuntu-latest
     steps:
@@ -47,7 +47,7 @@ jobs:
             Please investigate and fix ASAP! 🔧
 
   smoke-tests:
-    needs: [ deploy-mainnet ]
+    needs: [deploy-mainnet]
     if: needs.deploy-mainnet.result == 'success'
     uses: ./.github/workflows/smoke-tests.yml
     secrets: inherit

@@ -32,7 +32,7 @@ jobs:
           APP_NAME: ${{ inputs.app_name }}
 
   notify:
-    needs: [ smoke-tests ]
+    needs: [smoke-tests]
     if: failure()
     runs-on: ubuntu-latest
     steps:
