@@ -1,16 +1,15 @@
 import { LogicalReplicationService, PgoutputPlugin } from 'pg-logical-replication';
 
 import { useConfig } from './config';
-import { db } from './db';
 import { FeedReplicationService } from './feed';
 
 async function main() {
   const config = useConfig();
 
-  const client = await db.getClient();
-  await db.createReplicationSlot(config.SLOT_NAME);
-
-  const service = new LogicalReplicationService(client);
+  const service = new LogicalReplicationService({
+    connectionString: config.PG_URI,
+    connectionTimeoutMillis: 0,
+  });
 
   const plugin = new PgoutputPlugin({
     protoVersion: 1,
