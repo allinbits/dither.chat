@@ -1,4 +1,4 @@
-import pg from 'pg';
+import { Pool } from 'pg';
 
 import { useConfig } from '../config';
 
@@ -7,7 +7,7 @@ let pool: Pool;
 async function getClient() {
   if (!pool) {
     const config = useConfig();
-    pool = new pg.Pool({
+    pool = new Pool({
       connectionString: config.PG_URI,
       max: 150,
       connectionTimeoutMillis: 0,
