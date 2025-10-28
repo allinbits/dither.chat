@@ -1,6 +1,6 @@
 node_modules/
 data.json
-data.sqlite 
+data.sqlite
 packages/api-main/drizzle/migrations
 packages/api-main/data
 .env
@@ -8,7 +8,8 @@ dist
 dist/
 data
 data/*
-.vscode/
+.vscode/*
+!.vscode/settings.json
 .idea/
 .DS_Store
 .retype
