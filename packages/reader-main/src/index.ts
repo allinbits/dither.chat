@@ -30,11 +30,11 @@ export function getTransferMessage(messages: Array<MsgGeneric>) {
     return null;
   }
 
-  return msgTransfer as MsgTransfer;
+  return msgTransfer as unknown as MsgTransfer;
 }
 
 export function getTransferQuantities(messages: Array<MsgGeneric>, denom = 'uphoton') {
-  const msgTransfers = messages.filter(msg => msg['@type'] === '/cosmos.bank.v1beta1.MsgSend') as MsgTransfer[];
+  const msgTransfers = messages.filter(msg => msg['@type'] === '/cosmos.bank.v1beta1.MsgSend') as unknown as MsgTransfer[];
   let amount = BigInt('0');
 
   for (const msg of msgTransfers) {
@@ -95,8 +95,8 @@ async function processAction(action: Action): Promise<ResponseStatus> {
       return 'SKIP';
     }
 
-    const transfer = getTransferMessage(action.messages as Array<MsgGeneric>);
-    const quantity = getTransferQuantities(action.messages as Array<MsgGeneric>);
+    const transfer = getTransferMessage(action.messages as unknown as Array<MsgGeneric>);
+    const quantity = getTransferQuantities(action.messages as unknown as Array<MsgGeneric>);
     if (!transfer) {
       console.warn(`No transfer provided, skipping. ${actionType}`);
       return 'SKIP';

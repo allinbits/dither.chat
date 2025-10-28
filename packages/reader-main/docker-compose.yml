@@ -1,6 +1,8 @@
 services:
   chronosync:
-    build: .
+    build:
+      context: ../../
+      dockerfile: ./packages/reader-main/Dockerfile
     restart: always
     container_name: chronosync
     environment:
