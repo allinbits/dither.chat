@@ -5,7 +5,6 @@
   "packageManager": "pnpm@10.11.1",
   "description": "",
   "author": "",
-  "keywords": [],
   "main": "dist/index.js",
   "scripts": {
     "start": "vite-node ./src/index.ts",
