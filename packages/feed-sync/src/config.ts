@@ -6,7 +6,7 @@ dotenv.config();
 
 export interface Config {
   PG_URI: string;
-  PUBBLICATION_NAMES: string[];
+  PUBLICATION_NAMES: string[];
   SLOT_NAME: string;
 }
 
@@ -34,7 +34,7 @@ export function useConfig(): Config {
 
   config = {
     PG_URI: process.env.PG_URI,
-    PUBBLICATION_NAMES: process.env.PUBLICATION_NAMES.split(','),
+    PUBLICATION_NAMES: process.env.PUBLICATION_NAMES.split(','),
     SLOT_NAME: process.env.SLOT_NAME,
   };
 

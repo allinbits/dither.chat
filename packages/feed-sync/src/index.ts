@@ -8,11 +8,13 @@ async function main() {
   const config = useConfig();
 
   const client = await db.getClient();
+  await db.createReplicationSlot(config.SLOT_NAME);
+
   const service = new LogicalReplicationService(client);
 
   const plugin = new PgoutputPlugin({
     protoVersion: 1,
-    publicationNames: config.PUBBLICATION_NAMES,
+    publicationNames: config.PUBLICATION_NAMES,
   });
 
   const feedReplicationService = new FeedReplicationService(service, plugin, config.SLOT_NAME);
