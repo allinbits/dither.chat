@@ -18,7 +18,6 @@ jobs:
         uses: superfly/flyctl-actions/setup-flyctl@master
 
       - name: Deploy reader-main to Fly.io
-        working-directory: ./packages/reader-main
         run: |
           flyctl deploy \
             --remote-only \

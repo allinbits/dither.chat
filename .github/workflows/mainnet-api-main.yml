@@ -18,7 +18,6 @@ jobs:
         uses: superfly/flyctl-actions/setup-flyctl@master
 
       - name: Deploy api-main to Fly.io
-        working-directory: ./packages/api-main
         run: |
           flyctl deploy \
             --remote-only \
