@@ -1,15 +1,18 @@
-FROM node:24-slim
+FROM node:24-slim AS base
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable pnpm
 
+FROM base AS build
+WORKDIR /workspace
+COPY . .
+
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --filter api-feed... --frozen-lockfile
+RUN pnpm --filter api-feed build:deps
+RUN pnpm deploy --filter api-feed /api-feed
+
+FROM base AS runtime
 WORKDIR /app
-
-RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/* && corepack enable
-
-COPY package.json ./
-COPY src ./src
-COPY drizzle ./drizzle
-COPY tsconfig.json ./tsconfig.json
-COPY drizzle.config.ts ./drizzle.config.ts
-
-RUN pnpm install --no-cache
+COPY --from=build /api-feed ./
 
 CMD ["pnpm", "push-and-start"]

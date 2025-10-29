@@ -2,14 +2,16 @@
 
 docker_compose('docker-compose.yml')
 
-docker_build('ditherchat/api-main', './packages/api-main',
+docker_build('ditherchat/api-main', '.',
+  dockerfile = './packages/api-main/Dockerfile',
   live_update = [
     sync('./packages/api-main/src', '/app'),
     run('pnpm install', trigger='package.json'),
     restart_container(),
   ])
 
-docker_build('ditherchat/reader-main', './packages/reader-main',
+docker_build('ditherchat/reader-main', '.',
+  dockerfile = './packages/reader-main/Dockerfile',
   live_update = [
     sync('./packages/reader-main/src', '/app'),
     run('pnpm install', trigger='package.json'),

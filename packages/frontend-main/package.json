@@ -48,7 +48,7 @@
     "@walletconnect/types": "^2.22.4",
     "typescript": "~5.7.3",
     "vite": "^6.3.7",
-    "vite-plugin-node-polyfills": "^0.23.0",
+    "vite-plugin-node-polyfills": "^0.24.0",
     "vite-svg-loader": "^5.1.0",
     "vue-tsc": "^2.2.12"
   }
