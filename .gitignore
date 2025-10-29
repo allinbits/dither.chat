@@ -13,3 +13,4 @@ data/*
 .DS_Store
 .retype
 retype.manifest
+packages/**/coverage

@@ -1,9 +1,11 @@
+import process from 'node:process';
+
 import { LogicalReplicationService, PgoutputPlugin } from 'pg-logical-replication';
 
 import { useConfig } from './config';
 import { FeedReplicationService } from './feed';
 
-async function main() {
+export async function main() {
   const config = useConfig();
 
   const service = new LogicalReplicationService({
@@ -20,4 +22,6 @@ async function main() {
   await feedReplicationService.start();
 }
 
-main().catch(console.error);
+if (!process.env.SKIP_START) {
+  main().catch(console.error);
+}
