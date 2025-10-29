@@ -5,7 +5,15 @@ import { WalletConnectModal } from '@walletconnect/modal';
 import UniversalProvider from '@walletconnect/universal-provider';
 import { onMounted, ref } from 'vue';
 
-const PROJECT_ID = 'e700b6e7008642893d073812df4f87d4';
+const PROJECT_ID = import.meta.env.VITE_WALLETCONNECT_PROJECT_ID;
+if (!PROJECT_ID) {
+  throw new Error('VITE_WALLETCONNECT_PROJECT_ID is not set');
+}
+
+const RECOMMENDED_WALLET_ID = import.meta.env.VITE_WALLETCONNECT_WALLET_ID;
+if (!RECOMMENDED_WALLET_ID) {
+  throw new Error('VITE_WALLETCONNECT_WALLET_ID is not set');
+}
 
 // AtomOne chain configurations
 const ATOMONE_CHAINS = {
@@ -43,7 +51,7 @@ export function useWalletConnect() {
     projectId: PROJECT_ID,
     // Configure modal to only show Keplr
     enableExplorer: true,
-    explorerRecommendedWalletIds: ['c286eebfdfa4e6f251a110fefc7bd43046ab7c45f7782a28078e0fde5c0c742e'], // Keplr wallet ID
+    explorerRecommendedWalletIds: [RECOMMENDED_WALLET_ID],
     explorerExcludedWalletIds: 'ALL',
   });
 
