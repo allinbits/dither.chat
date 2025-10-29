@@ -6,20 +6,21 @@
   "author": "stuyk",
   "main": "dist/index.js",
   "scripts": {
+    "build:deps": "pnpm --filter {.}^... build",
     "build": "tsc",
-    "start": "vite-node ./src/index.ts",
+    "start": "npx vite-node ./src/index.ts",
     "test": "vitest"
   },
   "dependencies": {
     "@atomone/chronostate": "^2.3.0",
     "@atomone/dither-api-types": "workspace:*",
     "graphql": "^16.11.0",
-    "graphql-request": "^6.1.0",
-    "tsx": "^4.20.6"
+    "graphql-request": "^7.3.1",
+    "vite-node": "^3.2.4"
   },
   "devDependencies": {
     "@types/pg": "^8.15.5",
-    "vite-node": "^3.2.4",
+    "typescript": "^5.9.3",
     "vitest": "^3.2.4"
   }
 }

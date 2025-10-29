@@ -18,7 +18,10 @@ jobs:
         uses: superfly/flyctl-actions/setup-flyctl@master
 
       - name: Deploy reader-main to Fly.io
-        working-directory: ./packages/reader-main
-        run: flyctl deploy --remote-only --config ./fly.mainnet.toml
+        run: |
+          flyctl deploy \
+            --remote-only \
+            --config ./packages/reader-main/fly.mainnet.toml \
+            --dockerfile ./packages/reader-main/Dockerfile
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_READER_MAIN }}
