@@ -25,6 +25,10 @@ jobs:
       - name: Install dependencies with pnpm
         run: pnpm install
 
+      - name: Build dependencies
+        working-directory: packages/api-main
+        run: pnpm run build:deps
+
       - name: Run tests
         working-directory: packages/api-main
         run: pnpm run test:smoke
