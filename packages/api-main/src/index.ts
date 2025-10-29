@@ -10,6 +10,7 @@ import { moderatorRoutes } from './routes/moderator';
 import { publicRoutes } from './routes/public';
 import { readerRoutes } from './routes/reader';
 import { userRoutes } from './routes/user';
+import { startBot as startTelegramBot } from './telegram/bot';
 
 const config = useConfig();
 const app = new Elysia({ adapter: node(), prefix: '/v1' });
@@ -22,6 +23,7 @@ export function start() {
   app.use(userRoutes);
   app.use(moderatorRoutes);
 
+  startTelegramBot();
   app.listen(config.PORT);
 }
 

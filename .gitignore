@@ -8,9 +8,12 @@ dist
 dist/
 data
 data/*
-.vscode/
+.cursor/
 .idea/
 .DS_Store
 .retype
 retype.manifest
 packages/**/coverage
+
+# Local Netlify folder
+.netlify
