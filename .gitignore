@@ -13,5 +13,7 @@ data/*
 .DS_Store
 .retype
 retype.manifest
+packages/**/coverage
+
 # Local Netlify folder
 .netlify
