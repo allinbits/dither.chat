@@ -10,10 +10,7 @@ if (!PROJECT_ID) {
   throw new Error('VITE_WALLETCONNECT_PROJECT_ID is not set');
 }
 
-const RECOMMENDED_WALLET_ID = import.meta.env.VITE_WALLETCONNECT_WALLET_ID;
-if (!RECOMMENDED_WALLET_ID) {
-  throw new Error('VITE_WALLETCONNECT_WALLET_ID is not set');
-}
+const RECOMMENDED_WALLET_IDS: string[] = (import.meta.env.VITE_WALLETCONNECT_WALLET_IDS?.split(',') ?? []).filter(Boolean);
 
 // AtomOne chain configurations
 const ATOMONE_CHAINS = {
@@ -51,7 +48,7 @@ export function useWalletConnect() {
     projectId: PROJECT_ID,
     // Configure modal to only show Keplr
     enableExplorer: true,
-    explorerRecommendedWalletIds: [RECOMMENDED_WALLET_ID],
+    explorerRecommendedWalletIds: RECOMMENDED_WALLET_IDS,
     explorerExcludedWalletIds: 'ALL',
   });
 
