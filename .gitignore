@@ -8,7 +8,7 @@ dist
 dist/
 data
 data/*
-.vscode/
+.cursor/
 .idea/
 .DS_Store
 .retype
