@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n';
 import { X } from 'lucide-vue-next';
+import { useI18n } from 'vue-i18n';
 
 import ToastWrapper from './ToastWrapper.vue';
 
 defineProps<{
-    close: () => void;
-    txLabel: string;
-    errorMessage: string;
+  close: () => void;
+  txLabel: string;
+  errorMessage: string;
 }>();
 
 const { t } = useI18n();
@@ -20,7 +20,7 @@ const { t } = useI18n();
     </div>
     <div>
       <div class="font-semibold text-sm text-gray-900 dark:text-gray-100">
-        {{ t('components.Toast.fail', { txLabel: txLabel }) }}
+        {{ t('components.Toast.fail', { txLabel }) }}
       </div>
       <div class="text-sm text-gray-700 dark:text-gray-300 mt-1">
         {{ errorMessage }}

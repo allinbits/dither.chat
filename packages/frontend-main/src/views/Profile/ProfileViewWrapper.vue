@@ -1,26 +1,27 @@
 <script setup lang="ts">
+import type { PopupState } from '@/composables/usePopups';
+
+import { Loader } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { toast } from 'vue-sonner';
-import { Loader } from 'lucide-vue-next';
-
-import { useDefaultAmount } from '@/composables/useDefaultAmount';
-import { useFollowUser } from '@/composables/useFollowUser';
-import { useIsFollowing } from '@/composables/useIsFollowing';
-import { type PopupState, usePopups } from '@/composables/usePopups';
-import { useTipUser } from '@/composables/useTipUser';
-import { useUnfollowUser } from '@/composables/useUnfollowUser';
-import { useWallet } from '@/composables/useWallet';
-
-import ViewHeading from '../ViewHeading.vue';
 
 import Button from '@/components/ui/button/Button.vue';
 import RouterLinkTab from '@/components/ui/tabs/RouterLinkTab.vue';
 import UserAvatarUsername from '@/components/users/UserAvatarUsername.vue';
+import { useDefaultAmount } from '@/composables/useDefaultAmount';
+import { useFollowUser } from '@/composables/useFollowUser';
+import { useIsFollowing } from '@/composables/useIsFollowing';
+import { usePopups } from '@/composables/usePopups';
+import { useTipUser } from '@/composables/useTipUser';
+import { useUnfollowUser } from '@/composables/useUnfollowUser';
+import { useWallet } from '@/composables/useWallet';
 import MainLayout from '@/layouts/MainLayout.vue';
 import { useConfigStore } from '@/stores/useConfigStore';
 import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
 import { showBroadcastingToast } from '@/utility/toast';
+
+import ViewHeading from '../ViewHeading.vue';
 
 const wallet = useWallet();
 const popups = usePopups();
@@ -32,76 +33,66 @@ const { followUser } = useFollowUser();
 const { unfollowUser } = useUnfollowUser();
 
 const address = computed(() =>
-    typeof route.params.address === 'string' ? route.params.address : '',
+  typeof route.params.address === 'string' ? route.params.address : '',
 );
 const isMyProfile = computed(() =>
-    address.value === wallet.address.value,
+  address.value === wallet.address.value,
 );
 const { data: isFollowing, isFetching: isFetchingIsFollowing } = useIsFollowing({ followingAddress: address, followerAddress: wallet.address });
 
 const walletDialogStore = useWalletDialogStore();
 function handleAction(type: keyof PopupState, userAddress: string) {
-    if (wallet.loggedIn.value) {
-        popups.show(type, userAddress);
-        return;
-    }
-    walletDialogStore.showDialog(null, () => {
-        popups.show(type, userAddress);
-    });
+  if (wallet.loggedIn.value) {
+    popups.show(type, userAddress);
+    return;
+  }
+  walletDialogStore.showDialog(null, () => {
+    popups.show(type, userAddress);
+  });
 }
 
 async function onClickTip() {
-    if (isDefaultAmountInvalid.value) {
-        popups.show('invalidDefaultAmount', 'none');
+  if (isDefaultAmountInvalid.value) {
+    popups.show('invalidDefaultAmount', 'none');
+  } else if (configStore.config.defaultAmountEnabled) {
+    const toastId = showBroadcastingToast('Tip');
+    try {
+      await tipUser({ userAddress: address, amountAtomics: configStore.config.defaultAmountAtomics });
+    } finally {
+      toast.dismiss(toastId);
     }
-    else if (configStore.config.defaultAmountEnabled) {
-        const toastId = showBroadcastingToast('Tip');
-        try {
-            await tipUser({ userAddress: address, amountAtomics: configStore.config.defaultAmountAtomics });
-        }
-        finally {
-            toast.dismiss(toastId);
-        }
-    }
-    else {
-        handleAction('tipUser', address.value);
-    }
+  } else {
+    handleAction('tipUser', address.value);
+  }
 }
 async function onClickFollow() {
-    if (isDefaultAmountInvalid.value) {
-        popups.show('invalidDefaultAmount', 'none');
+  if (isDefaultAmountInvalid.value) {
+    popups.show('invalidDefaultAmount', 'none');
+  } else if (configStore.config.defaultAmountEnabled) {
+    const toastId = showBroadcastingToast('Follow');
+    try {
+      await followUser({ userAddress: address, amountAtomics: configStore.config.defaultAmountAtomics });
+    } finally {
+      toast.dismiss(toastId);
     }
-    else if (configStore.config.defaultAmountEnabled) {
-        const toastId = showBroadcastingToast('Follow');
-        try {
-            await followUser({ userAddress: address, amountAtomics: configStore.config.defaultAmountAtomics });
-        }
-        finally {
-            toast.dismiss(toastId);
-        }
-    }
-    else {
-        handleAction('follow', address.value);
-    }
+  } else {
+    handleAction('follow', address.value);
+  }
 }
 async function onClickUnfollow() {
-    if (isDefaultAmountInvalid.value) {
-        popups.show('invalidDefaultAmount', 'none');
+  if (isDefaultAmountInvalid.value) {
+    popups.show('invalidDefaultAmount', 'none');
+  } else if (configStore.config.defaultAmountEnabled) {
+    const toastId = showBroadcastingToast('Unfollow');
+    try {
+      await unfollowUser({ userAddress: address, amountAtomics: configStore.config.defaultAmountAtomics });
+    } finally {
+      toast.dismiss(toastId);
     }
-    else if (configStore.config.defaultAmountEnabled) {
-        const toastId = showBroadcastingToast('Unfollow');
-        try {
-            await unfollowUser({ userAddress: address, amountAtomics: configStore.config.defaultAmountAtomics });
-        }
-        finally {
-            toast.dismiss(toastId);
-        }
-    }
-    else {
-        handleAction('unfollow', address.value);
-    }
+  } else {
+    handleAction('unfollow', address.value);
+  }
 }
-
 </script>
 
 <template>
@@ -110,7 +101,7 @@ async function onClickUnfollow() {
       <ViewHeading :title="$t(`components.Headings.${isMyProfile ? 'myProfile' : 'profile'}`)" />
 
       <div class="flex flex-row justify-between items-center p-4">
-        <UserAvatarUsername :userAddress="address" size="lg" disabled/>
+        <UserAvatarUsername :user-address="address" size="lg" disabled />
         <Loader v-if="isFetchingIsFollowing" class="animate-spin w-[80px]" />
         <template v-else-if="!isMyProfile && wallet.loggedIn.value">
           <div class="flex flex-row gap-2">
@@ -128,18 +119,20 @@ async function onClickUnfollow() {
         </template>
       </div>
 
-      <div v-if="wallet.loggedIn.value" class='flex flex-row border-t'>
-        <RouterLinkTab :label="$t(`components.Tabs.${isMyProfile ? 'myPosts' : 'posts'}`)"
-                       :isActive="route.path === `/profile/${address}`"
-                       :to="`/profile/${address}`"
+      <div v-if="wallet.loggedIn.value" class="flex flex-row border-t">
+        <RouterLinkTab
+          :label="$t(`components.Tabs.${isMyProfile ? 'myPosts' : 'posts'}`)"
+          :is-active="route.path === `/profile/${address}`"
+          :to="`/profile/${address}`"
         />
-        <RouterLinkTab :label="$t(`components.Tabs.${isMyProfile ? 'myReplies' : 'replies'}`)"
-                       :isActive="route.path === `/profile/${address}/replies`"
-                       :to="`/profile/${address}/replies`"
+        <RouterLinkTab
+          :label="$t(`components.Tabs.${isMyProfile ? 'myReplies' : 'replies'}`)"
+          :is-active="route.path === `/profile/${address}/replies`"
+          :to="`/profile/${address}/replies`"
         />
       </div>
     </div>
 
-    <slot/>
+    <slot />
   </MainLayout>
 </template>

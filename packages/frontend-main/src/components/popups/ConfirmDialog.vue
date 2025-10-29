@@ -17,10 +17,14 @@ const { isOpen, title, description, onConfirm, onCancel } = useConfirmDialog();
       </AlertDialogHeader>
       <AlertDialogFooter>
         <AlertDialogCancel @click="onCancel">
-          <slot name="cancel">Discard</slot>
+          <slot name="cancel">
+            Discard
+          </slot>
         </AlertDialogCancel>
         <AlertDialogAction @click="onConfirm">
-          <slot name="confirm">OK</slot>
+          <slot name="confirm">
+            OK
+          </slot>
         </AlertDialogAction>
       </AlertDialogFooter>
     </AlertDialogContent>

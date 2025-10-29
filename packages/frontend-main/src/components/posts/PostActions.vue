@@ -1,28 +1,29 @@
 <script setup lang="ts">
 import type { Post } from 'api-main/types/feed';
 
-import { ref } from 'vue';
-import { toast } from 'vue-sonner';
+import type { PopupState } from '@/composables/usePopups';
+
 import { Decimal } from '@cosmjs/math';
 import { Flag, MessageCircle, ThumbsDown, ThumbsUp } from 'lucide-vue-next';
+import { ref } from 'vue';
+import { toast } from 'vue-sonner';
 
 import { useDefaultAmount } from '@/composables/useDefaultAmount';
 import { useDislikePost } from '@/composables/useDislikePost';
 import { useFlagPost } from '@/composables/useFlagPost';
 import { useLikePost } from '@/composables/useLikePost';
-import { type PopupState, usePopups } from '@/composables/usePopups';
+import { usePopups } from '@/composables/usePopups';
 import { useWallet } from '@/composables/useWallet';
-
-import Popover from '../ui/popover/Popover.vue';
-import PopoverContent from '../ui/popover/PopoverContent.vue';
-import PopoverTrigger from '../ui/popover/PopoverTrigger.vue';
-
 import { useConfigStore } from '@/stores/useConfigStore';
 import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
 import { cn } from '@/utility';
 import { fractionalDigits } from '@/utility/atomics';
 import { formatCompactAtomics, formatCompactNumber } from '@/utility/text';
 import { showBroadcastingToast } from '@/utility/toast';
+
+import Popover from '../ui/popover/Popover.vue';
+import PopoverContent from '../ui/popover/PopoverContent.vue';
+import PopoverTrigger from '../ui/popover/PopoverTrigger.vue';
 
 const props = defineProps<{ post: Post }>();
 const buttonWrapperClass = 'flex items-center flex-1 min-w-[84px]';
@@ -42,76 +43,65 @@ const { dislikePost } = useDislikePost();
 const { flagPost } = useFlagPost();
 
 function handleAction(type: keyof PopupState, post: Post) {
-    if (wallet.loggedIn.value) {
-        popups.show(type, post);
-        return;
-    }
+  if (wallet.loggedIn.value) {
+    popups.show(type, post);
+    return;
+  }
 
-    walletDialogStore.showDialog(null, () => {
-        popups.show(type, post);
-    });
+  walletDialogStore.showDialog(null, () => {
+    popups.show(type, post);
+  });
 }
 
 async function onClickReply() {
-    if (isDefaultAmountInvalid.value) {
-        popups.show('invalidDefaultAmount', 'none');
-    }
-    else {
-        handleAction('reply', props.post);
-    }
+  if (isDefaultAmountInvalid.value) {
+    popups.show('invalidDefaultAmount', 'none');
+  } else {
+    handleAction('reply', props.post);
+  }
 }
 async function onClickLike() {
-    if (isDefaultAmountInvalid.value) {
-        popups.show('invalidDefaultAmount', 'none');
+  if (isDefaultAmountInvalid.value) {
+    popups.show('invalidDefaultAmount', 'none');
+  } else if (configStore.config.defaultAmountEnabled) {
+    const toastId = showBroadcastingToast('Like');
+    try {
+      await likePost({ post: ref(props.post), amountAtomics: configStore.config.defaultAmountAtomics });
+    } finally {
+      toast.dismiss(toastId);
     }
-    else if (configStore.config.defaultAmountEnabled) {
-        const toastId = showBroadcastingToast('Like');
-        try {
-            await likePost({ post: ref(props.post), amountAtomics: configStore.config.defaultAmountAtomics });
-        }
-        finally {
-            toast.dismiss(toastId);
-        }
-    }
-    else {
-        handleAction('like', props.post);
-    }
+  } else {
+    handleAction('like', props.post);
+  }
 }
 async function onClickDislike() {
-    if (isDefaultAmountInvalid.value) {
-        popups.show('invalidDefaultAmount', 'none');
+  if (isDefaultAmountInvalid.value) {
+    popups.show('invalidDefaultAmount', 'none');
+  } else if (configStore.config.defaultAmountEnabled) {
+    const toastId = showBroadcastingToast('Dislike');
+    try {
+      await dislikePost({ post: ref(props.post), amountAtomics: configStore.config.defaultAmountAtomics });
+    } finally {
+      toast.dismiss(toastId);
     }
-    else if (configStore.config.defaultAmountEnabled) {
-        const toastId = showBroadcastingToast('Dislike');
-        try {
-            await dislikePost({ post: ref(props.post), amountAtomics: configStore.config.defaultAmountAtomics });
-        }
-        finally {
-            toast.dismiss(toastId);
-        }
-    }
-    else {
-        handleAction('dislike', props.post);
-    }
+  } else {
+    handleAction('dislike', props.post);
+  }
 }
 async function onClickFlag() {
-    if (isDefaultAmountInvalid.value) {
-        popups.show('invalidDefaultAmount', 'none');
+  if (isDefaultAmountInvalid.value) {
+    popups.show('invalidDefaultAmount', 'none');
+  } else if (configStore.config.defaultAmountEnabled) {
+    const toastId = showBroadcastingToast('Flag');
+    try {
+      await flagPost({ post: ref(props.post), amountAtomics: configStore.config.defaultAmountAtomics });
+    } finally {
+      toast.dismiss(toastId);
     }
-    else if (configStore.config.defaultAmountEnabled) {
-        const toastId = showBroadcastingToast('Flag');
-        try {
-            await flagPost({ post: ref(props.post), amountAtomics: configStore.config.defaultAmountAtomics });
-        }
-        finally {
-            toast.dismiss(toastId);
-        }
-    }
-    else {
-        handleAction('flag', props.post);
-    }
+  } else {
+    handleAction('flag', props.post);
+  }
 }
-
 </script>
 
 <template>
@@ -121,11 +111,11 @@ async function onClickFlag() {
         <MessageCircle class="size-5" color="#A2A2A9" />
       </button>
       <Popover>
-        <PopoverTrigger @click.stop >
+        <PopoverTrigger @click.stop>
           <span :class="amountTextClass">{{ formatCompactNumber(post.replies) }}</span>
         </PopoverTrigger>
         <PopoverContent :class="amountPopoverContentClass">
-          <span :class="fullAmountTextClass">{{ formatCompactNumber(post.replies) + ' ' + $t('components.PostActions.replies', post.replies ?? 0) }}</span>
+          <span :class="fullAmountTextClass">{{ `${formatCompactNumber(post.replies)} ${$t('components.PostActions.replies', post.replies ?? 0)}` }}</span>
         </PopoverContent>
       </Popover>
     </div>
@@ -135,14 +125,13 @@ async function onClickFlag() {
         <ThumbsUp class="size-5" color="#A2A2A9" />
       </button>
       <Popover>
-        <PopoverTrigger @click.stop >
+        <PopoverTrigger @click.stop>
           <span :class="amountTextClass">{{ formatCompactAtomics(post.likes_burnt, fractionalDigits) }}</span>
         </PopoverTrigger>
         <PopoverContent :class="amountPopoverContentClass">
           <span :class="fullAmountTextClass">{{ Decimal.fromAtomics(post.likes_burnt ?? '0', fractionalDigits).toString() }} PHOTON</span>
         </PopoverContent>
       </Popover>
-
     </div>
 
     <div :class="buttonWrapperClass">
@@ -150,7 +139,7 @@ async function onClickFlag() {
         <ThumbsDown class="size-5 scale-x-[-1]" color="#A2A2A9" />
       </button>
       <Popover>
-        <PopoverTrigger @click.stop >
+        <PopoverTrigger @click.stop>
           <span :class="amountTextClass">{{ formatCompactAtomics(post.dislikes_burnt, fractionalDigits) }}</span>
         </PopoverTrigger>
         <PopoverContent :class="amountPopoverContentClass">
@@ -164,7 +153,7 @@ async function onClickFlag() {
         <Flag class="size-5" color="#A2A2A9" />
       </button>
       <Popover>
-        <PopoverTrigger @click.stop >
+        <PopoverTrigger @click.stop>
           <span :class="amountTextClass">{{ formatCompactAtomics(post.flags_burnt, fractionalDigits) }}</span>
         </PopoverTrigger>
         <PopoverContent :class="amountPopoverContentClass">
@@ -174,7 +163,7 @@ async function onClickFlag() {
     </div>
 
     <Popover>
-      <PopoverTrigger @click.stop class="min-w-[114px] ml-auto text-right">
+      <PopoverTrigger class="min-w-[114px] ml-auto text-right" @click.stop>
         <span :class="amountTextClass">{{ formatCompactAtomics(post.quantity, fractionalDigits) }} PHOTON</span>
       </PopoverTrigger>
       <PopoverContent :class="amountPopoverContentClass">

@@ -37,7 +37,7 @@ jobs:
       # Add reader-main specific test steps here
 
   deploy-testnet:
-    needs: [ detect-changes, test ]
+    needs: [detect-changes, test]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.detect-changes.outputs.changed == 'true'
     runs-on: ubuntu-latest
     environment: testnet

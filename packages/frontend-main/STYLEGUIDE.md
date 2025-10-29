@@ -33,10 +33,10 @@ This document defines the coding standards, patterns, and constraints for the Di
 
 ```json
 {
-    "tabWidth": 4,
-    "singleQuote": true,
-    "semi": true,
-    "printWidth": 120
+  "tabWidth": 4,
+  "singleQuote": true,
+  "semi": true,
+  "printWidth": 120
 }
 ```
 
@@ -55,29 +55,29 @@ This document defines the coding standards, patterns, and constraints for the Di
 ```vue
 <script setup lang="ts">
 // 1. External imports first
-import { ref, computed, onMounted } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
+import Button from '@/components/ui/button/Button.vue';
 // 2. Internal imports (composables, components, utilities)
 import { useWallet } from '@/composables/useWallet';
 import { useConfigStore } from '@/stores/useConfigStore';
-import Button from '@/components/ui/button/Button.vue';
 import { cn } from '@/utility';
 
 // 3. Type definitions
 interface Props {
-    title: string;
-    isVisible?: boolean;
+  title: string;
+  isVisible?: boolean;
 }
 
 interface Emits {
-    close: [];
-    submit: [value: string];
+  close: [];
+  submit: [value: string];
 }
 
 // 4. Props and emits
 const props = withDefaults(defineProps<Props>(), {
-    isVisible: false,
+  isVisible: false,
 });
 
 const emit = defineEmits<Emits>();
@@ -93,29 +93,32 @@ const formData = ref('');
 
 // 7. Computed properties
 const isDisabled = computed(() => {
-    return isLoading.value || !wallet.loggedIn.value;
+  return isLoading.value || !wallet.loggedIn.value;
 });
 
 // 8. Methods
 function handleSubmit() {
-    if (!formData.value) return;
+  if (!formData.value)
+    return;
 
-    isLoading.value = true;
-    emit('submit', formData.value);
-    isLoading.value = false;
+  isLoading.value = true;
+  emit('submit', formData.value);
+  isLoading.value = false;
 }
 
 // 9. Lifecycle hooks
 onMounted(() => {
-    // Initialization logic
+  // Initialization logic
 });
 </script>
 
 <template>
-    <div :class="cn('component-wrapper', props.isVisible && 'visible')">
-        <h2>{{ props.title }}</h2>
-        <Button :disabled="isDisabled" @click="handleSubmit"> Submit </Button>
-    </div>
+  <div :class="cn('component-wrapper', props.isVisible && 'visible')">
+    <h2>{{ props.title }}</h2>
+    <Button :disabled="isDisabled" @click="handleSubmit">
+      Submit
+    </Button>
+  </div>
 </template>
 ```
 
@@ -151,19 +154,19 @@ onMounted(() => {
 ```typescript
 // Good - Explicit interface
 interface Props {
-    title: string;
-    isVisible?: boolean;
-    items: Array<{ id: string; name: string }>;
+  title: string;
+  isVisible?: boolean;
+  items: Array<{ id: string; name: string }>;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-    isVisible: false,
+  isVisible: false,
 });
 
 // Bad - Inline props
 const props = defineProps<{
-    title: string;
-    isVisible?: boolean;
+  title: string;
+  isVisible?: boolean;
 }>();
 ```
 
@@ -172,9 +175,9 @@ const props = defineProps<{
 ```typescript
 // Good - Explicit interface
 interface Emits {
-    update: [value: string];
-    close: [];
-    error: [error: Error];
+  update: [value: string];
+  close: [];
+  error: [error: Error];
 }
 
 const emit = defineEmits<Emits>();
@@ -188,24 +191,24 @@ const emit = defineEmits(['update', 'close', 'error']);
 ```typescript
 // Good - Return object with named properties
 export function useWallet() {
-    const address = ref('');
-    const isConnected = computed(() => !!address.value);
+  const address = ref('');
+  const isConnected = computed(() => !!address.value);
 
-    function connect() {
-        // Connection logic
-    }
+  function connect() {
+    // Connection logic
+  }
 
-    return {
-        address: readonly(address),
-        isConnected,
-        connect,
-    };
+  return {
+    address: readonly(address),
+    isConnected,
+    connect,
+  };
 }
 
 // Bad - Return array
 export function useWallet() {
-    const address = ref('');
-    return [address, connect];
+  const address = ref('');
+  return [address, connect];
 }
 ```
 
@@ -215,14 +218,18 @@ export function useWallet() {
 
 ```vue
 <template>
-    <!-- Good - Semantic class grouping -->
-    <div class="flex flex-col gap-4 p-6 bg-background border border-border rounded-lg">
-        <h2 class="text-xl font-semibold text-foreground">Title</h2>
-        <p class="text-sm text-muted-foreground">Description</p>
-    </div>
+  <!-- Good - Semantic class grouping -->
+  <div class="flex flex-col gap-4 p-6 bg-background border border-border rounded-lg">
+    <h2 class="text-xl font-semibold text-foreground">
+      Title
+    </h2>
+    <p class="text-sm text-muted-foreground">
+      Description
+    </p>
+  </div>
 
-    <!-- Bad - Random class order -->
-    <div class="p-6 flex gap-4 border-border bg-background text-xl rounded-lg flex-col">
+  <!-- Bad - Random class order -->
+  <div class="p-6 flex gap-4 border-border bg-background text-xl rounded-lg flex-col" />
 </template>
 ```
 
@@ -231,16 +238,16 @@ export function useWallet() {
 ```css
 /* Good - Use design tokens */
 .component {
-    background-color: var(--background);
-    color: var(--foreground);
-    border-radius: var(--radius);
+  background-color: var(--background);
+  color: var(--foreground);
+  border-radius: var(--radius);
 }
 
 /* Bad - Hard-coded values */
 .component {
-    background-color: #ffffff;
-    color: #000000;
-    border-radius: 8px;
+  background-color: #ffffff;
+  color: #000000;
+  border-radius: 8px;
 }
 ```
 
@@ -252,18 +259,18 @@ export function useWallet() {
 import { cn } from '@/utility';
 
 const props = defineProps<{
-    variant: 'primary' | 'secondary';
-    size: 'sm' | 'md' | 'lg';
+  variant: 'primary' | 'secondary';
+  size: 'sm' | 'md' | 'lg';
 }>();
 
 const buttonClasses = computed(() =>
-    cn('px-4 py-2 rounded-md font-medium transition-colors', {
-        'bg-primary text-primary-foreground': props.variant === 'primary',
-        'bg-secondary text-secondary-foreground': props.variant === 'secondary',
-        'px-2 py-1 text-sm': props.size === 'sm',
-        'px-4 py-2': props.size === 'md',
-        'px-6 py-3 text-lg': props.size === 'lg',
-    }),
+  cn('px-4 py-2 rounded-md font-medium transition-colors', {
+    'bg-primary text-primary-foreground': props.variant === 'primary',
+    'bg-secondary text-secondary-foreground': props.variant === 'secondary',
+    'px-2 py-1 text-sm': props.size === 'sm',
+    'px-4 py-2': props.size === 'md',
+    'px-6 py-3 text-lg': props.size === 'lg',
+  }),
 );
 </script>
 ```
@@ -275,43 +282,43 @@ const buttonClasses = computed(() =>
 ```typescript
 // Good - Clear store structure
 export const useWalletStore = defineStore(
-    'wallet',
-    () => {
-        // State
-        const address = ref('');
-        const isConnected = ref(false);
+  'wallet',
+  () => {
+    // State
+    const address = ref('');
+    const isConnected = ref(false);
 
-        // Getters
-        const shortAddress = computed(() => (address.value ? shorten(address.value) : ''));
+    // Getters
+    const shortAddress = computed(() => (address.value ? shorten(address.value) : ''));
 
-        // Actions
-        function setAddress(newAddress: string) {
-            address.value = newAddress;
-            isConnected.value = !!newAddress;
-        }
+    // Actions
+    function setAddress(newAddress: string) {
+      address.value = newAddress;
+      isConnected.value = !!newAddress;
+    }
 
-        function disconnect() {
-            address.value = '';
-            isConnected.value = false;
-        }
+    function disconnect() {
+      address.value = '';
+      isConnected.value = false;
+    }
 
-        return {
-            // State
-            address: readonly(address),
-            isConnected: readonly(isConnected),
-            // Getters
-            shortAddress,
-            // Actions
-            setAddress,
-            disconnect,
-        };
+    return {
+      // State
+      address: readonly(address),
+      isConnected: readonly(isConnected),
+      // Getters
+      shortAddress,
+      // Actions
+      setAddress,
+      disconnect,
+    };
+  },
+  {
+    persist: {
+      storage: sessionStorage,
+      pick: ['address', 'isConnected'],
     },
-    {
-        persist: {
-            storage: sessionStorage,
-            pick: ['address', 'isConnected'],
-        },
-    },
+  },
 );
 ```
 
@@ -320,19 +327,19 @@ export const useWalletStore = defineStore(
 ```typescript
 // Good - Proper query structure
 export function useFeed() {
-    const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
-    return useInfiniteQuery({
-        queryKey: ['feed'],
-        queryFn: async ({ pageParam = 0 }) => {
-            const response = await fetch(`/api/feed?page=${pageParam}`);
-            return response.json();
-        },
-        getNextPageParam: (lastPage, allPages) => {
-            return lastPage.hasMore ? allPages.length : undefined;
-        },
-        staleTime: 5 * 60 * 1000, // 5 minutes
-    });
+  return useInfiniteQuery({
+    queryKey: ['feed'],
+    queryFn: async ({ pageParam = 0 }) => {
+      const response = await fetch(`/api/feed?page=${pageParam}`);
+      return response.json();
+    },
+    getNextPageParam: (lastPage, allPages) => {
+      return lastPage.hasMore ? allPages.length : undefined;
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
 }
 ```
 
@@ -344,25 +351,20 @@ export function useFeed() {
 <!-- Bad - Options API -->
 <script lang="ts">
 export default {
-    data() {
-        return {
-            count: 0,
-        };
+  data() {
+    return {
+      count: 0,
+    };
+  },
+  methods: {
+    increment() {
+      this.count++;
     },
-    methods: {
-        increment() {
-            this.count++;
-        },
-    },
+  },
 };
 </script>
 
 <!-- Bad - Inline styles -->
-<template>
-    <div style="color: red; font-size: 16px;">Text</div>
-</template>
-
-<!-- Bad - Direct DOM manipulation -->
 <script setup>
 import { onMounted } from 'vue';
 
@@ -371,7 +373,7 @@ onMounted(() => {
 });
 </script>
 
-<!-- Bad - Mutating props -->
+<!-- Bad - Direct DOM manipulation -->
 <script setup>
 const props = defineProps<{ items: string[] }>();
 
@@ -379,6 +381,13 @@ function removeItem(index: number) {
     props.items.splice(index, 1); // Don't mutate props!
 }
 </script>
+
+<!-- Bad - Mutating props -->
+<template>
+  <div style="color: red; font-size: 16px;">
+    Text
+  </div>
+</template>
 ```
 
 ### Use These Patterns Instead
@@ -391,30 +400,32 @@ import { ref } from 'vue';
 const count = ref(0);
 
 function increment() {
-    count.value++;
+  count.value++;
 }
 </script>
 
 <!-- Good - Tailwind classes -->
-<template>
-    <div class="text-red-500 text-base">Text</div>
-</template>
-
-<!-- Good - Vue event handling -->
-<template>
-    <button @click="handleClick">Click me</button>
-</template>
-
-<!-- Good - Emit events for prop changes -->
 <script setup lang="ts">
 const props = defineProps<{ items: string[] }>();
 const emit = defineEmits<{ update: [items: string[]] }>();
 
 function removeItem(index: number) {
-    const newItems = props.items.filter((_, i) => i !== index);
-    emit('update', newItems);
+  const newItems = props.items.filter((_, i) => i !== index);
+  emit('update', newItems);
 }
 </script>
+
+<!-- Good - Vue event handling -->
+<template>
+  <div class="text-red-500 text-base">
+    Text
+  </div>
+</template>
+
+<!-- Good - Emit events for prop changes -->
+<template>
+    <button @click="handleClick">Click me</button>
+</template>
 ```
 
 ## Code Quality Rules

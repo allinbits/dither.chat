@@ -2,46 +2,46 @@ import type { Post } from 'api-main/types/feed';
 
 import { reactive } from 'vue';
 
-export type PopupState = {
-    like: Post | null;
-    dislike: Post | null;
-    flag: Post | null;
-    reply: Post | null;
-    newPost: object | null;
-    follow: string | null;
-    unfollow: string | null;
-    tipUser: string | null;
-    invalidDefaultAmount: string | null;
-};
+export interface PopupState {
+  like: Post | null;
+  dislike: Post | null;
+  flag: Post | null;
+  reply: Post | null;
+  newPost: object | null;
+  follow: string | null;
+  unfollow: string | null;
+  tipUser: string | null;
+  invalidDefaultAmount: string | null;
+}
 
 const state = reactive<PopupState>({
-    like: null,
-    dislike: null,
-    flag: null,
-    reply: null,
-    newPost: null,
-    follow: null,
-    unfollow: null,
-    tipUser: null,
-    invalidDefaultAmount: null,
+  like: null,
+  dislike: null,
+  flag: null,
+  reply: null,
+  newPost: null,
+  follow: null,
+  unfollow: null,
+  tipUser: null,
+  invalidDefaultAmount: null,
 });
 
 export function usePopups() {
-    const show = <T extends keyof PopupState>(key: T, val: Exclude<PopupState[T], null>) => {
-        for (const key of Object.keys(state)) {
-            state[key as keyof PopupState] = null;
-        }
+  const show = <T extends keyof PopupState>(key: T, val: Exclude<PopupState[T], null>) => {
+    for (const key of Object.keys(state)) {
+      state[key as keyof PopupState] = null;
+    }
 
-        state[key] = val;
-    };
+    state[key] = val;
+  };
 
-    const hide = <T extends keyof PopupState>(key: T) => {
-        state[key] = null;
-    };
+  const hide = <T extends keyof PopupState>(key: T) => {
+    state[key] = null;
+  };
 
-    return {
-        state,
-        show,
-        hide,
-    };
+  return {
+    state,
+    show,
+    hide,
+  };
 }

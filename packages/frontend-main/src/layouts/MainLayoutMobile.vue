@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import BottomPanel from './panels/BottomPanel.vue';
 import TopPanel from './panels/TopPanel.vue';
-
 </script>
 
 <template>

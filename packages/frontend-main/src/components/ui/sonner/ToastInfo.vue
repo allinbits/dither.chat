@@ -4,9 +4,9 @@ import { Info } from 'lucide-vue-next';
 import ToastWrapper from './ToastWrapper.vue';
 
 defineProps<{
-    close: () => void;
-    title: string;
-    description?: string;
+  close: () => void;
+  title: string;
+  description?: string;
 }>();
 </script>
 

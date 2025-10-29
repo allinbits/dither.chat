@@ -1,25 +1,25 @@
 import { reactive } from 'vue';
 
-type TabsState = {
-    activeTab: string;
-};
+interface TabsState {
+  activeTab: string;
+}
 
 const state = reactive<TabsState>({
-    activeTab: '',
+  activeTab: '',
 });
 
 interface Params {
-    defaultActiveTab: string;
+  defaultActiveTab: string;
 }
 
 export function useTabs(params: Params) {
-    state.activeTab = params.defaultActiveTab;
-    const setActiveTab = (activeTab: string) => {
-        state.activeTab = activeTab;
-    };
+  state.activeTab = params.defaultActiveTab;
+  const setActiveTab = (activeTab: string) => {
+    state.activeTab = activeTab;
+  };
 
-    return {
-        state,
-        setActiveTab,
-    };
+  return {
+    state,
+    setActiveTab,
+  };
 }

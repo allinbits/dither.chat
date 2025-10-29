@@ -4,9 +4,9 @@ This uses elysia to serve data from the relevant database.
 
 ## Tech Stack
 
--   [REST API - ElysiaJS](https://elysiajs.com)
--   [Database - PostgreSQL](https://www.postgresql.org)
--   [SQL ORM - Drizzle](https://orm.drizzle.team)
+- [REST API - ElysiaJS](https://elysiajs.com)
+- [Database - PostgreSQL](https://www.postgresql.org)
+- [SQL ORM - Drizzle](https://orm.drizzle.team)
 
 ## Usage
 
@@ -35,7 +35,7 @@ All data for postgres is stored in the `data` directory.
 
 ## Testing
 
-> [!Caution]  
+> [!Caution]
 > When running tests all tables will be cleaned out for a clean test environment. You've been warned.
 
 Start the PostgreSQL Database
