@@ -17,7 +17,7 @@ describe('v1/notifications', async () => {
 
   // Follows
   it('pOST - /follow', async () => {
-    const body: typeof Posts.FollowBody.static = {
+    const body: Posts.FollowBody = {
       from: walletA.publicKey,
       hash: getRandomHash(),
       address: walletB.publicKey,
@@ -71,7 +71,7 @@ describe('v1/notifications', async () => {
     const genericPostMessage
       = 'hello world, this is a really intereresting post $@!($)@!()@!$21,4214,12,42142,14,12,421,';
     const postHash = getRandomHash();
-    const body: typeof Posts.PostBody.static = {
+    const body: Posts.PostBody = {
       from: walletA.publicKey,
       hash: postHash,
       msg: genericPostMessage,
@@ -83,7 +83,7 @@ describe('v1/notifications', async () => {
     assert.isOk(postResponse != null);
     assert.isOk(postResponse && postResponse.status === 200, 'response was not okay');
 
-    const likeBody: typeof Posts.LikeBody.static = {
+    const likeBody: Posts.LikeBody = {
       from: walletB.publicKey,
       hash: getRandomHash(),
       post_hash: postHash,

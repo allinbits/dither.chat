@@ -12,7 +12,7 @@ describe('v1', { sequential: true }, async () => {
 
   // Posts
   it('pOST - /post', async () => {
-    const body: typeof Posts.PostBody.static = {
+    const body: Posts.PostBody = {
       from: addressUserA,
       hash: getRandomHash(),
       msg: genericPostMessage,
@@ -34,7 +34,7 @@ describe('v1', { sequential: true }, async () => {
       'feed result was not an array type',
     );
 
-    const body: typeof Posts.ReplyBody.static = {
+    const body: Posts.ReplyBody = {
       from: addressUserA,
       hash: replyHash,
       post_hash: response.rows[0].hash,
@@ -84,7 +84,7 @@ describe('v1', { sequential: true }, async () => {
     }
 
     for (let i = 0; i < 50; i++) {
-      const body: typeof Posts.LikeBody.static = {
+      const body: Posts.LikeBody = {
         from: addressUserA,
         hash: getRandomHash(),
         post_hash: likeablePost?.hash,
@@ -124,7 +124,7 @@ describe('v1', { sequential: true }, async () => {
     }
 
     for (let i = 0; i < 50; i++) {
-      const body: typeof Posts.DislikeBody.static = {
+      const body: Posts.DislikeBody = {
         from: addressUserA,
         hash: getRandomHash(),
         post_hash: dislikeablePost.hash,
@@ -164,7 +164,7 @@ describe('v1', { sequential: true }, async () => {
     }
 
     for (let i = 0; i < 50; i++) {
-      const body: typeof Posts.FlagBody.static = {
+      const body: Posts.FlagBody = {
         from: addressUserA,
         hash: getRandomHash(),
         post_hash: flagPost.hash,
@@ -196,7 +196,7 @@ describe('v1', { sequential: true }, async () => {
 
   // PostRemove
   it('pOST - /post-remove', async () => {
-    const bodyPost: typeof Posts.PostBody.static = {
+    const bodyPost: Posts.PostBody = {
       from: addressUserA,
       hash: getRandomHash(),
       msg: genericPostMessage,
@@ -213,7 +213,7 @@ describe('v1', { sequential: true }, async () => {
     assert.isOk(response, 'failed to fetch posts data');
     assert.isOk(Array.isArray(response.rows) && response.rows.length >= 1, 'feed result was not an array type');
 
-    const body: typeof Posts.PostRemoveBody.static = {
+    const body: Posts.PostRemoveBody = {
       from: addressUserA,
       hash: getRandomHash(),
       timestamp: '2025-04-16T19:46:42Z',
@@ -247,7 +247,7 @@ describe('v1', { sequential: true }, async () => {
     assert.isOk(response, 'failed to fetch posts data');
     assert.isOk(Array.isArray(response.rows) && response.rows.length >= 1, 'feed result was not an array type');
 
-    const body: typeof Posts.PostRemoveBody.static = {
+    const body: Posts.PostRemoveBody = {
       from: `${addressUserA}abcd`,
       hash: getRandomHash(),
       timestamp: '2025-04-16T19:46:42Z',
@@ -281,7 +281,7 @@ describe('v1', { sequential: true }, async () => {
     assert.isOk(response, 'failed to fetch posts data');
     assert.isOk(Array.isArray(response.rows) && response.rows.length >= 1, 'feed result was not an array type');
 
-    const body: typeof Posts.PostRemoveBody.static = {
+    const body: Posts.PostRemoveBody = {
       from: `${addressUserA}abcd`,
       hash: getRandomHash(),
       timestamp: '2025-04-16T19:46:42Z',

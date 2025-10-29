@@ -126,7 +126,7 @@ export function sleep(ms: number) {
 }
 
 export async function userLogin(wallet: { mnemonic: string; publicKey: string }) {
-  const body: typeof Posts.AuthCreateBody.static = {
+  const body: Posts.AuthCreateBody = {
     address: wallet.publicKey,
   };
 
@@ -136,7 +136,7 @@ export async function userLogin(wallet: { mnemonic: string; publicKey: string })
   }
 
   const signData = await signADR36Document(wallet.mnemonic, response.message);
-  const verifyBody: typeof Posts.AuthBody.static & { json: boolean } = {
+  const verifyBody: Posts.AuthBody & { json: boolean } = {
     id: response.id,
     ...signData.signature,
     json: true,
@@ -154,7 +154,7 @@ export async function createPost(msg = 'default content') {
   const address = getAtomOneAddress();
   const hash = getRandomHash();
 
-  const body: typeof Posts.PostBody.static = {
+  const body: Posts.PostBody = {
     from: address,
     hash,
     msg,
