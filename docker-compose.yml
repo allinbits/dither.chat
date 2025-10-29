@@ -6,12 +6,14 @@ services:
     image: postgres:18.0-alpine3.22
     container_name: postgres_db
     restart: always
+    command: -c config_file=/etc/postgresql/postgresql.conf
     environment:
       POSTGRES_USER: default
       POSTGRES_PASSWORD: password
     ports:
       - '5432:5432'
     volumes:
+      - ./packages/postgresql/postgresql.conf:/etc/postgresql/postgresql.conf:ro
       - ./data/postgres_data:/var/lib/postgresql/18/data
     healthcheck:
       test: [CMD, pg_isready, -U, default]
