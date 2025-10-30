@@ -9,11 +9,13 @@ import { FeedTable } from '../../drizzle/schema';
 const statement = getDatabase()
   .select()
   .from(FeedTable)
-  .where(and(
-    eq(FeedTable.post_hash, sql.placeholder('hash')),
-    isNull(FeedTable.removed_at),
-    gte(FeedTable.quantity, sql.placeholder('minQuantity')),
-  ))
+  .where(
+    and(
+      eq(FeedTable.post_hash, sql.placeholder('hash')),
+      isNull(FeedTable.removed_at),
+      gte(sql`CAST(${FeedTable.quantity} AS NUMERIC)`, sql`CAST(${sql.placeholder('minQuantity')} AS NUMERIC)`),
+    ),
+  )
   .limit(sql.placeholder('limit'))
   .offset(sql.placeholder('offset'))
   .orderBy(desc(FeedTable.timestamp))
@@ -55,11 +57,13 @@ const getUserRepliesWithParent = getDatabase()
   })
   .from(feed)
   .innerJoin(parentFeed, eq(feed.post_hash, parentFeed.hash))
-  .where(and(
-    eq(feed.author, sql.placeholder('author')),
-    isNotNull(feed.post_hash),
-    gte(feed.quantity, sql.placeholder('minQuantity')),
-  ))
+  .where(
+    and(
+      eq(feed.author, sql.placeholder('author')),
+      isNotNull(feed.post_hash),
+      gte(sql`CAST(${feed.quantity} AS NUMERIC)`, sql`CAST(${sql.placeholder('minQuantity')} AS NUMERIC)`),
+    ),
+  )
   .orderBy(desc(feed.timestamp))
   .limit(sql.placeholder('limit'))
   .offset(sql.placeholder('offset'))
