@@ -5,7 +5,7 @@ import type { Ref } from 'vue';
 
 import type { DitherTypes } from '@/types';
 
-import { coins, SigningStargateClient } from '@cosmjs/stargate';
+import { AminoTypes, coins, createDefaultAminoConverters, SigningStargateClient } from '@cosmjs/stargate';
 import { getOfflineSigner } from '@cosmostation/cosmos-client';
 import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
 import { storeToRefs } from 'pinia';
@@ -14,6 +14,7 @@ import { ref, watch } from 'vue';
 import { useConfigStore } from '@/stores/useConfigStore';
 import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
 import { useWalletStateStore } from '@/stores/useWalletStateStore';
+import { createAuthzAminoConverters } from '@/utility/authz';
 import { getChainConfigLazy } from '@/utility/getChainConfigLazy';
 
 import { useBalanceFetcher } from './useBalanceFetcher';
@@ -341,7 +342,13 @@ function useWalletInstance() {
 
       walletState.processState.value = 'connecting';
 
-      const client = await SigningStargateClient.connectWithSigner(chainInfo.value.rpc, signer.value);
+      const aminoTypes = new AminoTypes({
+        ...createAuthzAminoConverters(),
+        ...createDefaultAminoConverters(),
+      });
+      const client = await SigningStargateClient.connectWithSigner(chainInfo.value.rpc, signer.value, {
+        aminoTypes,
+      });
 
       walletState.processState.value = 'simulating';
 

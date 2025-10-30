@@ -48,6 +48,15 @@ import ViewHeading from './ViewHeading.vue';
             <ChevronRight class="size-4" />
           </Button>
         </RouterLink>
+
+        <RouterLink to="/settings/authz" class="border-b">
+          <Button size="sm" class="w-full text-left py-8" variant="ghost">
+            <span class="grow pl-2">
+              {{ $t('components.Headings.authz') }}
+            </span>
+            <ChevronRight class="size-4" />
+          </Button>
+        </RouterLink>
       </div>
     </div>
   </MainLayout>
