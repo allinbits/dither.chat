@@ -8,6 +8,8 @@ import { FeedReplicationService } from './feed';
 export async function main() {
   const config = useConfig();
 
+  // TODO: Support reading existing and new messages and push them though a publisher
+
   const service = new LogicalReplicationService({
     connectionString: config.PG_URI,
     connectionTimeoutMillis: 0,
