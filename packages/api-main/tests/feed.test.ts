@@ -74,7 +74,7 @@ describe('filter post depending on send tokens', async () => {
   it('filtering with large numbers (Photon filter bug fix)', async () => {
     // Create posts with amounts that would fail with string comparison
     const wallet = await createWallet();
-    
+
     // Post with 500000 tokens
     const post500k = await post(`post`, {
       from: wallet.publicKey,
@@ -105,7 +105,7 @@ describe('filter post depending on send tokens', async () => {
         quantity: string;
       }[];
     }>(`feed?minQuantity=100000`);
-    
+
     assert.isOk(filterResponse?.status === 200);
     const filteredMessages = filterResponse.rows.map(r => r.message);
     assert.include(filteredMessages, 'post with 500000 tokens', 'Should include 500k post');

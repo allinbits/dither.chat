@@ -8,12 +8,14 @@ import { FeedTable, FollowsTable } from '../../drizzle/schema';
 const statement = getDatabase()
   .select()
   .from(FeedTable)
-  .where(and(
-    eq(FeedTable.author, sql.placeholder('author')),
-    isNull(FeedTable.removed_at),
-    isNull(FeedTable.post_hash), // Do not return replies
-    gte(sql`CAST(${FeedTable.quantity} AS NUMERIC)`, sql`CAST(${sql.placeholder('minQuantity')} AS NUMERIC)`),
-  ))
+  .where(
+    and(
+      eq(FeedTable.author, sql.placeholder('author')),
+      isNull(FeedTable.removed_at),
+      isNull(FeedTable.post_hash), // Do not return replies
+      gte(sql`CAST(${FeedTable.quantity} AS NUMERIC)`, sql`CAST(${sql.placeholder('minQuantity')} AS NUMERIC)`),
+    ),
+  )
   .limit(sql.placeholder('limit'))
   .offset(sql.placeholder('offset'))
   .orderBy(desc(FeedTable.timestamp))
@@ -48,15 +50,17 @@ export async function Posts(query: Gets.PostsQuery) {
 const followingPostsStatement = getDatabase()
   .select()
   .from(FeedTable)
-  .where(and(
-    inArray(FeedTable.author, getDatabase()
-      .select({ following: FollowsTable.following })
-      .from(FollowsTable)
-      .where(and(eq(FollowsTable.follower, sql.placeholder('address')), isNull(FollowsTable.removed_at)))),
-    isNull(FeedTable.post_hash),
-    isNull(FeedTable.removed_at),
-    gte(sql`CAST(${FeedTable.quantity} AS NUMERIC)`, sql`CAST(${sql.placeholder('minQuantity')} AS NUMERIC)`),
-  ))
+  .where(
+    and(
+      inArray(FeedTable.author, getDatabase()
+        .select({ following: FollowsTable.following })
+        .from(FollowsTable)
+        .where(and(eq(FollowsTable.follower, sql.placeholder('address')), isNull(FollowsTable.removed_at)))),
+      isNull(FeedTable.post_hash),
+      isNull(FeedTable.removed_at),
+      gte(sql`CAST(${FeedTable.quantity} AS NUMERIC)`, sql`CAST(${sql.placeholder('minQuantity')} AS NUMERIC)`),
+    ),
+  )
   .orderBy(desc(FeedTable.timestamp))
   .limit(sql.placeholder('limit'))
   .offset(sql.placeholder('offset'))

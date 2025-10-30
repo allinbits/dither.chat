@@ -11,7 +11,7 @@ describe('v1', { sequential: true }, async () => {
     = 'hello world, this is a really intereresting post $@!($)@!()@!$21,4214,12,42142,14,12,421,';
 
   // Posts
-  it('pOST - /post', async () => {
+  it('post - /post', async () => {
     const body: typeof Posts.PostBody.static = {
       from: addressUserA,
       hash: getRandomHash(),
@@ -24,7 +24,7 @@ describe('v1', { sequential: true }, async () => {
     assert.isOk(response?.status === 200, 'response was not okay');
   });
 
-  it('pOST - /reply', async () => {
+  it('post - /reply', async () => {
     const response = await get<{ status: number; rows: { hash: string; author: string; message: string }[] }>(
       `feed`,
     );
@@ -47,7 +47,7 @@ describe('v1', { sequential: true }, async () => {
     assert.isOk(replyResponse?.status === 200, 'response was not okay');
   });
 
-  it('gET - /feed', async () => {
+  it('get - /feed', async () => {
     const response = await get<{ status: number; rows: { hash: string; author: string; message: string }[] }>(
       `feed`,
     );
@@ -61,7 +61,7 @@ describe('v1', { sequential: true }, async () => {
     assert.isOk(message);
   });
 
-  it('gET - /posts', async () => {
+  it('get - /posts', async () => {
     const response = await get<{ status: number; rows: { hash: string; author: string; message: string }[] }>(
       `posts?address=${addressUserA}`,
     );
@@ -72,9 +72,9 @@ describe('v1', { sequential: true }, async () => {
     );
   });
 
-  it('GET - /posts with minQuantity filter (Photon bug fix)', async () => {
+  it('get - /posts with minQuantity filter (Photon bug fix)', async () => {
     const wallet = await createWallet();
-    
+
     // Create posts with different quantities
     await post(`post`, {
       from: wallet.publicKey,
@@ -83,7 +83,7 @@ describe('v1', { sequential: true }, async () => {
       quantity: '100',
       timestamp: '2025-04-16T19:46:42Z',
     } as typeof Posts.PostBody.static);
-    
+
     await post(`post`, {
       from: wallet.publicKey,
       hash: getRandomHash(),
@@ -91,7 +91,7 @@ describe('v1', { sequential: true }, async () => {
       quantity: '1000000',
       timestamp: '2025-04-16T19:46:43Z',
     } as typeof Posts.PostBody.static);
-    
+
     // Test numeric comparison works correctly
     const response = await get<{ status: number; rows: { message: string; quantity: string }[] }>(
       `posts?address=${wallet.publicKey}&minQuantity=500000`,
@@ -103,11 +103,11 @@ describe('v1', { sequential: true }, async () => {
 
   // Likes
   const likeablePost = await createPost('A Likeable Post');
-  it ('should have a likeable post', () => {
+  it('should have a likeable post', () => {
     assert.isOk(likeablePost);
   });
 
-  it('pOST - /like', async () => {
+  it('post - /like', async () => {
     if (!likeablePost) {
       assert.fail('Likeable post does not exist');
     }
@@ -127,7 +127,7 @@ describe('v1', { sequential: true }, async () => {
     }
   });
 
-  it('gET - /likes', async () => {
+  it('get - /likes', async () => {
     if (!likeablePost) {
       assert.fail('Likeable post does not exist');
     }
@@ -143,11 +143,11 @@ describe('v1', { sequential: true }, async () => {
 
   // Dislikes
   const dislikeablePost = await createPost('A Dislikeable Post');
-  it ('should have a dislikeable post', () => {
+  it('should have a dislikeable post', () => {
     assert.isOk(dislikeablePost);
   });
 
-  it('pOST - /dislike', async () => {
+  it('post - /dislike', async () => {
     if (!dislikeablePost) {
       assert.fail('Likeable post does not exist');
     }
@@ -167,7 +167,7 @@ describe('v1', { sequential: true }, async () => {
     }
   });
 
-  it('gET - /dislikes', async () => {
+  it('get - /dislikes', async () => {
     if (!dislikeablePost) {
       assert.fail('Likeable post does not exist');
     }
@@ -183,11 +183,11 @@ describe('v1', { sequential: true }, async () => {
 
   // Flags
   const flagPost = await createPost('A Dislikeable Post');
-  it ('should have a dislikeable post (flag)', () => {
+  it('should have a dislikeable post (flag)', () => {
     assert.isOk(flagPost);
   });
 
-  it('pOST - /flag', async () => {
+  it('post - /flag', async () => {
     if (!flagPost) {
       assert.fail('Likeable post does not exist');
     }
@@ -207,7 +207,7 @@ describe('v1', { sequential: true }, async () => {
     }
   });
 
-  it('gET - /flags', async () => {
+  it('get - /flags', async () => {
     if (!flagPost) {
       assert.fail('Likeable post does not exist');
     }
@@ -224,7 +224,7 @@ describe('v1', { sequential: true }, async () => {
   });
 
   // PostRemove
-  it('pOST - /post-remove', async () => {
+  it('post - /post-remove', async () => {
     const bodyPost: typeof Posts.PostBody.static = {
       from: addressUserA,
       hash: getRandomHash(),
@@ -269,7 +269,7 @@ describe('v1', { sequential: true }, async () => {
     assert.isUndefined(data, 'data was not hidden');
   });
 
-  it('pOST - /post-remove - No Permission', async () => {
+  it('post - /post-remove - No Permission', async () => {
     const response = await get<{ status: number; rows: { hash: string; author: string; message: string }[] }>(
       `posts?address=${addressUserA}`,
     );
@@ -303,7 +303,7 @@ describe('v1', { sequential: true }, async () => {
     assert.isOk(data, 'data was hidden');
   });
 
-  it('pOST - /mod/post-remove - No Permission', async () => {
+  it('post - /mod/post-remove - No Permission', async () => {
     const response = await get<{ status: number; rows: { hash: string; author: string; message: string }[] }>(
       `posts?address=${addressUserA}`,
     );
