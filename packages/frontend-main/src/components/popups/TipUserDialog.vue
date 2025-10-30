@@ -1,58 +1,55 @@
 <script lang="ts" setup>
+import { Decimal } from '@cosmjs/math';
 import { computed, ref } from 'vue';
 import { toast } from 'vue-sonner';
-import { Decimal } from '@cosmjs/math';
-
-import { useTipUser } from '@/composables/useTipUser';
-import { useTxDialog } from '@/composables/useTxDialog';
-
-import DialogDescription from '../ui/dialog/DialogDescription.vue';
-import UserAvatarUsername from '../users/UserAvatarUsername.vue';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import InputPhoton from '@/components/ui/input/InputPhoton.vue';
+import { useTipUser } from '@/composables/useTipUser';
+import { useTxDialog } from '@/composables/useTxDialog';
 import { useConfigStore } from '@/stores/useConfigStore';
 import { fractionalDigits } from '@/utility/atomics';
 import { showBroadcastingToast } from '@/utility/toast';
+
+import DialogDescription from '../ui/dialog/DialogDescription.vue';
+import UserAvatarUsername from '../users/UserAvatarUsername.vue';
 
 const isBalanceInputValid = ref(false);
 
 const { tipUser, txError, txSuccess } = useTipUser();
 const {
-    isShown,
-    inputPhotonModel,
-    popupState: tip,
-    handleClose,
+  isShown,
+  inputPhotonModel,
+  popupState: tip,
+  handleClose,
 } = useTxDialog<string>('tipUser', txSuccess, txError);
 const configStore = useConfigStore();
 const amountAtomics = computed(() => configStore.config.defaultAmountEnabled ? configStore.config.defaultAmountAtomics : Decimal.fromUserInput(inputPhotonModel.value.toString(), fractionalDigits).atomics);
 
 const canSubmit = computed(() => {
-    return isBalanceInputValid.value;
+  return isBalanceInputValid.value;
 });
 
 function handleInputValidity(value: boolean) {
-    isBalanceInputValid.value = value;
+  isBalanceInputValid.value = value;
 }
 
 async function handleSubmit() {
-    if (!canSubmit.value || !tip.value) {
-        return;
-    }
+  if (!canSubmit.value || !tip.value) {
+    return;
+  }
 
-    const userAddress = ref(tip.value);
-    handleClose();
-    const toastId = showBroadcastingToast('Tip');
+  const userAddress = ref(tip.value);
+  handleClose();
+  const toastId = showBroadcastingToast('Tip');
 
-    try {
-        await tipUser({ userAddress, amountAtomics: amountAtomics.value });
-    }
-    finally {
-        toast.dismiss(toastId);
-    }
+  try {
+    await tipUser({ userAddress, amountAtomics: amountAtomics.value });
+  } finally {
+    toast.dismiss(toastId);
+  }
 }
-
 </script>
 
 <template>
@@ -60,7 +57,7 @@ async function handleSubmit() {
     <DialogContent>
       <DialogTitle>{{ $t('components.PopupTitles.tipUser') }}</DialogTitle>
       <DialogDescription>
-        <UserAvatarUsername :userAddress="tip"/>
+        <UserAvatarUsername :user-address="tip" />
       </DialogDescription>
 
       <!-- Transaction Form -->

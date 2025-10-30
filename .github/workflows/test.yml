@@ -1,0 +1,63 @@
+name: test
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  api-main-test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: default
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install pnpm with npm
+        run: npm install -g pnpm
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install dependencies with pnpm
+        run: pnpm install
+
+      - name: Build dependencies
+        working-directory: packages/api-main
+        run: pnpm build:deps
+
+      - name: Setup database schema
+        working-directory: packages/api-main
+        run: pnpm db:push:force
+        env:
+          PG_URI: postgresql://default:password@localhost:5432/postgres
+
+      - name: Run tests
+        working-directory: packages/api-main
+        run: pnpm test
+        env:
+          NODE_OPTIONS: --experimental-global-webcrypto
+          PG_URI: postgresql://default:password@localhost:5432/postgres
+          JWT: default_jwt_secret
+          JWT_STRICTNESS: lax
+          AUTH: whatever

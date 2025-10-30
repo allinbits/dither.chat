@@ -2,7 +2,7 @@
 import { defineProps } from 'vue';
 
 defineProps<{
-    close: () => void;
+  close: () => void;
 }>();
 </script>
 

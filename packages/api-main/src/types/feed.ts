@@ -9,10 +9,10 @@ export type Post = InferSelectModel<typeof FeedTable>;
 export const postSchema = createSelectSchema(FeedTable);
 
 export interface ReplyWithParent {
-    reply: InferSelectModel<typeof FeedTable>;
-    parent: InferSelectModel<typeof FeedTable>;
+  reply: InferSelectModel<typeof FeedTable>;
+  parent: InferSelectModel<typeof FeedTable>;
 };
 export const replyWithParentSchema = Type.Object({
-    reply: postSchema,
-    parent: postSchema,
+  reply: postSchema,
+  parent: postSchema,
 });

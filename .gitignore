@@ -8,8 +8,10 @@ dist
 dist/
 data
 data/*
-.vscode/
+.cursor/
 .idea/
 .DS_Store
 .retype
 retype.manifest
+# Local Netlify folder
+.netlify

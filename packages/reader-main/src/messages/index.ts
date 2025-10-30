@@ -8,12 +8,12 @@ import { Reply } from './reply';
 import { Unfollow } from './unfollow';
 
 export const MessageHandlers = {
-    Dislike,
-    Flag,
-    Follow,
-    Like,
-    Post,
-    Remove,
-    Reply,
-    Unfollow,
+  Dislike,
+  Flag,
+  Follow,
+  Like,
+  Post,
+  Remove,
+  Reply,
+  Unfollow,
 };

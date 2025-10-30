@@ -2,6 +2,7 @@ app = 'dither-testnet-reader-main'
 primary_region = 'iad'
 
 [build]
+
 [env]
 BATCH_SIZE = "500"
 MEMO_PREFIX = "dither."

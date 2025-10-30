@@ -19,7 +19,9 @@ jobs:
 
       - name: Deploy reader-main to Fly.io
         run: |
-          cd ./packages/reader-main
-          flyctl deploy --remote-only --config ./fly.mainnet.toml
+          flyctl deploy \
+            --remote-only \
+            --config ./packages/reader-main/fly.mainnet.toml \
+            --dockerfile ./packages/reader-main/Dockerfile
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_READER_MAIN }}

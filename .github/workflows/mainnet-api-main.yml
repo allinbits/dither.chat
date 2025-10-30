@@ -19,7 +19,39 @@ jobs:
 
       - name: Deploy api-main to Fly.io
         run: |
-          cd ./packages/api-main
-          flyctl deploy --remote-only --config ./fly.mainnet.toml
+          flyctl deploy \
+            --remote-only \
+            --config ./packages/api-main/fly.mainnet.toml \
+            --dockerfile ./packages/api-main/Dockerfile
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_API_MAIN }}
+
+  notify:
+    needs: [deploy-mainnet]
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: appleboy/telegram-action@v1.0.1
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          format: markdown
+          message: |
+            🚨 *Deploy API Mainnet Failed* 🚨
+
+            🔗 *Repository*: [${{ github.repository }}](https://github.com/${{ github.repository }})
+            📝 *Commit*: ${{ github.event.commits[0].message }}
+            👤 *Author*: ${{ github.actor }}
+            ⛓️‍💥 *App*: ${{ inputs.app_name }}
+
+            🔍 [View Logs](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+
+            Please investigate and fix *ASAP*! 🔧
+
+  smoke-tests:
+    needs: [deploy-mainnet]
+    if: needs.deploy-mainnet.result == 'success'
+    uses: ./.github/workflows/smoke-tests.yml
+    secrets: inherit
+    with:
+      app_name: dither-mainnet-api-main

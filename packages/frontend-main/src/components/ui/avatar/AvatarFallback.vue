@@ -1,15 +1,18 @@
 <script setup lang="ts">
-import { computed, type HTMLAttributes } from 'vue';
-import { AvatarFallback, type AvatarFallbackProps } from 'reka-ui';
+import type { AvatarFallbackProps } from 'reka-ui';
+import type { HTMLAttributes } from 'vue';
+
+import { AvatarFallback } from 'reka-ui';
+import { computed } from 'vue';
 
 import { cn } from '@/utility';
 
 const props = defineProps<AvatarFallbackProps & { class?: HTMLAttributes['class'] }>();
 
 const delegatedProps = computed(() => {
-    const { class: _, ...delegated } = props;
+  const { class: _, ...delegated } = props;
 
-    return delegated;
+  return delegated;
 });
 </script>
 

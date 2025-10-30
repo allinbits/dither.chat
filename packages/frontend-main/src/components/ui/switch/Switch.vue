@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref } from 'vue';
 import { SwitchRoot, SwitchThumb } from 'reka-ui';
+import { ref } from 'vue';
 
 const switchState = ref(false);
 </script>

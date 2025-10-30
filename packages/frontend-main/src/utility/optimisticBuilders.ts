@@ -3,15 +3,20 @@ import type { Post } from 'api-main/types/feed';
 import type { Following } from 'api-main/types/follows';
 
 interface NewPostParams {
-    message: string; hash: string; postHash: string | null; author: string; quantity: string;
+  message: string;
+  hash: string;
+  postHash: string | null;
+  author: string;
+  quantity: string;
 }
 
 interface NewFollowingParams {
-    address: string;
+  address: string;
 }
 
 // Returns a new Post, used for display
-export const newPost = ({ message, hash, postHash, author, quantity }: NewPostParams): Post => ({
+export function newPost({ message, hash, postHash, author, quantity }: NewPostParams): Post {
+  return {
     hash: hash.toLowerCase(),
     post_hash: postHash ? postHash.toLocaleLowerCase() : null,
     author,
@@ -28,45 +33,47 @@ export const newPost = ({ message, hash, postHash, author, quantity }: NewPostPa
     removed_hash: null,
     removed_at: null,
     removed_by: null,
-});
+  };
+}
 
 // Returns a new Following, used for display
-export const newFollowing = ({ address }: NewFollowingParams): Following => ({
+export function newFollowing({ address }: NewFollowingParams): Following {
+  return {
     address,
     hash: '',
-});
+  };
+}
 
 interface InfiniteDataWithNewItemParams<T> {
-    previousItems: InfiniteData<T[], unknown> | undefined;
-    newItem: T;
+  previousItems: InfiniteData<T[], unknown> | undefined;
+  newItem: T;
 }
 // Returns an InfiniteData with pages and pageParams after adding a new item to previous items, used for display
 export function infiniteDataWithNewItem<T>({ previousItems, newItem }: InfiniteDataWithNewItemParams<T>) {
-    const newPages = previousItems?.pages ? [...previousItems.pages] : [];
-    if (newPages.length > 0) {
-        newPages[0] = [newItem, ...newPages[0]];
-    }
-    else {
-        newPages.push([newItem]);
-    }
-    const newData: InfiniteData<T[], unknown> = {
-        pages: newPages,
-        pageParams: previousItems?.pageParams ?? [0],
-    };
-    return newData;
+  const newPages = previousItems?.pages ? [...previousItems.pages] : [];
+  if (newPages.length > 0) {
+    newPages[0] = [newItem, ...newPages[0]];
+  } else {
+    newPages.push([newItem]);
+  }
+  const newData: InfiniteData<T[], unknown> = {
+    pages: newPages,
+    pageParams: previousItems?.pageParams ?? [0],
+  };
+  return newData;
 }
 
 interface InfiniteDataWitoutItemParams<T> {
-    previousItems: InfiniteData<T[], unknown> | undefined;
-    predicate: (item: T) => boolean;
+  previousItems: InfiniteData<T[], unknown> | undefined;
+  predicate: (item: T) => boolean;
 }
 // Returns an InfiniteData with pages and pageParams after removing an item, used for display
 export function infiniteDataWithoutItem<T>({ previousItems, predicate }: InfiniteDataWitoutItemParams<T>) {
-    let newPages = previousItems?.pages ? [...previousItems.pages] : [];
-    newPages = newPages.map(page => page.filter(item => !predicate(item))) ?? [];
+  let newPages = previousItems?.pages ? [...previousItems.pages] : [];
+  newPages = newPages.map(page => page.filter(item => !predicate(item))) ?? [];
 
-    return {
-        pages: newPages,
-        pageParams: previousItems?.pageParams ?? [0],
-    };
+  return {
+    pages: newPages,
+    pageParams: previousItems?.pageParams ?? [0],
+  };
 }
