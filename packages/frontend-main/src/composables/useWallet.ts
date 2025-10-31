@@ -17,14 +17,16 @@ import { useSequenceManager } from './wallet/sequence';
 import { signMessage as signMessageUtil } from './wallet/signing';
 import { useTransactionManager } from './wallet/transactions';
 
-export enum Wallets {
-  keplr = 'Keplr',
-  leap = 'Leap',
-  cosmostation = 'Cosmostation',
-  addressOnly = 'AddressOnly',
-}
+export const Wallets = {
+  keplr: 'Keplr',
+  leap: 'Leap',
+  cosmostation: 'Cosmostation',
+  addressOnly: 'AddressOnly',
+} as const;
 
-export function getWalletHelp(wallet: Wallets) {
+export type WalletType = typeof Wallets[keyof typeof Wallets];
+
+export function getWalletHelp(wallet: WalletType) {
   switch (wallet) {
     case Wallets.keplr:
       return 'https://help.keplr.app/articles/advanced-troubleshooting-guidelines';
@@ -97,7 +99,7 @@ function useWalletInstance() {
   });
 
   // Connect wallet
-  const connect = async (walletType: Wallets, address?: string, signal?: AbortSignal) => {
+  const connect = async (walletType: WalletType, address?: string, signal?: AbortSignal) => {
     await connectWallet({
       walletType,
       address,
@@ -106,7 +108,7 @@ function useWalletInstance() {
       setAddress: (addr: string) => {
         walletState.address.value = addr;
       },
-      setUsed: (wallet: Wallets | null) => {
+      setUsed: (wallet: WalletType | null) => {
         walletState.used.value = wallet;
       },
       setSigner: (s: OfflineSigner | null) => {
