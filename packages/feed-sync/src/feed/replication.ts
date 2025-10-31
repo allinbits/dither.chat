@@ -54,7 +54,7 @@ export async function ensureReplicationSlot(client: Client, name: string): Promi
 // Creates a PostgreSQL publication that publishes feed table INSERT operations.
 // This is required so the feed replication service receives a message each time
 // a new post is created in the feed table.
-export async function setupPublication(client: Client, name: string): Promise<void> {
+export async function ensurePublication(client: Client, name: string): Promise<void> {
   // Check if publication exists
   const { rows } = await client.query(`SELECT count(*)::int FROM pg_publication WHERE pubname = $1`, [name]);
   if (rows[0].count) {

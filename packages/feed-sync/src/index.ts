@@ -5,7 +5,7 @@ import { LogicalReplicationService, PgoutputPlugin } from 'pg-logical-replicatio
 
 import { useConfig } from './config';
 import { ConsolePublisher } from './feed/publisher';
-import { ensureReplicationSlot, FeedReplicationService, setupPublication } from './feed/replication';
+import { ensurePublication, ensureReplicationSlot, FeedReplicationService } from './feed/replication';
 
 export async function main() {
   // TODO: Replace by TelegramPublisher and use console only to debug
@@ -20,7 +20,7 @@ export async function main() {
 
     // TODO: Support replaying posts (env.REPLAY_POSTS)
 
-    await setupPublication(client, 'feed_pub');
+    await ensurePublication(client, 'feed_pub');
   } finally {
     await client.end();
   }
