@@ -13,10 +13,15 @@ export class ConsolePublisher implements Publisher {
   }
 }
 
+// NopePublisher is a test publisher that doesn't publish messages.
+export class NopePublisher implements Publisher {
+  async publish(_: any): Promise<void> {}
+}
+
 // TelegramPublisher publishes Dither messages in Telegram
 export class TelegramPublisher implements Publisher {
   async publish(): Promise<void> {
-    // TODO: Define how to publish to telegram (api app endpoint?)
+    // TODO: Support publishing messages to Telegram
     throw new Error('Telegram publishing not supported yet');
   }
 }
