@@ -5,10 +5,10 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export interface Config {
-  PG_URI: string;
-  PUBLICATION_NAMES: string[];
-  SLOT_NAME: string;
-  REPLAY_POSTS: boolean;
+  postgresUri: string;
+  publicationNames: string[];
+  slotName: string;
+  replayPosts: boolean;
 }
 
 let config: Config;
@@ -34,10 +34,10 @@ export function useConfig(): Config {
   }
 
   config = {
-    PG_URI: process.env.PG_URI,
-    PUBLICATION_NAMES: process.env.PUBLICATION_NAMES.split(','),
-    SLOT_NAME: process.env.SLOT_NAME,
-    REPLAY_POSTS: process.env.REPLAY_POSTS === 'true',
+    postgresUri: process.env.PG_URI,
+    publicationNames: process.env.PUBLICATION_NAMES.split(','),
+    slotName: process.env.SLOT_NAME,
+    replayPosts: process.env.REPLAY_POSTS === 'true',
   };
 
   return config;

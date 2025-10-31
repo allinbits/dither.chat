@@ -12,7 +12,7 @@ export async function main() {
   const publisher = new ConsolePublisher();
 
   const config = useConfig();
-  const client = new Client({ connectionString: config.PG_URI });
+  const client = new Client({ connectionString: config.postgresUri });
   await client.connect();
 
   try {
@@ -22,29 +22,29 @@ export async function main() {
     //       Replay iterates posts from feed table, and replications service iterates
     //       posts from the WAL which could be duplicated for recent posts.
 
-    if (config.REPLAY_POSTS) {
+    if (config.replayPosts) {
       // Publish posts sorted by block timestamp and TX hash from older to recent
       const res = await client.query(`SELECT * FROM feed ORDER BY timestamp ASC, hash ASC`);
       res.rows.forEach(publisher.publish);
     }
 
-    await ensureReplicationSlot(client, config.SLOT_NAME);
+    await ensureReplicationSlot(client, config.slotName);
     await ensurePublication(client, 'feed_pub');
   } finally {
     await client.end();
   }
 
   const service = new LogicalReplicationService({
-    connectionString: config.PG_URI,
+    connectionString: config.postgresUri,
     connectionTimeoutMillis: 0,
   });
 
   const plugin = new PgoutputPlugin({
     protoVersion: 1,
-    publicationNames: config.PUBLICATION_NAMES,
+    publicationNames: config.publicationNames,
   });
 
-  const feedReplicationService = new FeedReplicationService(service, plugin, config.SLOT_NAME, publisher);
+  const feedReplicationService = new FeedReplicationService(service, plugin, config.slotName, publisher);
   await feedReplicationService.start();
 }
 
