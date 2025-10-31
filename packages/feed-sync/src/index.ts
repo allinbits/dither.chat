@@ -1,15 +1,29 @@
 import process from 'node:process';
 
+import { Client } from 'pg';
 import { LogicalReplicationService, PgoutputPlugin } from 'pg-logical-replication';
 
 import { useConfig } from './config';
-import { FeedReplicationService } from './feed';
 import { ConsolePublisher } from './feed/publisher';
+import { ensureReplicationSlot, FeedReplicationService, setupPublication } from './feed/replication';
 
 export async function main() {
-  const config = useConfig();
+  // TODO: Replace by TelegramPublisher and use console only to debug
+  const publisher = new ConsolePublisher();
 
-  // TODO: Support replaying existing messages
+  const config = useConfig();
+  const client = new Client({ connectionString: config.PG_URI });
+  await client.connect();
+
+  try {
+    await ensureReplicationSlot(client, config.SLOT_NAME);
+
+    // TODO: Support replaying posts (env.REPLAY_POSTS)
+
+    await setupPublication(client, 'feed_pub');
+  } finally {
+    await client.end();
+  }
 
   const service = new LogicalReplicationService({
     connectionString: config.PG_URI,
@@ -20,9 +34,6 @@ export async function main() {
     protoVersion: 1,
     publicationNames: config.PUBLICATION_NAMES,
   });
-
-  // TODO: Replace by TelegramPublisher and use console only to debug
-  const publisher = new ConsolePublisher();
 
   const feedReplicationService = new FeedReplicationService(service, plugin, config.SLOT_NAME, publisher);
   await feedReplicationService.start();
