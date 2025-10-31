@@ -15,7 +15,7 @@ describe('publisher', () => {
       await publisher.publish(msg);
 
       // Assert
-      expect(console.log).toBeCalledWith(msg);
+      expect(console.log).toBeCalledWith(JSON.stringify(msg));
     } finally {
       logMock.mockRestore();
     }
