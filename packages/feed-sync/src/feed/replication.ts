@@ -22,18 +22,15 @@ export class FeedReplicationService {
   }
 
   private setupEventHandlers(): void {
-    this.service.on('data', this.handleData.bind(this));
-    this.service.on('error', this.handleError.bind(this));
-  }
+    this.service.on('data', async (_: string, log: Pgoutput.Message) => {
+      if (log.tag === 'insert') {
+        await this.publisher.publish(log.new);
+      }
+    });
 
-  private async handleData(_: string, log: Pgoutput.Message): Promise<void> {
-    if (log.tag === 'insert') {
-      await this.publisher.publish(log.new);
-    }
-  }
-
-  private handleError(err: Error): void {
-    console.error(err);
+    this.service.on('error', (e: Error) => {
+      console.error(`Feed replication error: ${e.message}`);
+    });
   }
 }
 
