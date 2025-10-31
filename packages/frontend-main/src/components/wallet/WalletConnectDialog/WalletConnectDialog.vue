@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import type { Ref } from 'vue';
 
+import type { WalletType } from '@/composables/useWallet';
+
 import { bech32 } from 'bech32';
 import { Link2, Loader } from 'lucide-vue-next';
 import { VisuallyHidden } from 'reka-ui';
@@ -44,9 +46,9 @@ const viewState = computed(() => !isConnecting.value && loggedIn.value && !isErr
 const errorState = computed(() => isError.value);
 
 const controller: Ref<AbortController | null> = ref(null);
-const chosenWallet: Ref<Wallets> = ref(Wallets.keplr);
+const chosenWallet: Ref<WalletType> = ref(Wallets.keplr as WalletType);
 
-async function connectWallet(walletType: Wallets, address?: string) {
+async function connectWallet(walletType: WalletType, address?: string) {
   if (walletType === Wallets.addressOnly && !address) {
     isAddressOnlyConnection.value = true;
     return;
