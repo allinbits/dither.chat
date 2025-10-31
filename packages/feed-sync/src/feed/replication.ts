@@ -42,7 +42,6 @@ export class FeedReplicationService {
 export async function ensureReplicationSlot(client: Client, name: string): Promise<void> {
   // Check if slot exists
   const { rows } = await client.query('SELECT count(*)::int FROM pg_replication_slots WHERE slot_name = $1', [name]);
-  console.debug(rows);
   if (rows[0].count) {
     return;
   }
