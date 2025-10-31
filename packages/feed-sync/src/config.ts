@@ -8,6 +8,7 @@ export interface Config {
   PG_URI: string;
   PUBLICATION_NAMES: string[];
   SLOT_NAME: string;
+  REPLAY_POSTS: boolean;
 }
 
 let config: Config;
@@ -36,6 +37,7 @@ export function useConfig(): Config {
     PG_URI: process.env.PG_URI,
     PUBLICATION_NAMES: process.env.PUBLICATION_NAMES.split(','),
     SLOT_NAME: process.env.SLOT_NAME,
+    REPLAY_POSTS: process.env.REPLAY_POSTS === 'true',
   };
 
   return config;

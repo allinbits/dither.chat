@@ -16,10 +16,19 @@ export async function main() {
   await client.connect();
 
   try {
+    // TODO: If posts are replayed make sure that feed replication service only
+    //       publishes posts that are greater than the last replayed post.
+    //       This is required to avoid potentially publishing some posts more than once.
+    //       Replay iterates posts from feed table, and replications service iterates
+    //       posts from the WAL which could be duplicated for recent posts.
+
+    if (config.REPLAY_POSTS) {
+      // Publish posts sorted by block timestamp and TX hash from older to recent
+      const res = await client.query(`SELECT * FROM feed ORDER BY timestamp ASC, hash ASC`);
+      res.rows.forEach(publisher.publish);
+    }
+
     await ensureReplicationSlot(client, config.SLOT_NAME);
-
-    // TODO: Support replaying posts (env.REPLAY_POSTS)
-
     await ensurePublication(client, 'feed_pub');
   } finally {
     await client.end();
