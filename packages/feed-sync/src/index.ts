@@ -4,11 +4,12 @@ import { LogicalReplicationService, PgoutputPlugin } from 'pg-logical-replicatio
 
 import { useConfig } from './config';
 import { FeedReplicationService } from './feed';
+import { ConsolePublisher } from './feed/publisher';
 
 export async function main() {
   const config = useConfig();
 
-  // TODO: Support reading existing and new messages and push them though a publisher
+  // TODO: Support replaying existing messages
 
   const service = new LogicalReplicationService({
     connectionString: config.PG_URI,
@@ -20,7 +21,10 @@ export async function main() {
     publicationNames: config.PUBLICATION_NAMES,
   });
 
-  const feedReplicationService = new FeedReplicationService(service, plugin, config.SLOT_NAME);
+  // TODO: Replace by TelegramPublisher and use console only to debug
+  const publisher = new ConsolePublisher();
+
+  const feedReplicationService = new FeedReplicationService(service, plugin, config.SLOT_NAME, publisher);
   await feedReplicationService.start();
 }
 

@@ -1,14 +1,18 @@
 import type { LogicalReplicationService, Pgoutput, PgoutputPlugin } from 'pg-logical-replication';
 
+import type { Publisher } from './publisher';
+
 export class FeedReplicationService {
   private service: LogicalReplicationService;
   private plugin: PgoutputPlugin;
   private slotName: string;
+  private publisher: Publisher;
 
-  constructor(service: LogicalReplicationService, plugin: PgoutputPlugin, slotName: string) {
+  constructor(service: LogicalReplicationService, plugin: PgoutputPlugin, slotName: string, publisher: Publisher) {
     this.service = service;
     this.plugin = plugin;
     this.slotName = slotName;
+    this.publisher = publisher;
     this.setupEventHandlers();
   }
 
@@ -21,12 +25,9 @@ export class FeedReplicationService {
     this.service.on('error', this.handleError.bind(this));
   }
 
-  private handleData(lsn: string, log: Pgoutput.Message): void {
-    switch (log.tag) {
-      // handle insert events in the db
-      case 'insert':
-        console.log(log);
-        break;
+  private async handleData(_: string, log: Pgoutput.Message): Promise<void> {
+    if (log.tag === 'insert') {
+      await this.publisher.publish(log.new);
     }
   }
 
