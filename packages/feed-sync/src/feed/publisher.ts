@@ -7,7 +7,9 @@ export interface Publisher {
 // ConsolePublisher prints Dither messages to console
 export class ConsolePublisher implements Publisher {
   async publish(msg: any): Promise<void> {
-    console.log(msg);
+    if (msg) {
+      console.log(JSON.stringify(msg));
+    }
   }
 }
 
