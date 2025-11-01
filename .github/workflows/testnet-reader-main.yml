@@ -73,7 +73,8 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          context: ./packages/reader-main
+          context: .
+          file: ./packages/reader-main/Dockerfile
           push: true
           tags:
             ${{ secrets.REGION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/dither-chat/reader-main:${{ steps.sha_short.outputs.value }}
