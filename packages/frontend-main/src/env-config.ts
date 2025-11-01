@@ -8,17 +8,20 @@ export const envConfigs = {
     apiRoot: import.meta.env.VITE_API_ROOT_TESTNET,
     explorerUrl: import.meta.env.VITE_EXPLORER_URL_TESTNET,
     communityWallet: import.meta.env.VITE_COMMUNITY_WALLET_TESTNET,
+    authzGrantee: import.meta.env.VITE_AUTHZ_GRANTEE_TESTNET,
   },
   devnet: {
     chainConfig: chainConfigDevnet,
     apiRoot: import.meta.env.VITE_API_ROOT_DEVNET,
     explorerUrl: import.meta.env.VITE_EXPLORER_URL_DEVNET,
     communityWallet: import.meta.env.VITE_COMMUNITY_WALLET_DEVNET,
+    authzGrantee: import.meta.env.VITE_AUTHZ_GRANTEE_DEVNET,
   },
   mainnet: {
     chainConfig: chainConfigMainnet,
     apiRoot: import.meta.env.VITE_API_ROOT_MAINNET,
     explorerUrl: import.meta.env.VITE_EXPLORER_URL_MAINNET,
     communityWallet: import.meta.env.VITE_COMMUNITY_WALLET_MAINNET,
+    authzGrantee: import.meta.env.VITE_AUTHZ_GRANTEE_MAINNET,
   },
 };

@@ -9,9 +9,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@cosmjs/math": "^0.33.1",
-    "@cosmjs/proto-signing": "^0.32.4",
-    "@cosmjs/stargate": "^0.32.4",
+    "@cosmjs/math": "^0.37.0",
+    "@cosmjs/proto-signing": "^0.37.0",
+    "@cosmjs/stargate": "^0.37.0",
     "@cosmostation/cosmos-client": "^0.0.5",
     "@sinclair/typebox": "^0.34.41",
     "@tailwindcss/vite": "^4.1.14",
@@ -22,7 +22,7 @@
     "bignumber.js": "^9.3.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "cosmjs-types": "^0.9.0",
+    "cosmjs-types": "^0.10.1",
     "json-editor-vue": "^0.18.1",
     "lucide-vue-next": "^0.507.0",
     "mitt": "^3.0.1",
