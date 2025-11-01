@@ -10,35 +10,35 @@ on:
   workflow_dispatch:
 
 jobs:
-  #  detect-changes:
-  #    runs-on: ubuntu-latest
-  #    outputs:
-  #      changed: ${{ steps.changes.outputs.reader-main }}
-  #    steps:
-  #      - name: Checkout code
-  #        uses: actions/checkout@v3
-  #
-  #      - name: Detect reader-main changes
-  #        uses: dorny/paths-filter@v3
-  #        id: changes
-  #        with:
-  #          filters: |
-  #            reader-main:
-  #              - 'packages/reader-main/**'
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.changes.outputs.reader-main }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-  #  test:
-  #    needs: detect-changes
-  #    if: needs.detect-changes.outputs.changed == 'true'
-  #    runs-on: ubuntu-latest
-  #    steps:
-  #      - name: Checkout code
-  #        uses: actions/checkout@v3
+      - name: Detect reader-main changes
+        uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            reader-main:
+              - 'packages/reader-main/**'
+
+  test:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
   # Add reader-main specific test steps here
 
   deploy-testnet:
-    #    needs: [ detect-changes, test ]
-    #    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.detect-changes.outputs.changed == 'true'
+    needs: [detect-changes, test]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.detect-changes.outputs.changed == 'true'
     runs-on: ubuntu-latest
     environment: testnet
     permissions:
