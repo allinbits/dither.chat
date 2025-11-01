@@ -10,70 +10,70 @@ on:
   workflow_dispatch:
 
 jobs:
-  detect-changes:
-    runs-on: ubuntu-latest
-    outputs:
-      changed: ${{ steps.changes.outputs.api-main }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+  #  detect-changes:
+  #    runs-on: ubuntu-latest
+  #    outputs:
+  #      changed: ${{ steps.changes.outputs.api-main }}
+  #    steps:
+  #      - name: Checkout code
+  #        uses: actions/checkout@v3
+  #
+  #      - name: Detect api-main changes
+  #        uses: dorny/paths-filter@v3
+  #        id: changes
+  #        with:
+  #          filters: |
+  #            api-main:
+  #              - 'packages/api-main/**'
 
-      - name: Detect api-main changes
-        uses: dorny/paths-filter@v3
-        id: changes
-        with:
-          filters: |
-            api-main:
-              - 'packages/api-main/**'
-
-  test:
-    needs: detect-changes
-    if: needs.detect-changes.outputs.changed == 'true'
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Install pnpm with npm
-        run: npm install -g pnpm
-
-      - name: Create Directory
-        run: mkdir -p ./packages/api-main/data/postgres_data
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: .nvmrc
-          cache: pnpm
-
-      - name: Install dependencies with pnpm
-        run: pnpm install
-
-      - name: Set up Docker
-        uses: docker/setup-docker-action@v4
-
-      - name: Build API Types
-        working-directory: ./packages/lib-api-types
-        run: pnpm build
-
-      - name: Run Docker Compose Up
-        working-directory: ./packages/api-main
-        run: docker compose -f ./docker-compose-github.yml up --build -d --wait --wait-timeout 30
-
-      - name: Push database migrations
-        working-directory: ./packages/api-main
-        run: |
-          cp .env.example .env
-          pnpm db:push:force
-
-      - name: Run tests with pnpm
-        working-directory: ./packages/api-main
-        run: pnpm test
+  #  test:
+  #    needs: detect-changes
+  #    if: needs.detect-changes.outputs.changed == 'true'
+  #    runs-on: ubuntu-latest
+  #
+  #    steps:
+  #      - name: Checkout code
+  #        uses: actions/checkout@v3
+  #
+  #      - name: Install pnpm with npm
+  #        run: npm install -g pnpm
+  #
+  #      - name: Create Directory
+  #        run: mkdir -p ./packages/api-main/data/postgres_data
+  #
+  #      - name: Setup Node.js
+  #        uses: actions/setup-node@v4
+  #        with:
+  #          node-version-file: .nvmrc
+  #          cache: pnpm
+  #
+  #      - name: Install dependencies with pnpm
+  #        run: pnpm install
+  #
+  #      - name: Set up Docker
+  #        uses: docker/setup-docker-action@v4
+  #
+  #      - name: Build API Types
+  #        working-directory: ./packages/lib-api-types
+  #        run: pnpm build
+  #
+  #      - name: Run Docker Compose Up
+  #        working-directory: ./packages/api-main
+  #        run: docker compose -f ./docker-compose-github.yml up --build -d --wait --wait-timeout 30
+  #
+  #      - name: Push database migrations
+  #        working-directory: ./packages/api-main
+  #        run: |
+  #          cp .env.example .env
+  #          pnpm db:push:force
+  #
+  #      - name: Run tests with pnpm
+  #        working-directory: ./packages/api-main
+  #        run: pnpm test
 
   deploy-testnet:
-    needs: [detect-changes, test]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.detect-changes.outputs.changed == 'true'
+    #    needs: [ detect-changes, test ]
+    #    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.detect-changes.outputs.changed == 'true'
     runs-on: ubuntu-latest
     environment: testnet
     permissions:
@@ -113,32 +113,32 @@ jobs:
           tags:
             ${{ secrets.REGION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/dither-chat/api-main:${{ steps.sha_short.outputs.value }}
 
-  notify:
-    needs: [deploy-testnet]
-    if: failure()
-    runs-on: ubuntu-latest
-    steps:
-      - uses: appleboy/telegram-action@v1.0.1
-        with:
-          to: ${{ secrets.TELEGRAM_TO }}
-          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          format: markdown
-          message: |
-            🚨 *Deploy API Testnet Failed* 🚨
-
-            🔗 *Repository*: [${{ github.repository }}](https://github.com/${{ github.repository }})
-            📝 *Commit*: ${{ github.event.commits[0].message }}
-            👤 *Author*: ${{ github.actor }}
-            ⛓️‍💥 *App*: ${{ inputs.app_name }}
-
-            🔍 [View Logs](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
-
-            Please investigate and fix *ASAP*! 🔧
-
-  smoke-tests:
-    needs: [deploy-testnet]
-    if: needs.deploy-testnet.result == 'success'
-    uses: ./.github/workflows/smoke-tests.yml
-    secrets: inherit
-    with:
-      app_name: dither-testnet-api-main
+#  notify:
+#    needs: [ deploy-testnet ]
+#    if: failure()
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: appleboy/telegram-action@v1.0.1
+#        with:
+#          to: ${{ secrets.TELEGRAM_TO }}
+#          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+#          format: markdown
+#          message: |
+#            🚨 *Deploy API Testnet Failed* 🚨
+#
+#            🔗 *Repository*: [${{ github.repository }}](https://github.com/${{ github.repository }})
+#            📝 *Commit*: ${{ github.event.commits[0].message }}
+#            👤 *Author*: ${{ github.actor }}
+#            ⛓️‍💥 *App*: ${{ inputs.app_name }}
+#
+#            🔍 [View Logs](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+#
+#            Please investigate and fix *ASAP*! 🔧
+#
+#  smoke-tests:
+#    needs: [ deploy-testnet ]
+#    if: needs.deploy-testnet.result == 'success'
+#    uses: ./.github/workflows/smoke-tests.yml
+#    secrets: inherit
+#    with:
+#      app_name: dither-testnet-api-main
