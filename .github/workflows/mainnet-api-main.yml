@@ -37,17 +37,16 @@ jobs:
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           format: markdown
           message: |
-            🚨 *bold \*Deploy API Mainnet Failed* 🚨
+            🚨 *Deploy API Mainnet Failed* 🚨
 
-            🔗 Repository: ${{ github.repository }}
-            📝 Commit: ${{ github.event.commits[0].message }}
-            👤 Author: ${{ github.actor }}
-            ⛓️‍💥 App: ${{ inputs.app_name }}
+            🔗 *Repository*: [${{ github.repository }}](https://github.com/${{ github.repository }})
+            📝 *Commit*: ${{ github.event.commits[0].message }}
+            👤 *Author*: ${{ github.actor }}
+            ⛓️‍💥 *App*: ${{ inputs.app_name }}
 
-            ⚠️ *bold \*Failed Job:*
             🔍 [View Logs](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
 
-            Please investigate and fix ASAP! 🔧
+            Please investigate and fix *ASAP*! 🔧
 
   smoke-tests:
     needs: [deploy-mainnet]
