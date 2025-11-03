@@ -1,9 +1,13 @@
 import type { Client } from 'pg';
-import type { LogicalReplicationService, Pgoutput, PgoutputPlugin } from 'pg-logical-replication';
+import type { Pgoutput } from 'pg-logical-replication';
 
 import type { Publisher } from './publisher';
 
+import { LogicalReplicationService, PgoutputPlugin } from 'pg-logical-replication';
 import retry from 'retry';
+
+// Number of times service tries to publish a post when publishing fails.
+const publishRetries = 10;
 
 // Feed replications service listens for PostgreSQL logical replication events and publishes new posts to Telegram.
 export class FeedReplicationService {
@@ -15,14 +19,33 @@ export class FeedReplicationService {
   private lastLsn: string;
   private walQueue: { lsn: string; post: Record<string, any> }[];
 
-  constructor(service: LogicalReplicationService, plugin: PgoutputPlugin, slotName: string, publisher: Publisher) {
-    this.service = service;
-    this.plugin = plugin;
+  constructor(postgresUri: string, publicationNames: string[], slotName: string, publisher: Publisher) {
     this.slotName = slotName;
     this.publisher = publisher;
     this.walQueue = [];
     this.stopping = false;
-    this.lastLsn = service.lastLsn();
+
+    this.service = new LogicalReplicationService(
+      {
+        connectionString: postgresUri,
+        connectionTimeoutMillis: 0,
+      },
+      {
+        // Replication acknowledge must be done manually by the feed service
+        // once a post is successfully published to Telegram
+        acknowledge: {
+          auto: false,
+          timeoutSeconds: 0,
+        },
+      },
+    );
+
+    this.plugin = new PgoutputPlugin({
+      protoVersion: 1,
+      publicationNames,
+    });
+
+    this.lastLsn = this.service.lastLsn();
     this.setupEventHandlers();
   }
 
@@ -105,7 +128,7 @@ export class FeedReplicationService {
       if (this.walQueue.length) {
         const { lsn, post } = this.walQueue[0];
         try {
-          await this.publish(lsn, post, 10);
+          await this.publish(lsn, post, publishRetries);
         } catch (e) {
           // Stop replication service when post can't be published to Telegram after multiple attempts.
           // This must be done to avoid acknowledging any post that followed the one that failed.
