@@ -7,6 +7,8 @@ import { computed } from 'vue';
 import { useWalletStateStore } from '@/stores/useWalletStateStore';
 import { getChainConfigLazy } from '@/utility/getChainConfigLazy';
 
+export const QUERY_KEY_AUTHZ_GRANTS = 'authz-grants' as const;
+
 interface Grant {
   authorization: {
     '@type': string;
@@ -57,7 +59,7 @@ export function useAuthzGrants(grantee: string) {
 
   const query = useQuery(
     queryOptions({
-      queryKey: ['authz-grants', granter, grantee],
+      queryKey: [QUERY_KEY_AUTHZ_GRANTS, granter, grantee],
       queryFn: queryAuthzGrants,
       enabled: computed(() => !!granter.value && !!grantee),
       staleTime: 30_000,

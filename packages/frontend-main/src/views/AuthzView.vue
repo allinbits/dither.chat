@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { CheckCircle, Loader } from 'lucide-vue-next';
-import { ref } from 'vue';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { toast } from 'vue-sonner';
 
 import Button from '@/components/ui/button/Button.vue';
-import { useAuthzGrant, useAuthzGrants } from '@/composables/authz';
+import { useAuthzGrant, useAuthzGrants, useAuthzRevoke } from '@/composables/authz';
 import MainLayout from '@/layouts/MainLayout.vue';
 import { useConfigStore } from '@/stores/useConfigStore';
 import ViewHeading from '@/views/ViewHeading.vue';
@@ -14,34 +14,43 @@ const { t } = useI18n();
 const configStore = useConfigStore();
 const granteeAddress = configStore.envConfig.authzGrantee;
 
-const { isLoading, hasActiveGrant, refetch } = useAuthzGrants(granteeAddress);
-const { createSendGrant } = useAuthzGrant();
+const { isLoading, hasActiveGrant } = useAuthzGrants(granteeAddress);
 
-const isGranting = ref(false);
+const grantMutation = useAuthzGrant();
+const revokeMutation = useAuthzRevoke();
 
-async function handleGrant() {
-  isGranting.value = true;
+const isProcessing = computed(() => grantMutation.isPending.value || revokeMutation.isPending.value);
 
-  try {
-    const result = await createSendGrant(granteeAddress);
-
-    if (result.broadcast) {
-      toast.success(t('components.Authz.grantSuccess'));
-      setTimeout(() => refetch(), 2000);
-    } else {
-      toast.error(result.msg || t('components.Authz.grantFailed'));
-    }
-  } catch (error) {
-    console.error('Error granting authorization:', error);
-    toast.error(`${t('components.Authz.grantFailed')}: ${error}`);
-  } finally {
-    isGranting.value = false;
-  }
+function handleGrant() {
+  grantMutation.mutate(granteeAddress, {
+    onSuccess: (result) => {
+      if (result.broadcast) {
+        toast.success(t('components.Authz.grantSuccess'));
+      } else {
+        toast.error(result.msg || t('components.Authz.grantFailed'));
+      }
+    },
+    onError: (error) => {
+      console.error('Error granting authorization:', error);
+      toast.error(`${t('components.Authz.grantFailed')}: ${error}`);
+    },
+  });
 }
 
 function handleRevoke() {
-  // TODO: Implement revoke functionality
-  toast.info('Revoke functionality not implemented yet');
+  revokeMutation.mutate(granteeAddress, {
+    onSuccess: (result) => {
+      if (result.broadcast) {
+        toast.success(t('components.Authz.revokeSuccess'));
+      } else {
+        toast.error(result.msg || t('components.Authz.revokeFailed'));
+      }
+    },
+    onError: (error) => {
+      console.error('Error revoking authorization:', error);
+      toast.error(`${t('components.Authz.revokeFailed')}: ${error}`);
+    },
+  });
 }
 </script>
 
@@ -66,7 +75,7 @@ function handleRevoke() {
             </div>
           </template>
 
-          <template v-else-if="hasActiveGrant">
+          <template v-else-if="hasActiveGrant && !isProcessing">
             <!-- Active Grant Banner -->
             <div class="flex items-center gap-3 p-4 mb-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
               <CheckCircle :size="20" class="text-green-600 dark:text-green-400 flex-shrink-0" />
@@ -86,7 +95,7 @@ function handleRevoke() {
             </Button>
           </template>
 
-          <template v-else-if="!isGranting">
+          <template v-else-if="!hasActiveGrant && !isProcessing">
             <!-- Grant Button -->
             <Button
               size="sm"
@@ -98,8 +107,8 @@ function handleRevoke() {
             </Button>
           </template>
 
-          <template v-else>
-            <!-- Granting State -->
+          <template v-else-if="isProcessing">
+            <!-- Processing State -->
             <div class="flex items-center justify-center pt-4">
               <Loader class="animate-spin" :size="24" />
             </div>
