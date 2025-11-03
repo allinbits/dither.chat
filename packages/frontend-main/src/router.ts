@@ -2,7 +2,6 @@ import { createRouter, createWebHistory } from 'vue-router';
 
 import { useWalletStateStore } from './stores/useWalletStateStore';
 import AboutView from './views/AboutView.vue';
-import AuthzView from './views/AuthzView.vue';
 import EnvConfigView from './views/EnvConfigView.vue';
 import ExploreView from './views/ExploreView.vue';
 import HomeFeedView from './views/Home/HomeFeedView.vue';
@@ -30,7 +29,6 @@ export const routesNames = {
   settingsConfig: 'Settings Config',
   settingsSingleSession: 'Settings Single Session',
   settingsDefaultAmount: 'Settings Default Amount',
-  settingsAuthz: 'Settings Authz',
   post: 'Post',
   unauthorized: 'Unauthorized',
   notFound: 'NotFound',
@@ -49,7 +47,6 @@ const routes = [
   { path: '/settings/env-config', name: routesNames.settingsConfig, component: EnvConfigView, meta: { authRequired: true } },
   { path: '/settings/settings-single-session', name: routesNames.settingsSingleSession, component: SettingsSingleSession, meta: { authRequired: true } },
   { path: '/settings/default-amount', name: routesNames.settingsDefaultAmount, component: SettingsDefaultAmount, meta: { authRequired: true } },
-  { path: '/settings/authz', name: routesNames.settingsAuthz, component: AuthzView, meta: { authRequired: true } },
   { path: '/post/:hash/:postHash?', name: routesNames.post, component: PostView },
   { path: '/about', name: routesNames.about, component: AboutView },
   {
