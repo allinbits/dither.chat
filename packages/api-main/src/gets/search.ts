@@ -34,7 +34,7 @@ export async function Search(query: Gets.SearchQuery) {
             sql`to_tsvector('english', ${FeedTable.message}) @@ to_tsquery('english', ${processedQuery})`,
             inArray(FeedTable.author, matchedAuthorAddresses),
           ),
-          gte(FeedTable.quantity, minQuantity),
+          gte(sql`CAST(${FeedTable.quantity} AS NUMERIC)`, sql`CAST(${minQuantity} AS NUMERIC)`),
           isNull(FeedTable.removed_at),
         ),
       )

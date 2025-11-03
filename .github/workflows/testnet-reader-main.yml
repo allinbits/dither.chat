@@ -34,23 +34,47 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Add reader-main specific test steps here
+  # Add reader-main specific test steps here
 
   deploy-testnet:
     needs: [detect-changes, test]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.detect-changes.outputs.changed == 'true'
     runs-on: ubuntu-latest
     environment: testnet
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Setup Fly.io CLI
-        uses: superfly/flyctl-actions/setup-flyctl@master
+      - name: Set short SHA
+        id: sha_short
+        run: echo "value=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
-      - name: Deploy reader-main to Fly.io
-        run: |
-          cd ./packages/reader-main
-          flyctl deploy --remote-only --config ./fly.testnet.toml
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_READER_MAIN }}
+      - name: Auth GCloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.SERVICE_ACCOUNT }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v3
+
+      - name: Configure Docker
+        run: gcloud auth configure-docker ${{ secrets.REGION }}-docker.pkg.dev --quiet
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./packages/reader-main/Dockerfile
+          push: true
+          tags:
+            ${{ secrets.REGION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/dither-chat/reader-main:${{ steps.sha_short.outputs.value }}
