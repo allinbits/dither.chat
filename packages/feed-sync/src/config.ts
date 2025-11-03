@@ -9,6 +9,10 @@ export interface Config {
   publicationNames: string[];
   slotName: string;
   replayPosts: boolean;
+  telegram: {
+    token: string;
+    chatId: string;
+  };
 }
 
 let config: Config;
@@ -38,6 +42,10 @@ export function useConfig(): Config {
     publicationNames: process.env.PUBLICATION_NAMES.split(','),
     slotName: process.env.SLOT_NAME,
     replayPosts: process.env.REPLAY_POSTS === 'true',
+    telegram: {
+      token: process.env.TELEGRAM_TOKEN || '',
+      chatId: process.env.TELEGRAM_CHAT_ID || '',
+    },
   };
 
   return config;

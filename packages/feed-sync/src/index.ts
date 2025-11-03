@@ -1,20 +1,28 @@
+import type { Publisher } from './feed/publisher';
+
 import process from 'node:process';
 
 import { Client } from 'pg';
 import { LogicalReplicationService, PgoutputPlugin } from 'pg-logical-replication';
 
 import { useConfig } from './config';
-import { ConsolePublisher } from './feed/publisher';
+import { ConsolePublisher, TelegramPublisher } from './feed/publisher';
 import { ensurePublication, ensureReplicationSlot, FeedReplicationService } from './feed/replication';
 
+// TODO: Handle SIGNIT to work inside containers
+
 export async function main() {
-  // TODO: Replace by TelegramPublisher and use console only to debug
-  const publisher = new ConsolePublisher();
+  let publisher: Publisher;
 
   const config = useConfig();
+  if (config.telegram.token === '') {
+    publisher = new ConsolePublisher();
+  } else {
+    publisher = new TelegramPublisher(config.telegram.token, config.telegram.chatId);
+  }
+
   const client = new Client({ connectionString: config.postgresUri });
   await client.connect();
-
   try {
     // TODO: If posts are replayed make sure that feed replication service only
     //       publishes posts that are greater than the last replayed post.
@@ -22,22 +30,36 @@ export async function main() {
     //       Replay iterates posts from feed table, and replications service iterates
     //       posts from the WAL which could be duplicated for recent posts.
 
+    // Publish posts sorted by block timestamp and TX hash from older to recent
     if (config.replayPosts) {
-      // Publish posts sorted by block timestamp and TX hash from older to recent
       const res = await client.query(`SELECT * FROM feed ORDER BY timestamp ASC, hash ASC`);
-      res.rows.forEach(publisher.publish);
+      for (const post of res.rows) {
+        console.log(`Replaying post ${post.hash} with timestamp ${post.timestamp}`);
+        await publisher.publish(post);
+      }
     }
 
+    // Make sure PostgreSQL is configured to publish WAL updates
     await ensureReplicationSlot(client, config.slotName);
     await ensurePublication(client, 'feed_pub');
   } finally {
     await client.end();
   }
 
-  const service = new LogicalReplicationService({
-    connectionString: config.postgresUri,
-    connectionTimeoutMillis: 0,
-  });
+  const service = new LogicalReplicationService(
+    {
+      connectionString: config.postgresUri,
+      connectionTimeoutMillis: 0,
+    },
+    {
+      // Replication acknowledge must be done manually by the feed service
+      // once a post is successfully published to Telegram
+      acknowledge: {
+        auto: false,
+        timeoutSeconds: 0,
+      },
+    },
+  );
 
   const plugin = new PgoutputPlugin({
     protoVersion: 1,
@@ -45,9 +67,23 @@ export async function main() {
   });
 
   const feedReplicationService = new FeedReplicationService(service, plugin, config.slotName, publisher);
-  await feedReplicationService.start();
+  try {
+    await feedReplicationService.start();
+  } catch (e) {
+    console.error(e);
+  } finally {
+    console.log(`Stopping feed replication service...`);
+    await feedReplicationService.stop();
+  }
 }
 
 if (!process.env.SKIP_START) {
-  main().catch(console.error);
+  (async () => {
+    try {
+      await main();
+    } catch (e) {
+      console.error(e);
+      process.exit(1);
+    }
+  })();
 }
