@@ -11,7 +11,7 @@ describe('filter post depending on send tokens', async () => {
   const expensivePostTokens = '20';
 
   it('user creates one cheap and one expensive posts', async () => {
-    const body: typeof Posts.PostBody.static = {
+    const body: Posts.PostBody = {
       from: walletB.publicKey,
       hash: getRandomHash(),
       msg: cheapPostMessage,
@@ -21,7 +21,7 @@ describe('filter post depending on send tokens', async () => {
 
     let postResponse = await post(`post`, body);
 
-    const expensiveBody: typeof Posts.PostBody.static = {
+    const expensiveBody: Posts.PostBody = {
       from: walletB.publicKey,
       hash: getRandomHash(),
       msg: expensivePostMessage,
@@ -152,7 +152,7 @@ describe('user replies with parent', async () => {
   const replyMessage = 'this is a reply';
 
   it('pOST - /post', async () => {
-    const body: typeof Posts.PostBody.static = {
+    const body: Posts.PostBody = {
       from: walletA.publicKey,
       hash: parentPost,
       msg: postMessage,
@@ -165,7 +165,7 @@ describe('user replies with parent', async () => {
   });
 
   it('pOST - /reply', async () => {
-    const body: typeof Posts.ReplyBody.static = {
+    const body: Posts.ReplyBody = {
       from: walletB.publicKey,
       hash: replyPost,
       post_hash: parentPost,
@@ -218,7 +218,7 @@ describe('get post from followed', async () => {
   });
 
   it('pOST - now followed user posts', async () => {
-    const body: typeof Posts.PostBody.static = {
+    const body: Posts.PostBody = {
       from: walletB.publicKey,
       hash: getRandomHash(),
       msg: postMessage,
@@ -248,7 +248,7 @@ describe('get post from followed', async () => {
   });
 
   it('one post when user follows', async () => {
-    const body: typeof Posts.FollowBody.static = {
+    const body: Posts.FollowBody = {
       from: walletA.publicKey,
       hash: getRandomHash(),
       address: walletB.publicKey,

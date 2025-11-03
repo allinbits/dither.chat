@@ -11,7 +11,7 @@ describe('follows', async () => {
 
   // Follows
   it('pOST - /follow', async () => {
-    const body: typeof Posts.FollowBody.static = {
+    const body: Posts.FollowBody = {
       from: addressUserA,
       hash: getRandomHash(),
       address: addressUserB,
@@ -36,7 +36,7 @@ describe('follows', async () => {
   });
 
   it('pOST - /follow - no duplicates', async () => {
-    const body: typeof Posts.FollowBody.static = {
+    const body: Posts.FollowBody = {
       hash: getRandomHash(),
       from: addressUserA,
       address: addressUserB,
@@ -67,7 +67,7 @@ describe('follows', async () => {
 
   // Unfollow
   it('pOST - /unfollow', async () => {
-    const body: typeof Posts.UnfollowBody.static = {
+    const body: Posts.UnfollowBody = {
       hash: getRandomHash(),
       from: addressUserA,
       address: addressUserB,

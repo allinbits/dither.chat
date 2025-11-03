@@ -16,7 +16,6 @@ const config = useConfig();
 const queue = useQueue();
 const apiRoot = process.env.API_ROOT ?? 'http://localhost:3000/v1';
 const msCheckpointTime = 1_000;
-const actionTypes = ['Post', 'Reply', 'Like', 'Flag', 'Dislike', 'Follow', 'Unfollow', 'Remove'];
 
 let state: ChronoState;
 let lastHash: string;
@@ -84,29 +83,35 @@ async function handleLastBlock(block: string) {
 }
 
 async function processAction(action: Action): Promise<ResponseStatus> {
-  for (const actionType of actionTypes) {
-    if (!action.memo.startsWith(config.MEMO_PREFIX + actionType)) {
-      continue;
-    }
-
-    const actionTypeKey = actionType as keyof typeof MessageHandlers;
-    if (!MessageHandlers[actionTypeKey]) {
-      console.warn(`No message handler registered for ${actionType}`);
-      return 'SKIP';
-    }
-
-    const transfer = getTransferMessage(action.messages as unknown as Array<MsgGeneric>);
-    const quantity = getTransferQuantities(action.messages as unknown as Array<MsgGeneric>);
-    if (!transfer) {
-      console.warn(`No transfer provided, skipping. ${actionType}`);
-      return 'SKIP';
-    }
-
-    return await MessageHandlers[actionTypeKey]({ ...action, sender: transfer.from_address, quantity });
+  if (!config.MEMO_PREFIX || !action.memo.startsWith(config.MEMO_PREFIX)) {
+    console.warn(`Skipped ${action.hash}, not a valid dither protocol message`);
+    return 'SKIP';
   }
 
-  console.warn(`Skipped ${action.hash}, not a valid dither protocol message`);
-  return 'SKIP';
+  const afterPrefix = action.memo.slice(config.MEMO_PREFIX.length);
+  const match = afterPrefix.match(/^([A-Z]+)\(/i);
+
+  if (!match) {
+    console.warn(`Skipped ${action.hash}, invalid dither protocol format`);
+    return 'SKIP';
+  }
+
+  const actionType = match[1];
+
+  const actionTypeKey = actionType as keyof typeof MessageHandlers;
+  if (!MessageHandlers[actionTypeKey]) {
+    console.warn(`Skipped ${action.hash}, unknown action type: ${actionType}`);
+    return 'SKIP';
+  }
+
+  const transfer = getTransferMessage(action.messages as unknown as Array<MsgGeneric>);
+  const quantity = getTransferQuantities(action.messages as unknown as Array<MsgGeneric>);
+  if (!transfer) {
+    console.warn(`No transfer provided, skipping. ${actionType}`);
+    return 'SKIP';
+  }
+
+  return await MessageHandlers[actionTypeKey]({ ...action, sender: transfer.from_address, quantity });
 }
 
 async function updateLastBlock(height: string, attempt = 0) {
@@ -132,7 +137,7 @@ async function updateLastBlock(height: string, attempt = 0) {
     return updateLastBlock(height, attempt + 1);
   }
 
-  const response = await rawResponse.json() as { status: number; error?: string };
+  const response = (await rawResponse.json()) as { status: number; error?: string };
   if (response.status === 500) {
     console.warn(`Update state failed, trying again.`);
     console.info(rawResponse);
@@ -192,7 +197,7 @@ async function getLastBlock() {
     return null;
   }
 
-  const response = await rawResponse.json() as { status: number; rows: { last_block: string }[] };
+  const response = (await rawResponse.json()) as { status: number; rows: { last_block: string }[] };
   if (response.status === 404) {
     console.warn(`Block Height Not Stored, Starting from ${config.START_BLOCK}`);
     return null;
@@ -206,7 +211,7 @@ export async function start() {
 
   let startBlock = 0;
 
-  const lastBlockStored = Number.parseInt(await getLastBlock() ?? '0');
+  const lastBlockStored = Number.parseInt((await getLastBlock()) ?? '0');
   console.info(`Last Block: `, lastBlockStored);
 
   if (Number.parseInt(config.START_BLOCK) > lastBlockStored) {
@@ -216,7 +221,7 @@ export async function start() {
     startBlock = lastBlockStored;
   }
 
-  const isFastSync = (config.ECLESIA_GRAPHQL_ENDPOINT && config.ECLESIA_GRAPHQL_SECRET);
+  const isFastSync = config.ECLESIA_GRAPHQL_ENDPOINT && config.ECLESIA_GRAPHQL_SECRET;
   if (isFastSync) {
     const eclesiaClient = new EclesiaClient(config.ECLESIA_GRAPHQL_ENDPOINT!, config.ECLESIA_GRAPHQL_SECRET!);
 

@@ -18,7 +18,7 @@ describe('v1 - mod', { sequential: true }, () => {
   it('pOST mod obtain bearer token', async () => {
     const walletA = await createWallet();
     addressModerator = walletA.publicKey;
-    const body: typeof Posts.AuthCreateBody.static = {
+    const body: Posts.AuthCreateBody = {
       address: walletA.publicKey,
     };
 
@@ -26,7 +26,7 @@ describe('v1 - mod', { sequential: true }, () => {
     assert.isOk(response?.status === 200, 'response was not okay');
 
     const signData = await signADR36Document(walletA.mnemonic, response.message);
-    const verifyBody: typeof Posts.AuthBody.static & { json?: boolean } = {
+    const verifyBody: Posts.AuthBody & { json?: boolean } = {
       id: response.id,
       ...signData.signature,
       json: true,
@@ -39,7 +39,7 @@ describe('v1 - mod', { sequential: true }, () => {
   });
 
   it('pOST - /post', async () => {
-    const body: typeof Posts.PostBody.static = {
+    const body: Posts.PostBody = {
       from: addressUserA,
       hash: postHash,
       msg: genericPostMessage,
@@ -52,7 +52,7 @@ describe('v1 - mod', { sequential: true }, () => {
   });
 
   it('pOST - /mod/post-remove without autorization', async () => {
-    const body: typeof Posts.ModRemovePostBody.static = {
+    const body: Posts.ModRemovePostBody = {
       hash: getRandomHash(),
       timestamp: '2025-04-16T19:46:42Z',
       post_hash: postHash,
@@ -70,7 +70,7 @@ describe('v1 - mod', { sequential: true }, () => {
     assert.isOk(response, 'failed to fetch posts data');
     assert.isOk(Array.isArray(response.rows) && response.rows.length >= 1, 'feed result was not an array type');
 
-    const body: typeof Posts.ModRemovePostBody.static = {
+    const body: Posts.ModRemovePostBody = {
       hash: getRandomHash(),
       timestamp: '2025-04-16T19:46:42Z',
       post_hash: response.rows[0].hash,
@@ -111,7 +111,7 @@ describe('v1 - mod', { sequential: true }, () => {
     assert.isOk(response, 'failed to fetch posts data');
     assert.isOk(Array.isArray(response.rows) && response.rows.length >= 1, 'feed result was not an array type');
 
-    const body: typeof Posts.ModRemovePostBody.static = {
+    const body: Posts.ModRemovePostBody = {
       hash: getRandomHash(),
       timestamp: '2025-04-16T19:46:42Z',
       post_hash: response.rows[0].hash,
@@ -139,7 +139,7 @@ describe('v1 - mod', { sequential: true }, () => {
   });
 
   it('pOST - /mod/post-restore', async () => {
-    const body: typeof Posts.ModRemovePostBody.static = {
+    const body: Posts.ModRemovePostBody = {
       hash: getRandomHash(),
       timestamp: '2025-04-16T19:46:42Z',
       post_hash: postHash,
@@ -168,7 +168,7 @@ describe('v1 - mod', { sequential: true }, () => {
 
   it('pOST - /mod/post-restore on an user deleted post', async () => {
     // USER REMOVES POST
-    const body: typeof Posts.PostRemoveBody.static = {
+    const body: Posts.PostRemoveBody = {
       from: addressUserA,
       hash: getRandomHash(),
       timestamp: '2025-04-16T19:46:42Z',
@@ -179,7 +179,7 @@ describe('v1 - mod', { sequential: true }, () => {
     assert.isOk(userRemoveResponse?.status === 200, 'response was not okay');
 
     // MOD tries to restore post
-    const bodymod: typeof Posts.ModRemovePostBody.static = {
+    const bodymod: Posts.ModRemovePostBody = {
       hash: getRandomHash(),
       timestamp: '2025-04-16T19:46:42Z',
       post_hash: postHash,
@@ -191,7 +191,7 @@ describe('v1 - mod', { sequential: true }, () => {
   });
 
   it('pOST - /post user creates a second post', async () => {
-    const body: typeof Posts.PostBody.static = {
+    const body: Posts.PostBody = {
       from: addressUserA,
       hash: secondPostHash,
       msg: genericPostMessage,
@@ -205,7 +205,7 @@ describe('v1 - mod', { sequential: true }, () => {
 
   it('pOST - /mod/ban user banned deletes posts', async () => {
     // moderator bans user
-    const body: typeof Posts.ModBanBody.static = {
+    const body: Posts.ModBanBody = {
       hash: getRandomHash(),
       timestamp: '2025-04-16T19:46:42Z',
       user_address: addressUserA,
@@ -236,7 +236,7 @@ describe('v1 - mod', { sequential: true }, () => {
   });
 
   it('pOST - banned user publishes post is deleted automatically', async () => {
-    const body: typeof Posts.PostBody.static = {
+    const body: Posts.PostBody = {
       from: addressUserA,
       hash: getRandomHash(),
       msg: genericPostMessage,
@@ -268,7 +268,7 @@ describe('v1 - mod', { sequential: true }, () => {
   });
 
   it('pOST - unban restore all posts but user deleted ones', async () => {
-    const body: typeof Posts.ModBanBody.static = {
+    const body: Posts.ModBanBody = {
       hash: getRandomHash(),
       timestamp: '2025-04-16T19:46:42Z',
       user_address: addressUserA,
@@ -281,7 +281,7 @@ describe('v1 - mod', { sequential: true }, () => {
 
   it('pOST - freshly unbanned user publishes without problems', async () => {
     const newPostHash = getRandomHash();
-    const body: typeof Posts.PostBody.static = {
+    const body: Posts.PostBody = {
       from: addressUserA,
       hash: newPostHash,
       msg: genericPostMessage,
