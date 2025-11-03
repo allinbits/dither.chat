@@ -2,6 +2,8 @@ import { Buffer } from 'node:buffer';
 
 import { Markup, Telegraf } from 'telegraf';
 
+import logger from '../logger';
+
 // Publisher defines an interface for Dither message publishers
 export interface Publisher {
   // Publishes a Dither message
@@ -12,7 +14,7 @@ export interface Publisher {
 export class ConsolePublisher implements Publisher {
   async publish(msg: any): Promise<void> {
     if (msg) {
-      console.log(JSON.stringify(msg));
+      logger.info('Dither mesage', { msg });
     }
   }
 }

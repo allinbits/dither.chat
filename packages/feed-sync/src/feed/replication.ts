@@ -6,6 +6,8 @@ import type { Publisher } from './publisher';
 import { LogicalReplicationService, PgoutputPlugin } from 'pg-logical-replication';
 import retry from 'retry';
 
+import logger from '../logger';
+
 // Number of times service tries to publish a post when publishing fails.
 const publishRetries = 10;
 
@@ -19,7 +21,7 @@ export class FeedReplicationService {
   private lastLsn: string;
   private walQueue: { lsn: string; post: Record<string, any> }[];
 
-  constructor(postgresUri: string, publicationNames: string[], slotName: string, publisher: Publisher) {
+  constructor(postgresUri: string, publicationName: string, slotName: string, publisher: Publisher) {
     this.slotName = slotName;
     this.publisher = publisher;
     this.walQueue = [];
@@ -42,7 +44,7 @@ export class FeedReplicationService {
 
     this.plugin = new PgoutputPlugin({
       protoVersion: 1,
-      publicationNames,
+      publicationNames: [publicationName],
     });
 
     this.lastLsn = this.service.lastLsn();
@@ -70,7 +72,7 @@ export class FeedReplicationService {
   private setupEventHandlers(): void {
     this.service.on('error', (e: Error) => {
       // TODO: Should feed service stop when there is an error in the communication?
-      console.error(`Feed replication error: ${e.message}`);
+      logger.error('Feed replication error', { err: e.message });
     });
 
     // When replication data is received add WAL log a queue to make sure logs are handled sequentially.
@@ -101,7 +103,7 @@ export class FeedReplicationService {
       // Acknowledge all LSN values when there are no post to be handled.
       // This also keeps connection with PostgreSQL alive.
       await this.service.acknowledge(lsn);
-      console.debug(`Heartbeat ACK ${lsn}`);
+      logger.debug('Heartbeat acknowledge', { lsn });
     });
   }
 
@@ -140,7 +142,7 @@ export class FeedReplicationService {
       }
 
       if (this.stopping) {
-        console.debug(`Stopping feed publisher...`);
+        logger.debug(`Stopping feed publisher...`);
         return;
       }
 
@@ -154,7 +156,7 @@ export class FeedReplicationService {
 
     // Start publishing queued posts to Telegram
     await publisher();
-    console.debug(`Started feed publisher`);
+    logger.info('Started feed publisher');
   }
 
   // Publish a post to Telegram.
@@ -176,8 +178,11 @@ export class FeedReplicationService {
           resolve();
         } catch (e) {
           if (operation.retry(e as Error)) {
-            // TODO: Use structured logging everywhere ({error: string, cause: Error})
-            console.warn(`Post ${post.hash} publish failed, attempt ${attempt}: ${(e as Error).message}`);
+            logger.warn('Post publish failed', {
+              attempt,
+              hash: post.hash,
+              cause: (e as Error).message,
+            });
           }
 
           // Fail when maximum number of retries is reach and post failed to be published to Telegram

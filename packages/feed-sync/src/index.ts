@@ -4,22 +4,28 @@ import process from 'node:process';
 
 import { Client } from 'pg';
 
-import { useConfig } from './config';
+import { config } from './config';
 import { ConsolePublisher, TelegramPublisher } from './feed/publisher';
 import { ensurePublication, ensureReplicationSlot, FeedReplicationService } from './feed/replication';
+import logger from './logger';
 
 // Runs a feed replication service.
 export async function main() {
   let publisher: Publisher;
 
-  const config = useConfig();
   if (config.telegram.token === '') {
     publisher = new ConsolePublisher();
   } else {
     publisher = new TelegramPublisher(config.telegram.token, config.telegram.chatId);
   }
 
-  const client = new Client({ connectionString: config.postgresUri });
+  const { postgresUri, publicationName, slotName } = config;
+
+  if (postgresUri === '') {
+    throw new Error('PostgreSQL URI is required');
+  }
+
+  const client = new Client({ connectionString: postgresUri });
   await client.connect();
   try {
     // TODO: If posts are replayed make sure that feed replication service only
@@ -32,25 +38,24 @@ export async function main() {
     if (config.replayPosts) {
       const res = await client.query(`SELECT * FROM feed ORDER BY timestamp ASC, hash ASC`);
       for (const post of res.rows) {
-        console.log(`Replaying post ${post.hash} with timestamp ${post.timestamp}`);
+        logger.info(`Replaying post ${post.hash} with timestamp ${post.timestamp}`);
         await publisher.publish(post);
       }
     }
 
     // Make sure PostgreSQL is configured to publish WAL updates
     await ensureReplicationSlot(client, config.slotName);
-    await ensurePublication(client, 'feed_pub');
+    await ensurePublication(client, publicationName);
   } finally {
     await client.end();
   }
 
-  const { postgresUri, publicationNames, slotName } = config;
-  const service = new FeedReplicationService(postgresUri, publicationNames, slotName, publisher);
+  const service = new FeedReplicationService(postgresUri, publicationName, slotName, publisher);
 
   const stop = async () => {
-    console.log(`Stopping feed replication service...`);
+    logger.info(`Stopping feed replication service...`);
     await service.stop();
-    console.log(`Stopped`);
+    logger.info(`Stopped`);
     process.exit(0);
   };
 
@@ -65,7 +70,7 @@ if (!process.env.SKIP_START) {
     try {
       await main();
     } catch (e) {
-      console.error(e);
+      logger.error('Feed replication service failed', { cause: (e as Error).message });
       process.exit(1);
     }
   })();
