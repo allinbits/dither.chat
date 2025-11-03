@@ -67,14 +67,18 @@ export async function main() {
   });
 
   const feedReplicationService = new FeedReplicationService(service, plugin, config.slotName, publisher);
-  try {
-    await feedReplicationService.start();
-  } catch (e) {
-    console.error(e);
-  } finally {
+
+  const stop = async () => {
     console.log(`Stopping feed replication service...`);
     await feedReplicationService.stop();
-  }
+    console.log(`Stopped`);
+    process.exit(0);
+  };
+
+  process.on('SIGTERM', stop);
+  process.on('SIGINT', stop);
+
+  await feedReplicationService.start();
 }
 
 if (!process.env.SKIP_START) {
