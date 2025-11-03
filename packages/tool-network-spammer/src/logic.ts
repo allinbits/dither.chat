@@ -78,7 +78,7 @@ export async function publishSomething(client: spammerClient) {
       break;
     }
     case 'delete': {
-      memo = `dither.PostRemove("${postHash.hash}")`;
+      memo = `dither.Remove("${postHash.hash}")`;
       break;
     }
   }

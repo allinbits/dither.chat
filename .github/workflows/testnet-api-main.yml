@@ -26,71 +26,93 @@ jobs:
             api-main:
               - 'packages/api-main/**'
 
-  test:
-    needs: detect-changes
-    if: needs.detect-changes.outputs.changed == 'true'
-    runs-on: ubuntu-latest
+    test:
+      needs: detect-changes
+      if: needs.detect-changes.outputs.changed == 'true'
+      runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v3
 
-      - name: Install pnpm with npm
-        run: npm install -g pnpm
+        - name: Install pnpm with npm
+          run: npm install -g pnpm
 
-      - name: Create Directory
-        run: mkdir -p ./packages/api-main/data/postgres_data
+        - name: Create Directory
+          run: mkdir -p ./packages/api-main/data/postgres_data
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: .nvmrc
-          cache: pnpm
+        - name: Setup Node.js
+          uses: actions/setup-node@v4
+          with:
+            node-version-file: .nvmrc
+            cache: pnpm
 
-      - name: Install dependencies with pnpm
-        run: pnpm install
+        - name: Install dependencies with pnpm
+          run: pnpm install
 
-      - name: Set up Docker
-        uses: docker/setup-docker-action@v4
+        - name: Set up Docker
+          uses: docker/setup-docker-action@v4
 
-      - name: Build API Types
-        working-directory: ./packages/lib-api-types
-        run: pnpm build
+        - name: Build API Types
+          working-directory: ./packages/lib-api-types
+          run: pnpm build
 
-      - name: Run Docker Compose Up
-        working-directory: ./packages/api-main
-        run: docker compose -f ./docker-compose-github.yml up --build -d --wait --wait-timeout 30
+        - name: Run Docker Compose Up
+          working-directory: ./packages/api-main
+          run: docker compose -f ./docker-compose-github.yml up --build -d --wait --wait-timeout 30
 
-      - name: Push database migrations
-        working-directory: ./packages/api-main
-        run: |
-          cp .env.example .env
-          pnpm db:push:force
+        - name: Push database migrations
+          working-directory: ./packages/api-main
+          run: |
+            cp .env.example .env
+            pnpm db:push:force
 
-      - name: Run tests with pnpm
-        working-directory: ./packages/api-main
-        run: pnpm test
+        - name: Run tests with pnpm
+          working-directory: ./packages/api-main
+          run: pnpm test
 
   deploy-testnet:
     needs: [detect-changes, test]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.detect-changes.outputs.changed == 'true'
     runs-on: ubuntu-latest
     environment: testnet
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Setup Fly.io CLI
-        uses: superfly/flyctl-actions/setup-flyctl@master
+      - name: Set short SHA
+        id: sha_short
+        run: echo "value=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
-      - name: Deploy api-main to Fly.io
-        run: |
-          flyctl deploy \
-            --remote-only \
-            --config ./packages/api-main/fly.testnet.toml \
-            --dockerfile ./packages/api-main/Dockerfile
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_API_MAIN }}
+      - name: Auth GCloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.SERVICE_ACCOUNT }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v3
+
+      - name: Configure Docker
+        run: gcloud auth configure-docker ${{ secrets.REGION }}-docker.pkg.dev --quiet
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./packages/api-main/Dockerfile
+          push: true
+          tags:
+            ${{ secrets.REGION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/dither-chat/api-main:${{ steps.sha_short.outputs.value }}
 
   notify:
     needs: [deploy-testnet]
