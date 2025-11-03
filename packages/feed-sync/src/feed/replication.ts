@@ -131,6 +131,11 @@ export class FeedReplicationService {
         const { lsn, post } = this.walQueue[0];
         try {
           await this.publish(lsn, post, publishRetries);
+          logger.info('Post published', {
+            lsn,
+            hash: post.hash,
+            timestamp: post.timestamp,
+          });
         } catch (e) {
           // Stop replication service when post can't be published to Telegram after multiple attempts.
           // This must be done to avoid acknowledging any post that followed the one that failed.
