@@ -122,6 +122,9 @@ importers:
 
   packages/frontend-main:
     dependencies:
+      '@cosmjs/amino':
+        specifier: ^0.33.1
+        version: 0.33.1
       '@cosmjs/math':
         specifier: ^0.37.0
         version: 0.37.0

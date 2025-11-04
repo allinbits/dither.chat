@@ -1,18 +1,21 @@
 /* eslint-disable no-case-declarations */
+import type { AminoMsg } from '@cosmjs/amino';
 import type { AminoConverters, Coin } from '@cosmjs/stargate';
 
+import { AminoTypes, createDefaultAminoConverters } from '@cosmjs/stargate';
 import { GenericAuthorization } from 'cosmjs-types/cosmos/authz/v1beta1/authz';
 import { MsgExec, MsgGrant, MsgRevoke } from 'cosmjs-types/cosmos/authz/v1beta1/tx';
 import { SendAuthorization } from 'cosmjs-types/cosmos/bank/v1beta1/authz';
+import { MsgGrantAllowance, MsgRevokeAllowance } from 'cosmjs-types/cosmos/feegrant/v1beta1/tx';
 import { Timestamp } from 'cosmjs-types/google/protobuf/timestamp';
 import { fromJsonTimestamp, fromTimestamp } from 'cosmjs-types/helpers';
 
 /**
- * CosmJS removes authz Amino messages by default, see:
+ * CosmJS removes authz and feegrant Amino messages by default, see:
  * https://github.com/cosmos/cosmjs/blob/v0.37.0/packages/stargate/src/modules/authz/aminomessages.ts
  * so we reintroduce explicit converters here to support Amino-based signers
  */
-export function createAuthzAminoConverters(): AminoConverters {
+function createAuthzAminoConverters(): AminoConverters {
   return {
     [MsgGrant.typeUrl]: {
       aminoType: 'cosmos-sdk/MsgGrant',
@@ -141,3 +144,72 @@ export function createAuthzAminoConverters(): AminoConverters {
     },
   };
 }
+
+export interface MsgGrantAllowanceAminoType extends AminoMsg {
+  type: 'cosmos-sdk/MsgGrantAllowance';
+  value: {
+    granter: string;
+    grantee: string;
+    allowance: {
+      type_url: string;
+      value: Uint8Array;
+    };
+  };
+}
+
+export interface MsgRevokeAllowanceAminoType extends AminoMsg {
+  type: 'cosmos-sdk/MsgRevokeAllowance';
+  value: {
+    granter: string;
+    grantee: string;
+  };
+}
+
+function createFeegrantAminoConverters() {
+  return {
+    [MsgGrantAllowance.typeUrl]: {
+      aminoType: 'cosmos-sdk/MsgGrantAllowance',
+      toAmino: ({ granter, grantee, allowance }: MsgGrantAllowance): MsgGrantAllowanceAminoType['value'] => {
+        return {
+          granter,
+          grantee,
+          allowance: {
+            type_url: allowance!.typeUrl,
+            value: allowance!.value,
+          },
+        };
+      },
+      fromAmino: ({ granter, grantee, allowance }: MsgGrantAllowanceAminoType['value']) => {
+        return MsgGrantAllowance.fromPartial({
+          granter,
+          grantee,
+          allowance: {
+            typeUrl: allowance.type_url,
+            value: allowance.value,
+          },
+        });
+      },
+    },
+    [MsgRevokeAllowance.typeUrl]: {
+      aminoType: 'cosmos-sdk/MsgRevokeAllowance',
+      toAmino: ({ granter, grantee }: MsgRevokeAllowance) => {
+        return {
+          granter,
+          grantee,
+        };
+      },
+      fromAmino: ({ granter, grantee }: MsgRevokeAllowanceAminoType['value']) => {
+        return MsgRevokeAllowance.fromPartial({
+          granter,
+          grantee,
+        });
+      },
+    },
+  };
+}
+
+export const allAminoTypes = new AminoTypes({
+  ...createAuthzAminoConverters(),
+  ...createDefaultAminoConverters(),
+  ...createFeegrantAminoConverters(),
+});

@@ -3,6 +3,8 @@ import type { EncodeObject } from '@cosmjs/proto-signing';
 import { useMutation, useQueryClient } from '@tanstack/vue-query';
 import { MsgGrant } from 'cosmjs-types/cosmos/authz/v1beta1/tx';
 import { SendAuthorization } from 'cosmjs-types/cosmos/bank/v1beta1/authz';
+import { BasicAllowance } from 'cosmjs-types/cosmos/feegrant/v1beta1/feegrant';
+import { MsgGrantAllowance } from 'cosmjs-types/cosmos/feegrant/v1beta1/tx';
 
 import { useConfigStore } from '@/stores/useConfigStore';
 
@@ -20,6 +22,7 @@ export function useAuthzGrant() {
         throw new Error('Wallet not connected');
       }
 
+      const granter = wallet.address.value;
       const destinationWallet = configStore.envConfig.communityWallet;
       const sendAuthorization = SendAuthorization.fromPartial({
         spendLimit: [{ denom: 'uphoton', amount: String(1_000_000) }], // 1 PHOTON
@@ -27,7 +30,7 @@ export function useAuthzGrant() {
       });
 
       const msgGrant = MsgGrant.fromPartial({
-        granter: wallet.address.value,
+        granter,
         grantee,
         grant: {
           authorization: {
@@ -37,12 +40,29 @@ export function useAuthzGrant() {
         },
       });
 
-      const msg: EncodeObject = {
+      const allowance = BasicAllowance.fromPartial({
+        spendLimit: [{ denom: 'uphoton', amount: String(10_000_000) }], // 10 PHOTON for gas
+        expiration: undefined,
+      });
+
+      const feeAllowance = MsgGrantAllowance.fromPartial({
+        granter,
+        grantee,
+        allowance: {
+          typeUrl: BasicAllowance.typeUrl,
+          value: BasicAllowance.encode(allowance).finish(),
+        },
+      });
+
+      const msgs: EncodeObject[] = [{
         typeUrl: MsgGrant.typeUrl,
         value: msgGrant,
-      };
+      }, {
+        typeUrl: MsgGrantAllowance.typeUrl,
+        value: feeAllowance,
+      }];
 
-      return await wallet.sendTx([msg], 'Grant authorization for Dither.chat');
+      return await wallet.sendTx(msgs, 'Grant authorization for Dither.chat');
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEY_AUTHZ_GRANTS] });
