@@ -72,7 +72,7 @@ export class FeedReplicationService {
   private setupEventHandlers(): void {
     this.service.on('error', (e: Error) => {
       // TODO: Should feed service stop when there is an error in the communication?
-      logger.error('Feed replication error', { err: e.message });
+      logger.error('Feed replication error', { cause: e.message });
     });
 
     // When replication data is received add WAL log a queue to make sure logs are handled sequentially.

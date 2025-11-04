@@ -14,7 +14,7 @@ export interface Publisher {
 export class ConsolePublisher implements Publisher {
   async publish(msg: any): Promise<void> {
     if (msg) {
-      logger.info('Dither mesage', { msg });
+      logger.info('Post', { msg });
     }
   }
 }

@@ -1,3 +1,5 @@
+import type { Query } from 'pg';
+
 import type { Publisher } from './feed/publisher';
 
 import process from 'node:process';
@@ -13,10 +15,10 @@ import logger from './logger';
 export async function main() {
   let publisher: Publisher;
 
-  if (config.telegram.token === '') {
-    publisher = new ConsolePublisher();
-  } else {
+  if (config.telegram.token && config.telegram.chatId) {
     publisher = new TelegramPublisher(config.telegram.token, config.telegram.chatId);
+  } else {
+    publisher = new ConsolePublisher();
   }
 
   const { postgresUri, publicationName, slotName } = config;
@@ -28,17 +30,17 @@ export async function main() {
   const client = new Client({ connectionString: postgresUri });
   await client.connect();
   try {
-    // TODO: If posts are replayed make sure that feed replication service only
-    //       publishes posts that are greater than the last replayed post.
-    //       This is required to avoid potentially publishing some posts more than once.
-    //       Replay iterates posts from feed table, and replications service iterates
-    //       posts from the WAL which could be duplicated for recent posts.
+    // Publish posts sorted by block timestamp and TX hash from older to recent.
+    // Replay might be needed when the replayed posts are not available anymore in PostgreSQL WAL.
+    // It starts from the first post by default, or optionally from a specified one for a given
+    // timestamp and hash. Once started replay publishes all existing posts from the starting point.
+    if (config.replay.enabled) {
+      const query = buildReplayQuery(config.replay.fromTimestamp, config.replay.fromHash);
+      const res = await client.query(query);
 
-    // Publish posts sorted by block timestamp and TX hash from older to recent
-    if (config.replayPosts) {
-      const res = await client.query(`SELECT * FROM feed ORDER BY timestamp ASC, hash ASC`);
       for (const post of res.rows) {
-        logger.info(`Replaying post ${post.hash} with timestamp ${post.timestamp}`);
+        const { hash, timestamp } = post;
+        logger.debug('Replaying post', { hash, timestamp });
         await publisher.publish(post);
       }
     }
@@ -63,6 +65,18 @@ export async function main() {
   process.on('SIGINT', stop);
 
   await service.start();
+}
+
+function buildReplayQuery(fromTimestamp?: string, fromHash?: string): Query {
+  const query: Query = {
+    text: `SELECT * FROM feed ORDER BY timestamp ASC, hash ASC`,
+  };
+
+  if (fromTimestamp && fromHash) {
+    query.text = `SELECT * FROM feed WHERE timestamp >= $1 AND hash >= $2 ORDER BY timestamp ASC, hash ASC`;
+    query.values = [fromTimestamp, fromHash];
+  }
+  return query;
 }
 
 if (!process.env.SKIP_START) {
