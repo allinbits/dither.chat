@@ -1,4 +1,4 @@
-import type { Wallets } from '@/composables/useWallet';
+import type { WalletType } from '@/composables/useWallet';
 
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
@@ -14,7 +14,7 @@ export const useWalletStateStore = defineStore(
 
     const loggedIn = ref(false);
     const address = ref('');
-    const used = ref<Wallets | null>(null);
+    const used = ref<WalletType | null>(null);
     const processState = ref<WalletProcessState>('idle');
     const isUsingSingleSession = ref(false);
 
