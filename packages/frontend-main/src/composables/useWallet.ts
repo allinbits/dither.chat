@@ -1,36 +1,32 @@
-import type { EncodeObject, OfflineDirectSigner, OfflineSigner } from '@cosmjs/proto-signing';
-import type { DeliverTxResponse, SignerData } from '@cosmjs/stargate';
-import type { OfflineAminoSigner } from '@keplr-wallet/types';
+import type { OfflineSigner } from '@cosmjs/proto-signing';
 import type { Ref } from 'vue';
 
-import type { DitherTypes } from '@/types';
-
-import { AminoTypes, coins, createDefaultAminoConverters, SigningStargateClient } from '@cosmjs/stargate';
-import { getOfflineSigner } from '@cosmostation/cosmos-client';
-import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
 import { storeToRefs } from 'pinia';
 import { ref, watch } from 'vue';
 
 import { useConfigStore } from '@/stores/useConfigStore';
 import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
 import { useWalletStateStore } from '@/stores/useWalletStateStore';
-import { createAuthzAminoConverters } from '@/utility/authz';
-import { getChainConfigLazy } from '@/utility/getChainConfigLazy';
 
 import { useBalanceFetcher } from './useBalanceFetcher';
 import { useSessionWallet } from './useSessionWallet';
+import { authenticate, signOut as signOutAuth } from './wallet/auth';
+import { connectWallet } from './wallet/connection';
+import { useDitherUtilities } from './wallet/dither';
+import { useSequenceManager } from './wallet/sequence';
+import { signMessage as signMessageUtil } from './wallet/signing';
+import { useTransactionManager } from './wallet/transactions';
 
-const TX_BROADCAST_TIMEOUT = 30_000;
-const DEFAULT_GAS_CEIL = 1.6;
+export const Wallets = {
+  keplr: 'Keplr',
+  leap: 'Leap',
+  cosmostation: 'Cosmostation',
+  addressOnly: 'AddressOnly',
+} as const;
 
-export enum Wallets {
-  keplr = 'Keplr',
-  leap = 'Leap',
-  cosmostation = 'Cosmostation',
-  addressOnly = 'AddressOnly',
-}
+export type WalletType = typeof Wallets[keyof typeof Wallets];
 
-export function getWalletHelp(wallet: Wallets) {
+export function getWalletHelp(wallet: WalletType) {
   switch (wallet) {
     case Wallets.keplr:
       return 'https://help.keplr.app/articles/advanced-troubleshooting-guidelines';
@@ -41,284 +37,99 @@ export function getWalletHelp(wallet: Wallets) {
   }
 }
 
-async function isCredentialsValid() {
-  const configStore = useConfigStore();
-  const apiRoot = configStore.envConfig.apiRoot ?? 'http://localhost:3000/v1';
-
-  const resVerifyRaw = await fetch(`${apiRoot}/auth-verify`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    credentials: 'include',
-  });
-
-  if (resVerifyRaw.status !== 200) {
-    return false;
-  }
-
-  const resVerify = await resVerifyRaw.json();
-  if (resVerify.status !== 200) {
-    if (resVerify.status === 429) {
-      console.log(`Exceeded rate limiting, try again later.`);
-      return false;
-    }
-
-    return false;
-  }
-
-  return true;
-}
-
 function useWalletInstance() {
   const signer: Ref<OfflineSigner | null> = ref(null);
-  const localSequence = ref(0);
-  const localAccountNumber = ref(0);
-
-  const txProcessingCount = ref(0);
-  const cachedGasLimit = ref('');
-
-  const chainInfo = getChainConfigLazy();
   const configStore = useConfigStore();
   const balanceFetcher = useBalanceFetcher();
+  const walletDialogStore = useWalletDialogStore();
+  const walletState = storeToRefs(useWalletStateStore());
 
   const apiRoot = configStore.envConfig.apiRoot ?? 'http://localhost:3000/v1';
   const destinationWallet = configStore.envConfig.communityWallet ?? 'atone1uq6zjslvsa29cy6uu75y8txnl52mw06j6fzlep';
 
-  const walletDialogStore = useWalletDialogStore();
-  const walletState = storeToRefs(useWalletStateStore());
+  // Sequence management
+  const sequenceManager = useSequenceManager();
 
+  // Transaction manager
+  const transactionManager = useTransactionManager({
+    signer,
+    address: walletState.address,
+    processState: walletState.processState,
+    sequence: sequenceManager.sequence,
+    accountNumber: sequenceManager.accountNumber,
+    isUsingSingleSession: walletState.isUsingSingleSession,
+    onBalanceUpdate: (address: string) => balanceFetcher.updateAddress(address),
+  });
+
+  // Dither utilities
+  const ditherUtilities = useDitherUtilities({
+    address: walletState.address,
+    sendTx: transactionManager.sendTx,
+    sendBankTx: (memo: string, amount: string) =>
+      transactionManager.sendBankTx(memo, amount, destinationWallet),
+    destinationWallet,
+  });
+
+  // Message signing wrapper
   const signMessage = async (text: string) => {
     if (!signer.value) {
       throw new Error('Could not sign messages');
     }
-
-    if (walletState.used.value === Wallets.keplr) {
-      return window.keplr?.signArbitrary(chainInfo.value.chainId, walletState.address.value, text);
-    }
-
-    if (walletState.used.value === Wallets.cosmostation) {
-      return window.cosmostation.providers.keplr.signArbitrary(
-        chainInfo.value.chainId,
-        walletState.address.value,
-        text,
-      );
-    }
-
-    if (walletState.used.value === Wallets.leap) {
-      return window.leap?.signArbitrary(chainInfo.value.chainId, walletState.address.value, text);
-    }
-
-    throw new Error(`No valid wallet connected to sign messages.`);
+    return signMessageUtil({
+      walletType: walletState.used.value,
+      address: walletState.address.value,
+      text,
+    });
   };
 
+  // Sign out handler
   const signOut = async () => {
     walletState.address.value = '';
     walletState.used.value = null;
     walletState.loggedIn.value = false;
     walletState.processState.value = 'idle';
-    await fetch(`${apiRoot}/logout`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include',
-    });
+    await signOutAuth(apiRoot);
   };
 
+  // Watch for address/signer changes to update sequence
   watch([walletState.address, signer], async ([addressValue, signerValue]) => {
     if (addressValue && signerValue) {
-      const client = await SigningStargateClient.connectWithSigner(chainInfo.value.rpc, signerValue);
-      const { sequence, accountNumber } = await client.getSequence(addressValue);
-      localSequence.value = sequence;
-      localAccountNumber.value = accountNumber;
+      await sequenceManager.updateSequence(addressValue, signerValue);
     }
   });
 
-  const connect = async (walletType: Wallets, address?: string, signal?: AbortSignal) => {
-    if (signal?.aborted) {
-      return Promise.reject(new DOMException('Aborted', 'AbortError'));
-    }
-    signal?.addEventListener('abort', signOut);
-    switch (walletType) {
-      case Wallets.keplr:
-        try {
-          await window.keplr?.experimentalSuggestChain(chainInfo.value);
-          await window.keplr?.enable(chainInfo.value.chainId);
-          if (window.getOfflineSignerOnlyAmino) {
-            walletState.address.value = (
-              await window.getOfflineSignerOnlyAmino(chainInfo.value.chainId).getAccounts()
-            )[0].address;
-            walletState.used.value = Wallets.keplr;
-            signer.value = window.getOfflineSignerOnlyAmino(chainInfo.value.chainId);
-            if (signal?.aborted) {
-              signOut();
-            }
-          } else {
-            throw new Error('Could not connect to Keplr: getOfflineSigner method does not exist');
-          }
-        } catch (e) {
-          throw new Error(`Could not connect to Keplr: ${e}`);
-        } finally {
-          signal?.removeEventListener('abort', signOut);
-        }
-        break;
-      case Wallets.leap:
-        try {
-          await window.leap?.experimentalSuggestChain(chainInfo.value);
-          await window.leap?.enable(chainInfo.value.chainId);
-          walletState.address.value = (
-            await window.leap.getOfflineSignerOnlyAmino(chainInfo.value.chainId).getAccounts()
-          )[0].address;
-          walletState.used.value = Wallets.leap;
-          signer.value = window.leap.getOfflineSignerOnlyAmino(chainInfo.value.chainId);
-          if (signal?.aborted) {
-            signOut();
-          }
-        } catch (e) {
-          throw new Error(`Could not connect to Leap Wallet: ${e}`);
-        } finally {
-          signal?.removeEventListener('abort', signOut);
-        }
-        break;
-      case Wallets.cosmostation:
-        try {
-          await (window.cosmostation as any).cosmos.request({
-            method: 'cos_addChain',
-            params: {
-              chainId: chainInfo.value.chainId,
-              chainName: chainInfo.value.chainName,
-              addressPrefix: chainInfo.value.bech32Config.bech32PrefixAccAddr,
-              baseDenom: chainInfo.value.stakeCurrency.coinMinimalDenom,
-              displayDenom: chainInfo.value.stakeCurrency.coinDenom,
-              restURL: chainInfo.value.rest,
-              decimals: chainInfo.value.stakeCurrency.coinDecimals, // optional
-              coinType: `${chainInfo.value.bip44.coinType}`, // optional
-            },
-          });
-        } catch (e: unknown) {
-          if ((e as { code: number }).code !== -32602) {
-            throw e;
-          }
-        }
-        try {
-          walletState.address.value = (
-            await (window.cosmostation as any).cosmos.request({
-              method: 'cos_requestAccount',
-              params: { chainName: chainInfo.value.chainId },
-            })
-          ).address;
-          walletState.used.value = Wallets.cosmostation;
-          const cosmostationSigner = (await getOfflineSigner(chainInfo.value.chainId)) as OfflineSigner;
-          if ((cosmostationSigner as OfflineDirectSigner).signDirect) {
-            const { signDirect: _signDirect, ...aminoSigner } = cosmostationSigner as OfflineDirectSigner;
-            signer.value = aminoSigner as OfflineAminoSigner;
-          } else {
-            signer.value = cosmostationSigner;
-          }
-          if (signal?.aborted) {
-            signOut();
-          }
-        } catch (e) {
-          throw new Error(`Could not connect to Cosmostation: ${e}`);
-        } finally {
-          signal?.removeEventListener('abort', signOut);
-        }
-        break;
-      case Wallets.addressOnly:
-        if (address) {
-          walletState.address.value = address;
-          walletState.used.value = Wallets.addressOnly;
-        }
-        break;
-    }
+  // Connect wallet
+  const connect = async (walletType: WalletType, address?: string, signal?: AbortSignal) => {
+    await connectWallet({
+      walletType,
+      address,
+      signal,
+      onAbort: signOut,
+      setAddress: (addr: string) => {
+        walletState.address.value = addr;
+      },
+      setUsed: (wallet: WalletType | null) => {
+        walletState.used.value = wallet;
+      },
+      setSigner: (s: OfflineSigner | null) => {
+        signer.value = s;
+      },
+    });
 
+    // Authenticate if address is set
     if (walletState.address.value) {
-      const headers: Record<string, string> = {
-        'Content-Type': 'application/json',
-      };
-      const postBody = {
+      await authenticate({
+        apiRoot,
         address: walletState.address.value,
-      };
-
-      const isValid = await isCredentialsValid();
-      if (isValid) {
-        walletState.loggedIn.value = true;
-        walletDialogStore.hideDialog();
-        return;
-      }
-
-      try {
-        console.log('postBodypostBody', postBody);
-        // Create the authentication request
-        const responseRaw = await fetch(`${apiRoot}/auth-create`, {
-          body: JSON.stringify(postBody),
-          method: 'POST',
-          headers,
-        });
-        console.log('responseRawresponseRaw', responseRaw);
-
-        let response: { status: number; id: number; message: string; error?: string };
-
-        try {
-          response = await responseRaw.json();
-        } catch (err) {
-          walletState.loggedIn.value = false;
-          walletDialogStore.hideDialog();
-          console.error(`Failed to create auth request`, err);
-          return;
-        }
-
-        if (responseRaw.status === 429) {
-          walletState.loggedIn.value = false;
-          walletDialogStore.hideDialog();
-          if (response.error) {
-            console.error(`${response.message}`);
-          }
-
-          return;
-        }
-
-        // Sign the authentication request
-        const signedMsg = await signMessage(response.message);
-        if (!signedMsg) {
-          walletState.loggedIn.value = false;
-          walletDialogStore.hideDialog();
-          console.error(`Failed to sign response`);
-          // TODO - Add Better Error Handling
-          return;
-        }
-
-        const data = { ...signedMsg, id: response.id };
-        const resAuthRaw = await fetch(`${apiRoot}/auth`, {
-          body: JSON.stringify(data),
-          method: 'POST',
-          headers,
-          credentials: 'include',
-        });
-
-        if (resAuthRaw.status !== 200) {
-          walletState.loggedIn.value = false;
-          walletDialogStore.hideDialog();
-          console.error(`Failed to authenticate, invalid JSON response`);
-          // TODO - Add Better Error Handling
-          return;
-        }
-
-        const resAuth = await resAuthRaw.json();
-        if (resAuth.status !== 200) {
-          console.error(resAuth);
-          walletState.loggedIn.value = false;
-          return;
-        }
-
-        walletState.loggedIn.value = true;
-      } catch (e) {
-        signOut();
-        throw e;
-      }
+        signMessage,
+        setLoggedIn: (loggedIn: boolean) => {
+          walletState.loggedIn.value = loggedIn;
+        },
+        signOut,
+      });
     }
 
+    // Create session if needed
     if (walletState.isUsingSingleSession.value) {
       await useSessionWallet().createSession();
     }
@@ -326,267 +137,38 @@ function useWalletInstance() {
     walletDialogStore.hideDialog();
   };
 
-  const sendTx = async (msgs: EncodeObject[], formattedMemo?: string) => {
-    const response: { broadcast: boolean; tx?: DeliverTxResponse; msg?: string } = { broadcast: false };
-    walletState.processState.value = 'starting';
-
-    if (!signer.value) {
-      walletState.processState.value = 'idle';
-      throw new Error('Could not sign messages');
-    }
-
-    let isPreIncremented = false;
-
-    try {
-      txProcessingCount.value++;
-
-      walletState.processState.value = 'connecting';
-
-      const aminoTypes = new AminoTypes({
-        ...createAuthzAminoConverters(),
-        ...createDefaultAminoConverters(),
-      });
-      const client = await SigningStargateClient.connectWithSigner(chainInfo.value.rpc, signer.value, {
-        aminoTypes,
-      });
-
-      walletState.processState.value = 'simulating';
-
-      let gasLimit = '';
-
-      if (txProcessingCount.value > 1) {
-        gasLimit = cachedGasLimit.value;
-      } else {
-        const simulate = await client.simulate(walletState.address.value, msgs, formattedMemo);
-        gasLimit = simulate && simulate > 0 ? `${Math.ceil(simulate * DEFAULT_GAS_CEIL)}` : '500000';
-        cachedGasLimit.value = gasLimit;
-      }
-
-      walletState.processState.value = 'broadcasting';
-
-      const explicitSignerData: SignerData = {
-        accountNumber: localAccountNumber.value,
-        sequence: localSequence.value,
-        chainId: chainInfo.value.chainId,
-      };
-
-      // NOTE: to allow multi actions at a time, we support that the tx would be done successfully
-      // and the sequence would be incremented by 1 then decremented by 1 later if failed
-      localSequence.value++;
-      isPreIncremented = true;
-
-      const signedTx = await client.sign(
-        walletState.address.value,
-        msgs,
-        {
-          amount: [{ amount: Math.ceil(Number(gasLimit) * 0.225).toString(), denom: chainInfo.value.feeCurrencies[0].coinMinimalDenom }],
-          gas: gasLimit,
-        },
-        formattedMemo ?? '',
-        explicitSignerData,
-      );
-
-      const txBytes = TxRaw.encode(signedTx).finish();
-      const result = await client.broadcastTx(txBytes, TX_BROADCAST_TIMEOUT);
-
-      response.msg = result.code === 0 ? 'successfully broadcast' : 'failed to broadcast transaction';
-      response.broadcast = result.code === 0;
-      response.tx = result;
-
-      // Update balance if tx was successful
-      if (response.broadcast) {
-        balanceFetcher.updateAddress(walletState.address.value);
-      }
-
-      return response;
-    } catch (err) {
-      console.error(err);
-      if (isPreIncremented) {
-        localSequence.value--;
-      }
-      throw new Error('Could not sign messages');
-    } finally {
-      isPreIncremented = false;
-      walletState.processState.value = 'idle';
-      txProcessingCount.value--;
-    }
-  };
-
-  const sendBankTx = async (formattedMemo: string, amount: string) => {
-    const response: { broadcast: boolean; tx?: DeliverTxResponse; msg?: string } = { broadcast: false };
-    walletState.processState.value = 'starting';
-
-    if (!signer.value) {
-      walletState.processState.value = 'idle';
-      response.msg = 'No valid signer available.';
-      return response;
-    }
-
-    let isPreIncremented = false;
-
-    const currentLocalSequence = localSequence.value;
-
-    try {
-      txProcessingCount.value++;
-
-      walletState.processState.value = 'connecting';
-
-      const client = await SigningStargateClient.connectWithSigner(chainInfo.value.rpc, signer.value);
-
-      walletState.processState.value = 'simulating';
-
-      let gasLimit = '';
-
-      // NOTE: when executing multiple txs, when then first tx is not done, the 2nd tx should have
-      // sequence = 1st tx sequence + 1, but there is no way to send custom sequence with simulate function
-      // which will throw error. So we use the cached gas limit to avoid simulating again
-      if (txProcessingCount.value > 1) {
-        gasLimit = cachedGasLimit.value;
-      } else {
-        const simulate = await client.simulate(
-          walletState.address.value,
-          [
-            {
-              typeUrl: '/cosmos.bank.v1beta1.MsgSend',
-              value: {
-                fromAddress: walletState.address.value,
-                toAddress: destinationWallet,
-                amount: coins(1, chainInfo.value.feeCurrencies[0].coinMinimalDenom),
-              },
-            },
-          ],
-          formattedMemo,
-        );
-
-        gasLimit = simulate && simulate > 0 ? `${Math.ceil(simulate * DEFAULT_GAS_CEIL)}` : '500000';
-        cachedGasLimit.value = gasLimit;
-      }
-
-      walletState.processState.value = 'broadcasting';
-
-      const sessionWallet = useSessionWallet();
-      let result: DeliverTxResponse;
-      if (walletState.isUsingSingleSession.value && sessionWallet.sessionSigner.value) {
-        result = await sessionWallet.sessionSigner.value.execute.send({
-          toAddress: destinationWallet,
-          amount: [{ denom: 'uphoton', amount: String(100_000) }], // 0.1 PHOTON
-          memo: formattedMemo,
-        });
-
-        // NOTE: to allow multi actions at a time, we support that the tx would be done successfully
-        // and the sequence would be incremented by 1 then decremented by 1 later if failed
-        localSequence.value++;
-        isPreIncremented = true;
-      } else {
-        const explicitSignerData: SignerData = {
-          accountNumber: localAccountNumber.value,
-          sequence: currentLocalSequence,
-          chainId: chainInfo.value.chainId,
-        };
-
-        // NOTE: to allow multi actions at a time, we support that the tx would be done successfully
-        // and the sequence would be incremented by 1 then decremented by 1 later if failed
-        localSequence.value++;
-        isPreIncremented = true;
-
-        const signedTx = await client.sign(
-          walletState.address.value,
-          [
-            {
-              typeUrl: '/cosmos.bank.v1beta1.MsgSend',
-              value: {
-                fromAddress: walletState.address.value,
-                toAddress: destinationWallet,
-                amount: [{ amount, denom: chainInfo.value.feeCurrencies[0].coinMinimalDenom }], // Amount
-              },
-            },
-          ],
-          {
-            amount: [{ amount: Math.ceil(Number(gasLimit) * 0.225).toString(), denom: chainInfo.value.feeCurrencies[0].coinMinimalDenom }],
-            gas: gasLimit,
-          }, // Gas
-          formattedMemo,
-          explicitSignerData,
-        );
-
-        const txBytes = TxRaw.encode(signedTx).finish();
-        result = await client.broadcastTx(txBytes, TX_BROADCAST_TIMEOUT);
-      }
-
-      response.msg = result.code === 0 ? 'successfully broadcast' : 'failed to broadcast transaction';
-      response.broadcast = result.code === 0;
-      response.tx = result;
-
-      // Update balance if tx was successful
-      if (response.broadcast) {
-        balanceFetcher.updateAddress(walletState.address.value);
-      }
-
-      return response;
-    } catch (err) {
-      if (isPreIncremented) {
-        localSequence.value--;
-      }
-
-      response.msg = String(err);
-      return response;
-    } finally {
-      isPreIncremented = false;
-      walletState.processState.value = 'idle';
-      txProcessingCount.value--;
-    }
-  };
-
+  // Refresh address
   const refreshAddress = () => {
-    if (walletState.used.value) {
-      if (walletState.used.value === Wallets.addressOnly) {
+    switch (walletState.used.value) {
+      case Wallets.addressOnly:
         connect(walletState.used.value, walletState.address.value);
-      } else {
+        break;
+      case Wallets.keplr:
+      case Wallets.leap:
+      case Wallets.cosmostation:
         connect(walletState.used.value);
-      }
+        break;
     }
   };
 
-  const ditherTipUser = async (address: string, amount = '1') => {
-    return sendTx(
-      [
-        {
-          typeUrl: '/cosmos.bank.v1beta1.MsgSend',
-          value: {
-            fromAddress: walletState.address.value,
-            toAddress: address,
-            amount: coins(amount, chainInfo.value.feeCurrencies[0].coinMinimalDenom),
-          },
-        },
-      ],
-      `dither.TipUser("${address}")`,
-    );
-  };
-
-  const ditherSend = async <K extends keyof DitherTypes>(
-    type: K,
-    data: { args: DitherTypes[K]; amount?: string },
-  ) => {
-    data.amount ??= '1';
-    const memo = `dither.${type}("${data.args.join('","')}")`;
-    return await sendBankTx(memo, data.amount);
-  };
-
-  window.addEventListener('cosmostation_keystorechange', refreshAddress);
-  window.addEventListener('keplr_keystorechange', refreshAddress);
-  window.addEventListener('leap_keystorechange', refreshAddress);
+  // Set up wallet change listeners
+  if (typeof window !== 'undefined') {
+    window.addEventListener('cosmostation_keystorechange', refreshAddress);
+    window.addEventListener('keplr_keystorechange', refreshAddress);
+    window.addEventListener('leap_keystorechange', refreshAddress);
+  }
 
   return {
     ...walletState,
     signer,
     signOut,
     connect,
-    sendTx,
+    sendTx: transactionManager.sendTx,
     refreshAddress,
     signMessage,
     dither: {
-      send: ditherSend,
-      tipUser: ditherTipUser,
+      send: ditherUtilities.send,
+      tipUser: ditherUtilities.tipUser,
     },
   };
 }
