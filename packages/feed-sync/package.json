@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "dotenv": "^16.6.1",
+    "limiter": "^3.0.0",
     "pg": "^8.16.3",
     "pg-logical-replication": "^2.2.1",
     "retry": "^0.13.1",

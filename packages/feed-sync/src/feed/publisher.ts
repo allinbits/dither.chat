@@ -1,5 +1,6 @@
 import { Buffer } from 'node:buffer';
 
+import { RateLimiter } from 'limiter';
 import { Markup, Telegraf } from 'telegraf';
 
 import logger from '../logger';
@@ -28,10 +29,17 @@ export class NopePublisher implements Publisher {
 export class TelegramPublisher implements Publisher {
   private bot: Telegraf;
   private chatId: string;
+  private limiter: RateLimiter;
+  private burst: RateLimiter;
 
   constructor(token: string, chatId: string) {
     this.chatId = chatId;
     this.bot = new Telegraf(token);
+
+    // Limit to 20 messages per minute, with bursts of 1 message per second.
+    // https://core.telegram.org/bots/faq#my-bot-is-hitting-limits-how-do-i-avoid-this
+    this.limiter = new RateLimiter({ tokensPerInterval: 20, interval: 'minute' });
+    this.burst = new RateLimiter({ tokensPerInterval: 1, interval: 'second' });
   }
 
   async publish(post: any): Promise<void> {
@@ -39,6 +47,9 @@ export class TelegramPublisher implements Publisher {
     if (post.removed_at) {
       return;
     }
+
+    await this.burst.removeTokens(1);
+    await this.limiter.removeTokens(1);
 
     // Compresses hash to fit within Telegram's 64-byte callback_data limit.
     // See https://core.telegram.org/bots/api#inlinekeyboardbutton
