@@ -5,15 +5,18 @@ import { Markup, Telegraf } from 'telegraf';
 
 import logger from '../logger';
 
+// Dither post.
+type Post = Record<string, any>; // TODO: Create a package that defines the post type and deals with TG message send
+
 // Publisher defines an interface for Dither message publishers
-export interface Publisher {
+export interface Publisher<T = unknown> {
   // Publishes a Dither message
-  publish: (msg: any) => Promise<void>;
+  publish: (msg: T) => Promise<void>;
 }
 
 // ConsolePublisher prints Dither messages to console
-export class ConsolePublisher implements Publisher {
-  async publish(msg: any): Promise<void> {
+export class ConsolePublisher implements Publisher<Post> {
+  async publish(msg: Post): Promise<void> {
     if (msg) {
       logger.info('Post', { msg });
     }
@@ -22,11 +25,11 @@ export class ConsolePublisher implements Publisher {
 
 // NopePublisher is a test publisher that doesn't publish messages.
 export class NopePublisher implements Publisher {
-  async publish(_: any): Promise<void> {}
+  async publish(): Promise<void> {}
 }
 
 // TelegramPublisher publishes Dither messages in Telegram
-export class TelegramPublisher implements Publisher {
+export class TelegramPublisher implements Publisher<Post> {
   private bot: Telegraf;
   private chatId: string;
   private limiter: RateLimiter;
@@ -42,7 +45,7 @@ export class TelegramPublisher implements Publisher {
     this.burst = new RateLimiter({ tokensPerInterval: 1, interval: 'second' });
   }
 
-  async publish(post: any): Promise<void> {
+  async publish(post: Post): Promise<void> {
     // Skip removed posts
     if (post.removed_at) {
       return;
