@@ -1,0 +1,27 @@
+{
+  "name": "feed-sync",
+  "type": "module",
+  "version": "1.0.0",
+  "packageManager": "pnpm@10.11.1",
+  "description": "",
+  "author": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "vite-node ./src/index.ts",
+    "build": "pnpm build:deps && tsc",
+    "build:deps": "pnpm --filter {.}^... build"
+  },
+  "dependencies": {
+    "dotenv": "^16.6.1",
+    "limiter": "^3.0.0",
+    "pg": "^8.16.3",
+    "pg-logical-replication": "^2.2.1",
+    "retry": "^0.13.1",
+    "telegraf": "^4.16.3",
+    "winston": "^3.18.3"
+  },
+  "devDependencies": {
+    "@types/retry": "^0.12.5",
+    "vite-node": "^3.2.4"
+  }
+}
