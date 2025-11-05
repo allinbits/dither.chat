@@ -9,8 +9,8 @@ export const tabVariants = cva(
   {
     variants: {
       size: {
-        default: 'p-4 text-base',
-        lg: 'p-6 text-lg',
+        default: 'p-4 text-base border-b-2',
+        lg: 'p-6 text-lg border-b-4',
       },
       layout: {
         default: '',
