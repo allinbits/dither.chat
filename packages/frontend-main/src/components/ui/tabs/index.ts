@@ -2,7 +2,7 @@ import type { VariantProps } from 'class-variance-authority';
 
 import { cva } from 'class-variance-authority';
 
-export { default as Tabs } from './Tabs.vue';
+export { default as Tabs } from './RouterTabs.vue';
 
 export const tabVariants = cva(
   'inline-flex items-center justify-center whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 relative rounded-none border-b-2 bg-transparent font-semibold shadow-none transition-none',

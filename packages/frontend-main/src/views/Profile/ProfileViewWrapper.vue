@@ -8,7 +8,7 @@ import { useRoute } from 'vue-router';
 import { toast } from 'vue-sonner';
 
 import Button from '@/components/ui/button/Button.vue';
-import Tabs from '@/components/ui/tabs/Tabs.vue';
+import Tabs from '@/components/ui/tabs/RouterTabs.vue';
 import UserAvatarUsername from '@/components/users/UserAvatarUsername.vue';
 import { useDefaultAmount } from '@/composables/useDefaultAmount';
 import { useFollowUser } from '@/composables/useFollowUser';

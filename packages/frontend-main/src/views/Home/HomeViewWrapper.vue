@@ -2,7 +2,7 @@
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
-import Tabs from '@/components/ui/tabs/Tabs.vue';
+import Tabs from '@/components/ui/tabs/RouterTabs.vue';
 import { useWallet } from '@/composables/useWallet';
 import MainLayout from '@/layouts/MainLayout.vue';
 
