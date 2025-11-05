@@ -132,7 +132,7 @@ async function onClickUnfollow() {
         </template>
       </div>
 
-      <Tabs v-if="wallet.loggedIn.value" :tabs="tabs" layout="fill" />
+      <Tabs v-if="wallet.loggedIn.value" :tabs="tabs" layout="fill" class="border-t" />
     </div>
     <slot />
   </MainLayout>
