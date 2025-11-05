@@ -8,7 +8,7 @@ describe('should search for posts', async () => {
   const addressUserA = getAtomOneAddress();
 
   it('search - /search', async () => {
-    const body: typeof Posts.PostBody.static = {
+    const body: Posts.PostBody = {
       from: addressUserA,
       hash: getRandomHash(),
       msg: 'this is a very unique message with a very unique result',
@@ -33,7 +33,7 @@ describe('should search for posts', async () => {
   });
 
   it('search - /search post with owner', async () => {
-    const body: typeof Posts.PostBody.static = {
+    const body: Posts.PostBody = {
       from: addressUserA,
       hash: getRandomHash(),
       msg: 'content not related at all with owner',

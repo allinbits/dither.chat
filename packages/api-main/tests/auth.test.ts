@@ -8,7 +8,7 @@ describe('v1/auth', async () => {
   const walletA = await createWallet();
 
   it('create and verify request for wallet', async () => {
-    const body: typeof Posts.AuthCreateBody.static = {
+    const body: Posts.AuthCreateBody = {
       address: walletA.publicKey,
     };
 
@@ -16,7 +16,7 @@ describe('v1/auth', async () => {
     assert.isOk(response?.status === 200, 'response was not okay');
 
     const signData = await signADR36Document(walletA.mnemonic, response.message);
-    const verifyBody: typeof Posts.AuthBody.static & { json?: boolean } = {
+    const verifyBody: Posts.AuthBody & { json?: boolean } = {
       id: response.id,
       ...signData.signature,
       json: true,
