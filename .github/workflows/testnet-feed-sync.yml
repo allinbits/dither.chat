@@ -1,4 +1,4 @@
-name: '[Testnet] Reader Main'
+name: '[Testnet] Feed Sync'
 
 on:
   pull_request:
@@ -13,18 +13,18 @@ jobs:
   detect-changes:
     runs-on: ubuntu-latest
     outputs:
-      changed: ${{ steps.changes.outputs.reader-main }}
+      changed: ${{ steps.changes.outputs.feed-sync }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Detect reader-main changes
+      - name: Detect feed-sync changes
         uses: dorny/paths-filter@v3
         id: changes
         with:
           filters: |
-            reader-main:
-              - 'packages/reader-main/**'
+            feed-sync:
+              - 'packages/feed-sync/**'
 
   build:
     needs: [detect-changes]
@@ -63,10 +63,10 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: ./packages/reader-main/Dockerfile
+          file: ./packages/feed-sync/Dockerfile
           push: true
           tags:
-            ${{ secrets.REGION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/dither-chat/reader-main:${{ steps.sha_short.outputs.value }}
+            ${{ secrets.REGION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/dither-chat/feed-sync:${{ steps.sha_short.outputs.value }}
 
   notify:
     needs: [build]
@@ -79,7 +79,7 @@ jobs:
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           format: markdown
           message: |
-            🚨 *Reader Main Testnet Build Failed* 🚨
+            🚨 *Feed Sync Build Failed* 🚨
 
             🔗 *Repository*: [${{ github.repository }}](https://github.com/${{ github.repository }})
             📝 *Commit*: ${{ github.event.commits[0].message }}
