@@ -2,11 +2,11 @@ import type { EncodeObject, OfflineSigner } from '@cosmjs/proto-signing';
 import type { DeliverTxResponse, SignerData } from '@cosmjs/stargate';
 import type { Ref } from 'vue';
 
-import { AminoTypes, coins, createDefaultAminoConverters, SigningStargateClient } from '@cosmjs/stargate';
+import { coins, SigningStargateClient } from '@cosmjs/stargate';
 import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
 import { ref } from 'vue';
 
-import { createAuthzAminoConverters } from '@/utility/authz';
+import { allAminoTypes } from '@/utility/amino';
 import { getChainConfigLazy } from '@/utility/getChainConfigLazy';
 
 import { useSessionWallet } from '../useSessionWallet';
@@ -57,12 +57,8 @@ export function useTransactionManager(params: TransactionManagerParams): Transac
       txProcessingCount.value++;
       processState.value = 'connecting';
 
-      const aminoTypes = new AminoTypes({
-        ...createAuthzAminoConverters(),
-        ...createDefaultAminoConverters(),
-      });
       const client = await SigningStargateClient.connectWithSigner(chainInfo.value.rpc, signer.value, {
-        aminoTypes,
+        aminoTypes: allAminoTypes,
       });
       processState.value = 'simulating';
 
