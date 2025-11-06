@@ -79,7 +79,7 @@ jobs:
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           format: markdown
           message: |
-            🚨 *Build Reader Main Testnet Failed* 🚨
+            🚨 *Reader Main Testnet Build Failed* 🚨
 
             🔗 *Repository*: [${{ github.repository }}](https://github.com/${{ github.repository }})
             📝 *Commit*: ${{ github.event.commits[0].message }}
