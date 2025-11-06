@@ -1,4 +1,4 @@
-name: testnet-reader-main
+name: '[Testnet] Reader Main'
 
 on:
   pull_request:
@@ -26,21 +26,10 @@ jobs:
             reader-main:
               - 'packages/reader-main/**'
 
-  test:
-    needs: detect-changes
-    if: needs.detect-changes.outputs.changed == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-  # Add reader-main specific test steps here
-
-  deploy-testnet:
-    needs: [detect-changes, test]
+  build:
+    needs: [detect-changes]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.detect-changes.outputs.changed == 'true'
     runs-on: ubuntu-latest
-    environment: testnet
     permissions:
       contents: read
       id-token: write
@@ -78,3 +67,25 @@ jobs:
           push: true
           tags:
             ${{ secrets.REGION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/dither-chat/reader-main:${{ steps.sha_short.outputs.value }}
+
+  notify:
+    needs: [build]
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: appleboy/telegram-action@v1.0.1
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          format: markdown
+          message: |
+            🚨 *Build Reader Main Testnet Failed* 🚨
+
+            🔗 *Repository*: [${{ github.repository }}](https://github.com/${{ github.repository }})
+            📝 *Commit*: ${{ github.event.commits[0].message }}
+            👤 *Author*: ${{ github.actor }}
+            ⛓️‍💥 *App*: ${{ inputs.app_name }}
+
+            🔍 [View Logs](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+
+            Please investigate and fix *ASAP*! 🔧
