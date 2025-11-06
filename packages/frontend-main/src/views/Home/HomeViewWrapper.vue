@@ -1,20 +1,29 @@
 <script setup lang="ts">
-import { useRoute } from 'vue-router';
+import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 
-import RouterLinkTab from '@/components/ui/tabs/RouterLinkTab.vue';
+import Tabs from '@/components/ui/tabs/RouterTabs.vue';
 import { useWallet } from '@/composables/useWallet';
 import MainLayout from '@/layouts/MainLayout.vue';
 
 const wallet = useWallet();
-const route = useRoute();
+const { t } = useI18n();
+
+const tabs = computed(() => [
+  {
+    label: t('components.Tabs.feed'),
+    to: '/',
+  },
+  {
+    label: t('components.Tabs.following'),
+    to: '/following',
+  },
+]);
 </script>
 
 <template>
   <MainLayout>
-    <div v-if="wallet.loggedIn.value" class="flex flex-row">
-      <RouterLinkTab :label="$t('components.Tabs.feed')" :is-active="route.path === '/'" to="/" />
-      <RouterLinkTab :label="$t('components.Tabs.following')" :is-active="route.path === '/following'" to="/following" />
-    </div>
+    <Tabs v-if="wallet.loggedIn.value" :tabs="tabs" size="lg" layout="fill" />
 
     <slot />
   </MainLayout>

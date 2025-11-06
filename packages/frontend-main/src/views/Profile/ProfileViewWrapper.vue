@@ -3,11 +3,12 @@ import type { PopupState } from '@/composables/usePopups';
 
 import { Loader } from 'lucide-vue-next';
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
 import { toast } from 'vue-sonner';
 
 import Button from '@/components/ui/button/Button.vue';
-import RouterLinkTab from '@/components/ui/tabs/RouterLinkTab.vue';
+import Tabs from '@/components/ui/tabs/RouterTabs.vue';
 import UserAvatarUsername from '@/components/users/UserAvatarUsername.vue';
 import { useDefaultAmount } from '@/composables/useDefaultAmount';
 import { useFollowUser } from '@/composables/useFollowUser';
@@ -31,6 +32,7 @@ const configStore = useConfigStore();
 const { tipUser } = useTipUser();
 const { followUser } = useFollowUser();
 const { unfollowUser } = useUnfollowUser();
+const { t } = useI18n();
 
 const address = computed(() =>
   typeof route.params.address === 'string' ? route.params.address : '',
@@ -39,6 +41,17 @@ const isMyProfile = computed(() =>
   address.value === wallet.address.value,
 );
 const { data: isFollowing, isFetching: isFetchingIsFollowing } = useIsFollowing({ followingAddress: address, followerAddress: wallet.address });
+
+const tabs = computed(() => [
+  {
+    label: t(`components.Tabs.${isMyProfile.value ? 'myPosts' : 'posts'}`),
+    to: `/profile/${address.value}`,
+  },
+  {
+    label: t(`components.Tabs.${isMyProfile.value ? 'myReplies' : 'replies'}`),
+    to: `/profile/${address.value}/replies`,
+  },
+]);
 
 const walletDialogStore = useWalletDialogStore();
 function handleAction(type: keyof PopupState, userAddress: string) {
@@ -119,20 +132,8 @@ async function onClickUnfollow() {
         </template>
       </div>
 
-      <div v-if="wallet.loggedIn.value" class="flex flex-row border-t">
-        <RouterLinkTab
-          :label="$t(`components.Tabs.${isMyProfile ? 'myPosts' : 'posts'}`)"
-          :is-active="route.path === `/profile/${address}`"
-          :to="`/profile/${address}`"
-        />
-        <RouterLinkTab
-          :label="$t(`components.Tabs.${isMyProfile ? 'myReplies' : 'replies'}`)"
-          :is-active="route.path === `/profile/${address}/replies`"
-          :to="`/profile/${address}/replies`"
-        />
-      </div>
+      <Tabs v-if="wallet.loggedIn.value" :tabs="tabs" layout="fill" class="border-t" />
     </div>
-
     <slot />
   </MainLayout>
 </template>
