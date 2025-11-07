@@ -133,6 +133,7 @@ export class FeedReplicationService {
           await this.publish(lsn, post, publishRetries);
           logger.info('Post published', {
             lsn,
+            height: post.block_height,
             hash: post.hash,
             timestamp: post.timestamp,
           });
@@ -186,6 +187,7 @@ export class FeedReplicationService {
             logger.warn('Post publish failed', {
               attempt,
               hash: post.hash,
+              height: post.block_height,
               cause: (e as Error).message,
             });
           }

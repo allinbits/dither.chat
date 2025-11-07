@@ -39,8 +39,8 @@ export async function main() {
       const res = await client.query(query);
 
       for (const post of res.rows) {
-        const { hash, timestamp } = post;
-        logger.debug('Replaying post', { hash, timestamp });
+        const { block_height, hash, timestamp } = post;
+        logger.debug('Replaying post', { block_height, hash, timestamp });
         await publisher.publish(post);
       }
     }
