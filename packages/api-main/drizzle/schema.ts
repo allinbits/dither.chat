@@ -6,6 +6,7 @@ const MEMO_LENGTH = 512;
 export const FeedTable = pgTable(
   'feed',
   {
+    block_height: bigint({ mode: 'bigint' }), // Height of the block that contains the transaction
     hash: varchar({ length: 64 }).primaryKey(), // Main hash from the transaction
     post_hash: varchar({ length: 64 }), // Optional, this makes a post a reply, provided through memo
     author: varchar({ length: 44 }).notNull(), // Address of user, usually in the transfer message

@@ -24,6 +24,7 @@ export async function Post(action: ActionWithData): Promise<ResponseStatus> {
   try {
     const [message] = extractMemoContent(action.memo, 'dither.Post');
     const postBody: Posts.PostBody = {
+      block_height: action.height,
       hash: action.hash,
       from: action.sender,
       msg: message,
