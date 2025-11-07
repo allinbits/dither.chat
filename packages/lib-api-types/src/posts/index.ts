@@ -66,6 +66,7 @@ export const ModBanBodySchema = t.Object({
 export type ModBanBody = Static<typeof ModBanBodySchema>;
 
 export const PostBodySchema = t.Object({
+  block_height: t.String(),
   hash: t.String(),
   timestamp: t.String(),
   from: t.String(),

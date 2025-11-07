@@ -9,6 +9,7 @@ import { postToDiscord } from '../utility';
 const statement = getDatabase()
   .insert(FeedTable)
   .values({
+    block_height: sql.placeholder('block_height'),
     hash: sql.placeholder('hash'),
     timestamp: sql.placeholder('timestamp'),
     author: sql.placeholder('author'),
@@ -25,6 +26,7 @@ export async function Post(body: Posts.PostBody) {
     }
 
     await statement.execute({
+      block_height: body.block_height,
       hash: body.hash.toLowerCase(),
       timestamp: new Date(body.timestamp),
       author: body.from.toLowerCase(),
@@ -50,7 +52,7 @@ async function removePostIfBanned(body: Posts.PostBody) {
     .where(eq(AuditTable.user_address, body.from))
     .orderBy(desc(AuditTable.created_at))
     .limit(1);
-    // If there are not action over the user of they were restored (unbanned), do nothing
+  // If there are not action over the user of they were restored (unbanned), do nothing
   if (!lastAuditOnUser || lastAuditOnUser.restored_at) {
     return;
   }
