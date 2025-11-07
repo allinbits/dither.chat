@@ -6,7 +6,7 @@ import { Markup, Telegraf } from 'telegraf';
 import logger from '../logger';
 
 // Dither post.
-type Post = Record<string, any>; // TODO: Create a package that defines the post type and deals with TG message send
+export type Post = Record<string, any>; // TODO: Create a package that defines the post type and deals with TG message send
 
 // Publisher defines an interface for Dither message publishers
 export interface Publisher<T = unknown> {
@@ -39,9 +39,10 @@ export class TelegramPublisher implements Publisher<Post> {
     this.chatId = chatId;
     this.bot = new Telegraf(token);
 
-    // Limit to 20 messages per minute, with bursts of 1 message per second.
+    // Limit to 10 messages per minute, with bursts of 1 message per second.
     // https://core.telegram.org/bots/faq#my-bot-is-hitting-limits-how-do-i-avoid-this
-    this.limiter = new RateLimiter({ tokensPerInterval: 20, interval: 'minute' });
+    // API seems to allow 20 per minute but using 15 to be safe.
+    this.limiter = new RateLimiter({ tokensPerInterval: 15, interval: 'minute' });
     this.burst = new RateLimiter({ tokensPerInterval: 1, interval: 'second' });
   }
 

@@ -1,7 +1,7 @@
 import type { Client } from 'pg';
 import type { Pgoutput } from 'pg-logical-replication';
 
-import type { Publisher } from './publisher';
+import type { Post, Publisher } from './publisher';
 
 import { LogicalReplicationService, PgoutputPlugin } from 'pg-logical-replication';
 import retry from 'retry';
@@ -16,12 +16,12 @@ export class FeedReplicationService {
   private service: LogicalReplicationService;
   private plugin: PgoutputPlugin;
   private slotName: string;
-  private publisher: Publisher;
+  private publisher: Publisher<Post>;
   private stopping: boolean;
   private lastLsn: string;
   private walQueue: { lsn: string; post: Record<string, any> }[];
 
-  constructor(postgresUri: string, publicationName: string, slotName: string, publisher: Publisher) {
+  constructor(postgresUri: string, publicationName: string, slotName: string, publisher: Publisher<Post>) {
     this.slotName = slotName;
     this.publisher = publisher;
     this.walQueue = [];
@@ -129,13 +129,11 @@ export class FeedReplicationService {
     const publisher = async () => {
       if (this.walQueue.length) {
         const { lsn, post } = this.walQueue[0];
+        const { hash, timestamp } = post;
         try {
+          logger.debug('Publishing post...', { lsn, hash, timestamp });
           await this.publish(lsn, post, publishRetries);
-          logger.info('Post published', {
-            lsn,
-            hash: post.hash,
-            timestamp: post.timestamp,
-          });
+          logger.info('Post published', { lsn, hash, timestamp });
         } catch (e) {
           // Stop replication service when post can't be published to Telegram after multiple attempts.
           // This must be done to avoid acknowledging any post that followed the one that failed.
@@ -165,7 +163,7 @@ export class FeedReplicationService {
   }
 
   // Publish a post to Telegram.
-  private async publish(lsn: string, post: Record<string, any>, retries: number): Promise<void> {
+  private async publish(lsn: string, post: Post, retries: number): Promise<void> {
     const operation = retry.operation({ retries });
 
     return new Promise((resolve, reject) => {
