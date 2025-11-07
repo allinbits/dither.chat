@@ -10,7 +10,8 @@
     "https://raw.githubusercontent.com",
     "https://github.com",
     "https://*.githubusercontent.com",
-    "https://api.dicebear.com"
+    "https://api.dicebear.com",
+    "https://i.ytimg.com"
   ],
   "font-src": ["'self'", "https://fonts.gstatic.com"],
   "frame-src": [
@@ -21,8 +22,8 @@
   "connect-src": [
     "'self'",
     "https://cloud.umami.is",
+    "https://api-gateway.umami.dev",
     "https://*.dither.chat",
-    "https://*.allinbits.com",
-    "https://api-gateway.umami.dev"
+    "https://*.allinbits.com"
   ]
 }
