@@ -14,7 +14,7 @@ interface Config {
 
 const defaultConfig: Config = {
   envConfigs,
-  selectedChain: import.meta.env.ENVIRONMENT_TYPE ?? 'mainnet',
+  selectedChain: import.meta.env.VITE_ENVIRONMENT_TYPE ?? 'mainnet',
   defaultAmountAtomics: Decimal.fromUserInput('0.1', fractionalDigits).atomics,
   defaultAmountEnabled: false,
 };
