@@ -6,6 +6,8 @@ import { defineConfig } from 'vite';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import svgLoader from 'vite-svg-loader';
 
+import { cspMetaTagPlugin } from './vite/vite.plugins';
+
 // https://vite.dev/config/
 export default defineConfig({
   server: {
@@ -13,6 +15,7 @@ export default defineConfig({
     port: 5173,
   },
   plugins: [
+    cspMetaTagPlugin(),
     nodePolyfills({
       // Whether to polyfill specific globals.
       globals: {

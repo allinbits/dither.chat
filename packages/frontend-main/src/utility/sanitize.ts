@@ -1,7 +1,6 @@
 import type { Static, TSchema } from '@sinclair/typebox';
-import type { ValueError } from '@sinclair/typebox/compiler';
 
-import { TypeCompiler } from '@sinclair/typebox/compiler';
+import { Value } from '@sinclair/typebox/value';
 
 export interface RawRow {
   timestamp?: unknown;
@@ -24,12 +23,11 @@ export function checkRowsSchema<T extends TSchema>(
   schema: T,
   rows: RawRow[],
 ): Static<T>[] {
-  const typeChecker = TypeCompiler.Compile(schema);
   return rows
     .map((rawRow, i) => {
       const row = preprocessRow(rawRow);
-      if (!typeChecker.Check(row)) {
-        console.warn(`Invalid row at index ${i}`, [...typeChecker.Errors(row)] as ValueError[]);
+      if (!Value.Check(schema, row)) {
+        console.warn(`Invalid row at index ${i}`, [...Value.Errors(schema, row)]);
         return null;
       }
       const validatedRow = row as Static<T>;

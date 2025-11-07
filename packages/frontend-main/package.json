@@ -41,8 +41,10 @@
   },
   "devDependencies": {
     "@keplr-wallet/types": "^0.12.280",
+    "@types/lodash.merge": "^4.6.9",
     "@vitejs/plugin-vue": "^5.2.4",
     "@vue/tsconfig": "^0.7.0",
+    "lodash.merge": "^4.6.2",
     "typescript": "~5.7.3",
     "vite": "^6.3.7",
     "vite-plugin-node-polyfills": "^0.24.0",
