@@ -1,53 +1,37 @@
-# Netlify Edge Functions
+# OG Meta Edge Functions
 
-Edge functions for dynamic OG meta tags and image generation.
+Dynamic OG meta tags and image generation for social media previews.
 
 ## Functions
 
-### `post-meta.ts`
+- **`post-meta.ts`** - Handles `/post/*` routes, returns HTML with dynamic OG meta tags
+- **`og-image.ts`** - Handles `/og-image/*` routes, generates 1200×630 SVG images
 
-Handles `/post/*` routes and returns dynamic HTML with OG meta tags based on post content.
+## Setup
 
-**Features:**
+Set `API_ROOT` in Netlify dashboard or `netlify.toml`:
 
-- Fetches post from API (`/v1/post?hash={hash}`)
-- Injects dynamic meta tags (og:title, og:description, og:image, etc.)
-- Returns HTML for bots (Telegram, Discord, etc.)
-
-### `og-image.ts`
-
-Handles `/og-image/*` routes and generates 1200×630 PNG images for social media previews.
-
-**Features:**
-
-- Fetches post from API (`/v1/post?hash={hash}`)
-- Generates image using Satori
-- Returns PNG with post author, message, and timestamp
-
-## Environment Variables
-
-Set `API_ROOT` in Netlify dashboard:
-
+```toml
+[build.environment]
+API_ROOT = "https://api.mainnet.dither.chat/v1"
 ```
-API_ROOT=https://api.dither.chat/v1
-```
-
-The edge functions call the API to fetch post data instead of querying PostgreSQL directly.
-
-## Dependencies
-
-- `esm.sh/satori` - SVG generation
-- `esm.sh/@resvg/resvg-js` - SVG to PNG conversion
 
 ## Testing
 
-Test locally with Netlify CLI:
-
 ```bash
+# Local
 netlify dev
+
+# Test endpoints
+curl http://localhost:8888/post/{hash}
+curl http://localhost:8888/og-image/{hash}
+
+# Automated test
+./test-og-meta.sh {hash} {base_url}
 ```
 
-Then visit:
+## Online Validators
 
-- `http://localhost:8888/post/{hash}` - Dynamic HTML with meta tags
-- `http://localhost:8888/og-image/{hash}` - OG image
+- [Facebook Sharing Debugger](https://developers.facebook.com/tools/debug/)
+- [Twitter Card Validator](https://cards-dev.twitter.com/validator)
+- [LinkedIn Post Inspector](https://www.linkedin.com/post-inspector/)
