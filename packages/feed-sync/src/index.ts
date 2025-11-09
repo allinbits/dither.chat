@@ -1,6 +1,6 @@
 import type { Query } from 'pg';
 
-import type { Publisher } from './feed/publisher';
+import type { Post, Publisher } from './feed/publisher';
 
 import process from 'node:process';
 
@@ -13,7 +13,7 @@ import logger from './logger';
 
 // Runs a feed replication service.
 export async function main() {
-  let publisher: Publisher;
+  let publisher: Publisher<Post>;
 
   if (config.telegram.token && config.telegram.chatId) {
     publisher = new TelegramPublisher(config.telegram.token, config.telegram.chatId);
@@ -40,8 +40,9 @@ export async function main() {
 
       for (const post of res.rows) {
         const { hash, timestamp } = post;
-        logger.debug('Replaying post', { hash, timestamp });
+        logger.debug('Publishing post...', { hash, timestamp });
         await publisher.publish(post);
+        logger.info('Post published', { hash, timestamp });
       }
     }
 
