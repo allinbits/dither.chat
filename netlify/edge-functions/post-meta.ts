@@ -19,7 +19,7 @@ export default async (request: Request) => {
       return new Response('Failed to load template', { status: 500 });
     }
 
-    let html = await htmlResponse.text();
+
     const siteUrl = url.origin;
     const postUrl = `${siteUrl}/post/${post.hash}`;
     const ogImageUrl = `${siteUrl}/og-image/${post.hash}`;
@@ -44,9 +44,9 @@ export default async (request: Request) => {
       [/<meta\s+property="twitter:image"\s+content=".*?"\s*\/?>/, `<meta property="twitter:image" content="${ogImageUrl}" />`],
     ];
 
-    for (const [pattern, replacement] of replacements) {
-      html = html.replace(pattern, replacement);
-    }
+    const html = await htmlResponse.text().then(html =>
+      replacements.reduce((html, [pattern, replacement]) => html.replace(pattern, replacement), html)
+    );
 
     return new Response(html, {
       headers: { 'Content-Type': 'text/html; charset=utf-8' },
