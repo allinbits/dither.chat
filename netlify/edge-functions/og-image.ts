@@ -4,6 +4,68 @@ import { components } from './lib/components.ts';
 import { getPost } from './lib/shared.ts';
 
 /**
+ * Converts an emoji string to its code point representation.
+ * Handles multi-code-point emojis (e.g., flags, skin tones, ZWJ sequences).
+ * Code points are zero-padded to 4 characters as required by twemoji.
+ * @param emoji - The emoji string
+ * @returns The code point string (e.g., "1f600" for 😀, "1f1fa-1f1f8" for 🇺🇸)
+ */
+function getIconCode(emoji: string): string {
+  const codePoints: string[] = [];
+  let i = 0;
+
+  while (i < emoji.length) {
+    const codePoint = emoji.codePointAt(i);
+    if (codePoint) {
+      codePoints.push(codePoint.toString(16).padStart(4, '0'));
+      // Skip surrogate pairs (they take 2 UTF-16 units)
+      i += codePoint > 0xFFFF ? 2 : 1;
+    } else {
+      i++;
+    }
+  }
+
+  return codePoints.join('-');
+}
+
+/**
+ * Loads an emoji SVG from the twemoji CDN.
+ * Uses the GitHub CDN which is the official source for twemoji assets.
+ * @param code - The emoji code point string
+ * @returns The SVG content as a string
+ * @throws {Error} If the emoji cannot be loaded
+ */
+async function loadEmoji(code: string): Promise<string> {
+  // Use GitHub CDN for twemoji assets (official source)
+  const url = `https://cdn.jsdelivr.net/gh/twitter/twemoji@latest/assets/svg/${code}.svg`;
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Failed to load emoji ${code}: ${response.status}`);
+  }
+  return await response.text();
+}
+
+async function loadAdditionalAsset(code: string, segment: string): Promise<string> {
+  if (code === 'emoji') {
+    try {
+      // Convert emoji segment to code point and load SVG from twemoji CDN
+      const emojiCode = getIconCode(segment);
+      const emojiSvg = await loadEmoji(emojiCode);
+      // Return as base64-encoded data URI
+      return `data:image/svg+xml;base64,${btoa(emojiSvg)}`;
+    } catch (error) {
+      // If emoji fails to load, log details and return the original segment
+      // This prevents the entire image generation from failing
+      const emojiCode = getIconCode(segment);
+      console.warn(`Failed to load emoji "${segment}" (code: ${emojiCode}):`, error);
+      return code;
+    }
+  }
+  // If segment is normal text, return as-is
+  return code;
+}
+
+/**
  * Generates Open Graph images for post pages.
  *
  * Intercepts `/og-image/{hash}` requests and generates a 1200x630 SVG image using Satori.
@@ -45,6 +107,7 @@ export default async (request: Request) => {
           style: 'normal',
         },
       ],
+      loadAdditionalAsset,
     });
 
     return new Response(svg, {
