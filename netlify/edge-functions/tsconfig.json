@@ -10,6 +10,6 @@
     "skipLibCheck": true,
     "types": []
   },
-  "include": ["**/*.ts", "deno.d.ts"],
+  "include": ["**/*.ts", "types/deno.d.ts"],
   "exclude": ["node_modules"]
 }

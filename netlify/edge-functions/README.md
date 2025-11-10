@@ -32,6 +32,4 @@ curl http://localhost:8888/og-image/{hash}
 
 ## Online Validators
 
-- [Facebook Sharing Debugger](https://developers.facebook.com/tools/debug/)
-- [Twitter Card Validator](https://cards-dev.twitter.com/validator)
-- [LinkedIn Post Inspector](https://www.linkedin.com/post-inspector/)
+- [opengraph.xyx](https://www.opengraph.xyz/url/https%3A%2F%2Fditherbot.netlify.app%2Fpost%2F76a62f84a5b57da2c1c8a8f08264563a7bbde06e3a5f5cb63ea552d6d943d5ee)

@@ -1,6 +1,6 @@
 import satori from 'https://esm.sh/satori@0.10.11';
 
-import { formatAuthorAddress, formatDate, getPost, truncateText } from './shared.ts';
+import { formatAuthorAddress, formatDate, getPost, truncateText } from './lib/shared.ts';
 
 export default async (request: Request) => {
   const url = new URL(request.url);

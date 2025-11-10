@@ -1,4 +1,4 @@
-import { escapeHtml, formatAuthorAddress, getPost, truncateText } from './shared.ts';
+import { escapeHtml, formatAuthorAddress, getPost, truncateText } from './lib/shared.ts';
 
 export default async (request: Request) => {
   const url = new URL(request.url);
