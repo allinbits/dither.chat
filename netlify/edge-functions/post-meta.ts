@@ -1,5 +1,15 @@
 import { escapeHtml, formatAuthorAddress, getPost, truncateText } from './lib/shared.ts';
 
+/**
+ * Generates HTML with dynamic meta tags for post pages.
+ *
+ * Intercepts `/post/{hash}` requests and returns HTML with updated Open Graph and Twitter Card meta tags.
+ *
+ * @param request - The incoming HTTP request
+ * @returns HTML response with updated meta tags
+ * @throws {404} Invalid path or post not found
+ * @throws {500} Error fetching post or template
+ */
 export default async (request: Request) => {
   const url = new URL(request.url);
   const pathParts = url.pathname.split('/').filter(Boolean);

@@ -2,6 +2,16 @@ import satori from 'https://esm.sh/satori@0.10.11';
 
 import { formatAuthorAddress, formatDate, getPost, truncateText } from './lib/shared.ts';
 
+/**
+ * Generates Open Graph images for post pages.
+ *
+ * Intercepts `/og-image/{hash}` requests and generates a 1200x630 SVG image using Satori.
+ *
+ * @param request - The incoming HTTP request
+ * @returns SVG image response (1200x630)
+ * @throws {404} Invalid path or post not found
+ * @throws {500} Error fetching post, loading fonts, or generating image
+ */
 export default async (request: Request) => {
   const url = new URL(request.url);
   const pathParts = url.pathname.split('/').filter(Boolean);
