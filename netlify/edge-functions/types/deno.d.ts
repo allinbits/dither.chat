@@ -22,6 +22,22 @@ declare module 'https://esm.sh/*' {
   export default content;
 }
 
+// JSX namespace declarations for Preact
+declare namespace JSX {
+  interface Element {
+    type: string;
+    props: Record<string, unknown>;
+  }
+
+  interface IntrinsicElements {
+    [elemName: string]: Record<string, unknown>;
+  }
+
+  interface ElementChildrenAttribute {
+    children: unknown;
+  }
+}
+
 // Deno global types
 declare namespace Deno {
   namespace env {

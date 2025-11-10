@@ -1,6 +1,6 @@
 import satori from 'https://esm.sh/satori@0.10.11';
 
-import { components } from './lib/components.ts';
+import { components } from './lib/components.tsx';
 import { FONT_URL, TWEMOJI_BASE_URL } from './lib/config.ts';
 import { getPost, utf8ToBase64 } from './lib/shared.ts';
 
