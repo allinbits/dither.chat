@@ -5,8 +5,24 @@ export interface Post {
   timestamp: Date;
 }
 
+function getApiRoot() {
+  const environmentType = Deno.env.get('VITE_ENVIRONMENT_TYPE');
+
+  switch (environmentType) {
+    case 'testnet':
+      return Deno.env.get('VITE_API_ROOT_TESTNET');
+    case 'devnet':
+      return Deno.env.get('VITE_API_ROOT_DEVNET');
+    case 'mainnet':
+      return Deno.env.get('VITE_API_ROOT_MAINNET');
+    default:
+      throw new Error(`Unknown environment type: ${environmentType}`);
+  }
+}
+
 export async function getPost(hash: string): Promise<Post | null> {
-  const apiRoot = Deno.env.get('API_ROOT');
+  const apiRoot = getApiRoot();
+
   if (!apiRoot) {
     throw new Error('API_ROOT environment variable is not set');
   }

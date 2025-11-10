@@ -2,14 +2,6 @@
 publish = "./packages/frontend-main/dist"
 command = "pnpm -F ./packages/frontend-main build"
 
-[build.environment]
-# Set API_ROOT in Netlify dashboard under Site settings > Environment variables
-# Based on environment, use one of:
-# - Mainnet: https://api.mainnet.dither.chat/v1
-# - Testnet: https://api.testnet.dither.chat/v1
-# - Devnet: https://dither-staging.stuyk.com/v1
-# API_ROOT = "https://api.mainnet.dither.chat/v1"
-
 [[edge_functions]]
 function = "post-meta"
 path = "/post/*"
