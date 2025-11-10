@@ -5,20 +5,6 @@ import { formatAuthorAddress, formatDate, truncateText, utf8ToBase64 } from './s
 
 /**
  * Loads a Dicebear avatar SVG from the Dicebear API.
- * @param url - The Dicebear API URL
- * @returns The SVG content as a string
- * @throws {Error} If the avatar cannot be loaded
- */
-async function loadDicebearAvatar(url: string): Promise<string> {
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`Failed to load Dicebear avatar: ${response.status}`);
-  }
-  return await response.text();
-}
-
-/**
- * Loads a Dicebear avatar SVG from the Dicebear API.
  * @param author - The author address
  * @returns The SVG content as a string
  * @throws {Error} If the avatar cannot be loaded
@@ -26,7 +12,11 @@ async function loadDicebearAvatar(url: string): Promise<string> {
 async function loadAvatarDataUri(author: string): Promise<string> {
   const encodedSeed = encodeURIComponent(author);
   const dicebearUrl = `${AVATAR_BASE_URL}?seed=${encodedSeed}&size=48&backgroundColor=EFEFEF&radius=50`;
-  const avatarSvg = await loadDicebearAvatar(dicebearUrl);
+  const avatarResponse = await fetch(dicebearUrl);
+  if (!avatarResponse.ok) {
+    throw new Error(`Failed to load Dicebear avatar: ${avatarResponse.status}`);
+  }
+  const avatarSvg = await avatarResponse.text();
   return `data:image/svg+xml;base64,${utf8ToBase64(avatarSvg)}`;
 }
 
@@ -85,28 +75,31 @@ export const components = {
   /**
    * Creates the header section with avatar and author address.
    */
-  header: (author: string, avatarDataUri: string) => ({
-    type: 'div',
-    props: {
-      style: {
-        display: 'flex',
-        alignItems: 'center',
-        gap: '16px',
-        fontSize: '24px',
-        fontWeight: 600,
-      },
-      children: [
-        components.avatar(avatarDataUri),
-        {
-          type: 'div',
-          props: {
-            style: { color: '#888888' },
-            children: formatAuthorAddress(author),
-          },
+  header: async (author: string) => {
+    const avatarDataUri = await loadAvatarDataUri(author);
+    return {
+      type: 'div',
+      props: {
+        style: {
+          display: 'flex',
+          alignItems: 'center',
+          gap: '16px',
+          fontSize: '24px',
+          fontWeight: 600,
         },
-      ],
-    },
-  }),
+        children: [
+          components.avatar(avatarDataUri),
+          {
+            type: 'div',
+            props: {
+              style: { color: '#888888' },
+              children: formatAuthorAddress(author),
+            },
+          },
+        ],
+      },
+    };
+  },
   /**
    * Creates the message content section.
    */
@@ -157,28 +150,30 @@ export const components = {
   /**
    * Creates the main content container with all post sections.
    */
-  content: (post: Post, avatarDataUri: string) => ({
-    type: 'div',
-    props: {
-      style: {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '24px',
-        flex: 1,
+  content: async (post: Post) => {
+    const header = await components.header(post.author);
+    return {
+      type: 'div',
+      props: {
+        style: {
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '24px',
+          flex: 1,
+        },
+        children: [
+          header,
+          components.message(post.message),
+          components.footer(post.timestamp),
+        ],
       },
-      children: [
-        components.header(post.author, avatarDataUri),
-        components.message(post.message),
-        components.footer(post.timestamp),
-      ],
-    },
-  }),
+    };
+  },
   /**
    * Creates the root container component.
-   * Accepts an optional avatar data URI for pre-loaded avatar images.
    */
   container: async (post: Post) => {
-    const avatarDataUri = await loadAvatarDataUri(post.author);
+    const content = await components.content(post);
     return ({
       type: 'div',
       props: {
@@ -192,7 +187,7 @@ export const components = {
           fontFamily: 'Roboto, sans-serif',
           padding: '60px',
         },
-        children: [components.content(post, avatarDataUri)],
+        children: [content],
       },
     });
   },
