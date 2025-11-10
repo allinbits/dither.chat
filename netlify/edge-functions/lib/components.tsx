@@ -1,7 +1,7 @@
 /** @jsxImportSource https://esm.sh/preact */
 import type { Post } from './shared.ts';
 
-import { formatAuthorAddress, formatDate, loadAvatarDataUri, truncateText } from './shared.ts';
+import { formatAuthorAddress, formatDate, loadAvatarDataUri } from './shared.ts';
 
 const styles = {
   identicon: {
@@ -93,7 +93,7 @@ function Header(props: { avatarDataUri: string; author: string }) {
 }
 
 function Message(props: { message: string }) {
-  return <div style={styles.message}>{truncateText(props.message, 200)}</div>;
+  return <div style={styles.message}>{props.message}</div>;
 }
 
 function Footer(props: { timestamp: Date }) {

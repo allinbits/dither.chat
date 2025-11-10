@@ -1,4 +1,4 @@
-import { escapeHtml, formatAuthorAddress, getPost, truncateText } from './lib/shared.ts';
+import { escapeHtml, formatAuthorAddress, getPost } from './lib/shared.ts';
 
 /**
  * Generates HTML with dynamic meta tags for post pages.
@@ -33,8 +33,7 @@ export default async (request: Request) => {
     const postUrl = `${siteUrl}/post/${post.hash}`;
     const ogImageUrl = `${siteUrl}/og-image/${post.hash}`;
     const title = `Post by ${formatAuthorAddress(post.author)} | dither.chat`;
-    const description = truncateText(post.message, 200);
-    const escapedDescription = escapeHtml(description);
+    const escapedDescription = escapeHtml(post.message);
     const escapedTitle = escapeHtml(title);
 
     const replacements: [RegExp, string][] = [

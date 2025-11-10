@@ -45,10 +45,6 @@ export async function getPost(hash: string): Promise<Post | null> {
   };
 }
 
-export function truncateText(text: string, maxLength: number): string {
-  return text.length <= maxLength ? text : `${text.slice(0, maxLength - 3)}...`;
-}
-
 export function formatAuthorAddress(address: string): string {
   return address.length <= 20 ? address : `${address.slice(0, 10)}...${address.slice(-8)}`;
 }
