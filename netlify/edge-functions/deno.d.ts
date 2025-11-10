@@ -3,8 +3,12 @@
 
 // Satori types from esm.sh
 declare module 'https://esm.sh/satori@0.10.11' {
-  export { default } from 'satori';
-  export * from 'satori';
+  import type { SatoriOptions } from 'satori';
+  type JSXElement = { type: string; props: Record<string, unknown> };
+
+  const defaultExport: (element: JSXElement, options: SatoriOptions) => Promise<string>;
+  export default defaultExport;
+  export * from defaultExport;
 }
 
 // Generic URL imports fallback
