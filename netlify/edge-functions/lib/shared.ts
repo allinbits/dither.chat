@@ -1,4 +1,4 @@
-interface Post {
+export interface Post {
   hash: string;
   author: string;
   message: string;

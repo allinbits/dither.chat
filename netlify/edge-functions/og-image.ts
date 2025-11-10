@@ -1,6 +1,7 @@
 import satori from 'https://esm.sh/satori@0.10.11';
 
-import { formatAuthorAddress, formatDate, getPost, truncateText } from './lib/shared.ts';
+import { components } from './lib/components.ts';
+import { getPost } from './lib/shared.ts';
 
 /**
  * Generates Open Graph images for post pages.
@@ -33,128 +34,18 @@ export default async (request: Request) => {
       throw new Error(`Failed to load font: ${fontResponse.status}`);
     }
 
-    const svg = await satori(
-      {
-        type: 'div',
-        props: {
-          style: {
-            display: 'flex',
-            flexDirection: 'column',
-            width: '100%',
-            height: '100%',
-            backgroundColor: '#0a0a0a',
-            color: '#ffffff',
-            fontFamily: 'Roboto, sans-serif',
-            padding: '60px',
-          },
-          children: [
-            {
-              type: 'div',
-              props: {
-                style: {
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '24px',
-                  flex: 1,
-                },
-                children: [
-                  {
-                    type: 'div',
-                    props: {
-                      style: {
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '16px',
-                        fontSize: '24px',
-                        fontWeight: 600,
-                      },
-                      children: [
-                        {
-                          type: 'div',
-                          props: {
-                            style: {
-                              width: '48px',
-                              height: '48px',
-                              borderRadius: '50%',
-                              backgroundColor: '#1a1a1a',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              fontSize: '20px',
-                              fontWeight: 700,
-                            },
-                            children: 'D',
-                          },
-                        },
-                        {
-                          type: 'div',
-                          props: {
-                            style: { color: '#888888' },
-                            children: formatAuthorAddress(post.author),
-                          },
-                        },
-                      ],
-                    },
-                  },
-                  {
-                    type: 'div',
-                    props: {
-                      style: {
-                        fontSize: '36px',
-                        lineHeight: '1.4',
-                        fontWeight: 500,
-                        color: '#ffffff',
-                        flex: 1,
-                      },
-                      children: truncateText(post.message, 200),
-                    },
-                  },
-                  {
-                    type: 'div',
-                    props: {
-                      style: {
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '12px',
-                        fontSize: '20px',
-                        color: '#666666',
-                      },
-                      children: [
-                        { type: 'div', props: { children: formatDate(post.timestamp) } },
-                        {
-                          type: 'div',
-                          props: {
-                            style: {
-                              width: '4px',
-                              height: '4px',
-                              borderRadius: '50%',
-                              backgroundColor: '#666666',
-                            },
-                          },
-                        },
-                        { type: 'div', props: { children: 'dither.chat' } },
-                      ],
-                    },
-                  },
-                ],
-              },
-            },
-          ],
+    const svg = await satori(components.container(post), {
+      width: 1200,
+      height: 630,
+      fonts: [
+        {
+          name: 'Roboto',
+          data: new Uint8Array(await fontResponse.arrayBuffer()),
+          weight: 400,
+          style: 'normal',
         },
-      },
-      {
-        width: 1200,
-        height: 630,
-        fonts: [
-          {
-            name: 'Roboto',
-            data: new Uint8Array(await fontResponse.arrayBuffer()),
-            weight: 400,
-            style: 'normal',
-          },
-        ],
-      },
-    );
+      ],
+    });
 
     return new Response(svg, {
       headers: {
