@@ -121,15 +121,15 @@ function Container(props: { children: JSX.Element }) {
 }
 
 export const components = {
-  header: async (author: string) => {
+  async header(author: string) {
     const avatarDataUri = await loadAvatarDataUri(author);
     return <Header avatarDataUri={avatarDataUri} author={author} />;
   },
-  content: async (post: Post) => {
+  async content(post: Post) {
     const header = await components.header(post.author);
     return <Content header={header} message={post.message} timestamp={post.timestamp} />;
   },
-  container: async (post: Post) => {
+  async container(post: Post) {
     const content = await components.content(post);
     return <Container>{content}</Container>;
   },
