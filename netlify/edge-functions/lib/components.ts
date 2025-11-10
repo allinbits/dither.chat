@@ -1,6 +1,34 @@
 import type { Post } from './shared.ts';
 
-import { formatAuthorAddress, formatDate, truncateText } from './shared.ts';
+import { AVATAR_BASE_URL } from './config.ts';
+import { formatAuthorAddress, formatDate, truncateText, utf8ToBase64 } from './shared.ts';
+
+/**
+ * Loads a Dicebear avatar SVG from the Dicebear API.
+ * @param url - The Dicebear API URL
+ * @returns The SVG content as a string
+ * @throws {Error} If the avatar cannot be loaded
+ */
+async function loadDicebearAvatar(url: string): Promise<string> {
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Failed to load Dicebear avatar: ${response.status}`);
+  }
+  return await response.text();
+}
+
+/**
+ * Loads a Dicebear avatar SVG from the Dicebear API.
+ * @param author - The author address
+ * @returns The SVG content as a string
+ * @throws {Error} If the avatar cannot be loaded
+ */
+async function loadAvatarDataUri(author: string): Promise<string> {
+  const encodedSeed = encodeURIComponent(author);
+  const dicebearUrl = `${AVATAR_BASE_URL}?seed=${encodedSeed}&size=48&backgroundColor=EFEFEF&radius=50`;
+  const avatarSvg = await loadDicebearAvatar(dicebearUrl);
+  return `data:image/svg+xml;base64,${utf8ToBase64(avatarSvg)}`;
+}
 
 export const components = {
   /**
@@ -8,7 +36,7 @@ export const components = {
    * Uses pixel-art style with proper URL encoding and API options.
    * Accepts either a URL or a base64 data URI for the image source.
    */
-  identicon: (avatarDataUri?: string) => {
+  identicon: (avatarDataUri: string) => {
     // If base64 data URI is provided, use it directly (better performance per Satori docs)
     // Otherwise, construct the URL
     const src = avatarDataUri;
@@ -149,20 +177,23 @@ export const components = {
    * Creates the root container component.
    * Accepts an optional avatar data URI for pre-loaded avatar images.
    */
-  container: (post: Post, avatarDataUri: string) => ({
-    type: 'div',
-    props: {
-      style: {
-        display: 'flex',
-        flexDirection: 'column',
-        width: '100%',
-        height: '100%',
-        backgroundColor: '#0a0a0a',
-        color: '#ffffff',
-        fontFamily: 'Roboto, sans-serif',
-        padding: '60px',
+  container: async (post: Post) => {
+    const avatarDataUri = await loadAvatarDataUri(post.author);
+    return ({
+      type: 'div',
+      props: {
+        style: {
+          display: 'flex',
+          flexDirection: 'column',
+          width: '100%',
+          height: '100%',
+          backgroundColor: '#0a0a0a',
+          color: '#ffffff',
+          fontFamily: 'Roboto, sans-serif',
+          padding: '60px',
+        },
+        children: [components.content(post, avatarDataUri)],
       },
-      children: [components.content(post, avatarDataUri)],
-    },
-  }),
+    });
+  },
 };

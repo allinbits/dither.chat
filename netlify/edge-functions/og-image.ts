@@ -1,7 +1,8 @@
 import satori from 'https://esm.sh/satori@0.10.11';
 
 import { components } from './lib/components.ts';
-import { getPost } from './lib/shared.ts';
+import { FONT_URL, TWEMOJI_BASE_URL } from './lib/config.ts';
+import { getPost, utf8ToBase64 } from './lib/shared.ts';
 
 /**
  * Converts an emoji string to its code point representation.
@@ -29,21 +30,6 @@ function getIconCode(emoji: string): string {
 }
 
 /**
- * Converts a UTF-8 string to base64.
- * Handles Unicode characters properly unlike btoa which only works with Latin1.
- * @param str - The string to encode
- * @returns Base64-encoded string
- */
-function utf8ToBase64(str: string): string {
-  const bytes = new TextEncoder().encode(str);
-  let binary = '';
-  for (let i = 0; i < bytes.length; i++) {
-    binary += String.fromCharCode(bytes[i]);
-  }
-  return btoa(binary);
-}
-
-/**
  * Loads an emoji SVG from the twemoji CDN.
  * Uses the GitHub CDN which is the official source for twemoji assets.
  * @param code - The emoji code point string
@@ -52,24 +38,10 @@ function utf8ToBase64(str: string): string {
  */
 async function loadEmoji(code: string): Promise<string> {
   // Use GitHub CDN for twemoji assets (official source)
-  const url = `https://cdn.jsdelivr.net/gh/twitter/twemoji@latest/assets/svg/${code}.svg`;
+  const url = `${TWEMOJI_BASE_URL}/${code}.svg`;
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error(`Failed to load emoji ${code}: ${response.status}`);
-  }
-  return await response.text();
-}
-
-/**
- * Loads a Dicebear avatar SVG from the Dicebear API.
- * @param url - The Dicebear API URL
- * @returns The SVG content as a string
- * @throws {Error} If the avatar cannot be loaded
- */
-async function loadDicebearAvatar(url: string): Promise<string> {
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`Failed to load Dicebear avatar: ${response.status}`);
   }
   return await response.text();
 }
@@ -96,6 +68,14 @@ async function loadAdditionalAsset(code: string, segment: string): Promise<strin
   return code;
 }
 
+async function loadFont() {
+  const response = await fetch(FONT_URL);
+  if (!response.ok) {
+    throw new Error(`Failed to load font: ${response.status}`);
+  }
+  return response;
+}
+
 /**
  * Generates Open Graph images for post pages.
  *
@@ -120,31 +100,10 @@ export default async (request: Request) => {
       return new Response('Post not found', { status: 404 });
     }
 
-    const fontResponse = await fetch(
-      'https://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Mu4mxP.ttf',
-    );
-    if (!fontResponse.ok) {
-      throw new Error(`Failed to load font: ${fontResponse.status}`);
-    }
-
-    // Pre-fetch the avatar image and convert to base64 for better performance
-    // According to Satori docs: "it would be better to use base64 encoded image data
-    // directly as props.src so no extra I/O is needed in Satori"
-    // The avatar data URI is derived within the container rendering
-    const encodedSeed = encodeURIComponent(post.author);
-    const dicebearUrl = `https://api.dicebear.com/9.x/notionists-neutral/svg?seed=${encodedSeed}&size=48&backgroundColor=1a1a1a&radius=50`;
-    let avatarDataUri: string | undefined;
-
-    try {
-      const avatarSvg = await loadDicebearAvatar(dicebearUrl);
-      avatarDataUri = `data:image/svg+xml;base64,${utf8ToBase64(avatarSvg)}`;
-    } catch (error) {
-      console.warn(`Failed to pre-load Dicebear avatar:`, error);
-      // Continue without avatar - will fall back to URL
-    }
+    const fontResponse = await loadFont();
 
     // Create container with optional pre-loaded avatar data URI
-    const container = components.container(post, avatarDataUri || '');
+    const container = await components.container(post);
 
     const svg = await satori(container, {
       width: 1200,
