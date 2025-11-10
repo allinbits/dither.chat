@@ -1,3 +1,5 @@
+import { AVATAR_BASE_URL } from './config.ts';
+
 export interface Post {
   hash: string;
   author: string;
@@ -5,7 +7,7 @@ export interface Post {
   timestamp: Date;
 }
 
-function getApiRoot() {
+function getAPIRoot() {
   const environmentType = Deno.env.get('VITE_ENVIRONMENT_TYPE');
 
   switch (environmentType) {
@@ -21,7 +23,7 @@ function getApiRoot() {
 }
 
 export async function getPost(hash: string): Promise<Post | null> {
-  const apiRoot = getApiRoot();
+  const apiRoot = getAPIRoot();
 
   if (!apiRoot) {
     throw new Error('API_ROOT environment variable is not set');
@@ -72,4 +74,21 @@ export function utf8ToBase64(str: string): string {
     binary += String.fromCharCode(bytes[i]);
   }
   return btoa(binary);
+}
+
+/**
+ * Loads a Dicebear avatar SVG from the Dicebear API.
+ * @param author - The author address
+ * @returns The SVG content as a string
+ * @throws {Error} If the avatar cannot be loaded
+ */
+export async function loadAvatarDataUri(author: string): Promise<string> {
+  const encodedSeed = encodeURIComponent(author);
+  const dicebearUrl = `${AVATAR_BASE_URL}?seed=${encodedSeed}&size=48&backgroundColor=EFEFEF&radius=50`;
+  const avatarResponse = await fetch(dicebearUrl);
+  if (!avatarResponse.ok) {
+    throw new Error(`Failed to load Dicebear avatar: ${avatarResponse.status}`);
+  }
+  const avatarSvg = await avatarResponse.text();
+  return `data:image/svg+xml;base64,${utf8ToBase64(avatarSvg)}`;
 }

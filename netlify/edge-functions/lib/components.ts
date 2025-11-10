@@ -1,24 +1,74 @@
 import type { Post } from './shared.ts';
 
-import { AVATAR_BASE_URL } from './config.ts';
-import { formatAuthorAddress, formatDate, truncateText, utf8ToBase64 } from './shared.ts';
+import { formatAuthorAddress, formatDate, loadAvatarDataUri, truncateText } from './shared.ts';
 
-/**
- * Loads a Dicebear avatar SVG from the Dicebear API.
- * @param author - The author address
- * @returns The SVG content as a string
- * @throws {Error} If the avatar cannot be loaded
- */
-async function loadAvatarDataUri(author: string): Promise<string> {
-  const encodedSeed = encodeURIComponent(author);
-  const dicebearUrl = `${AVATAR_BASE_URL}?seed=${encodedSeed}&size=48&backgroundColor=EFEFEF&radius=50`;
-  const avatarResponse = await fetch(dicebearUrl);
-  if (!avatarResponse.ok) {
-    throw new Error(`Failed to load Dicebear avatar: ${avatarResponse.status}`);
-  }
-  const avatarSvg = await avatarResponse.text();
-  return `data:image/svg+xml;base64,${utf8ToBase64(avatarSvg)}`;
-}
+const styles = {
+  identicon: {
+    width: '48px',
+    height: '48px',
+    borderRadius: '50%',
+    objectFit: 'cover',
+    display: 'block',
+    backgroundColor: '#FFFFFF',
+    filter: 'invert(0.96)',
+  },
+  avatar: {
+    width: '48px',
+    height: '48px',
+    borderRadius: '50%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  header: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '16px',
+    fontSize: '24px',
+    fontWeight: 600,
+  },
+  headerAuthor: {
+    color: '#888888',
+  },
+  message: {
+    fontSize: '36px',
+    lineHeight: '1.4',
+    fontWeight: 500,
+    color: '#ffffff',
+    flex: 1,
+  },
+  footer: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+    fontSize: '20px',
+    color: '#666666',
+  },
+  footerDot: {
+    width: '4px',
+    height: '4px',
+    borderRadius: '50%',
+    backgroundColor: '#666666',
+  },
+  content: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '24px',
+    flex: 1,
+  },
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
+    width: '100%',
+    height: '100%',
+    backgroundColor: '#0a0a0a',
+    color: '#ffffff',
+    fontFamily: 'Roboto, sans-serif',
+    padding: '60px',
+  },
+};
 
 export const components = {
   /**
@@ -38,15 +88,7 @@ export const components = {
         width: 48,
         height: 48,
         alt: 'Avatar',
-        style: {
-          width: '48px',
-          height: '48px',
-          borderRadius: '50%',
-          objectFit: 'cover',
-          display: 'block',
-          backgroundColor: '#FFFFFF',
-          filter: 'invert(0.96)',
-        },
+        style: styles.identicon,
       },
     };
   },
@@ -58,16 +100,7 @@ export const components = {
     return {
       type: 'div',
       props: {
-        style: {
-          width: '48px',
-          height: '48px',
-          borderRadius: '50%',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          overflow: 'hidden',
-          position: 'relative',
-        },
+        style: styles.avatar,
         children: identicon,
       },
     };
@@ -75,24 +108,18 @@ export const components = {
   /**
    * Creates the header section with avatar and author address.
    */
-  header: async (author: string) => {
+  async header(author: string) {
     const avatarDataUri = await loadAvatarDataUri(author);
     return {
       type: 'div',
       props: {
-        style: {
-          display: 'flex',
-          alignItems: 'center',
-          gap: '16px',
-          fontSize: '24px',
-          fontWeight: 600,
-        },
+        style: styles.header,
         children: [
           components.avatar(avatarDataUri),
           {
             type: 'div',
             props: {
-              style: { color: '#888888' },
+              style: styles.headerAuthor,
               children: formatAuthorAddress(author),
             },
           },
@@ -106,13 +133,7 @@ export const components = {
   message: (message: string) => ({
     type: 'div',
     props: {
-      style: {
-        fontSize: '36px',
-        lineHeight: '1.4',
-        fontWeight: 500,
-        color: '#ffffff',
-        flex: 1,
-      },
+      style: styles.message,
       children: truncateText(message, 200),
     },
   }),
@@ -123,24 +144,13 @@ export const components = {
   footer: (timestamp: Date) => ({
     type: 'div',
     props: {
-      style: {
-        display: 'flex',
-        alignItems: 'center',
-        gap: '12px',
-        fontSize: '20px',
-        color: '#666666',
-      },
+      style: styles.footer,
       children: [
         { type: 'div', props: { children: formatDate(timestamp) } },
         {
           type: 'div',
           props: {
-            style: {
-              width: '4px',
-              height: '4px',
-              borderRadius: '50%',
-              backgroundColor: '#666666',
-            },
+            style: styles.footerDot,
           },
         },
         { type: 'div', props: { children: 'dither.chat' } },
@@ -150,17 +160,12 @@ export const components = {
   /**
    * Creates the main content container with all post sections.
    */
-  content: async (post: Post) => {
+  async content(post: Post) {
     const header = await components.header(post.author);
     return {
       type: 'div',
       props: {
-        style: {
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '24px',
-          flex: 1,
-        },
+        style: styles.content,
         children: [
           header,
           components.message(post.message),
@@ -172,21 +177,12 @@ export const components = {
   /**
    * Creates the root container component.
    */
-  container: async (post: Post) => {
+  async container(post: Post) {
     const content = await components.content(post);
     return ({
       type: 'div',
       props: {
-        style: {
-          display: 'flex',
-          flexDirection: 'column',
-          width: '100%',
-          height: '100%',
-          backgroundColor: '#0a0a0a',
-          color: '#ffffff',
-          fontFamily: 'Roboto, sans-serif',
-          padding: '60px',
-        },
+        style: styles.container,
         children: [content],
       },
     });
