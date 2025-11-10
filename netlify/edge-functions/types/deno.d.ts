@@ -4,7 +4,8 @@
 // Satori types from esm.sh
 declare module 'https://esm.sh/satori@0.10.11' {
   import type { SatoriOptions } from 'satori';
-  type JSXElement = { type: string; props: Record<string, unknown> };
+
+  interface JSXElement { type: string; props: Record<string, unknown> }
 
   const defaultExport: (element: JSXElement, options: SatoriOptions) => Promise<string>;
   export default defaultExport;
@@ -27,4 +28,3 @@ declare namespace Deno {
     function get(key: string): string | undefined;
   }
 }
-

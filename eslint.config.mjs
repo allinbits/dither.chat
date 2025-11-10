@@ -16,7 +16,7 @@ export default antfu({
       'style/brace-style': ['error', '1tbs'],
     },
   },
-  ignores: ['docs/**', 'netlify/edge-functions/**'],
+  ignores: ['docs/**'],
 }, {
   files: ['tsconfig.json', 'package.json'],
   rules: { 'jsonc/sort-keys': 'off' },

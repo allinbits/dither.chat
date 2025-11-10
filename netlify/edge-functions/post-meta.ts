@@ -19,7 +19,6 @@ export default async (request: Request) => {
       return new Response('Failed to load template', { status: 500 });
     }
 
-
     const siteUrl = url.origin;
     const postUrl = `${siteUrl}/post/${post.hash}`;
     const ogImageUrl = `${siteUrl}/og-image/${post.hash}`;
@@ -45,7 +44,7 @@ export default async (request: Request) => {
     ];
 
     const html = await htmlResponse.text().then(html =>
-      replacements.reduce((html, [pattern, replacement]) => html.replace(pattern, replacement), html)
+      replacements.reduce((html, [pattern, replacement]) => html.replace(pattern, replacement), html),
     );
 
     return new Response(html, {
