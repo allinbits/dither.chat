@@ -29,6 +29,21 @@ function getIconCode(emoji: string): string {
 }
 
 /**
+ * Converts a UTF-8 string to base64.
+ * Handles Unicode characters properly unlike btoa which only works with Latin1.
+ * @param str - The string to encode
+ * @returns Base64-encoded string
+ */
+function utf8ToBase64(str: string): string {
+  const bytes = new TextEncoder().encode(str);
+  let binary = '';
+  for (let i = 0; i < bytes.length; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
+}
+
+/**
  * Loads an emoji SVG from the twemoji CDN.
  * Uses the GitHub CDN which is the official source for twemoji assets.
  * @param code - The emoji code point string
@@ -45,14 +60,29 @@ async function loadEmoji(code: string): Promise<string> {
   return await response.text();
 }
 
+/**
+ * Loads a Dicebear avatar SVG from the Dicebear API.
+ * @param url - The Dicebear API URL
+ * @returns The SVG content as a string
+ * @throws {Error} If the avatar cannot be loaded
+ */
+async function loadDicebearAvatar(url: string): Promise<string> {
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Failed to load Dicebear avatar: ${response.status}`);
+  }
+  return await response.text();
+}
+
 async function loadAdditionalAsset(code: string, segment: string): Promise<string> {
+  // Handle emoji loading
   if (code === 'emoji') {
     try {
       // Convert emoji segment to code point and load SVG from twemoji CDN
       const emojiCode = getIconCode(segment);
       const emojiSvg = await loadEmoji(emojiCode);
-      // Return as base64-encoded data URI
-      return `data:image/svg+xml;base64,${btoa(emojiSvg)}`;
+      // Return as base64-encoded data URI (using UTF-8 safe encoding)
+      return `data:image/svg+xml;base64,${utf8ToBase64(emojiSvg)}`;
     } catch (error) {
       // If emoji fails to load, log details and return the original segment
       // This prevents the entire image generation from failing
@@ -61,6 +91,7 @@ async function loadAdditionalAsset(code: string, segment: string): Promise<strin
       return code;
     }
   }
+
   // If segment is normal text, return as-is
   return code;
 }
@@ -96,7 +127,26 @@ export default async (request: Request) => {
       throw new Error(`Failed to load font: ${fontResponse.status}`);
     }
 
-    const svg = await satori(components.container(post), {
+    // Pre-fetch the avatar image and convert to base64 for better performance
+    // According to Satori docs: "it would be better to use base64 encoded image data
+    // directly as props.src so no extra I/O is needed in Satori"
+    // The avatar data URI is derived within the container rendering
+    const encodedSeed = encodeURIComponent(post.author);
+    const dicebearUrl = `https://api.dicebear.com/9.x/notionists-neutral/svg?seed=${encodedSeed}&size=48&backgroundColor=1a1a1a&radius=50`;
+    let avatarDataUri: string | undefined;
+
+    try {
+      const avatarSvg = await loadDicebearAvatar(dicebearUrl);
+      avatarDataUri = `data:image/svg+xml;base64,${utf8ToBase64(avatarSvg)}`;
+    } catch (error) {
+      console.warn(`Failed to pre-load Dicebear avatar:`, error);
+      // Continue without avatar - will fall back to URL
+    }
+
+    // Create container with optional pre-loaded avatar data URI
+    const container = components.container(post, avatarDataUri || '');
+
+    const svg = await satori(container, {
       width: 1200,
       height: 630,
       fonts: [

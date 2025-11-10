@@ -5,6 +5,21 @@ export interface Post {
   timestamp: Date;
 }
 
+/**
+ * Converts a UTF-8 string to base64.
+ * Handles Unicode characters properly unlike btoa which only works with Latin1.
+ * @param str - The string to encode
+ * @returns Base64-encoded string
+ */
+export function utf8ToBase64(str: string): string {
+  const bytes = new TextEncoder().encode(str);
+  let binary = '';
+  for (let i = 0; i < bytes.length; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
+}
+
 export async function getPost(hash: string): Promise<Post | null> {
   const apiRoot = Deno.env.get('API_ROOT');
   if (!apiRoot) {

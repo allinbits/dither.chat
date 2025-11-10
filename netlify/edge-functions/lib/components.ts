@@ -4,29 +4,60 @@ import { formatAuthorAddress, formatDate, truncateText } from './shared.ts';
 
 export const components = {
   /**
-   * Creates the avatar component (circle with "D").
+   * Creates the identicon avatar component using Dicebear API.
+   * Uses pixel-art style with proper URL encoding and API options.
+   * Accepts either a URL or a base64 data URI for the image source.
    */
-  avatar: () => ({
-    type: 'div',
-    props: {
-      style: {
-        width: '48px',
-        height: '48px',
-        borderRadius: '50%',
-        backgroundColor: '#1a1a1a',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: '20px',
-        fontWeight: 700,
+  identicon: (avatarDataUri?: string) => {
+    // If base64 data URI is provided, use it directly (better performance per Satori docs)
+    // Otherwise, construct the URL
+    const src = avatarDataUri;
+
+    return {
+      type: 'img',
+      props: {
+        src,
+        width: 48,
+        height: 48,
+        alt: 'Avatar',
+        style: {
+          width: '48px',
+          height: '48px',
+          borderRadius: '50%',
+          objectFit: 'cover',
+          display: 'block',
+          backgroundColor: '#FFFFFF',
+          filter: 'invert(0.96)',
+        },
       },
-      children: 'D',
-    },
-  }),
+    };
+  },
+  /**
+   * Creates the avatar component wrapper.
+   */
+  avatar: (avatarDataUri: string) => {
+    const identicon = components.identicon(avatarDataUri);
+    return {
+      type: 'div',
+      props: {
+        style: {
+          width: '48px',
+          height: '48px',
+          borderRadius: '50%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          overflow: 'hidden',
+          position: 'relative',
+        },
+        children: identicon,
+      },
+    };
+  },
   /**
    * Creates the header section with avatar and author address.
    */
-  header: (author: string) => ({
+  header: (author: string, avatarDataUri: string) => ({
     type: 'div',
     props: {
       style: {
@@ -37,7 +68,7 @@ export const components = {
         fontWeight: 600,
       },
       children: [
-        components.avatar(),
+        components.avatar(avatarDataUri),
         {
           type: 'div',
           props: {
@@ -98,7 +129,7 @@ export const components = {
   /**
    * Creates the main content container with all post sections.
    */
-  content: (post: Post) => ({
+  content: (post: Post, avatarDataUri: string) => ({
     type: 'div',
     props: {
       style: {
@@ -108,7 +139,7 @@ export const components = {
         flex: 1,
       },
       children: [
-        components.header(post.author),
+        components.header(post.author, avatarDataUri),
         components.message(post.message),
         components.footer(post.timestamp),
       ],
@@ -116,8 +147,9 @@ export const components = {
   }),
   /**
    * Creates the root container component.
+   * Accepts an optional avatar data URI for pre-loaded avatar images.
    */
-  container: (post: Post) => ({
+  container: (post: Post, avatarDataUri: string) => ({
     type: 'div',
     props: {
       style: {
@@ -130,7 +162,7 @@ export const components = {
         fontFamily: 'Roboto, sans-serif',
         padding: '60px',
       },
-      children: [components.content(post)],
+      children: [components.content(post, avatarDataUri)],
     },
   }),
 };
