@@ -8,7 +8,7 @@ import { toast } from 'vue-sonner';
 import PostMessage from '@/components/posts/PostMessage.vue';
 import PrettyTimestamp from '@/components/posts/PrettyTimestamp.vue';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogTitle, ResponsiveDialogContent } from '@/components/ui/dialog';
 import InputPhoton from '@/components/ui/input/InputPhoton.vue';
 import { Textarea } from '@/components/ui/textarea';
 import UserAvatar from '@/components/users/UserAvatar.vue';
@@ -59,7 +59,7 @@ function handleInputValidity(value: boolean) {
 <template>
   <div>
     <Dialog v-if="isShown" open @update:open="handleClose">
-      <DialogContent>
+      <ResponsiveDialogContent>
         <DialogTitle>{{ $t('components.PopupTitles.reply') }}</DialogTitle>
 
         <div class="flex flex-row gap-3 border-b pb-3">
@@ -83,7 +83,7 @@ function handleInputValidity(value: boolean) {
             {{ $t('components.Button.submit') }}
           </Button>
         </div>
-      </DialogContent>
+      </ResponsiveDialogContent>
     </Dialog>
   </div>
 </template>

@@ -6,7 +6,7 @@ import { computed, ref } from 'vue';
 import { toast } from 'vue-sonner';
 
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogTitle, ResponsiveDialogContent } from '@/components/ui/dialog';
 import InputPhoton from '@/components/ui/input/InputPhoton.vue';
 import { useFlagPost } from '@/composables/useFlagPost';
 import { useTxDialog } from '@/composables/useTxDialog';
@@ -57,7 +57,7 @@ async function handleSubmit() {
 
 <template>
   <Dialog v-if="isShown" open @update:open="handleClose">
-    <DialogContent>
+    <ResponsiveDialogContent>
       <DialogTitle>{{ $t('components.PopupTitles.flagPost') }}</DialogTitle>
       <span>{{ $t('components.PopupDescriptions.flagPost') }}</span>
       <div class="flex flex-row gap-3 border-b pb-3">
@@ -78,6 +78,6 @@ async function handleSubmit() {
           {{ $t('components.Button.submit') }}
         </Button>
       </div>
-    </DialogContent>
+    </ResponsiveDialogContent>
   </Dialog>
 </template>

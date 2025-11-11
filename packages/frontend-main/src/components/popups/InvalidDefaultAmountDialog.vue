@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogTitle, ResponsiveDialogContent } from '@/components/ui/dialog';
 import { useTxDialog } from '@/composables/useTxDialog';
 import { routesNames } from '@/router';
 
@@ -20,7 +20,7 @@ function onClickDefaultAmountButton() {
 
 <template>
   <Dialog v-if="isShown" :open="isShown" @update:open="handleClose">
-    <DialogContent>
+    <ResponsiveDialogContent>
       <DialogTitle>{{ $t('components.PopupTitles.invalidDefaultAmount') }}</DialogTitle>
       <DialogDescription class="whitespace-pre-line">
         {{ $t('components.PopupDescriptions.invalidDefaultAmount') }}
@@ -29,6 +29,6 @@ function onClickDefaultAmountButton() {
       <Button class="w-full" @click="onClickDefaultAmountButton">
         {{ $t('components.Button.adjustDefaultAmount') }}
       </Button>
-    </DialogContent>
+    </ResponsiveDialogContent>
   </Dialog>
 </template>
