@@ -6,7 +6,7 @@ import { computed, ref } from 'vue';
 import { toast } from 'vue-sonner';
 
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogTitle, ResponsiveDialogContent } from '@/components/ui/dialog';
 import InputPhoton from '@/components/ui/input/InputPhoton.vue';
 import { useDislikePost } from '@/composables/useDislikePost';
 import { useTxDialog } from '@/composables/useTxDialog';
@@ -50,7 +50,7 @@ async function handleSubmit() {
 
 <template>
   <Dialog v-if="isShown" :open="isShown" @update:open="handleClose">
-    <DialogContent>
+    <ResponsiveDialogContent>
       <DialogTitle>{{ $t('components.PopupTitles.dislikePost') }}</DialogTitle>
       <DialogDescription>{{ shorten(dislike.hash) }}</DialogDescription>
 
@@ -61,6 +61,6 @@ async function handleSubmit() {
           {{ $t('components.Button.submit') }}
         </Button>
       </div>
-    </DialogContent>
+    </ResponsiveDialogContent>
   </Dialog>
 </template>

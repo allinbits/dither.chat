@@ -8,8 +8,8 @@ import
   from '@/components/ui/button';
 import {
   Dialog,
-  DialogContent,
   DialogTitle,
+  ResponsiveDialogContent,
 } from '@/components/ui/dialog';
 import InputPhoton from '@/components/ui/input/InputPhoton.vue';
 import { Textarea } from '@/components/ui/textarea';
@@ -80,7 +80,7 @@ async function handleSubmit() {
 <template>
   <div>
     <Dialog v-if="isShown" open @update:open="handleCloseWithSaveDraft">
-      <DialogContent>
+      <ResponsiveDialogContent>
         <DialogTitle>{{ $t('components.PopupTitles.newPost') }}</DialogTitle>
 
         <Textarea v-model="message" :placeholder="$t('placeholders.post')" :maxlength="MAX_CHARS" />
@@ -92,7 +92,7 @@ async function handleSubmit() {
             {{ $t('components.Button.submit') }}
           </Button>
         </div>
-      </DialogContent>
+      </ResponsiveDialogContent>
     </Dialog>
   </div>
 </template>

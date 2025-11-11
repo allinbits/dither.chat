@@ -4,7 +4,7 @@ import { computed, ref } from 'vue';
 import { toast } from 'vue-sonner';
 
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogTitle, ResponsiveDialogContent } from '@/components/ui/dialog';
 import InputPhoton from '@/components/ui/input/InputPhoton.vue';
 import { useTipUser } from '@/composables/useTipUser';
 import { useTxDialog } from '@/composables/useTxDialog';
@@ -54,7 +54,7 @@ async function handleSubmit() {
 
 <template>
   <Dialog v-if="isShown" open @update:open="handleClose">
-    <DialogContent>
+    <ResponsiveDialogContent>
       <DialogTitle>{{ $t('components.PopupTitles.tipUser') }}</DialogTitle>
       <DialogDescription>
         <UserAvatarUsername :user-address="tip" />
@@ -67,6 +67,6 @@ async function handleSubmit() {
           {{ $t('components.Button.submit') }}
         </Button>
       </div>
-    </DialogContent>
+    </ResponsiveDialogContent>
   </Dialog>
 </template>
