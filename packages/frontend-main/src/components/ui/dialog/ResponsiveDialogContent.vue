@@ -140,25 +140,30 @@ function handleClose() {
   }
 }
 
+const eventMap = {
+  pointermove: handlePointerMove,
+  pointerup: handlePointerUp,
+  pointercancel: handlePointerUp,
+  touchmove: handlePointerMove,
+  touchend: handlePointerUp,
+  touchcancel: handlePointerUp,
+} as const;
+
+const eventMapEntries = Object.entries(eventMap) as [keyof WindowEventMap, EventListener][];
+
 onMounted(() => {
   if (typeof window !== 'undefined') {
-    window.addEventListener('pointermove', handlePointerMove, { passive: false });
-    window.addEventListener('pointerup', handlePointerUp);
-    window.addEventListener('pointercancel', handlePointerUp);
-    window.addEventListener('touchmove', handlePointerMove, { passive: false });
-    window.addEventListener('touchend', handlePointerUp);
-    window.addEventListener('touchcancel', handlePointerUp);
+    for (const [event, handler] of eventMapEntries) {
+      window.addEventListener(event, handler, { passive: false });
+    }
   }
 });
 
 onUnmounted(() => {
   if (typeof window !== 'undefined') {
-    window.removeEventListener('pointermove', handlePointerMove);
-    window.removeEventListener('pointerup', handlePointerUp);
-    window.removeEventListener('pointercancel', handlePointerUp);
-    window.removeEventListener('touchmove', handlePointerMove);
-    window.removeEventListener('touchend', handlePointerUp);
-    window.removeEventListener('touchcancel', handlePointerUp);
+    for (const [event, handler] of eventMapEntries) {
+      window.removeEventListener(event, handler);
+    }
   }
 });
 
