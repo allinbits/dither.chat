@@ -29,21 +29,16 @@ const emits = defineEmits<DialogContentEmits>();
 
 const delegatedProps = computed(() => {
   const { class: _, showCloseButton: __, ...delegated } = props;
-
   return delegated;
 });
 
 const forwarded = useForwardPropsEmits(delegatedProps, emits);
 
-// Mobile detection (640px breakpoint)
 const isMobile = useMediaQuery('(max-width: 640px)');
-
-// Drag state
 const isDragging = ref(false);
 const dragY = ref(0);
 const contentRef = ref<HTMLElement | null>(null);
 
-// Touch/pointer event handlers
 let startY = 0;
 let currentY = 0;
 let isPointerDown = false;
@@ -52,19 +47,35 @@ let startTime = 0;
 function handlePointerDown(e: PointerEvent | TouchEvent) {
   if (!isMobile.value) return;
 
-  // Don't start drag if clicking on the close button or its children
   const target = e.target as HTMLElement;
+  const dialogContent = contentRef.value?.querySelector('[data-slot="dialog-content"]') as HTMLElement;
+
   const closeButton = contentRef.value?.querySelector('[data-slot="dialog-close"]') as HTMLElement;
-  if (closeButton && closeButton.contains(target)) {
-    return;
+  if (closeButton?.contains(target)) return;
+
+  const headerArea = dialogContent?.querySelector('.sticky') as HTMLElement;
+  const isInHeader = headerArea?.contains(target);
+
+  if (!isInHeader) {
+    const interactiveSelectors = [
+      'input',
+      'textarea',
+      'button',
+      'select',
+      'a',
+      '[role="button"]',
+      '[tabindex]:not([tabindex="-1"])',
+      '[contenteditable="true"]',
+    ];
+
+    const isInteractive = interactiveSelectors.some((selector) => {
+      return target.matches(selector) || target.closest(selector);
+    });
+
+    if (isInteractive) return;
   }
 
-  // Check if the content is scrollable and not at the top
-  const dialogContent = contentRef.value?.querySelector('[data-slot="dialog-content"]') as HTMLElement;
-  if (dialogContent && dialogContent.scrollTop > 0) {
-    // Allow scrolling if content is scrollable
-    return;
-  }
+  if (dialogContent?.scrollTop > 0) return;
 
   const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
   startY = clientY;
@@ -73,7 +84,6 @@ function handlePointerDown(e: PointerEvent | TouchEvent) {
   isPointerDown = true;
   isDragging.value = true;
 
-  // Prevent default scrolling behavior
   if (e instanceof TouchEvent) {
     e.preventDefault();
   }
@@ -85,13 +95,11 @@ function handlePointerMove(e: PointerEvent | TouchEvent) {
   const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
   const deltaY = clientY - startY;
 
-  // Only allow downward drag
   if (deltaY > 0) {
     currentY = clientY;
     dragY.value = deltaY;
   }
 
-  // Prevent default scrolling behavior
   if (e instanceof TouchEvent) {
     e.preventDefault();
   }
@@ -106,11 +114,9 @@ function handlePointerUp() {
   const distance = Math.abs(currentY - startY);
   const velocity = timeDelta > 0 ? distance / timeDelta : 0;
 
-  // Close if dragged down past threshold or with sufficient velocity
   if (dragY.value > threshold || (dragY.value > 50 && velocity > 0.5)) {
     handleClose();
   } else {
-    // Snap back to original position
     dragY.value = 0;
   }
 
@@ -124,7 +130,6 @@ function handleClose() {
   if (closeButton) {
     closeButton.click();
   } else {
-    // Fallback: dispatch escape key event
     const escapeEvent = new KeyboardEvent('keydown', {
       key: 'Escape',
       code: 'Escape',
@@ -158,45 +163,39 @@ onUnmounted(() => {
 });
 
 const contentStyle = computed(() => {
-  if (!isMobile.value) {
-    // On desktop, return empty object - no wrapper styling needed
-    return {};
-  }
-  // On mobile, use fixed positioning to ensure it's always visible
-  if (isDragging.value) {
-    return {
-      position: 'fixed' as const,
-      bottom: '0',
-      left: '0',
-      right: '0',
-      zIndex: '51',
-      transform: `translateY(${dragY.value}px)`,
-      transition: 'none',
-    };
-  }
-  return {
+  if (!isMobile.value) return {};
+
+  const baseStyle = {
     position: 'fixed' as const,
     bottom: '0',
     left: '0',
     right: '0',
     zIndex: '51',
+  };
+
+  if (isDragging.value) {
+    return {
+      ...baseStyle,
+      transform: `translateY(${dragY.value}px)`,
+      transition: 'none',
+    };
+  }
+
+  return {
+    ...baseStyle,
     transform: 'translateY(0)',
     transition: 'transform 200ms cubic-bezier(0.4, 0, 0.2, 1)',
   };
 });
 
 const overlayOpacity = computed(() => {
-  if (!isMobile.value || !isDragging.value) {
-    return undefined;
-  }
+  if (!isMobile.value || !isDragging.value) return undefined;
   const maxDrag = 200;
   return Math.max(0.3, 1 - dragY.value / maxDrag);
 });
 
 const overlayStyle = computed(() => {
-  if (overlayOpacity.value === undefined) {
-    return {};
-  }
+  if (overlayOpacity.value === undefined) return {};
   return {
     opacity: overlayOpacity.value.toString(),
     transition: 'opacity 75ms',
@@ -210,14 +209,11 @@ const overlayStyle = computed(() => {
       :style="overlayStyle"
       :class="overlayOpacity !== undefined ? 'transition-opacity duration-75' : ''"
     />
-    <!-- Mobile: Wrapper div for drag functionality -->
     <div
       v-if="isMobile"
       ref="contentRef"
       :style="contentStyle"
-      :class="[
-        !isDragging ? 'transition-transform duration-200 ease-out' : '',
-      ]"
+      :class="[!isDragging ? 'transition-transform duration-200 ease-out' : '']"
       @pointerdown="handlePointerDown"
       @touchstart="handlePointerDown"
     >
@@ -226,19 +222,12 @@ const overlayStyle = computed(() => {
         v-bind="forwarded"
         :class="
           cn(
-            // Positioning
             'fixed right-0 bottom-[58px] left-0 z-[51]',
-            // Layout
             'grid max-h-[90vh] w-full gap-4',
-            // Overflow
             'overflow-y-auto',
-            // Styling
             'rounded-t-lg border-t border-r border-l bg-background',
-            // Spacing
             'pb-[max(1.5rem,env(safe-area-inset-bottom))]',
-            // Effects
             'shadow-lg duration-200',
-            // Animations
             'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:slide-out-to-bottom',
             'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:slide-in-from-bottom',
             props.class,
@@ -250,7 +239,6 @@ const overlayStyle = computed(() => {
         }"
       >
         <div class="sticky top-0 right-0 left-0 isolate grid place-items-center bg-gradient-to-b from-background py-4">
-          <!-- Drag handle -->
           <div
             class="mx-auto mb-2 h-1 w-12 rounded-full bg-muted-foreground/30 pointer-events-none"
             aria-hidden="true"
@@ -271,7 +259,6 @@ const overlayStyle = computed(() => {
         </div>
       </DialogContent>
     </div>
-    <!-- Desktop: Render DialogContent directly (matches DialogContent.vue exactly) -->
     <DialogContent
       v-else
       data-slot="dialog-content"
