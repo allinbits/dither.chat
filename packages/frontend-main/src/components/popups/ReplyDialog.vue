@@ -69,7 +69,10 @@ function handleInputValidity(value: boolean) {
               <Username :user-address="reply.author" />
               <PrettyTimestamp :timestamp="new Date(reply.timestamp)" />
             </div>
-            <PostMessage :message="reply.message" />
+
+            <div class="max-w-[calc(100dvw-6rem)] overflow-x-auto">
+              <PostMessage :message="reply.message" />
+            </div>
           </div>
         </div>
 
