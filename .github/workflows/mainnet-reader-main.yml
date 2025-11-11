@@ -42,4 +42,4 @@ jobs:
           file: ./packages/api-main/Dockerfile
           push: true
           tags:
-            ${{ secrets.REGION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/dither-chat/api-main:${{ github.ref_name }}
+            ${{ secrets.REGION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/dither-chat/reader-main:${{ github.ref_name }}
