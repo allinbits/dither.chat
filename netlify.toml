@@ -2,6 +2,17 @@
 publish = "./packages/frontend-main/dist"
 command = "pnpm -F ./packages/frontend-main build"
 
+[[edge_functions]]
+function = "post-meta"
+path = "/post/*"
+
+[[edge_functions]]
+function = "og-image"
+path = "/og-image/*"
+
+# Redirect all routes to index.html
+# Note: Edge functions take precedence over redirects, so /og-image/* and /post/*
+# will be handled by edge functions before this redirect rule applies
 [[redirects]]
 from = "/*"
 to = "/index.html"
