@@ -38,7 +38,7 @@ function handleActionClick(url: string) {
 
 <template>
   <MainLayout>
-    <div class="flex flex-col h-full">
+    <div class="flex flex-col h-[calc(100dvh-2*var(--mobile-panel-height))]">
       <ViewHeading :title="$t('components.Headings.about')" />
 
       <div class="flex flex-col flex-1">
