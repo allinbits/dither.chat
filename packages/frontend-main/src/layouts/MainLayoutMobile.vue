@@ -4,15 +4,15 @@ import TopPanel from './panels/TopPanel.vue';
 </script>
 
 <template>
-  <div class="w-full h-[58px] sticky top-0 z-99">
+  <div class="w-full h-mobile-panel sticky top-0 z-99">
     <TopPanel />
   </div>
 
-  <main class="min-h-[100vh]">
+  <main class="min-h-dvh flex flex-col flex-1">
     <slot />
   </main>
 
-  <div class="w-full h-[58px] sticky bottom-0 z-99">
+  <div class="w-full h-mobile-panel sticky bottom-0 z-99">
     <BottomPanel />
   </div>
 </template>

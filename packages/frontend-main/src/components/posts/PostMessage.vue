@@ -60,7 +60,7 @@ const parsedMessage = computed((): MessageSegment[] => {
         :href="segment.content"
         target="_blank"
         rel="noopener noreferrer"
-        class="text-blue-500 hover:underline font-medium"
+        class="text-blue-500 hover:underline font-medium wrap-anywhere"
         @click.stop=""
       >
         {{ segment.content }}

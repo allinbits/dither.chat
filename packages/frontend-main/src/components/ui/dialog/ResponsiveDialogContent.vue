@@ -227,7 +227,7 @@ const overlayStyle = computed(() => {
         v-bind="forwarded"
         :class="
           cn(
-            'fixed right-0 bottom-[58px] left-0 z-[51]',
+            'fixed right-0 bottom-mobile-header left-0 z-[51]',
             'grid max-h-[90vh] w-full gap-4',
             'overflow-y-auto',
             'rounded-t-lg border-t border-r border-l bg-background',
