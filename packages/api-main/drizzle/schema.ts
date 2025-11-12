@@ -3,6 +3,33 @@ import { bigint, boolean, index, integer, pgEnum, pgTable, primaryKey, serial, t
 
 const MEMO_LENGTH = 512;
 
+export const HandleTable = pgTable(
+  'handle',
+  {
+    name: varchar({ length: 32 }).primaryKey(),
+    address: varchar({ length: 44 }).notNull(),
+    hash: varchar({ length: 64 }).notNull(),
+    timestamp: timestamp({ withTimezone: true }).notNull(),
+  },
+  t => [
+    index('handle_address_idx').on(t.address),
+  ],
+);
+
+export const HandleTransferTable = pgTable(
+  'handle_transfer',
+  {
+    hash: varchar({ length: 64 }).notNull(),
+    name: varchar({ length: 32 }).notNull(),
+    from_address: varchar({ length: 44 }).notNull(),
+    to_address: varchar({ length: 44 }).notNull(),
+    timestamp: timestamp({ withTimezone: true }).notNull(),
+  },
+  t => [
+    index('handle_transfer_to_idx').on(t.name, t.to_address),
+  ],
+);
+
 export const FeedTable = pgTable(
   'feed',
   {
@@ -166,4 +193,6 @@ export const tables = [
   'state',
   'authrequests',
   'ratelimits',
+  'handle',
+  'handle_transfer',
 ];

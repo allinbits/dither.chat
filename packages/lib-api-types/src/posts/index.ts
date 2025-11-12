@@ -110,8 +110,8 @@ export type RegisterBody = Static<typeof RegisterBodySchema>;
 
 export const TransferBodySchema = t.Object({
   hash: t.String(),
-  from: t.String(),
   handle: t.String(),
+  from_address: t.String(),
   to_address: t.String(),
   timestamp: t.String(),
 });

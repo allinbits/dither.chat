@@ -1,3 +1,4 @@
+export * from './accept';
 export * from './auth';
 export * from './authCreate';
 export * from './dislike';
@@ -8,6 +9,8 @@ export * from './logout';
 export * from './mod';
 export * from './post';
 export * from './postRemove';
+export * from './register';
 export * from './reply';
+export * from './transfer';
 export * from './unfollow';
 export * from './updateState';

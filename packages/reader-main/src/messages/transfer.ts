@@ -25,9 +25,9 @@ export async function Transfer(action: ActionWithData): Promise<ResponseStatus> 
     const [handle, to_address] = extractMemoContent(action.memo, 'dither.Transfer');
     const postBody: Posts.TransferBody = {
       hash: action.hash,
-      from: action.sender,
-      handle,
+      from_address: action.sender,
       to_address,
+      handle,
       timestamp: action.timestamp,
     };
 

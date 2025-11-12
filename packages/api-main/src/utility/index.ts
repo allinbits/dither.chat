@@ -1,3 +1,6 @@
+import type { SQL } from 'drizzle-orm';
+import type { AnyPgColumn } from 'drizzle-orm/pg-core';
+
 import type * as T from '../types/index';
 
 import { Buffer } from 'node:buffer';
@@ -9,6 +12,10 @@ import { getDatabase } from '../../drizzle/db';
 import { useConfig } from '../config';
 
 const { AUTH, DISCORD_WEBHOOK_URL } = useConfig();
+
+export function lower(email: AnyPgColumn): SQL {
+  return sql`lower(${email})`;
+}
 
 export function getTransferMessage(messages: Array<T.MsgGeneric>) {
   const msgTransfer = messages.find(msg => msg['@type'] === '/cosmos.bank.v1beta1.MsgSend');

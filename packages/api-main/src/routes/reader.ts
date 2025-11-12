@@ -18,6 +18,9 @@ export const readerRoutes = new Elysia()
   .post('/dislike', ({ body }) => PostRequests.Dislike(body), { body: Posts.DislikeBodySchema })
   .post('/flag', ({ body }) => PostRequests.Flag(body), { body: Posts.FlagBodySchema })
   .post('/post-remove', ({ body }) => PostRequests.PostRemove(body), { body: Posts.PostRemoveBodySchema })
+  .post('/register', ({ body }) => PostRequests.Register(body), { body: Posts.RegisterBodySchema })
+  .post('/transfer', ({ body }) => PostRequests.Transfer(body), { body: Posts.TransferBodySchema })
+  .post('/accept', ({ body }) => PostRequests.Accept(body), { body: Posts.AcceptBodySchema })
   .post('/update-state', ({ body }) => PostRequests.UpdateState(body), {
     body: t.Object({ last_block: t.String() }),
   });
