@@ -100,6 +100,31 @@ export const UnfollowBodySchema = t.Object({
 });
 export type UnfollowBody = Static<typeof UnfollowBodySchema>;
 
+export const RegisterBodySchema = t.Object({
+  hash: t.String(),
+  from: t.String(),
+  handle: t.String(),
+  timestamp: t.String(),
+});
+export type RegisterBody = Static<typeof RegisterBodySchema>;
+
+export const TransferBodySchema = t.Object({
+  hash: t.String(),
+  from: t.String(),
+  handle: t.String(),
+  to_address: t.String(),
+  timestamp: t.String(),
+});
+export type TransferBody = Static<typeof TransferBodySchema>;
+
+export const AcceptBodySchema = t.Object({
+  hash: t.String(),
+  from: t.String(),
+  handle: t.String(),
+  timestamp: t.String(),
+});
+export type AcceptBody = Static<typeof AcceptBodySchema>;
+
 export const AddPublicKeySchema = t.Object({
   key: t.String(),
 });
