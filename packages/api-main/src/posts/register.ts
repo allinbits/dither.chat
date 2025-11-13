@@ -1,27 +1,16 @@
 import type { Posts } from '@atomone/dither-api-types';
 
-import { eq, sql } from 'drizzle-orm';
+import type { DbClient } from '../../drizzle/db';
+
+import { eq } from 'drizzle-orm';
 
 import { getDatabase } from '../../drizzle/db';
 import { HandleTable } from '../../drizzle/schema';
 import { lower } from '../utility';
 
-const statement = getDatabase()
-  .insert(HandleTable)
-  .values({
-    name: sql.placeholder('name'),
-    address: sql.placeholder('address'),
-    hash: sql.placeholder('hash'),
-    timestamp: sql.placeholder('timestamp'),
-  })
-  .onConflictDoNothing()
-  .prepare('stmnt_handle_insert');
-
 export const tgHandleRegex = /^[a-z]{3}\w*$/i;
 
 export async function Register(body: Posts.RegisterBody) {
-  // TODO: Define how many names a single account can register
-
   if (!tgHandleRegex.test(body.handle)) {
     return {
       status: 400,
@@ -33,16 +22,26 @@ export async function Register(body: Posts.RegisterBody) {
     return { status: 400, error: 'handle must have between 5 and 32 characters long' };
   }
 
+  const db = getDatabase();
+
   try {
-    if (await doesHandleExists(body.handle)) {
+    if (await doesHandleExists(db, body.handle)) {
       return { status: 400, error: 'handle is already registered' };
     }
 
-    await statement.execute({
-      hash: body.hash.toLowerCase(),
-      address: body.from.toLowerCase(),
-      name: body.handle,
-      timestamp: new Date(body.timestamp),
+    const address = body.from.toLowerCase();
+
+    await db.transaction(async (tx) => {
+      // Remove current handle if one is registered to address
+      await tx.delete(HandleTable).where(eq(HandleTable.address, address));
+
+      // Register a new handle for the address
+      await tx.insert(HandleTable).values({
+        name: body.handle,
+        hash: body.hash.toLowerCase(),
+        address: body.from.toLowerCase(),
+        timestamp: new Date(body.timestamp),
+      });
     });
 
     return { status: 200 };
@@ -52,7 +51,7 @@ export async function Register(body: Posts.RegisterBody) {
   }
 }
 
-async function doesHandleExists(name: string): Promise<boolean> {
-  const count = await getDatabase().$count(HandleTable, eq(lower(HandleTable.name), name.toLowerCase()));
+async function doesHandleExists(db: DbClient, name: string): Promise<boolean> {
+  const count = await db.$count(HandleTable, eq(lower(HandleTable.name), name.toLowerCase()));
   return count !== 0;
 }
