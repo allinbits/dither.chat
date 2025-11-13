@@ -47,7 +47,7 @@ const openModel = computed({
       <slot name="trigger" />
     </DialogTrigger>
     <DialogPortal>
-      <DialogOverlay class="z-[99] opacity-45" />
+      <DialogOverlay class="z-[99] opacity-55" />
       <DialogContent
         data-slot="dialog-content"
         :class="
