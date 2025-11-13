@@ -96,7 +96,7 @@ function insertVideoUrl() {
           size="icon"
           type="button"
           :title="$t('components.PostEditorToolbar.insertVideoTitle')"
-          :class="{ 'text-primary': hasVideoInContent }"
+          :class="{ 'text-blue-500': hasVideoInContent }"
         >
           <Video class="size-5" />
         </Button>
