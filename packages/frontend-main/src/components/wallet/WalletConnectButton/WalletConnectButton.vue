@@ -1,5 +1,7 @@
 <script lang="ts" setup>
+import { MoreVertical } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
+import { RouterLink } from 'vue-router';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -22,20 +24,28 @@ const connectedState = computed(() => !isConnecting.value && loggedIn.value && !
 </script>
 
 <template>
-  <div>
+  <div class="w-full">
     <!-- Normal signed in account display -->
     <template v-if="connectedState">
-      <Popover>
-        <PopoverTrigger class="w-full">
-          <UserAvatarUsername :user-address="address" disabled class="h-[52px] px-4 gap-3 rounded-sm hover:bg-accent active:bg-accent transition-colors" />
-        </PopoverTrigger>
+      <div class="flex w-full items-center gap-2.5 rounded-md px-3 py-2 hover:bg-accent/50 transition-colors">
+        <RouterLink
+          :to="`/profile/${address}`"
+          class="flex flex-1 items-center gap-2.5 active:opacity-70 transition-opacity"
+        >
+          <UserAvatarUsername :user-address="address" size="sm" disabled />
+        </RouterLink>
 
-        <WalletConnectPopoverContent />
-      </Popover>
+        <Popover>
+          <PopoverTrigger class="p-1 rounded hover:bg-accent/70 active:bg-accent transition-colors shrink-0">
+            <MoreVertical class="size-4 text-muted-foreground" />
+          </PopoverTrigger>
+          <WalletConnectPopoverContent />
+        </Popover>
+      </div>
     </template>
 
     <template v-else>
-      <Button class="w-[207px]" @click="walletDialogStore.showDialog">
+      <Button class="w-full" @click="walletDialogStore.showDialog">
         {{ $t('components.WalletConnect.button') }}
       </Button>
     </template>
