@@ -52,7 +52,7 @@ const parsedMessage = computed((): MessageSegment[] => {
 </script>
 
 <template>
-  <div class="leading-6 text-sm">
+  <div class="leading-relaxed text-sm">
     <template v-for="(segment, index) in parsedMessage" :key="`${index}-${segment.content}`">
       <span v-if="segment.type === 'text'">{{ segment.content }}</span>
       <a

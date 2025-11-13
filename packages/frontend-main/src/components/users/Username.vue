@@ -8,5 +8,5 @@ defineProps<UserAvatarUsernameProps>();
 </script>
 
 <template>
-  <span :class="cn(size === 'lg' ? 'text-lg' : size === 'sm' ? 'text-sm' : 'text-base', !disabled && 'active:underline hover:underline decoration-2', 'font-semibold')">{{ shorten(userAddress || '...............', 8, 4) }}</span>
+  <span :class="cn(size === 'lg' ? 'text-lg' : size === 'sm' ? 'text-sm' : 'text-sm', !disabled && 'active:underline hover:underline decoration-2', 'font-medium text-muted-foreground')">{{ shorten(userAddress || '...............', 8, 4) }}</span>
 </template>

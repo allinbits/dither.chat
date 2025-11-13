@@ -28,7 +28,7 @@ import PopoverTrigger from '../ui/popover/PopoverTrigger.vue';
 const props = defineProps<{ post: Post }>();
 const buttonWrapperClass = 'flex items-center flex-1 min-w-[84px]';
 const buttonClass = 'flex flex-row items-center gap-1 p-2 rounded-full hover:bg-accent active:bg-accent transition-colors';
-const amountTextClass = 'text-[#A2A2A9] text-xs font-medium hover:underline active:underline transition-colors';
+const amountTextClass = 'text-muted-foreground text-xs font-normal hover:underline active:underline transition-colors';
 const amountPopoverContentClass = 'py-2 px-3 size-fit';
 const fullAmountTextClass = 'text-sm ';
 
@@ -108,7 +108,7 @@ async function onClickFlag() {
   <div :class="cn('flex flex-row items-center justify-between pr-2 flex-wrap')">
     <div :class="buttonWrapperClass">
       <button :class="buttonClass" @click.stop="onClickReply">
-        <MessageCircle class="size-5" color="#A2A2A9" />
+        <MessageCircle class="size-5" />
       </button>
       <Popover>
         <PopoverTrigger @click.stop>
@@ -122,7 +122,7 @@ async function onClickFlag() {
 
     <div :class="buttonWrapperClass">
       <button :class="buttonClass" @click.stop="onClickLike">
-        <ThumbsUp class="size-5" color="#A2A2A9" />
+        <ThumbsUp class="size-5" />
       </button>
       <Popover>
         <PopoverTrigger @click.stop>
@@ -135,8 +135,8 @@ async function onClickFlag() {
     </div>
 
     <div :class="buttonWrapperClass">
-      <button :class="buttonClass" @click.stop="onClickDislike">
-        <ThumbsDown class="size-5 scale-x-[-1]" color="#A2A2A9" />
+      <button :class="cn(buttonClass, 'opacity-60')" @click.stop="onClickDislike">
+        <ThumbsDown class="size-5 scale-x-[-1]" />
       </button>
       <Popover>
         <PopoverTrigger @click.stop>
@@ -149,8 +149,8 @@ async function onClickFlag() {
     </div>
 
     <div :class="buttonWrapperClass">
-      <button :class="buttonClass" @click.stop="onClickFlag">
-        <Flag class="size-5" color="#A2A2A9" />
+      <button :class="cn(buttonClass, 'opacity-60')" @click.stop="onClickFlag">
+        <Flag class="size-5" />
       </button>
       <Popover>
         <PopoverTrigger @click.stop>

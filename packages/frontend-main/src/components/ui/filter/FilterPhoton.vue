@@ -51,10 +51,10 @@ function inverseExponentialScale(amount: Decimal): number {
 </script>
 
 <template>
-  <div class="flex flex-col gap-4">
-    <label class="font-semibold text-sm">{{ $t('components.Filter.posts') }}</label>
+  <div class="flex flex-col gap-3">
+    <label class="text-xs font-medium text-muted-foreground/70 uppercase tracking-wider">{{ $t('components.Filter.posts') }}</label>
     <Slider v-model="sliderValue" :min="min" :max="max" :step="step" class="cursor-pointer" />
-    <span class="text-sm">
+    <span class="text-xs text-muted-foreground/80">
       {{ `${$t('components.Filter.amount')}: ${displayValue}` }}
     </span>
   </div>
