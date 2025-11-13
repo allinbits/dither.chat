@@ -1,15 +1,12 @@
 <script setup lang="ts">
 import { CircleX, Loader } from 'lucide-vue-next';
-import { RouterLink, useRouter } from 'vue-router';
+import { RouterLink } from 'vue-router';
 
 import PostMessage from '@/components/posts/PostMessage.vue';
 import UserAvatarUsername from '@/components/users/UserAvatarUsername.vue';
 import { useSearchPosts } from '@/composables/useSearchPosts';
-import { routesNames } from '@/router';
 
 import Input from '../input/Input.vue';
-
-const router = useRouter();
 
 const { query, posts, isLoading, error } = useSearchPosts();
 
@@ -17,16 +14,12 @@ function clearSearch() {
   query.value = '';
   posts.value = [];
 }
-
-function gotoExplore() {
-  router.push({ name: routesNames.explore, query: { q: query.value } });
-}
 </script>
 
 <template>
   <div class="relative">
     <div class="flex items-center gap-2 relative z-10">
-      <Input v-model="query" :placeholder="$t('placeholders.search')" @keyup.enter="gotoExplore" />
+      <Input v-model="query" :placeholder="$t('placeholders.search')" />
 
       <CircleX
         v-if="query"
