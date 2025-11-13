@@ -23,7 +23,6 @@ export async function Register(body: Posts.RegisterBody) {
   }
 
   const db = getDatabase();
-
   try {
     if (await doesHandleExists(db, body.handle)) {
       return { status: 400, error: 'handle is already registered' };
@@ -33,15 +32,19 @@ export async function Register(body: Posts.RegisterBody) {
 
     await db.transaction(async (tx) => {
       // Remove current handle if one is registered to address
-      await tx.delete(HandleTable).where(eq(HandleTable.address, address));
+      await tx
+        .delete(HandleTable)
+        .where(eq(HandleTable.address, address));
 
       // Register a new handle for the address
-      await tx.insert(HandleTable).values({
-        name: body.handle,
-        hash: body.hash.toLowerCase(),
-        address: body.from.toLowerCase(),
-        timestamp: new Date(body.timestamp),
-      });
+      await tx
+        .insert(HandleTable)
+        .values({
+          name: body.handle,
+          hash: body.hash.toLowerCase(),
+          address: body.from.toLowerCase(),
+          timestamp: new Date(body.timestamp),
+        });
     });
 
     return { status: 200 };

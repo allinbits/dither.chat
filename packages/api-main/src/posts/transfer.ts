@@ -1,30 +1,21 @@
 import type { Posts } from '@atomone/dither-api-types';
 
-import { and, eq, sql } from 'drizzle-orm';
+import type { DbClient } from '../../drizzle/db';
+
+import { and, eq } from 'drizzle-orm';
 
 import { getDatabase } from '../../drizzle/db';
 import { HandleTable, HandleTransferTable } from '../../drizzle/schema';
 import { lower } from '../utility';
 
-const statement = getDatabase()
-  .insert(HandleTransferTable)
-  .values({
-    hash: sql.placeholder('hash'),
-    name: sql.placeholder('name'),
-    from_address: sql.placeholder('from_address'),
-    to_address: sql.placeholder('to_address'),
-    timestamp: sql.placeholder('timestamp'),
-  })
-  .onConflictDoNothing()
-  .prepare('stmnt_handle_transfer_insert');
-
 export async function Transfer(body: Posts.TransferBody) {
+  const db = getDatabase();
   try {
-    if (!await isHandleOwner(body.handle, body.from_address)) {
+    if (!await isHandleOwner(db, body.handle, body.from_address)) {
       return { status: 400, error: 'handle not found or not registered for address' };
     }
 
-    await statement.execute({
+    await db.insert(HandleTransferTable).values({
       hash: body.hash.toLowerCase(),
       from_address: body.from_address.toLowerCase(),
       to_address: body.to_address.toLowerCase(),
@@ -39,8 +30,8 @@ export async function Transfer(body: Posts.TransferBody) {
   }
 }
 
-async function isHandleOwner(handle: string, address: string): Promise<boolean> {
-  const count = await getDatabase().$count(HandleTable, and(
+async function isHandleOwner(db: DbClient, handle: string, address: string): Promise<boolean> {
+  const count = await db.$count(HandleTable, and(
     eq(lower(HandleTable.name), handle.toLowerCase()),
     eq(HandleTable.address, address.toLowerCase()),
   ));
