@@ -24,7 +24,6 @@ const connectedState = computed(() => !isConnecting.value && loggedIn.value && !
 
 <template>
   <div class="w-full">
-    <!-- Normal signed in account display -->
     <template v-if="connectedState">
       <div class="flex w-full items-center gap-2.5 rounded-md px-3 py-2 hover:bg-accent/50 transition-colors">
         <RouterLink
