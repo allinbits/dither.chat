@@ -37,6 +37,7 @@ services:
     environment:
       PG_URI: 'postgresql://default:password@postgres:5432/postgres'
       AUTH: dev
+      JWT: dev-jwt-secret
     ports:
       - 3000:3000
     healthcheck:
