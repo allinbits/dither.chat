@@ -40,6 +40,7 @@ export const messages = {
         close: 'Close',
         showMore: 'Show more',
         copyLink: 'Copy link',
+        copyAddress: 'Copy address',
         follow: 'Follow',
         unfollow: 'Unfollow',
         newPost: 'New post',

@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import type { PopupState } from '@/composables/usePopups';
 
-import { Loader } from 'lucide-vue-next';
-import { computed } from 'vue';
+import { Copy, Loader } from 'lucide-vue-next';
+import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
 import { toast } from 'vue-sonner';
 
 import Button from '@/components/ui/button/Button.vue';
 import Tabs from '@/components/ui/tabs/RouterTabs.vue';
-import UserAvatarUsername from '@/components/users/UserAvatarUsername.vue';
+import UserAvatar from '@/components/users/UserAvatar.vue';
 import { useDefaultAmount } from '@/composables/useDefaultAmount';
 import { useFollowUser } from '@/composables/useFollowUser';
 import { useIsFollowing } from '@/composables/useIsFollowing';
@@ -20,9 +20,8 @@ import { useWallet } from '@/composables/useWallet';
 import MainLayout from '@/layouts/MainLayout.vue';
 import { useConfigStore } from '@/stores/useConfigStore';
 import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
+import { shorten } from '@/utility/text';
 import { showBroadcastingToast } from '@/utility/toast';
-
-import ViewHeading from '../ViewHeading.vue';
 
 const wallet = useWallet();
 const popups = usePopups();
@@ -41,6 +40,21 @@ const isMyProfile = computed(() =>
   address.value === wallet.address.value,
 );
 const { data: isFollowing, isFetching: isFetchingIsFollowing } = useIsFollowing({ followingAddress: address, followerAddress: wallet.address });
+
+const isAddressExpanded = ref(false);
+
+function toggleAddress() {
+  isAddressExpanded.value = !isAddressExpanded.value;
+}
+
+async function copyAddress() {
+  try {
+    await navigator.clipboard.writeText(address.value);
+    toast.success('Address copied to clipboard');
+  } catch {
+    toast.error('Failed to copy address');
+  }
+}
 
 const tabs = computed(() => [
   {
@@ -111,28 +125,49 @@ async function onClickUnfollow() {
 <template>
   <MainLayout>
     <div class="flex flex-col">
-      <ViewHeading :title="$t(`components.Headings.${isMyProfile ? 'myProfile' : 'profile'}`)" />
+      <div class="flex flex-row items-center justify-between gap-4 p-6 border-b">
+        <div class="flex flex-row items-center gap-4 flex-1 min-w-0">
+          <UserAvatar :user-address="address" size="lg" disabled />
 
-      <div class="flex flex-row justify-between items-center p-4">
-        <UserAvatarUsername :user-address="address" size="lg" disabled />
-        <Loader v-if="isFetchingIsFollowing" class="animate-spin w-[80px]" />
-        <template v-else-if="!isMyProfile && wallet.loggedIn.value">
-          <div class="flex flex-row gap-2">
-            <Button size="sm" @click="onClickTip">
-              {{ $t('components.Button.tip') }}
-            </Button>
+          <div class="flex flex-row items-center gap-2 flex-1 min-w-0">
+            <button
+              class="text-xl font-medium font-mono tracking-wide text-left hover:opacity-70 active:opacity-50 transition-opacity flex-1 min-w-0"
+              @click="toggleAddress"
+            >
+              <span v-if="isAddressExpanded" class="break-all">{{ address }}</span>
+              <span v-else>{{ shorten(address, 10, 6) }}</span>
+            </button>
 
-            <Button v-if="isFollowing" size="sm" @click="onClickUnfollow">
-              {{ $t('components.Button.unfollow') }}
-            </Button>
-            <Button v-else size="sm" @click="onClickFollow">
-              {{ $t('components.Button.follow') }}
-            </Button>
+            <button
+              class="p-1.5 rounded hover:bg-accent/50 active:bg-accent transition-colors shrink-0"
+              :aria-label="$t('components.Button.copyAddress')"
+              @click.stop="copyAddress"
+            >
+              <Copy class="size-4 text-muted-foreground" />
+            </button>
           </div>
-        </template>
+        </div>
+
+        <div class="flex items-center shrink-0">
+          <Loader v-if="isFetchingIsFollowing" class="animate-spin w-5 h-5" />
+          <template v-else-if="!isMyProfile && wallet.loggedIn.value">
+            <div class="flex flex-row gap-2">
+              <Button size="sm" @click="onClickTip">
+                {{ $t('components.Button.tip') }}
+              </Button>
+
+              <Button v-if="isFollowing" size="sm" @click="onClickUnfollow">
+                {{ $t('components.Button.unfollow') }}
+              </Button>
+              <Button v-else size="sm" @click="onClickFollow">
+                {{ $t('components.Button.follow') }}
+              </Button>
+            </div>
+          </template>
+        </div>
       </div>
 
-      <Tabs v-if="wallet.loggedIn.value" :tabs="tabs" layout="fill" class="border-t" />
+      <Tabs v-if="wallet.loggedIn.value" :tabs="tabs" layout="fill" />
     </div>
     <slot />
   </MainLayout>
