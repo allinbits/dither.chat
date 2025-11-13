@@ -214,7 +214,9 @@
       -apple-system,
       BlinkMacSystemFont,
       sans-serif;
-    font-feature-settings: 'kern' 1, 'liga' 1;
+    font-feature-settings:
+      'kern' 1,
+      'liga' 1;
     letter-spacing: -0.01em;
   }
   button:not([disabled]),

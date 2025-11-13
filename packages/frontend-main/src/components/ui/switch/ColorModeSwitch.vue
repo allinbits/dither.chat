@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { ColorTheme } from '@/composables/useColorTheme';
-
 import { useMediaQuery } from '@vueuse/core';
 import { Atom, Moon, Sun } from 'lucide-vue-next';
 import { computed } from 'vue';
