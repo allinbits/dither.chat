@@ -1,4 +1,9 @@
 <script setup lang="ts">
+/**
+ * Responsive popover that adapts to screen size:
+ * - Mobile: Dialog (higher z-index to appear above parent dialogs)
+ * - Desktop: Popover
+ */
 import { useMediaQuery } from '@vueuse/core';
 import { X } from 'lucide-vue-next';
 import {

@@ -74,6 +74,7 @@ function insertVideoUrl() {
         <Input
           v-model="imageUrl"
           :placeholder="$t('components.PostEditorToolbar.insertImagePlaceholder')"
+          @keyup.enter="insertImageUrl"
         />
         <Alert v-if="showImageError" variant="destructive">
           <CircleAlert />
