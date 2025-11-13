@@ -15,12 +15,29 @@ export async function Transfer(body: Posts.TransferBody) {
       return { status: 400, error: 'handle not found or not registered for address' };
     }
 
-    await db.insert(HandleTransferTable).values({
-      hash: body.hash.toLowerCase(),
-      from_address: body.from_address.toLowerCase(),
-      to_address: body.to_address.toLowerCase(),
-      name: body.handle,
-      timestamp: new Date(body.timestamp),
+    const fromAddress = body.from_address.toLowerCase();
+
+    await db.transaction(async (tx) => {
+      // If it exists delete previous transfer for the same handle
+      await tx
+        .delete(HandleTransferTable)
+        .where(
+          and(
+            eq(lower(HandleTransferTable.name), body.handle.toLowerCase()),
+            eq(HandleTransferTable.from_address, fromAddress),
+          ),
+        );
+
+      // Add a handle transfer to a new address
+      await tx
+        .insert(HandleTransferTable)
+        .values({
+          hash: body.hash.toLowerCase(),
+          name: body.handle,
+          from_address: fromAddress,
+          to_address: body.to_address.toLowerCase(),
+          timestamp: new Date(body.timestamp),
+        });
     });
 
     return { status: 200 };
