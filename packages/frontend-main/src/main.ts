@@ -4,6 +4,7 @@ import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
 import { createApp } from 'vue';
 import { createI18n } from 'vue-i18n';
 
+import { useColorTheme } from '@/composables/useColorTheme';
 import { messages } from '@/localization';
 
 import App from './App.vue';
@@ -11,6 +12,15 @@ import Icon from './components/ui/icon/Icon.vue';
 import router from './router.ts';
 
 import './style.css';
+
+const { theme } = useColorTheme();
+
+router.afterEach(() => {
+  const html = document.documentElement;
+  const currentTheme = theme.value;
+  html.classList.remove('light', 'dark', 'atomone');
+  html.classList.add(currentTheme);
+});
 
 const pinia = createPinia();
 pinia.use(piniaPluginPersistedstate);
