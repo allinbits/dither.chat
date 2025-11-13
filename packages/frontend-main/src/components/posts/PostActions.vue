@@ -21,13 +21,13 @@ import { fractionalDigits } from '@/utility/atomics';
 import { formatCompactAtomics, formatCompactNumber } from '@/utility/text';
 import { showBroadcastingToast } from '@/utility/toast';
 
+import { Button } from '../ui/button';
 import Popover from '../ui/popover/Popover.vue';
 import PopoverContent from '../ui/popover/PopoverContent.vue';
 import PopoverTrigger from '../ui/popover/PopoverTrigger.vue';
 
 const props = defineProps<{ post: Post }>();
 const buttonWrapperClass = 'flex items-center flex-1 min-w-[84px]';
-const buttonClass = 'flex flex-row items-center gap-1 p-2 rounded-full hover:bg-accent active:bg-accent transition-colors';
 const amountTextClass = 'text-muted-foreground text-xs font-normal hover:underline active:underline transition-colors';
 const amountPopoverContentClass = 'py-2 px-3 size-fit';
 const fullAmountTextClass = 'text-sm ';
@@ -107,9 +107,9 @@ async function onClickFlag() {
 <template>
   <div :class="cn('flex flex-row items-center justify-between pr-2 flex-wrap')">
     <div :class="buttonWrapperClass">
-      <button :class="buttonClass" @click.stop="onClickReply">
+      <Button variant="icon" size="icon" class="p-2" @click.stop="onClickReply">
         <MessageCircle class="size-5" />
-      </button>
+      </Button>
       <Popover>
         <PopoverTrigger @click.stop>
           <span :class="amountTextClass">{{ formatCompactNumber(post.replies) }}</span>
@@ -121,9 +121,9 @@ async function onClickFlag() {
     </div>
 
     <div :class="buttonWrapperClass">
-      <button :class="buttonClass" @click.stop="onClickLike">
+      <Button variant="icon" size="icon" class="p-2" @click.stop="onClickLike">
         <ThumbsUp class="size-5" />
-      </button>
+      </Button>
       <Popover>
         <PopoverTrigger @click.stop>
           <span :class="amountTextClass">{{ formatCompactAtomics(post.likes_burnt, fractionalDigits) }}</span>
@@ -135,9 +135,9 @@ async function onClickFlag() {
     </div>
 
     <div :class="buttonWrapperClass">
-      <button :class="cn(buttonClass, 'opacity-60')" @click.stop="onClickDislike">
+      <Button variant="icon" size="icon" class="p-2 opacity-60" @click.stop="onClickDislike">
         <ThumbsDown class="size-5 scale-x-[-1]" />
-      </button>
+      </Button>
       <Popover>
         <PopoverTrigger @click.stop>
           <span :class="amountTextClass">{{ formatCompactAtomics(post.dislikes_burnt, fractionalDigits) }}</span>
@@ -149,9 +149,9 @@ async function onClickFlag() {
     </div>
 
     <div :class="buttonWrapperClass">
-      <button :class="cn(buttonClass, 'opacity-60')" @click.stop="onClickFlag">
+      <Button variant="icon" size="icon" class="p-2 opacity-60" @click.stop="onClickFlag">
         <Flag class="size-5" />
-      </button>
+      </Button>
       <Popover>
         <PopoverTrigger @click.stop>
           <span :class="amountTextClass">{{ formatCompactAtomics(post.flags_burnt, fractionalDigits) }}</span>

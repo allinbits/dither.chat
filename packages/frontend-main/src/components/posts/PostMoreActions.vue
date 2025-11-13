@@ -4,14 +4,13 @@ import type { Post } from 'api-main/types/feed';
 import { useClipboard } from '@vueuse/core';
 import { Ellipsis, Link2 } from 'lucide-vue-next';
 
+import { Button } from '@/components/ui/button';
+import Icon from '@/components/ui/icon/Icon.vue';
 import Popover from '@/components/ui/popover/Popover.vue';
 import PopoverContent from '@/components/ui/popover/PopoverContent.vue';
 import PopoverTrigger from '@/components/ui/popover/PopoverTrigger.vue';
 import { useConfigStore } from '@/stores/useConfigStore';
 import { cn } from '@/utility';
-
-import Button from '../ui/button/Button.vue';
-import Icon from '../ui/icon/Icon.vue';
 
 const { post } = defineProps<{ post: Post }>();
 const configStore = useConfigStore();
@@ -35,8 +34,10 @@ function gotoMintscan() {
 
 <template>
   <Popover>
-    <PopoverTrigger class="p-2 rounded-full hover:bg-accent active:bg-accent transition-colors" @click.stop>
-      <Ellipsis class="size-5" color="#A2A2A9" />
+    <PopoverTrigger as-child>
+      <Button variant="icon" size="icon" class="p-2" @click.stop>
+        <Ellipsis class="size-5" color="#A2A2A9" />
+      </Button>
     </PopoverTrigger>
 
     <PopoverContent class="p-2">

@@ -130,21 +130,24 @@ async function onClickUnfollow() {
           <UserAvatar :user-address="address" size="lg" disabled />
 
           <div class="flex flex-row items-center gap-2 flex-1 min-w-0">
-            <button
-              class="text-xl font-medium font-mono tracking-wide text-left hover:opacity-70 active:opacity-50 transition-opacity flex-1 min-w-0"
+            <Button
+              variant="ghost"
+              class="text-xl font-medium font-mono tracking-wide text-left hover:opacity-70 active:opacity-50 transition-opacity flex-1 min-w-0 justify-start h-auto p-0"
               @click="toggleAddress"
             >
               <span v-if="isAddressExpanded" class="break-all">{{ address }}</span>
               <span v-else>{{ shorten(address, 10, 6) }}</span>
-            </button>
+            </Button>
 
-            <button
-              class="p-1.5 rounded hover:bg-accent/50 active:bg-accent transition-colors shrink-0"
+            <Button
+              variant="icon"
+              size="icon"
+              class="p-1.5 shrink-0"
               :aria-label="$t('components.Button.copyAddress')"
               @click.stop="copyAddress"
             >
               <Copy class="size-4 text-muted-foreground" />
-            </button>
+            </Button>
           </div>
         </div>
 

@@ -3,6 +3,7 @@ import { MoreVertical } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import { RouterLink } from 'vue-router';
 
+import { Button } from '@/components/ui/button';
 import {
   Popover,
   PopoverTrigger,
@@ -43,12 +44,14 @@ const connectedState = computed(() => !isConnecting.value && loggedIn.value && !
     </template>
 
     <template v-else>
-      <button
-        class="flex items-center justify-center flex-row h-11 px-3 gap-2.5 rounded-md border border-border/70 bg-background/60 backdrop-blur-sm shadow-[0_1px_3px_0_rgba(0,0,0,0.08)] hover:border-border hover:bg-background/85 hover:shadow-[0_2px_6px_0_rgba(0,0,0,0.12)] active:bg-background/95 active:shadow-[0_1px_2px_0_rgba(0,0,0,0.08)] transition-all duration-200 w-full text-base font-semibold"
+      <Button
+        variant="elevated"
+        size="sm"
+        class="w-full"
         @click="walletDialogStore.showDialog"
       >
         {{ $t('components.WalletConnect.button') }}
-      </button>
+      </Button>
     </template>
   </div>
 </template>
