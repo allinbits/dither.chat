@@ -1,11 +1,74 @@
 <script setup lang="ts">
 import { Github, Link as LinkIcon } from 'lucide-vue-next';
+import { onMounted, onUnmounted } from 'vue';
 
 import Button from '@/components/ui/button/Button.vue';
 import WalletConnectButton from '@/components/wallet/WalletConnectButton/WalletConnectButton.vue';
 import MainLayout from '@/layouts/MainLayout.vue';
 
 import ViewHeading from './ViewHeading.vue';
+
+// SEO: Update meta tags for About page
+onMounted(() => {
+  document.title = 'About Dither - Open Blockchain Messaging Protocol | dither.chat';
+  const metaDescription = document.querySelector('meta[name="description"]');
+  if (metaDescription) {
+    metaDescription.setAttribute('content', 'Dither is an open messaging protocol built on blockchain. Decentralized social messaging, onchain posts, and durable protocol for Web3. Built on AtomOne blockchain. Simple, extensible, and protocol-first.');
+  }
+
+  // Update OG tags
+  const ogTitle = document.querySelector('meta[property="og:title"]');
+  const ogDescription = document.querySelector('meta[property="og:description"]');
+  const ogUrl = document.querySelector('meta[property="og:url"]');
+
+  if (ogTitle) ogTitle.setAttribute('content', 'About Dither - Open Blockchain Messaging Protocol');
+  if (ogDescription) ogDescription.setAttribute('content', 'Open messaging protocol built on blockchain. Decentralized social messaging, onchain posts, and durable protocol for Web3. Built on AtomOne.');
+  if (ogUrl) ogUrl.setAttribute('content', 'https://dither.chat/about');
+
+  // Add structured data
+  const structuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    'name': 'About Dither - Open Blockchain Messaging Protocol',
+    'description': 'Dither is an open messaging protocol built on blockchain. Decentralized social messaging, onchain posts, and durable protocol for Web3. Built on AtomOne blockchain.',
+    'url': 'https://dither.chat/about',
+    'keywords': 'blockchain messaging, decentralized social, onchain messaging, messaging protocol, Web3 social, crypto social media, AtomOne, Cosmos blockchain, open protocol, durable messaging',
+    'mainEntity': {
+      '@type': 'SoftwareApplication',
+      'name': 'Dither',
+      'applicationCategory': 'SocialNetworkingApplication',
+      'operatingSystem': 'Web',
+      'description': 'Open messaging protocol for publishing messages onchain. Built on AtomOne blockchain.',
+      'keywords': 'blockchain messaging, decentralized social, onchain messaging, messaging protocol, Web3',
+    },
+  };
+
+  const script = document.createElement('script');
+  script.type = 'application/ld+json';
+  script.text = JSON.stringify(structuredData);
+  script.id = 'about-structured-data';
+  document.head.appendChild(script);
+});
+
+onUnmounted(() => {
+  const script = document.getElementById('about-structured-data');
+  if (script) script.remove();
+
+  // Reset to default
+  document.title = 'dither.chat';
+  const metaDescription = document.querySelector('meta[name="description"]');
+  if (metaDescription) {
+    metaDescription.setAttribute('content', 'Dither is a public messaging protocol that anyone can build on. All data is public and immutable on the AtomOne blockchain.');
+  }
+
+  const ogTitle = document.querySelector('meta[property="og:title"]');
+  const ogDescription = document.querySelector('meta[property="og:description"]');
+  const ogUrl = document.querySelector('meta[property="og:url"]');
+
+  if (ogTitle) ogTitle.setAttribute('content', 'dither.chat - The public protocol for thought');
+  if (ogDescription) ogDescription.setAttribute('content', 'Dither is a public messaging protocol that anyone can build on. All data is public and immutable on the AtomOne blockchain.');
+  if (ogUrl) ogUrl.setAttribute('content', 'https://dither.chat');
+});
 
 function handleTelegramBot() {
   window.open('https://t.me/dither_chat_bot', '_blank');
@@ -242,6 +305,8 @@ function handleTermsOfService() {
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
               class="opacity-60"
+              aria-label="All in Bits logo"
+              role="img"
             >
               <path
                 fill-rule="evenodd"
