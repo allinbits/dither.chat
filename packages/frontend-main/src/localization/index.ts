@@ -160,6 +160,11 @@ export const messages = {
         insertVideoError: 'Provide a valid Youtube video URL',
         insertButton: 'Insert',
       },
+      PostMediaThumbnail: {
+        multipleImagesWarning: 'Multiple images detected. Only the first image will be shown.',
+        invalidFormatWarning: 'Image URL must end with a valid extension (.gif, .jpg, .png).',
+        untrustedDomainWarning: 'Only Imgur images are supported.',
+      },
       About: {
         privacyPolicy: 'Privacy Policy',
         termsAndConditions: 'Terms & Conditions',

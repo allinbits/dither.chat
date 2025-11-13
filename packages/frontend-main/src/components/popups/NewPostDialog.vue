@@ -4,6 +4,7 @@ import { computed, ref } from 'vue';
 import { toast } from 'vue-sonner';
 
 import PostEditorToolbar from '@/components/posts/PostEditorToolbar.vue';
+import PostMediaThumbnail from '@/components/posts/PostMediaThumbnail.vue';
 import
 { Button }
   from '@/components/ui/button';
@@ -101,7 +102,9 @@ function handleRemoveText(text: string) {
           v-model="message" :placeholder="$t('placeholders.post')" :maxlength="MAX_CHARS" class="min-h-[74px] w-full break-all"
         />
 
-        <PostEditorToolbar :content="message" @insert-text="handleInsertText" @remove-text="handleRemoveText" />
+        <PostMediaThumbnail :content="message" @remove-text="handleRemoveText" />
+
+        <PostEditorToolbar :content="message" @insert-text="handleInsertText" />
 
         <!-- Transaction Form -->
         <div class="flex flex-col w-full gap-4">

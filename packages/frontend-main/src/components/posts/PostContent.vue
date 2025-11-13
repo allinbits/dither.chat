@@ -2,17 +2,14 @@
 import { computed, ref } from 'vue';
 
 import Button from '@/components/ui/button/Button.vue';
-import { extractImageURL, extractVideoURL } from '@/utility/mediaUrls';
+import { extractImageUrl, extractVideoURL } from '@/utility/mediaUrls';
 
 import PostMessage from './PostMessage.vue';
 
 const props = defineProps<{ message: string }>();
 const isEmbedToggled = ref(false);
 
-const imageUrl = computed(() => {
-  return extractImageURL(props.message) ?? '';
-});
-
+const imageUrl = computed(() => extractImageUrl(props.message) || '');
 const hasImage = computed(() => imageUrl.value.length > 0);
 
 const youtubeLink = computed(() => {
