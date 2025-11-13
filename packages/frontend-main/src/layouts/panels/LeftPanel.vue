@@ -6,13 +6,11 @@ import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 
 import NotificationsCount from '@/components/notifications/NotificationsCount.vue';
-import WalletConnectButton from '@/components/wallet/WalletConnectButton/WalletConnectButton.vue';
 import { useDefaultAmount } from '@/composables/useDefaultAmount';
 import { usePopups } from '@/composables/usePopups';
 import { useWallet } from '@/composables/useWallet';
 import { routesNames } from '@/router';
 import { cn } from '@/utility';
-import { shorten } from '@/utility/text';
 
 const wallet = useWallet();
 const popups = usePopups();
