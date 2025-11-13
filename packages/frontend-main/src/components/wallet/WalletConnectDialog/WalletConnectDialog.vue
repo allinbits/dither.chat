@@ -9,7 +9,7 @@ import { VisuallyHidden } from 'reka-ui';
 import { computed, ref } from 'vue';
 
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Dialog, ResponsiveDialogContent } from '@/components/ui/dialog';
 import DialogDescription from '@/components/ui/dialog/DialogDescription.vue';
 import DialogTitle from '@/components/ui/dialog/DialogTitle.vue';
 import Icon from '@/components/ui/icon/Icon.vue';
@@ -129,7 +129,7 @@ const isValidAddress = computed(() => {
 
 <template>
   <Dialog v-model:open="walletDialogStore.isOpen" @update:open="cancelConnect">
-    <DialogContent>
+    <ResponsiveDialogContent>
       <VisuallyHidden>
         <DialogTitle />
         <DialogDescription />
@@ -308,6 +308,6 @@ const isValidAddress = computed(() => {
           </Button>
         </div>
       </template>
-    </DialogContent>
+    </ResponsiveDialogContent>
   </Dialog>
 </template>
