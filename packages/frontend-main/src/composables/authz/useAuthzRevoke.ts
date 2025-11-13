@@ -28,7 +28,7 @@ export function useAuthzRevoke() {
         value: msgRevoke,
       };
 
-      return await wallet.sendTx([msg], 'Revoke authorization for Dither.chat');
+      return await wallet.sendTx([msg], 'Revoke authorization for dither.chat');
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEY_AUTHZ_GRANTS] });
