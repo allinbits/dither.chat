@@ -2,38 +2,18 @@
 import { computed, ref } from 'vue';
 
 import Button from '@/components/ui/button/Button.vue';
+import { extractImageUrl, extractVideoURL } from '@/utility/mediaUrls';
 
 import PostMessage from './PostMessage.vue';
 
 const props = defineProps<{ message: string }>();
 const isEmbedToggled = ref(false);
 
-function extractImageURL(msg: string) {
-  const regex = /(https?:\/\/\S+\.(?:jpg|jpeg|png|gif))/i;
-  const match = msg.match(regex);
+const imageUrl = computed(() => extractImageUrl(props.message) || '');
+const hasImage = computed(() => imageUrl.value.length > 0);
 
-  if (match && match[1]) {
-    return match[1];
-  }
-  return null;
-}
-
-const hasImage = computed(() => {
-  return extractImageURL(props.message) !== null;
-});
-
-const imageUrl = computed(() => {
-  return extractImageURL(props.message) ?? '';
-});
-
-const youtubeRegex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/g;
 const youtubeLink = computed(() => {
-  const regex = youtubeRegex.exec(props.message);
-  if (!regex || !regex[1]) {
-    return undefined;
-  }
-
-  return `https://www.youtube.com/embed/${regex[1]}`;
+  return extractVideoURL(props.message);
 });
 </script>
 
