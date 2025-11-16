@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
 
+import LinkWithPreview from './LinkWithPreview.vue';
+
 const props = defineProps<{ message: string }>();
 
 interface MessageSegment {
@@ -55,16 +57,14 @@ const parsedMessage = computed((): MessageSegment[] => {
   <div class="leading-6 text-sm">
     <template v-for="(segment, index) in parsedMessage" :key="`${index}-${segment.content}`">
       <span v-if="segment.type === 'text'">{{ segment.content }}</span>
-      <a
+      <LinkWithPreview
         v-else-if="segment.type === 'link'"
         :href="segment.content"
-        target="_blank"
-        rel="noopener noreferrer"
         class="text-blue-500 hover:underline font-medium wrap-anywhere"
         @click.stop=""
       >
         {{ segment.content }}
-      </a>
+      </LinkWithPreview>
     </template>
   </div>
 </template>
