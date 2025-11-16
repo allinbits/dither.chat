@@ -50,7 +50,7 @@ const youtubeLink = computed(() => {
           {{ $t('components.Button.hideImage') }}
         </Button>
         <div class="flex flex-col">
-          <img alt="embedded content" class="rounded" :src="imageUrl">
+          <img alt="embedded content" class="rounded" :src="imageUrl" referrerpolicy="no-referrer">
         </div>
       </template>
     </div>
