@@ -1,11 +1,6 @@
 /**
  * Fetches Open Graph metadata from external URLs.
- *
- * Intercepts `/link-meta?url={encoded_url}` requests and returns JSON with OG metadata.
- *
- * @param request - The incoming HTTP request
- * @returns JSON response with link metadata (200 status) or error (400 for client errors)
- * @note Returns 200 with error field for graceful degradation instead of 500 errors
+ * Returns 200 with error field for graceful degradation.
  */
 
 import {
@@ -13,31 +8,48 @@ import {
   createErrorResponse,
   createJsonResponse,
 } from './lib/http.ts';
+import { extractMetadata } from './lib/opengraph.ts';
 
-// Constants
 const FETCH_TIMEOUT_MS = 5000;
 const USER_AGENT = 'Mozilla/5.0 (compatible; LinkPreviewBot/1.0; +https://dither.chat)';
 const ALLOWED_PROTOCOLS = ['http:', 'https:'] as const;
+const MAX_URL_LENGTH = 2048;
+const MAX_HTML_SIZE = 5 * 1024 * 1024;
 
-// Types
-interface LinkMetadata {
-  title?: string;
-  description?: string;
-  image?: string;
-  url?: string;
-  siteName?: string;
-  error?: string;
+function isPrivateIP(hostname: string): boolean {
+  if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '[::1]') {
+    return true;
+  }
+
+  // Block private IP ranges: 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 169.254.0.0/16
+  if (
+    hostname.startsWith('192.168.')
+    || hostname.startsWith('10.')
+    || hostname.startsWith('169.254.')
+    || (hostname.startsWith('172.') && /^172\.(?:1[6-9]|2\d|3[01])\./.test(hostname))
+  ) {
+    return true;
+  }
+
+  return false;
 }
 
-// URL validation
 function validateUrl(
   url: string,
 ): { success: true; url: URL } | { success: false; error: string } {
+  if (url.length > MAX_URL_LENGTH) {
+    return { success: false, error: 'URL too long' };
+  }
+
   try {
     const parsedUrl = new URL(url);
 
     if (!ALLOWED_PROTOCOLS.includes(parsedUrl.protocol as typeof ALLOWED_PROTOCOLS[number])) {
       return { success: false, error: 'Invalid URL protocol' };
+    }
+
+    if (isPrivateIP(parsedUrl.hostname)) {
+      return { success: false, error: 'Invalid URL hostname' };
     }
 
     return { success: true, url: parsedUrl };
@@ -46,15 +58,6 @@ function validateUrl(
   }
 }
 
-function resolveUrl(relativeUrl: string, baseUrl: URL): string | undefined {
-  try {
-    return new URL(relativeUrl, baseUrl.origin).href;
-  } catch {
-    return undefined;
-  }
-}
-
-// Fetch utilities
 async function fetchWithTimeout(url: string): Promise<Response> {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
@@ -99,7 +102,26 @@ async function extractHtmlContent(
   baseUrl: URL,
 ): Promise<{ success: true; html: string } | { success: false; response: Response }> {
   try {
+    const contentLength = response.headers.get('content-length');
+    if (contentLength) {
+      const size = Number.parseInt(contentLength, 10);
+      if (size > MAX_HTML_SIZE) {
+        return {
+          success: false,
+          response: createErrorResponse('Page content too large', baseUrl.href),
+        };
+      }
+    }
+
     const html = await response.text();
+
+    if (html.length > MAX_HTML_SIZE) {
+      return {
+        success: false,
+        response: createErrorResponse('Page content too large', baseUrl.href),
+      };
+    }
+
     return { success: true, html };
   } catch {
     return {
@@ -109,115 +131,6 @@ async function extractHtmlContent(
   }
 }
 
-// Metadata extraction
-/**
- * Extracts meta tag content, handling both property and name attributes.
- * Supports flexible attribute order (property/name can come before or after content).
- */
-function extractMetaTag(
-  html: string,
-  property: string,
-  attribute: 'property' | 'name' = 'property',
-): string | undefined {
-  // Pattern handles: <meta property="..." content="..."> or <meta content="..." property="...">
-  // Also handles single or double quotes and flexible whitespace
-  const patterns = [
-    // attribute before content
-    new RegExp(
-      `<meta[^>]+${attribute}=["']${property.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}["'][^>]+content=["']([^"']+)["']`,
-      'i',
-    ),
-    // content before attribute
-    new RegExp(
-      `<meta[^>]+content=["']([^"']+)["'][^>]+${attribute}=["']${property.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}["']`,
-      'i',
-    ),
-  ];
-
-  for (const pattern of patterns) {
-    const match = html.match(pattern);
-    if (match) return match[1];
-  }
-
-  return undefined;
-}
-
-/**
- * Extracts Open Graph meta tags, trying property="og:X" first, then name="X" as fallback.
- */
-function extractOgMeta(html: string, property: string): string | undefined {
-  return extractMetaTag(html, `og:${property}`, 'property')
-    || extractMetaTag(html, property, 'name');
-}
-
-/**
- * Extracts Twitter meta tags, checking both name and property attributes.
- */
-function extractTwitterMeta(html: string, property: string): string | undefined {
-  return extractMetaTag(html, `twitter:${property}`, 'name')
-    || extractMetaTag(html, `twitter:${property}`, 'property');
-}
-
-function extractTitle(html: string): string | undefined {
-  return extractOgMeta(html, 'title')
-    || extractTwitterMeta(html, 'title')
-    || html.match(/<title[^>]*>([^<]+)<\/title>/i)?.[1]?.trim();
-}
-
-function extractDescription(html: string): string | undefined {
-  return extractOgMeta(html, 'description')
-    || extractTwitterMeta(html, 'description')
-    || extractMetaTag(html, 'description', 'name');
-}
-
-function extractImage(html: string, baseUrl: URL): string | undefined {
-  const image = extractOgMeta(html, 'image')
-    || extractTwitterMeta(html, 'image');
-
-  if (!image) return undefined;
-
-  // Resolve relative URLs
-  if (!image.startsWith('http')) {
-    return resolveUrl(image, baseUrl) || image;
-  }
-
-  return image;
-}
-
-/**
- * Builds metadata object with conditional error field if no metadata found.
- */
-function buildMetadata(
-  title: string | undefined,
-  description: string | undefined,
-  image: string | undefined,
-  siteName: string | undefined,
-  url: string,
-): LinkMetadata {
-  const hasMetadata = !!(title || description || image);
-
-  return {
-    url,
-    ...(title && { title }),
-    ...(description && { description }),
-    ...(image && { image }),
-    ...(siteName && { siteName }),
-    ...(!hasMetadata && { error: 'No metadata found on this page' }),
-  };
-}
-
-function extractMetadata(html: string, baseUrl: URL): LinkMetadata {
-  const title = extractTitle(html);
-  const description = extractDescription(html);
-  const image = extractImage(html, baseUrl);
-  const siteName = extractOgMeta(html, 'site_name');
-
-  return buildMetadata(title, description, image, siteName, baseUrl.href);
-}
-
-/**
- * Validates and processes the fetched response, extracting metadata.
- */
 async function processResponse(
   response: Response,
   baseUrl: URL,
@@ -246,9 +159,6 @@ async function processResponse(
   return createJsonResponse(metadata);
 }
 
-/**
- * Handles the main request processing flow.
- */
 async function handleRequestProcessing(
   targetUrl: string,
   parsedUrl: URL,
@@ -266,7 +176,6 @@ async function handleRequestProcessing(
   }
 }
 
-// Main handler
 export default async (request: Request): Promise<Response> => {
   const url = new URL(request.url);
   const targetUrl = url.searchParams.get('url');
