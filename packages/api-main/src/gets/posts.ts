@@ -1,13 +1,17 @@
 import type { Gets } from '@atomone/dither-api-types';
 
-import { and, desc, eq, gte, inArray, isNull, sql } from 'drizzle-orm';
+import { and, desc, eq, getTableColumns, gte, inArray, isNull, sql } from 'drizzle-orm';
 
 import { getDatabase } from '../../drizzle/db';
-import { FeedTable, FollowsTable } from '../../drizzle/schema';
+import { FeedTable, FollowsTable, HandleTable } from '../../drizzle/schema';
 
 const statement = getDatabase()
-  .select()
+  .select({
+    ...getTableColumns(FeedTable),
+    handle: HandleTable.name,
+  })
   .from(FeedTable)
+  .leftJoin(HandleTable, eq(FeedTable.author, HandleTable.address))
   .where(
     and(
       eq(FeedTable.author, sql.placeholder('author')),
