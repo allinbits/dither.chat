@@ -21,7 +21,6 @@ export const testWithKeplr = base.extend<{
     ];
 
     const context = await chromium.launchPersistentContext(userDataDir, {
-      channel: 'chromium',
       recordVideo: {
         dir: 'test-results/videos',
       },
