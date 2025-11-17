@@ -1,6 +1,6 @@
 import process from 'node:process';
 
-import { defineConfig } from '@playwright/test';
+import { defineConfig, devices } from '@playwright/test';
 
 const userDataDir = './playwright/.user-data';
 
@@ -16,6 +16,8 @@ export default defineConfig({
   reporter: isCI ? [['html'], ['github'], ['list', { printSteps: true }]] : [['list']],
 
   use: {
+    ...devices['Desktop Chrome'],
+    channel: 'chromium',
     baseURL: process.env.E2E_BASE_URL ?? 'http://localhost:5173',
     launchOptions: {
       env: {

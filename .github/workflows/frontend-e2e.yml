@@ -65,6 +65,12 @@ jobs:
           path: ./packages/frontend-main/playwright/.user-data
           key: playwright-user-data-${{ hashFiles('packages/frontend-main/e2e/setup/*.ts', 'packages/frontend-main/e2e/config/keplr.ts') }}
 
+      - name: Cache Keplr extension
+        uses: actions/cache@v4
+        with:
+          path: ./packages/frontend-main/playwright/.cache
+          key: playwright-cache-${{ hashFiles('packages/frontend-main/e2e/config/keplr.ts') }}
+
       - name: Install Playwright
         run: npx playwright install --with-deps chromium
 
