@@ -78,10 +78,7 @@ jobs:
 
       - name: Run Playwright Tests
         working-directory: packages/frontend-main
-        run: |
-          set -e
-          xvfb-run --auto-servernum --server-num=1 --server-args="-screen 0, 1920x1080x24" \
-          npx playwright test --headed
+        run: xvfb-run --auto-servernum -- pnpm test:e2e
 
       - name: Upload playwright results
         uses: actions/upload-artifact@v4
