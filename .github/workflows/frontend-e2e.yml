@@ -30,6 +30,9 @@ jobs:
     needs: detect-changes
     if: needs.detect-changes.outputs.changed == 'true'
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.56.1-noble
+      options: --user 1001
 
     steps:
       - name: Checkout code
@@ -74,17 +77,8 @@ jobs:
       - name: Install Playwright
         run: npx playwright install --with-deps chromium
 
-      - name: Start Xvfb
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y xvfb zip
-          Xvfb :99 -screen 0 1280x1024x24 &
-          export DISPLAY=:99
-
       - name: Run Playwright Tests
         working-directory: packages/frontend-main
-        env:
-          DISPLAY: :99
         run: pnpm test:e2e --headed
 
       - name: Upload playwright results
