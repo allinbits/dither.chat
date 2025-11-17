@@ -1,0 +1,86 @@
+name: Frontend E2E Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.changes.outputs.frontend-main }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Detect frontend-main changes
+        uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            frontend-main:
+              - 'packages/frontend-main/**'
+
+  e2e-tests:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.changed == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install pnpm with npm
+        run: npm install -g pnpm
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install dependencies with pnpm
+        run: pnpm install
+
+      - name: Store Playwright's Version
+        id: playwright-version
+        run: |
+          PLAYWRIGHT_VERSION=$(npx playwright --version | sed 's/Version //')
+          echo "Playwright's Version: $PLAYWRIGHT_VERSION"
+          echo "version=${PLAYWRIGHT_VERSION}" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ steps.playwright-version.outputs.version }}-${{ runner.os }}-playwright-browsers
+
+      - name: Cache Playwright user data
+        uses: actions/cache@v4
+        with:
+          path: ./packages/frontend-main/playwright/.user-data
+          key: playwright-user-data-${{ hashFiles('packages/frontend-main/e2e/setup/*.ts', 'packages/frontend-main/e2e/config/keplr.ts') }}
+
+      - name: Install Playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Playwright Tests
+        working-directory: packages/frontend-main
+        run: |
+          xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" \
+          pnpm test:e2e
+
+      - name: Upload playwright results
+        uses: actions/upload-artifact@v4
+        if: ${{ failure() }}
+        with:
+          name: playwright-results
+          path: |
+            packages/frontend-main/test-results/
+            packages/frontend-main/playwright-report/
+          retention-days: 1
+          if-no-files-found: ignore
