@@ -78,12 +78,7 @@ jobs:
 
       - name: Run Playwright Tests
         working-directory: packages/frontend-main
-        run: |
-          Xvfb :99 -screen 0 1280x720x16 & \
-          export DISPLAY=:99 && \
-          sleep 2 && \
-          echo "VNC server started on port 5900" && \
-          pnpm test:e2e
+        run: xvfb-run --auto-servernum --server-num=1 pnpm test:e2e
 
       - name: Upload playwright results
         uses: actions/upload-artifact@v4
