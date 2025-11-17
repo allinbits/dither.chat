@@ -17,3 +17,6 @@ packages/**/coverage
 
 # Local Netlify folder
 .netlify
+
+# netlify edge functions
+deno.lock
