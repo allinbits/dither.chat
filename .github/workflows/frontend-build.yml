@@ -46,3 +46,7 @@ jobs:
       - name: Verify Build
         working-directory: ./packages/frontend-main
         run: pnpm build
+
+      - name: Run E2E Tests
+        working-directory: ./packages/frontend-main
+        run: pnpm test:e2e

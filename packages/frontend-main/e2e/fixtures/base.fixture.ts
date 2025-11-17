@@ -11,7 +11,7 @@ export const baseTest = base.extend<{
   connectWallet: async ({ homePage, keplrPopup }, use) => {
     await use(async () => {
       await test.step('Navigate to home page', async () => {
-        await homePage.page.waitForTimeout(1000);
+        await homePage.page.waitForTimeout(1500);
         await homePage.navigate();
       });
 

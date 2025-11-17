@@ -2,12 +2,34 @@ import process from 'node:process';
 
 import { defineConfig } from '@playwright/test';
 
+const userDataDir = './playwright/.user-data';
+
+const isCI = !!process.env.CI;
+
 export default defineConfig({
   testDir: './e2e',
   testMatch: '*.spec.ts',
+  fullyParallel: true,
+  forbidOnly: isCI,
+  retries: isCI ? 2 : 0,
+  workers: isCI ? 1 : undefined,
+  reporter: isCI ? [['html'], ['github'], ['list', { printSteps: true }]] : [['list']],
+
   use: {
     baseURL: process.env.E2E_BASE_URL ?? 'http://localhost:5173',
+    launchOptions: {
+      env: {
+        userDataDir,
+      },
+    },
+    screenshot: 'only-on-failure',
+    video: 'retain-on-failure',
+    trace: 'on-first-retry',
+    headless: isCI,
+    viewport: { width: 1280, height: 720 },
+    permissions: ['clipboard-read', 'clipboard-write'],
   },
+
   projects: [
     {
       name: 'keplr-download-wallet',
@@ -26,7 +48,19 @@ export default defineConfig({
     {
       name: 'logged-out',
       testMatch: 'e2e/specs/logged-out/*.spec.ts',
-      dependencies: ['logged-in'],
+      use: {
+        launchOptions: {
+          env: {
+            userDataDir: '',
+          },
+        },
+      },
     },
   ],
+
+  webServer: {
+    command: 'pnpm dev',
+    port: 5173,
+    reuseExistingServer: true,
+  },
 });

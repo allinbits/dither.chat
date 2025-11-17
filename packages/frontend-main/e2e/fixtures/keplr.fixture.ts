@@ -1,4 +1,3 @@
-/* eslint-disable no-empty-pattern */
 import type { BrowserContext, Page } from '@playwright/test';
 
 import { test as base, chromium } from '@playwright/test';
@@ -12,7 +11,8 @@ export const testWithKeplr = base.extend<{
   keplrPopup: { waitForPopup: () => Promise<KeplrExtensionPage> };
   keplrExtension: KeplrExtensionPage;
 }>({
-  context: async ({}, use) => {
+  context: async ({ launchOptions }, use) => {
+    const userDataDir = launchOptions.env?.userDataDir ?? '';
     const args = [
       `--disable-web-security`,
       '--disable-setuid-sandbox',
@@ -20,12 +20,11 @@ export const testWithKeplr = base.extend<{
       `--load-extension=${keplrData.extensionPath}`,
     ];
 
-    const context = await chromium.launchPersistentContext('./playwright/.user-data', {
+    const context = await chromium.launchPersistentContext(userDataDir, {
       channel: 'chromium',
       recordVideo: {
         dir: 'test-results/videos',
       },
-      permissions: ['clipboard-read', 'clipboard-write'],
       devtools: false,
       timeout: 0,
       headless: false,
