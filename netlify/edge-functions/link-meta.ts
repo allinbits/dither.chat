@@ -8,6 +8,17 @@
  * @note Returns 200 with error field for graceful degradation instead of 500 errors
  */
 
+import {
+  createClientErrorResponse,
+  createErrorResponse,
+  createJsonResponse,
+} from './lib/http.ts';
+
+// Constants
+const FETCH_TIMEOUT_MS = 5000;
+const USER_AGENT = 'Mozilla/5.0 (compatible; LinkPreviewBot/1.0; +https://dither.chat)';
+const ALLOWED_PROTOCOLS = ['http:', 'https:'] as const;
+
 // Types
 interface LinkMetadata {
   title?: string;
@@ -18,51 +29,10 @@ interface LinkMetadata {
   error?: string;
 }
 
-interface ResponseOptions {
-  status?: number;
-  cacheMaxAge?: number;
-}
-
-// Constants
-const FETCH_TIMEOUT_MS = 5000;
-const CACHE_SUCCESS_SECONDS = 300; // 5 minutes
-const CACHE_ERROR_SECONDS = 60; // 1 minute
-const ALLOWED_PROTOCOLS = ['http:', 'https:'] as const;
-const USER_AGENT = 'Mozilla/5.0 (compatible; LinkPreviewBot/1.0; +https://dither.chat)';
-
-// Response helpers
-function createJsonResponse(
-  data: LinkMetadata | { error: string },
-  options: ResponseOptions = {},
-): Response {
-  const { status = 200, cacheMaxAge = CACHE_SUCCESS_SECONDS } = options;
-
-  return new Response(JSON.stringify(data), {
-    status,
-    headers: {
-      'Content-Type': 'application/json',
-      'Cache-Control': `public, max-age=${cacheMaxAge}`,
-    },
-  });
-}
-
-function createErrorResponse(
-  error: string,
-  url?: string,
-  status: number = 200,
-): Response {
-  return createJsonResponse(
-    { error, ...(url && { url }) },
-    { status, cacheMaxAge: CACHE_ERROR_SECONDS },
-  );
-}
-
-function createClientErrorResponse(error: string): Response {
-  return createJsonResponse({ error }, { status: 400 });
-}
-
 // URL validation
-function validateUrl(url: string): { success: true; url: URL } | { success: false; error: string } {
+function validateUrl(
+  url: string,
+): { success: true; url: URL } | { success: false; error: string } {
   try {
     const parsedUrl = new URL(url);
 
@@ -76,13 +46,18 @@ function validateUrl(url: string): { success: true; url: URL } | { success: fals
   }
 }
 
-// Fetch with timeout
-async function fetchWithTimeout(
-  url: string,
-  timeoutMs: number = FETCH_TIMEOUT_MS,
-): Promise<Response> {
+function resolveUrl(relativeUrl: string, baseUrl: URL): string | undefined {
+  try {
+    return new URL(relativeUrl, baseUrl.origin).href;
+  } catch {
+    return undefined;
+  }
+}
+
+// Fetch utilities
+async function fetchWithTimeout(url: string): Promise<Response> {
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+  const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
 
   try {
     const response = await fetch(url, {
@@ -97,12 +72,11 @@ async function fetchWithTimeout(
   }
 }
 
-// Error handling
-function handleFetchError(error: unknown, url: string): Response {
+function handleFetchError(error: unknown): string {
   if (error instanceof Error && error.name === 'AbortError') {
-    return createErrorResponse('Request timeout', url);
+    return 'Request timeout';
   }
-  return createErrorResponse('Network error: Unable to reach the URL', url);
+  return 'Network error: Unable to reach the URL';
 }
 
 function getHttpErrorMessage(status: number): string {
@@ -120,9 +94,6 @@ function isHtmlContent(contentType: string | null): boolean {
   return normalized.includes('text/html') || normalized.includes('text/xml');
 }
 
-/**
- * Safely extracts HTML content from response, returning error response on failure.
- */
 async function extractHtmlContent(
   response: Response,
   baseUrl: URL,
@@ -207,11 +178,7 @@ function extractImage(html: string, baseUrl: URL): string | undefined {
 
   // Resolve relative URLs
   if (!image.startsWith('http')) {
-    try {
-      return new URL(image, baseUrl.origin).href;
-    } catch {
-      return image; // Keep original if resolution fails
-    }
+    return resolveUrl(image, baseUrl) || image;
   }
 
   return image;
@@ -291,7 +258,7 @@ async function handleRequestProcessing(
     return await processResponse(response, parsedUrl);
   } catch (error) {
     if (error instanceof Error) {
-      return handleFetchError(error, parsedUrl.href);
+      return createErrorResponse(handleFetchError(error), parsedUrl.href);
     }
 
     console.error('Error in link-meta:', error);

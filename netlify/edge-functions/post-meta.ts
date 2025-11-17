@@ -1,3 +1,4 @@
+import { createInternalErrorResponse, createNotFoundResponse, createTextResponse } from './lib/http.ts';
 import { escapeHtml, formatAuthorAddress, getPost } from './lib/shared.ts';
 
 /**
@@ -15,18 +16,18 @@ export default async (request: Request) => {
   const pathParts = url.pathname.split('/').filter(Boolean);
 
   if (pathParts[0] !== 'post' || pathParts.length < 2) {
-    return new Response('Not Found', { status: 404 });
+    return createNotFoundResponse();
   }
 
   try {
     const post = await getPost(pathParts[1]);
     if (!post) {
-      return new Response('Post not found', { status: 404 });
+      return createNotFoundResponse('Post not found');
     }
 
     const htmlResponse = await fetch(`${url.origin}/index.html`);
     if (!htmlResponse.ok) {
-      return new Response('Failed to load template', { status: 500 });
+      return createInternalErrorResponse('Failed to load template');
     }
 
     const siteUrl = url.origin;
@@ -56,11 +57,9 @@ export default async (request: Request) => {
       replacements.reduce((html, [pattern, replacement]) => html.replace(pattern, replacement), html),
     );
 
-    return new Response(html, {
-      headers: { 'Content-Type': 'text/html; charset=utf-8' },
-    });
+    return createTextResponse(html, 'text/html; charset=utf-8');
   } catch (error) {
     console.error('Error in post-meta:', error);
-    return new Response('Internal Server Error', { status: 500 });
+    return createInternalErrorResponse();
   }
 };
