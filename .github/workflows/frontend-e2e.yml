@@ -30,8 +30,6 @@ jobs:
     needs: detect-changes
     if: needs.detect-changes.outputs.changed == 'true'
     runs-on: ubuntu-latest
-    container:
-      image: mcr.microsoft.com/playwright:v1.56.1-noble
 
     steps:
       - name: Checkout code
@@ -78,9 +76,16 @@ jobs:
       - name: Install Playwright
         run: npx playwright install --with-deps chromium
 
+      - name: Start Xvfb
+        run: |
+          Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+          echo "DISPLAY=:99" >> $GITHUB_ENV
+
       - name: Run Playwright Tests
         working-directory: packages/frontend-main
-        run: xvfb-run pnpm test:e2e --headed
+        run: CI=1 DEBUG=pw:browser* pnpm test:e2e --headed
+        env:
+          DISPLAY: ':99'
 
       - name: Upload playwright results
         uses: actions/upload-artifact@v4
