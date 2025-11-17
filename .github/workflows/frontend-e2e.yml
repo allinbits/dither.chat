@@ -80,7 +80,7 @@ jobs:
         working-directory: packages/frontend-main
         run: |
           set -e
-          xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
+          xvfb-run --auto-servernum --server-num=1 --server-args="-screen 0, 1920x1080x24" \
           npx playwright test --headed
 
       - name: Upload playwright results
