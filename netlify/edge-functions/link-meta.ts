@@ -1,8 +1,26 @@
 /**
  * Fetches Open Graph metadata from external URLs.
  * Returns 200 with error field for graceful degradation.
+ *
+ * Caching Strategy:
+ * - Uses Cache API (`caches.open()`) to prevent re-execution for cached URLs
+ * - Sets Cache-Control headers (7 days) to enable Netlify CDN caching
+ * - Query parameters (`url`) are automatically factored into cache keys by Netlify
+ * - Normalizes URLs to ensure consistent cache keys (lowercase hostname, no trailing slashes)
+ *
+ * See:
+ * - https://docs.netlify.com/build/caching/caching-overview/
+ * - https://docs.netlify.com/build/caching/cache-api/
  */
 
+import {
+  addCacheDateHeader,
+  createCacheKey,
+  getCachedResponse,
+  markCacheMiss,
+  normalizeUrl,
+  storeInCache,
+} from './lib/cache.ts';
 import {
   createClientErrorResponse,
   createErrorResponse,
@@ -10,11 +28,13 @@ import {
 } from './lib/http.ts';
 import { extractMetadata } from './lib/opengraph.ts';
 
-const FETCH_TIMEOUT_MS = 5000;
+const FETCH_TIMEOUT_MS = 10000; // 10 seconds per issue #430
+const CACHE_TTL_SECONDS = 7 * 24 * 60 * 60; // 7 days per issue #430
 const USER_AGENT = 'Mozilla/5.0 (compatible; LinkPreviewBot/1.0; +https://dither.chat)';
 const ALLOWED_PROTOCOLS = ['http:', 'https:'] as const;
 const MAX_URL_LENGTH = 2048;
 const MAX_HTML_SIZE = 5 * 1024 * 1024;
+const CACHE_KEY_PREFIX = 'link-meta:';
 
 function isPrivateIP(hostname: string): boolean {
   if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '[::1]') {
@@ -156,16 +176,47 @@ async function processResponse(
   }
 
   const metadata = extractMetadata(htmlResult.html, baseUrl);
-  return createJsonResponse(metadata);
+  const jsonResponse = createJsonResponse(metadata, {
+    cacheMaxAge: CACHE_TTL_SECONDS,
+  });
+
+  // Add cache date header for debugging
+  return addCacheDateHeader(jsonResponse);
 }
 
 async function handleRequestProcessing(
   targetUrl: string,
   parsedUrl: URL,
 ): Promise<Response> {
+  // Normalize URL for cache key
+  const normalizedUrl = normalizeUrl(parsedUrl);
+  const cacheKey = createCacheKey(normalizedUrl, CACHE_KEY_PREFIX);
+
+  // Check cache first using a named cache instance
+  const cachedResponse = await getCachedResponse(cacheKey, {
+    cacheName: 'link-meta',
+  });
+  if (cachedResponse) {
+    return cachedResponse;
+  }
+
   try {
     const response = await fetchWithTimeout(targetUrl);
-    return await processResponse(response, parsedUrl);
+    const processedResponse = await processResponse(response, parsedUrl);
+
+    // Only cache successful responses (200 status)
+    // storeInCache validates status and Cache-Control headers internally
+    if (processedResponse.status === 200) {
+      // Store in cache asynchronously (don't await to avoid blocking)
+      storeInCache(cacheKey, processedResponse, {
+        cacheName: 'link-meta',
+      }).catch((error) => {
+        console.warn('Background cache store failed:', error);
+      });
+    }
+
+    // Add cache miss header for debugging
+    return markCacheMiss(processedResponse);
   } catch (error) {
     if (error instanceof Error) {
       return createErrorResponse(handleFetchError(error), parsedUrl.href);
