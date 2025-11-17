@@ -80,13 +80,9 @@ jobs:
 
       - name: Run Playwright Tests
         working-directory: packages/frontend-main
-        run: |
-          Xvfb :99 -screen 0 1280x720x24 &
-          export DISPLAY=:99
-          pnpm exec playwright test
+        run: pnpm test:e2e
         env:
           DEBUG: 'pw:browser*'
-          DISPLAY: ':99'
 
       - name: Upload playwright results
         uses: actions/upload-artifact@v4
