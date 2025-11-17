@@ -34,7 +34,11 @@ const isOpen = computed({
 });
 
 const hostname = computed(() => {
-  return new URL(preview.value?.url ?? '').hostname;
+  try {
+    return preview.value?.url ? new URL(preview.value.url).hostname : '';
+  } catch {
+    return '';
+  }
 });
 </script>
 
