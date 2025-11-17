@@ -80,7 +80,7 @@ jobs:
 
       - name: Run Playwright Tests
         working-directory: packages/frontend-main
-        run: pnpm test:e2e --headed
+        run: xvfb-run pnpm test:e2e --headed
 
       - name: Upload playwright results
         uses: actions/upload-artifact@v4
