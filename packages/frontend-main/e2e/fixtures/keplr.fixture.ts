@@ -27,7 +27,7 @@ export const testWithKeplr = base.extend<{
       },
       devtools: false,
       timeout: 0,
-      headless: false,
+      headless: true,
       bypassCSP: true,
       serviceWorkers: 'allow',
       args,
