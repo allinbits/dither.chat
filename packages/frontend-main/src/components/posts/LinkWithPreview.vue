@@ -10,32 +10,60 @@ const props = defineProps<{
 
 const isHovered = ref(false);
 const hoverTimeout = ref<number | null>(null);
+const hideTimeout = ref<number | null>(null);
 const shouldShowPreview = ref(false);
 
 function handleMouseEnter() {
-  // Clear any existing timeout
+  // Clear any hide timeout
+  if (hideTimeout.value !== null) {
+    clearTimeout(hideTimeout.value);
+    hideTimeout.value = null;
+  }
+
+  // Clear any existing show timeout
   if (hoverTimeout.value !== null) {
     clearTimeout(hoverTimeout.value);
   }
 
   isHovered.value = true;
 
-  // Delay showing preview by 500ms
+  // Delay showing preview by 400ms (similar to X.com/Bluesky)
   hoverTimeout.value = window.setTimeout(() => {
     if (isHovered.value) {
       shouldShowPreview.value = true;
     }
-  }, 500);
+  }, 400);
 }
 
 function handleMouseLeave() {
   isHovered.value = false;
-  shouldShowPreview.value = false;
 
+  // Clear show timeout
   if (hoverTimeout.value !== null) {
     clearTimeout(hoverTimeout.value);
     hoverTimeout.value = null;
   }
+
+  // Small delay before hiding to allow moving to preview card (like X.com/Bluesky)
+  hideTimeout.value = window.setTimeout(() => {
+    if (!isHovered.value && !shouldShowPreview.value) {
+      shouldShowPreview.value = false;
+    }
+  }, 150);
+}
+
+function handlePreviewMouseEnter() {
+  // Keep preview open when hovering over it
+  if (hideTimeout.value !== null) {
+    clearTimeout(hideTimeout.value);
+    hideTimeout.value = null;
+  }
+  shouldShowPreview.value = true;
+}
+
+function handlePreviewMouseLeave() {
+  // Hide preview when leaving the preview card
+  shouldShowPreview.value = false;
 }
 
 function handleClick() {
@@ -49,11 +77,19 @@ onUnmounted(() => {
   if (hoverTimeout.value !== null) {
     clearTimeout(hoverTimeout.value);
   }
+  if (hideTimeout.value !== null) {
+    clearTimeout(hideTimeout.value);
+  }
 });
 </script>
 
 <template>
-  <LinkPreviewCard v-model:open="shouldShowPreview" :url="href">
+  <LinkPreviewCard
+    v-model:open="shouldShowPreview"
+    :url="href"
+    @mouseenter="handlePreviewMouseEnter"
+    @mouseleave="handlePreviewMouseLeave"
+  >
     <a
       :href="href"
       target="_blank"
