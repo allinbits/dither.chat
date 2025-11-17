@@ -31,7 +31,7 @@ jobs:
     if: needs.detect-changes.outputs.changed == 'true'
     runs-on: ubuntu-latest
     container:
-      image: mcr.microsoft.com/playwright:v1.56.1-noble
+      image: digitronik/playwright-vnc:chromium-1.56.1
 
     steps:
       - name: Checkout code
