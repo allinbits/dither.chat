@@ -8,11 +8,13 @@ export const HandleTable = pgTable(
   {
     name: varchar({ length: 32 }).primaryKey(),
     address: varchar({ length: 44 }).notNull(),
+    display: varchar({ length: 128 }),
     hash: varchar({ length: 64 }).notNull(),
     timestamp: timestamp({ withTimezone: true }).notNull(),
   },
   t => [
     index('handle_address_idx').on(t.address),
+    index('handle_display_idx').on(t.display),
   ],
 );
 

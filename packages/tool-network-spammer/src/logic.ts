@@ -39,7 +39,7 @@ function getRandomHash(): hash {
   return hashes[Math.floor(Math.random() * hashes.length)];
 }
 
-// TODO: Add support for usernames (register, transfer, accept)
+// TODO: Add support for usernames (register, transfer, accept, display)
 const actions = ['post', 'reply', 'like', 'dislike', 'delete', 'flag'] as const;
 type ActionType = (typeof actions)[number];
 

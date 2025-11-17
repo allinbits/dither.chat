@@ -104,9 +104,18 @@ export const RegisterBodySchema = t.Object({
   hash: t.String(),
   from: t.String(),
   handle: t.String(),
+  display: t.String(),
   timestamp: t.String(),
 });
 export type RegisterBody = Static<typeof RegisterBodySchema>;
+
+export const DisplayBodySchema = t.Object({
+  hash: t.String(),
+  from: t.String(),
+  display: t.String(),
+  timestamp: t.String(),
+});
+export type DisplayBody = Static<typeof DisplayBodySchema>;
 
 export const TransferBodySchema = t.Object({
   hash: t.String(),

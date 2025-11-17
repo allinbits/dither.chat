@@ -12,7 +12,7 @@ import { useConfig } from '../config/index';
 declare module '@atomone/chronostate' {
   export namespace MemoExtractor {
     export interface TypeMap {
-      'dither.Register': [string, string];
+      'dither.Display': [string];
     }
   }
 }
@@ -20,18 +20,17 @@ declare module '@atomone/chronostate' {
 const { AUTH } = useConfig();
 const apiRoot = process.env.API_ROOT ?? 'http://localhost:3000/v1';
 
-export async function Register(action: ActionWithData): Promise<ResponseStatus> {
+export async function Display(action: ActionWithData): Promise<ResponseStatus> {
   try {
-    const [handle, display] = extractMemoContent(action.memo, 'dither.Register');
-    const postBody: Posts.RegisterBody = {
+    const [display] = extractMemoContent(action.memo, 'dither.Display');
+    const postBody: Posts.DisplayBody = {
       hash: action.hash,
       from: action.sender,
-      handle,
       display,
       timestamp: action.timestamp,
     };
 
-    const rawResponse = await fetch(`${apiRoot}/register`, {
+    const rawResponse = await fetch(`${apiRoot}/display`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -48,21 +47,21 @@ export async function Register(action: ActionWithData): Promise<ResponseStatus> 
 
     const response = await rawResponse.json() as { status: number; error?: string };
     if (response.status === 200) {
-      console.log(`dither.Register message processed successfully: ${action.hash}`);
+      console.log(`dither.Display message processed successfully: ${action.hash}`);
       return 'SUCCESS';
     }
 
     if (response.status === 500) {
-      console.log(`dither.Register could not reach database: ${action.hash}`);
+      console.log(`dither.Display could not reach database: ${action.hash}`);
       return 'RETRY';
     }
 
     if (response.status === 401) {
-      console.log(`dither.Register message skipped, invalid address provided: ${action.hash}`);
+      console.log(`dither.Display message skipped, invalid address provided: ${action.hash}`);
       return 'SKIP';
     }
 
-    console.warn(`dither.Register failed: ${action.hash} (${response.error})`);
+    console.warn(`dither.Display failed: ${action.hash} (${response.error})`);
     return 'RETRY';
   } catch (error) {
     console.error('Error processing message:', error);

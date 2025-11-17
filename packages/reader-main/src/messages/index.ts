@@ -1,5 +1,6 @@
 import { Accept } from './accept';
 import { Dislike } from './dislike';
+import { Display } from './display';
 import { Flag } from './flag';
 import { Follow } from './follow';
 import { Like } from './like';
@@ -13,6 +14,7 @@ import { Unfollow } from './unfollow';
 export const MessageHandlers = {
   Accept,
   Dislike,
+  Display,
   Flag,
   Follow,
   Like,

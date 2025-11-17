@@ -8,6 +8,10 @@ import { getDatabase } from '../../drizzle/db';
 import { HandleTable } from '../../drizzle/schema';
 import { lower } from '../utility';
 
+const minHandleLength = 5;
+const maxHandleLength = 32;
+
+export const maxDisplayLength = 128;
 export const tgHandleRegex = /^[a-z]{3}\w*$/i;
 
 export async function Register(body: Posts.RegisterBody) {
@@ -18,8 +22,13 @@ export async function Register(body: Posts.RegisterBody) {
     };
   }
 
-  if (body.handle.length < 5 || body.handle.length > 32) {
-    return { status: 400, error: 'handle must have between 5 and 32 characters long' };
+  if (body.handle.length < minHandleLength || body.handle.length > maxHandleLength) {
+    return { status: 400, error: `handle must have between ${minHandleLength} and ${maxHandleLength} characters long` };
+  }
+
+  const display = (body.display || '').trim();
+  if (display.length > maxDisplayLength) {
+    return { status: 400, error: `maximum display length is ${maxDisplayLength} characters long` };
   }
 
   const db = getDatabase();
@@ -43,6 +52,7 @@ export async function Register(body: Posts.RegisterBody) {
           name: body.handle,
           hash: body.hash.toLowerCase(),
           address: body.from.toLowerCase(),
+          display: display || null,
           timestamp: new Date(body.timestamp),
         });
     });
