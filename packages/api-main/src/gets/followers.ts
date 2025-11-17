@@ -9,6 +9,7 @@ const statementGetFollowers = getDatabase()
   .select({
     address: FollowsTable.follower,
     handle: HandleTable.name,
+    display: HandleTable.display,
     hash: FollowsTable.hash,
   })
   .from(FollowsTable)

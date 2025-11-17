@@ -9,6 +9,7 @@ const statement = getDatabase()
   .select({
     ...getTableColumns(FeedTable),
     handle: HandleTable.name,
+    display: HandleTable.display,
   })
   .from(FeedTable)
   .leftJoin(HandleTable, eq(FeedTable.author, HandleTable.address))
