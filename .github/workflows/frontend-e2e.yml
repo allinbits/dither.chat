@@ -75,8 +75,8 @@ jobs:
           path: ./packages/frontend-main/playwright/.cache
           key: playwright-cache-${{ hashFiles('packages/frontend-main/e2e/config/keplr.ts') }}
 
-      - name: Install Playwright
-        run: npx playwright install --with-deps chromium
+      # - name: Install Playwright
+      # run: npx playwright install --with-deps chromium
 
       - name: Run Playwright Tests
         working-directory: packages/frontend-main
