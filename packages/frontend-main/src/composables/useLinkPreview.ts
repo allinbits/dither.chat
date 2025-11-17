@@ -19,7 +19,7 @@ export function linkPreview(params: Params) {
   return queryOptions({
     queryKey: ['linkPreview', params.url],
     queryFn: async (): Promise<LinkPreview> => {
-      const urlValue = typeof params.url === 'function' ? params.url.value : params.url.value;
+      const urlValue = params.url.value;
 
       if (!urlValue) {
         throw new Error('URL is required');
@@ -43,7 +43,7 @@ export function linkPreview(params: Params) {
       return data;
     },
     enabled: () => {
-      const urlValue = typeof params.url === 'function' ? params.url.value : params.url.value;
+      const urlValue = params.url.value;
       return !!urlValue && urlValue.startsWith('http');
     },
     staleTime: 5 * 60 * 1000, // 5 minutes

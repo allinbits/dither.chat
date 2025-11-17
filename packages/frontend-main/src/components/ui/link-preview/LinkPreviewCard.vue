@@ -30,6 +30,10 @@ const isOpen = computed({
   get: () => props.open ?? false,
   set: value => emit('update:open', value),
 });
+
+const hostname = computed(() => {
+  return new URL(preview.value?.url ?? '').hostname;
+});
 </script>
 
 <template>
@@ -63,7 +67,7 @@ const isOpen = computed({
           <div class="flex items-center gap-2 text-xs text-muted-foreground">
             <span v-if="preview.siteName" class="font-medium">{{ preview.siteName }}</span>
             <span v-if="preview.siteName && preview.url" class="text-muted-foreground/60">•</span>
-            <span v-if="preview.url" class="truncate">{{ new URL(preview.url).hostname }}</span>
+            <span v-if="preview.url" class="truncate">{{ hostname }}</span>
           </div>
         </div>
       </div>
