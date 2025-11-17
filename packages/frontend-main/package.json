@@ -43,7 +43,6 @@
   },
   "devDependencies": {
     "@keplr-wallet/types": "^0.12.280",
-    "@playwright/test": "^1.56.1",
     "@types/lodash.merge": "^4.6.9",
     "@types/node": "^22.18.12",
     "@vitejs/plugin-vue": "^5.2.4",
