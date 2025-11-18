@@ -1,18 +1,12 @@
-FROM oven/bun:1.3.2-slim AS base
-
-FROM base AS build
-WORKDIR /workspace
+FROM oven/bun:1.3.2-slim
+WORKDIR /app
 COPY . .
 
-# Install all workspace dependencies first
+# Install all workspace dependencies
 # Cache bun's global install cache for faster builds
 RUN --mount=type=cache,id=bun-cache,target=/root/.bun/install/cache \
     bun install --frozen-lockfile
 
-FROM base AS runtime
-ENV NODE_TLS_REJECT_UNAUTHORIZED=0
-WORKDIR /app
-
-COPY --from=build /workspace/packages/reader-main ./
-
+# Run command from package directory
+WORKDIR /app/packages/reader-main
 CMD ["bun", "run", "start"]
