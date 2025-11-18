@@ -1,5 +1,5 @@
 {
-  "name": "@dither.chat/frontend-main",
+  "name": "@dither.chat/frontend",
   "type": "module",
   "version": "0.0.1",
   "private": true,
