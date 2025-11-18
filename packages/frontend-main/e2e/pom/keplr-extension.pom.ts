@@ -1,39 +1,45 @@
-import type { Page } from '@playwright/test';
+import type { BrowserContext, Locator, Page } from '@playwright/test';
 
 import { keplrData } from '../config/keplr';
 
 export class KeplrExtensionPage {
   readonly page: Page;
   readonly extensionId: string;
+  readonly approveConnectionScreenLocator: Locator;
+  readonly approveSignatureScreenLocator: Locator;
+  readonly registerScreenLocator: Locator;
+  readonly unlockScreenLocator: Locator;
+
+  readonly popupUrl: string;
+  readonly registerUrl: string;
+
+  static async popupFromContext(context: BrowserContext, extensionId: string) {
+    const page = await context.newPage();
+    const ext = new KeplrExtensionPage(page, extensionId);
+    await ext.navigateToPopup();
+    return ext;
+  }
 
   constructor(page: Page, extensionId: string) {
     this.page = page;
     this.extensionId = extensionId;
+
+    this.approveConnectionScreenLocator = this.page.getByText('Requesting Connection');
+    this.approveSignatureScreenLocator = this.page.getByText('Signature Request');
+    this.unlockScreenLocator = this.page.getByText('Welcome Back');
+    this.registerScreenLocator = this.page.getByText('Create a new wallet');
+
+    this.popupUrl = `chrome-extension://${this.extensionId}/popup.html`;
+    this.registerUrl = `chrome-extension://${this.extensionId}/register.html`;
   }
 
   async navigateToRegister() {
-    await this.page.goto(`chrome-extension://${this.extensionId}/register.html`);
+    await this.page.goto(this.registerUrl);
   }
 
   async navigateToPopup() {
-    await this.page.goto(`chrome-extension://${this.extensionId}/popup.html`);
+    await this.page.goto(this.popupUrl);
     await this.page.waitForLoadState();
-  }
-
-  async isUnlockScreen() {
-    return this.page.getByText('Welcome Back').isVisible();
-  }
-
-  async isApproveConnectionScreen() {
-    return this.page.getByText('Requesting Connection').isVisible();
-  }
-
-  async isApproveSignatureScreen() {
-    return this.page.getByText('Signature Request').isVisible();
-  }
-
-  async isRegisterScreen(): Promise<boolean> {
-    return this.page.getByText('Create a new wallet').isVisible();
   }
 
   async unlockWallet() {
@@ -65,12 +71,12 @@ export class KeplrExtensionPage {
   }
 
   async approveConnection() {
-    await this.isApproveConnectionScreen();
+    await this.approveConnectionScreenLocator.waitFor();
     await this.page.getByRole('button', { name: 'Approve' }).click();
   }
 
   async approveSignature() {
-    await this.isApproveSignatureScreen();
+    await this.approveSignatureScreenLocator.waitFor();
     await this.page.getByRole('button', { name: 'Approve' }).click();
   }
 }

@@ -17,6 +17,7 @@ export default defineConfig({
 
   use: {
     ...devices['Desktop Chrome'],
+    channel: 'chromium',
     baseURL: process.env.E2E_BASE_URL ?? 'http://localhost:5173',
     launchOptions: {
       env: {
@@ -24,7 +25,7 @@ export default defineConfig({
       },
     },
     screenshot: 'only-on-failure',
-    video: 'retain-on-failure',
+    video: 'on',
     trace: 'on-first-retry',
     viewport: { width: 1280, height: 720 },
     permissions: ['clipboard-read', 'clipboard-write'],

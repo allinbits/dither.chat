@@ -1,14 +1,19 @@
-import type { BrowserContext, Page } from '@playwright/test';
+import type { BrowserContext } from '@playwright/test';
 
 import { test as base, chromium } from '@playwright/test';
 
 import { keplrData } from '../config/keplr';
 import { KeplrExtensionPage } from '../pom/keplr-extension.pom';
 
+export interface KeplrPopupAPI {
+  popup: () => Promise<KeplrExtensionPage>;
+  invoke: (callback: (page: KeplrExtensionPage) => Promise<void>) => Promise<void>;
+}
+
 export const testWithKeplr = base.extend<{
   context: BrowserContext;
   extensionId: string;
-  keplrPopup: { waitForPopup: () => Promise<KeplrExtensionPage> };
+  keplrPopup: KeplrPopupAPI;
   keplrExtension: KeplrExtensionPage;
 }>({
   context: async ({ launchOptions }, use) => {
@@ -18,6 +23,7 @@ export const testWithKeplr = base.extend<{
       '--disable-setuid-sandbox',
       `--disable-extensions-except=${keplrData.extensionPath}`,
       `--load-extension=${keplrData.extensionPath}`,
+      `--headless=new`,
     ];
 
     const context = await chromium.launchPersistentContext(userDataDir, {
@@ -46,26 +52,25 @@ export const testWithKeplr = base.extend<{
   },
 
   keplrPopup: async ({ context, extensionId }, use) => {
-    const waitForPermissionPopup = async (): Promise<KeplrExtensionPage> => {
-      return await new Promise((resolve) => {
-        function findPermissionPopup(page: Page) {
-          if (page.url().includes('popup.html')) {
-            const handle = new KeplrExtensionPage(page, extensionId);
-            // Reload is required as Keplr popup initially loads with blank content
-            page.reload().then(() => resolve(handle));
-            return handle;
-          }
-        }
+    const openPopup = () => KeplrExtensionPage.popupFromContext(context, extensionId);
 
-        const found = context.pages().map(findPermissionPopup).filter(Boolean).length > 0;
-
-        if (!found) {
-          context.once('page', findPermissionPopup);
-        }
+    const invoke = async (callback: (page: KeplrExtensionPage) => Promise<void>): Promise<void> => {
+      let closed = false;
+      const keplrPage = await openPopup();
+      keplrPage.page.on('close', () => {
+        closed = true;
       });
+
+      await callback(keplrPage);
+      await new Promise(r => setTimeout(r, 500));
+
+      // Only close if the page wasn't already closed
+      if (!closed) {
+        await keplrPage.page.close();
+      }
     };
 
-    await use({ waitForPopup: waitForPermissionPopup });
+    await use({ popup: openPopup, invoke });
   },
 
   keplrExtension: async ({ context, extensionId }, use) => {
