@@ -1,6 +1,6 @@
 export const TRUSTED_IMAGE_SOURCES = ['i.imgur.com', 'imgur.com'];
 export const ALLOWED_IMAGE_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.gif'];
-const YOUTUBE_REGEX = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/g;
+const YOUTUBE_REGEX = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/;
 
 export function isFromTrustedDomain(url: string): boolean {
   try {
