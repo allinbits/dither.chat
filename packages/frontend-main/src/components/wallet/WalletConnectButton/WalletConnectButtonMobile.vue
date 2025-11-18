@@ -2,6 +2,7 @@
 import { Wallet } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 
+import { Button } from '@/components/ui/button';
 import {
   Popover,
   PopoverTrigger,
@@ -35,9 +36,9 @@ const connectedState = computed(() => !isConnecting.value && loggedIn.value && !
     </template>
 
     <template v-else>
-      <button class="flex items-center justify-center flex-row size-full rounded-full hover:bg-accent active:bg-accent transition-colors" @click="walletDialogStore.showDialog">
+      <Button variant="icon" size="iconSm" @click="walletDialogStore.showDialog">
         <Wallet class="size-6" />
-      </button>
+      </Button>
     </template>
   </div>
 </template>

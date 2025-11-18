@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { SlidersHorizontal } from 'lucide-vue-next';
 
+import { Button } from '@/components/ui/button';
 import FilterPhoton from '@/components/ui/filter/FilterPhoton.vue';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import SearchInput from '@/components/ui/search/SearchInput.vue';
+import { SearchInput } from '@/components/ui/search';
 import ColorModeSwitch from '@/components/ui/switch/ColorModeSwitch.vue';
 import WalletConnectButtonMobile from '@/components/wallet/WalletConnectButton/WalletConnectButtonMobile.vue';
 </script>
@@ -21,10 +22,10 @@ import WalletConnectButtonMobile from '@/components/wallet/WalletConnectButton/W
     <div class="flex flex-row items-center gap-2">
       <SearchInput class="self-start" />
       <Popover>
-        <PopoverTrigger>
-          <div class="flex flex-row items-center justify-center size-[40px] rounded-full hover:bg-accent active:bg-accent transition-colors">
+        <PopoverTrigger as-child>
+          <Button variant="icon" size="iconSm">
             <SlidersHorizontal class="size-6" />
-          </div>
+          </Button>
         </PopoverTrigger>
         <PopoverContent>
           <FilterPhoton />

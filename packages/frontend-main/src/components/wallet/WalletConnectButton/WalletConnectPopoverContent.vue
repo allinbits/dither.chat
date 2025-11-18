@@ -12,10 +12,10 @@ const { signOut } = useWallet();
   <PopoverContent>
     <div class="flex flex-col gap-4">
       <Button
-        class="justify-center"
-        @click="
-          signOut();
-        "
+        variant="elevated"
+        size="sm"
+        class="w-full"
+        @click="signOut()"
       >
         {{ $t('components.WalletConnect.disconnect') }}
       </Button>

@@ -2,6 +2,7 @@
 import { ChevronDown, ChevronRight, Globe, Smartphone } from 'lucide-vue-next';
 import { computed, onMounted, ref } from 'vue';
 
+import { Button } from '@/components/ui/button';
 import { useTMAStore } from '@/stores/useTMAStore';
 
 import TelegramLogo from './telegram-logo.svg';
@@ -39,8 +40,9 @@ function toggleExpanded() {
 <template>
   <div v-if="tmaInfo.isInitialized" class="border-y md:border-x md:rounded-lg bg-background">
     <!-- Summary -->
-    <button
-      class="w-full flex items-center justify-between p-4 text-left hover:bg-accent/50 transition-colors"
+    <Button
+      variant="ghost"
+      class="w-full flex items-center justify-between p-4 text-left h-auto"
       @click="toggleExpanded"
     >
       <div class="flex items-center gap-3">
@@ -68,7 +70,7 @@ function toggleExpanded() {
           class="size-4 text-muted-foreground transition-transform"
         />
       </div>
-    </button>
+    </Button>
 
     <!-- Details -->
     <div

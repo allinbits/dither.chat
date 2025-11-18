@@ -19,14 +19,23 @@ export const buttonVariants = cva(
           'bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80 active:bg-secondary/80',
         ghost:
           'hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 active:bg-accent active:text-accent-foreground dark:active:bg-accent/50',
+        navigation:
+          'justify-start rounded-md hover:bg-accent/50 active:bg-accent transition-colors',
+        icon:
+          'rounded-full hover:bg-accent active:bg-accent transition-colors p-0',
         link: 'text-primary underline-offset-4 hover:underline active:underline',
+        elevated:
+          'rounded-md border border-border/70 bg-background/60 backdrop-blur-sm shadow-[0_1px_3px_0_rgba(0,0,0,0.08)] hover:border-border hover:bg-background/85 hover:shadow-[0_2px_6px_0_rgba(0,0,0,0.12)] active:bg-background/95 active:shadow-[0_1px_2px_0_rgba(0,0,0,0.08)] transition-all duration-200',
       },
       size: {
         default: 'h-13 px-4 has-[>svg]:px-3',
         xs: 'h-8 rounded-xs gap-1 px-2 has-[>svg]:px-1.5',
         sm: 'h-10 rounded-xs gap-1.5 px-3 has-[>svg]:px-2.5',
+        nav: 'h-11 px-3 gap-2.5',
         lg: 'h-15 rounded-xs px-6 has-[>svg]:px-4',
         icon: 'size-10',
+        iconSm: 'size-[40px]',
+        iconMd: 'size-[52px]',
       },
     },
     defaultVariants: {

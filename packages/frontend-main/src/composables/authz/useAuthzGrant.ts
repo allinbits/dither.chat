@@ -62,7 +62,7 @@ export function useAuthzGrant() {
         value: feeAllowance,
       }];
 
-      return await wallet.sendTx(msgs, 'Grant authorization for Dither.chat');
+      return await wallet.sendTx(msgs, 'Grant authorization for dither.chat');
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEY_AUTHZ_GRANTS] });

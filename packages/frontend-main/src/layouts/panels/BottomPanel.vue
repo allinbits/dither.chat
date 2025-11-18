@@ -3,9 +3,10 @@ import type { RouteRecordNameGeneric } from 'vue-router';
 
 import { Bell, Feather, HelpCircle, House, Search, Settings, User } from 'lucide-vue-next';
 import { computed } from 'vue';
-import { useRouter } from 'vue-router';
+import { RouterLink, useRouter } from 'vue-router';
 
 import NotificationsCount from '@/components/notifications/NotificationsCount.vue';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { useDefaultAmount } from '@/composables/useDefaultAmount';
 import { usePopups } from '@/composables/usePopups';
 import { useWallet } from '@/composables/useWallet';
@@ -17,40 +18,69 @@ const popups = usePopups();
 const { isDefaultAmountInvalid } = useDefaultAmount();
 const router = useRouter();
 const isMyProfileRoute = computed(() => router.currentRoute.value.name?.toString().startsWith(routesNames.profile) && wallet.loggedIn.value && wallet.address.value === router.currentRoute.value.params.address);
-const buttonClass = (routeName?: RouteRecordNameGeneric) => `flex justify-center items-center size-[52px] rounded-full active:bg-accent hover:bg-accent ${!!routeName && router.currentRoute.value.name?.toString().startsWith(routeName.toString()) && 'bg-accent/80'}`;
+
+function isRouteActive(routeName?: RouteRecordNameGeneric) {
+  return !!routeName && router.currentRoute.value.name?.toString().startsWith(routeName.toString());
+}
 </script>
 
 <template>
   <header class="h-full w-full flex flex-row items-center justify-around border-t bg-background px-4">
     <nav class="contents">
-      <RouterLink to="/" :class="buttonClass(routesNames.home)">
+      <RouterLink
+        to="/"
+        :class="cn(buttonVariants({ variant: 'icon', size: 'iconMd' }), isRouteActive(routesNames.home) && 'bg-accent/80')"
+      >
         <House class="size-6" />
       </RouterLink>
 
-      <RouterLink to="/explore" :class="buttonClass(routesNames.explore)">
+      <RouterLink
+        to="/explore"
+        :class="cn(buttonVariants({ variant: 'icon', size: 'iconMd' }), isRouteActive(routesNames.explore) && 'bg-accent/80')"
+      >
         <Search class="size-6" />
       </RouterLink>
 
-      <RouterLink v-if="wallet.loggedIn.value" to="/notifications" :class="cn(buttonClass(routesNames.notifications), 'relative')">
+      <RouterLink
+        v-if="wallet.loggedIn.value"
+        to="/notifications"
+        :class="cn(buttonVariants({ variant: 'icon', size: 'iconMd' }), 'relative', isRouteActive(routesNames.notifications) && 'bg-accent/80')"
+      >
         <NotificationsCount class="absolute top-1 left-6" />
         <Bell class="size-6" />
       </RouterLink>
 
-      <RouterLink v-if="wallet.loggedIn.value" :to="`/profile/${wallet.address.value}`" :class="buttonClass(isMyProfileRoute ? routesNames.profile : undefined)">
+      <RouterLink
+        v-if="wallet.loggedIn.value"
+        :to="`/profile/${wallet.address.value}`"
+        :class="cn(buttonVariants({ variant: 'icon', size: 'iconMd' }), isMyProfileRoute && 'bg-accent/80')"
+      >
         <User class="size-6" />
       </RouterLink>
 
-      <RouterLink v-if="wallet.loggedIn.value" to="/settings" :class="buttonClass(routesNames.settings)">
+      <RouterLink
+        v-if="wallet.loggedIn.value"
+        to="/settings"
+        :class="cn(buttonVariants({ variant: 'icon', size: 'iconMd' }), isRouteActive(routesNames.settings) && 'bg-accent/80')"
+      >
         <Settings class="size-6" />
       </RouterLink>
 
-      <RouterLink to="/about" :class="buttonClass(routesNames.about)">
+      <RouterLink
+        to="/about"
+        :class="cn(buttonVariants({ variant: 'icon', size: 'iconMd' }), isRouteActive(routesNames.about) && 'bg-accent/80')"
+      >
         <HelpCircle class="size-6" />
       </RouterLink>
     </nav>
 
-    <button v-if="wallet.loggedIn.value" :class="buttonClass()" @click="isDefaultAmountInvalid ? popups.show('invalidDefaultAmount', 'none') : popups.show('newPost', {})">
+    <Button
+      v-if="wallet.loggedIn.value"
+      variant="icon"
+      size="iconMd"
+      @click="isDefaultAmountInvalid ? popups.show('invalidDefaultAmount', 'none') : popups.show('newPost', {})"
+    >
       <Feather class="size-6" />
-    </button>
+    </Button>
   </header>
 </template>

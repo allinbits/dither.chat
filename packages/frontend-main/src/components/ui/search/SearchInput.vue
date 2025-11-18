@@ -25,14 +25,17 @@ function gotoExplore() {
 
 <template>
   <div class="relative">
-    <div class="flex items-center gap-2 relative z-10">
-      <Input v-model="query" :placeholder="$t('placeholders.search')" @keyup.enter="gotoExplore" />
+    <div class="flex flex-col gap-2">
+      <label class="text-xs font-medium text-muted-foreground/70 uppercase tracking-wider">Search</label>
+      <div class="flex items-center gap-2 relative z-10">
+        <Input v-model="query" :placeholder="$t('placeholders.search')" @keyup.enter="gotoExplore" />
 
-      <CircleX
-        v-if="query"
-        class="size-6 absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer"
-        @click="clearSearch"
-      />
+        <CircleX
+          v-if="query"
+          class="size-4 absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer text-muted-foreground/60 hover:text-muted-foreground transition-colors"
+          @click="clearSearch"
+        />
+      </div>
     </div>
 
     <div
