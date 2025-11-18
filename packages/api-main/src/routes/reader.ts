@@ -21,6 +21,7 @@ export const readerRoutes = new Elysia()
   .post('/register', ({ body }) => PostRequests.Register(body), { body: Posts.RegisterBodySchema })
   .post('/transfer', ({ body }) => PostRequests.Transfer(body), { body: Posts.TransferBodySchema })
   .post('/accept', ({ body }) => PostRequests.Accept(body), { body: Posts.AcceptBodySchema })
+  .post('/display', ({ body }) => PostRequests.Display(body), { body: Posts.DisplayBodySchema })
   .post('/update-state', ({ body }) => PostRequests.UpdateState(body), {
     body: t.Object({ last_block: t.String() }),
   });

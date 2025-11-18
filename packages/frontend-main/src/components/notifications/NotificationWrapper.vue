@@ -25,7 +25,7 @@ const navigationPath = computed(() => {
   }
 
   // actions on user
-  if (['follow'].includes(notification.type)) {
+  if (['follow', 'accept'].includes(notification.type)) {
     return `/profile/${notification.actor}`;
   }
 

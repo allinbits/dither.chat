@@ -158,7 +158,14 @@ export const ModeratorTable = pgTable('moderators', {
   deleted_at: timestamp({ withTimezone: true }),
 });
 
-export const notificationTypeEnum = pgEnum('notification_type', ['like', 'dislike', 'flag', 'follow', 'reply']);
+export const notificationTypeEnum = pgEnum('notification_type', [
+  'like',
+  'dislike',
+  'flag',
+  'follow',
+  'reply',
+  'register',
+]);
 
 export const NotificationTable = pgTable(
   'notifications',

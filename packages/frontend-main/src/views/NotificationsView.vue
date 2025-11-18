@@ -6,6 +6,7 @@ import DislikeNotification from '@/components/notifications/DislikeNotification.
 import FlagNotification from '@/components/notifications/FlagNotification.vue';
 import FollowNotification from '@/components/notifications/FollowNotification.vue';
 import LikeNotification from '@/components/notifications/LikeNotification.vue';
+import RegisterNotification from '@/components/notifications/RegisterNotification.vue';
 import ReplyNotification from '@/components/notifications/ReplyNotification.vue';
 import Button from '@/components/ui/button/Button.vue';
 import { useNotifications } from '@/composables/useNotifications';
@@ -38,6 +39,7 @@ const flatNotifications = computed(() => data.value?.pages.flat() ?? []);
           <FollowNotification v-if="notification.type === 'follow'" :key="index" :notification="notification" />
           <FlagNotification v-if="notification.type === 'flag'" :key="index" :notification="notification" />
           <ReplyNotification v-if="notification.type === 'reply'" :key="index" :notification="notification" />
+          <RegisterNotification v-if="notification.type === 'register'" :key="index" :notification="notification" />
         </template>
 
         <div v-if="isFetchingNextPage || hasNextPage" class="flex items-center justify-center my-4 px-4 h-[40px]">

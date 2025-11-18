@@ -6,6 +6,7 @@ import { eq } from 'drizzle-orm';
 
 import { getDatabase } from '../../drizzle/db';
 import { HandleTable } from '../../drizzle/schema';
+import { notify } from '../shared/notify';
 import { lower } from '../utility';
 
 const minHandleLength = 5;
@@ -33,8 +34,19 @@ export async function Register(body: Posts.RegisterBody) {
 
   const db = getDatabase();
   try {
+    const timestamp = new Date(body.timestamp);
     if (await doesHandleExists(db, body.handle)) {
-      return { status: 400, error: 'handle is already registered' };
+      await notify({
+        hash: body.hash,
+        type: 'register',
+        actor: body.from,
+        owner: body.from,
+        timestamp,
+        subcontext: 'Handle is already taken',
+      });
+
+      // Succeed to stop reader from keep trying to register
+      return { status: 200, error: 'handle is already registered' };
     }
 
     const address = body.from.toLowerCase();
@@ -53,7 +65,7 @@ export async function Register(body: Posts.RegisterBody) {
           hash: body.hash.toLowerCase(),
           address: body.from.toLowerCase(),
           display: display || null,
-          timestamp: new Date(body.timestamp),
+          timestamp,
         });
     });
 
