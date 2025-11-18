@@ -21,7 +21,10 @@ export const baseTest = base.extend<{
       });
 
       await test.step('Unlock Keplr wallet', async () => {
-        await keplrPopup.invoke(k => k.unlockWalletIfNeeded());
+        await keplrPopup.invoke(async (k) => {
+          await k.unlockWalletIfNeeded();
+          await k.approveSuggestChainIfNeeded();
+        });
       });
 
       let connApproved = false;

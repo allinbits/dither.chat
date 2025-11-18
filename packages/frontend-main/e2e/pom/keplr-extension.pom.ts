@@ -98,6 +98,12 @@ export class KeplrExtensionPage {
     }
   }
 
+  async approveSuggestChainIfNeeded() {
+    if (this.page.url().includes('popup.html#/suggest-chain')) {
+      await this.clickApprove();
+    }
+  }
+
   async expectUnlockScreen() {
     await this.unlockScreenLocator.waitFor();
   }
