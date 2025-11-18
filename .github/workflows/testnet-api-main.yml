@@ -57,10 +57,18 @@ jobs:
         run: |
           cp .env.example .env
           bun run db:push:force
+        env:
+          PG_URI: postgresql://default:password@localhost:5432/postgres
 
       - name: Run tests
         working-directory: ./packages/api-main
         run: bun run test
+        env:
+          NODE_OPTIONS: --experimental-global-webcrypto
+          PG_URI: postgresql://default:password@localhost:5432/postgres
+          JWT: default_jwt_secret
+          JWT_STRICTNESS: lax
+          AUTH: whatever
 
   build:
     needs: [detect-changes, test]
