@@ -61,9 +61,7 @@ jobs:
 
       - name: Push database migrations
         working-directory: ./packages/api-main
-        run: |
-          cp .env.example .env
-          bun run db:push:force
+        run: bun run db:push:force
         env:
           PG_URI: postgresql://default:password@localhost:5432/postgres
 
