@@ -60,7 +60,7 @@ jobs:
 
       - name: Run tests
         working-directory: ./packages/api-main
-        run: bun test
+        run: bun run test
 
   build:
     needs: [detect-changes, test]
