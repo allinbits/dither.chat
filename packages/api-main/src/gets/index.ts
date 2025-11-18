@@ -4,6 +4,7 @@ export * from './feed';
 export * from './flags';
 export * from './followers';
 export * from './following';
+export * from './handle';
 export * from './health';
 export * from './isFollowing';
 export * from './lastBlock';
