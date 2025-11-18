@@ -10,8 +10,12 @@ path = "/post/*"
 function = "og-image"
 path = "/og-image/*"
 
+[[edge_functions]]
+function = "link-meta"
+path = "/link-meta"
+
 # Redirect all routes to index.html
-# Note: Edge functions take precedence over redirects, so /og-image/* and /post/*
+# Note: Edge functions take precedence over redirects.
 # will be handled by edge functions before this redirect rule applies
 [[redirects]]
 from = "/*"

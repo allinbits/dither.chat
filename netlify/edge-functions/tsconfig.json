@@ -11,6 +11,6 @@
     "noEmit": true,
     "skipLibCheck": true
   },
-  "include": ["**/*.ts", "types/deno.d.ts"],
+  "include": ["**/*.ts", "types/edge-runtime.d.ts"],
   "exclude": ["node_modules"]
 }

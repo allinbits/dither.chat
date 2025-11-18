@@ -44,3 +44,20 @@ declare namespace Deno {
     function get(key: string): string | undefined;
   }
 }
+
+// Cache API for Netlify Edge Functions
+// Standard CacheStorage API as per https://docs.netlify.com/build/caching/cache-api/
+interface CacheStorage {
+  open: (name: string) => Promise<Cache>;
+  match: (request: Request | string) => Promise<Response | undefined>;
+}
+
+interface Cache {
+  match: (request: Request | string) => Promise<Response | undefined>;
+  put: (request: Request | string, response: Response) => Promise<void>;
+  delete: (request: Request | string) => Promise<boolean>;
+  add: (request: Request | string) => Promise<void>;
+  addAll: (requests: (Request | string)[]) => Promise<void>;
+}
+
+declare const caches: CacheStorage;

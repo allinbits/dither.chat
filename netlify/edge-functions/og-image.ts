@@ -2,6 +2,7 @@ import satori from 'https://esm.sh/satori@0.10.11';
 
 import { components } from './lib/components.tsx';
 import { FONT_URL, TWEMOJI_BASE_URL } from './lib/config.ts';
+import { CACHE_IMMUTABLE_SECONDS, createInternalErrorResponse, createNotFoundResponse, createTextResponse } from './lib/http.ts';
 import { getPost, utf8ToBase64 } from './lib/shared.ts';
 
 /**
@@ -91,13 +92,13 @@ export default async (request: Request) => {
   const pathParts = url.pathname.split('/').filter(Boolean);
 
   if (pathParts[0] !== 'og-image' || pathParts.length < 2) {
-    return new Response('Not Found', { status: 404 });
+    return createNotFoundResponse();
   }
 
   try {
     const post = await getPost(pathParts[1].replace(/\.(png|jpg|jpeg)$/i, ''));
     if (!post) {
-      return new Response('Post not found', { status: 404 });
+      return createNotFoundResponse('Post not found');
     }
 
     const fontResponse = await loadFont();
@@ -119,14 +120,11 @@ export default async (request: Request) => {
       loadAdditionalAsset,
     });
 
-    return new Response(svg, {
-      headers: {
-        'Content-Type': 'image/svg+xml',
-        'Cache-Control': 'public, max-age=31536000, immutable',
-      },
+    return createTextResponse(svg, 'image/svg+xml', {
+      cacheMaxAge: CACHE_IMMUTABLE_SECONDS,
     });
   } catch (error) {
     console.error('Error in og-image:', error);
-    return new Response('Internal Server Error', { status: 500 });
+    return createInternalErrorResponse();
   }
 };
