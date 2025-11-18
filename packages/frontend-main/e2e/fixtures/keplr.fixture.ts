@@ -31,6 +31,7 @@ export const testWithKeplr = base.extend<{
       },
       devtools: false,
       serviceWorkers: 'allow',
+      bypassCSP: true,
       args,
     });
 
