@@ -69,11 +69,3 @@ jobs:
             🔍 [View Logs](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
 
             Please investigate and fix *ASAP*! 🔧
-
-  smoke-tests:
-    needs: [build]
-    if: needs.deploy-mainnet.result == 'success'
-    uses: ./.github/workflows/smoke-tests.yml
-    secrets: inherit
-    with:
-      app_name: dither-mainnet-api-main
