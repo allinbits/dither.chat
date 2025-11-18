@@ -10,24 +10,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  detect-changes:
-    runs-on: ubuntu-latest
-    outputs:
-      changed: ${{ steps.changes.outputs.reader-main }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Detect reader-main changes
-        uses: dorny/paths-filter@v3
-        id: changes
-        with:
-          filters: |
-            reader-main:
-              - 'packages/reader-main/**'
-
   build:
-    needs: [detect-changes]
     runs-on: ubuntu-latest
     permissions:
       contents: read

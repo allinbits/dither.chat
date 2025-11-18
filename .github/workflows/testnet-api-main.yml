@@ -10,25 +10,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  detect-changes:
-    runs-on: ubuntu-latest
-    outputs:
-      changed: ${{ steps.changes.outputs.api-main }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Detect api-main changes
-        uses: dorny/paths-filter@v3
-        id: changes
-        with:
-          filters: |
-            api-main:
-              - 'packages/api-main/**'
-
   test:
-    needs: detect-changes
-    if: needs.detect-changes.outputs.changed == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -76,7 +58,7 @@ jobs:
           AUTH: whatever
 
   build:
-    needs: [detect-changes, test]
+    needs: [test]
     runs-on: ubuntu-latest
     permissions:
       contents: read
