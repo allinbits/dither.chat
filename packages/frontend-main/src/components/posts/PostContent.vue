@@ -37,7 +37,7 @@ const youtubeLink = computed(() => {
 
     <iframe
       v-if="youtubeLink"
-      class="w-full aspect-video rounded-sm"
+      class="w-full aspect-video rounded-sm max-w-[calc(100%-0.5rem)]"
       :src="youtubeLink"
       title="YouTube Video"
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
