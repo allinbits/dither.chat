@@ -28,7 +28,6 @@ jobs:
 
   build:
     needs: [detect-changes]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.detect-changes.outputs.changed == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read
