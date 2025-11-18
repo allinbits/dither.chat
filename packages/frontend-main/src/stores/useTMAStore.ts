@@ -1,11 +1,9 @@
-import type { InitData, RetrieveLaunchParamsResult } from '@tma.js/sdk-vue';
+import type { InitData, RetrieveLaunchParamsError, RetrieveLaunchParamsResult } from '@tma.js/sdk-vue';
 
 import {
   initData,
-
   init as initSDK,
   retrieveLaunchParams,
-
   setDebug,
   useSignal,
 } from '@tma.js/sdk-vue';
@@ -24,7 +22,7 @@ declare global {
 export const useTMAStore = defineStore('tmaStore', () => {
   const isInitialized = ref(false);
   const launchParams = ref<RetrieveLaunchParamsResult | null>(null);
-  const initDataRef = ref<InitData | undefined>(undefined);
+  const initDataRef = ref<InitData<RetrieveLaunchParamsError>>();
   const error = ref<string | null>(null);
   const debugLogs = ref<string[]>([]);
 
@@ -42,7 +40,9 @@ export const useTMAStore = defineStore('tmaStore', () => {
 
       // Get init data using the signal
       const initDataSignal = useSignal(initData.state);
-      initDataRef.value = initDataSignal.value;
+      if (initDataSignal.value) {
+        initDataRef.value = initDataSignal.value as unknown as InitData<RetrieveLaunchParamsError>;
+      }
 
       isInitialized.value = true;
       error.value = null;

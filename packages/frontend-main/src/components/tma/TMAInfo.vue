@@ -18,11 +18,23 @@ onMounted(async () => {
 const tmaInfo = computed(() => {
   const params = tmaStore.launchParams;
   const initData = tmaStore.initData;
-  const user = initData?.user;
+  const user = initData?.user();
+
+  if (!user) {
+    return {
+      userName: 'Unknown User',
+      userId: 'Unknown',
+      platform: params?.tgWebAppPlatform || 'Unknown',
+      version: params?.tgWebAppVersion || 'Unknown',
+      isInitialized: tmaStore.isInitialized,
+      hasError: !!tmaStore.error,
+      error: tmaStore.error,
+    };
+  }
 
   return {
-    userName: user?.first_name ? `${user.first_name} ${user.last_name || ''}`.trim() : 'Unknown User',
-    userId: user?.id?.toString() || 'Unknown',
+    userName: user.first_name ? `${user.first_name} ${user.last_name || ''}`.trim() : 'Unknown User',
+    userId: user.id.toString(),
     platform: params?.tgWebAppPlatform || 'Unknown',
     version: params?.tgWebAppVersion || 'Unknown',
     isInitialized: tmaStore.isInitialized,
