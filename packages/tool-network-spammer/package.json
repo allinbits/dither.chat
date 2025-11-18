@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "tsx src/index.ts",
-    "start": "tsx src/index.ts",
+    "dev": "bun src/index.ts",
+    "start": "bun src/index.ts",
     "build": "tsc"
   },
   "dependencies": {
@@ -14,7 +14,6 @@
     "lorem-ipsum": "^2.0.8"
   },
   "devDependencies": {
-    "tsx": "^4.20.6",
     "typescript": "^5.9.3"
   }
 }
