@@ -52,6 +52,13 @@ jobs:
         working-directory: ./packages/api-main
         run: docker compose -f ./docker-compose-github.yml up --build -d --wait --wait-timeout 30
 
+      - name: Wait for database to be ready
+        working-directory: ./packages/api-main
+        run: |
+          until docker exec postgres_db pg_isready -U default; do
+            sleep 1
+          done
+
       - name: Push database migrations
         working-directory: ./packages/api-main
         run: |
