@@ -1,6 +1,6 @@
 [build]
 publish = "./packages/frontend-main/dist"
-command = "pnpm -F ./packages/frontend-main build"
+command = "bun --cwd ./packages/frontend-main run build"
 
 [[edge_functions]]
 function = "post-meta"
