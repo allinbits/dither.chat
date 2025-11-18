@@ -47,7 +47,7 @@ jobs:
 
       - name: Run tests
         working-directory: packages/api-main
-        run: bun test
+        run: bun run test
         env:
           NODE_OPTIONS: --experimental-global-webcrypto
           PG_URI: postgresql://default:password@localhost:5432/postgres
