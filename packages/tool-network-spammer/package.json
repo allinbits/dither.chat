@@ -1,20 +1,19 @@
 {
-  "name": "network-spammer",
+  "name": "@dither.chat/network-spammer",
   "version": "1.0.0",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "tsx src/index.ts",
-    "start": "tsx src/index.ts",
+    "dev": "bun src/index.ts",
+    "start": "bun src/index.ts",
     "build": "tsc"
   },
   "dependencies": {
     "@cosmjs/proto-signing": "^0.33.1",
     "@cosmjs/stargate": "^0.33.1",
-    "dotenv": "^16.6.1",
+    "dotenv": "^17.2.3",
     "lorem-ipsum": "^2.0.8"
   },
   "devDependencies": {
-    "tsx": "^4.20.6",
     "typescript": "^5.9.3"
   }
 }

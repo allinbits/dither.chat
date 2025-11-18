@@ -1,9 +1,0 @@
-packages:
-  - packages/*
-onlyBuiltDependencies:
-  - '@tailwindcss/oxide'
-  - esbuild
-  - protobufjs
-  - tiny-secp256k1
-  - vue-demi
-injectWorkspacePackages: true

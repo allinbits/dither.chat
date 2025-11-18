@@ -1,18 +1,20 @@
-FROM node:24-slim AS base
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable pnpm
+FROM oven/bun:1.3.2-slim AS base
 
 FROM base AS build
 WORKDIR /workspace
 COPY . .
 
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --filter api-feed... --frozen-lockfile
-RUN pnpm --filter api-feed build:deps
-RUN pnpm deploy --filter api-feed /api-feed
+# Install all workspace dependencies first
+# Cache bun's global install cache for faster builds
+RUN --mount=type=cache,id=bun-cache,target=/root/.bun/install/cache \
+    bun install --frozen-lockfile
 
 FROM base AS runtime
 WORKDIR /app
-COPY --from=build /api-feed ./
 
-CMD ["pnpm", "push-and-start"]
+# Copy workspace structure (needed for drizzle-kit workspace resolution)
+COPY --from=build /workspace/packages/api-main ./packages/api-main
+
+WORKDIR /app/packages/api-main
+
+CMD ["bun", "run", "push-and-start"]
