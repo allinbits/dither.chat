@@ -44,6 +44,14 @@ export default defineConfig({
     {
       name: 'logged-in',
       testMatch: 'e2e/specs/logged-in/*.spec.ts',
+      use: {
+        launchOptions: {
+          slowMo: 1000,
+          env: {
+            userDataDir,
+          },
+        },
+      },
       dependencies: ['keplr-import-wallet'],
     },
     {

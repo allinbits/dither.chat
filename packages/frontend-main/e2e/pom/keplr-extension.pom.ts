@@ -5,10 +5,10 @@ import { keplrData } from '../config/keplr';
 export class KeplrExtensionPage {
   readonly page: Page;
   readonly extensionId: string;
-  readonly approveConnectionScreenLocator: Locator;
-  readonly approveSignatureScreenLocator: Locator;
-  readonly registerScreenLocator: Locator;
-  readonly unlockScreenLocator: Locator;
+  private readonly approveConnectionScreenLocator: Locator;
+  private readonly approveSignatureScreenLocator: Locator;
+  private readonly registerScreenLocator: Locator;
+  private readonly unlockScreenLocator: Locator;
 
   readonly popupUrl: string;
   readonly registerUrl: string;
@@ -70,13 +70,39 @@ export class KeplrExtensionPage {
     await this.page.getByRole('button', { name: 'Finish' }).click();
   }
 
-  async approveConnection() {
-    await this.approveConnectionScreenLocator.waitFor();
-    await this.page.getByRole('button', { name: 'Approve' }).click();
+  async unlockWalletIfNeeded() {
+    const isVisible = await this.unlockScreenLocator.isVisible();
+    if (isVisible) {
+      await this.unlockWallet();
+    }
+    return isVisible;
   }
 
-  async approveSignature() {
-    await this.approveSignatureScreenLocator.waitFor();
+  async approveConnectionIfNeeded() {
+    const isVisible = await this.approveConnectionScreenLocator.isVisible();
+    if (isVisible) {
+      await this.clickApprove();
+    }
+    return isVisible;
+  }
+
+  async approveSignatureIfNeeded() {
+    try {
+      const isVisible = await this.approveSignatureScreenLocator.isVisible();
+      if (isVisible) {
+        await this.clickApprove();
+      }
+      return isVisible;
+    } catch {
+      return false;
+    }
+  }
+
+  async expectUnlockScreen() {
+    await this.unlockScreenLocator.waitFor();
+  }
+
+  private async clickApprove() {
     await this.page.getByRole('button', { name: 'Approve' }).click();
   }
 }

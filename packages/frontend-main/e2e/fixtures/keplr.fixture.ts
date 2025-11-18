@@ -7,7 +7,7 @@ import { KeplrExtensionPage } from '../pom/keplr-extension.pom';
 
 export interface KeplrPopupAPI {
   popup: () => Promise<KeplrExtensionPage>;
-  invoke: (callback: (page: KeplrExtensionPage) => Promise<void>) => Promise<void>;
+  invoke: (callback: (page: KeplrExtensionPage) => Promise<any>) => Promise<void>;
 }
 
 export const testWithKeplr = base.extend<{
@@ -23,7 +23,6 @@ export const testWithKeplr = base.extend<{
       '--disable-setuid-sandbox',
       `--disable-extensions-except=${keplrData.extensionPath}`,
       `--load-extension=${keplrData.extensionPath}`,
-      `--headless=new`,
     ];
 
     const context = await chromium.launchPersistentContext(userDataDir, {
@@ -31,9 +30,6 @@ export const testWithKeplr = base.extend<{
         dir: 'test-results/videos',
       },
       devtools: false,
-      timeout: 0,
-      headless: false,
-      bypassCSP: true,
       serviceWorkers: 'allow',
       args,
     });
@@ -64,7 +60,6 @@ export const testWithKeplr = base.extend<{
       await callback(keplrPage);
       await new Promise(r => setTimeout(r, 500));
 
-      // Only close if the page wasn't already closed
       if (!closed) {
         await keplrPage.page.close();
       }

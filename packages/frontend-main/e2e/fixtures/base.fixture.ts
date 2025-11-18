@@ -15,32 +15,28 @@ export const baseTest = base.extend<{
         await homePage.navigate();
       });
 
-      await new Promise(r => setTimeout(r, 3000));
-
       await test.step('Open wallet connection dialog', async () => {
         const walletDialog = await homePage.openConnectWalletDialog();
         await walletDialog.selectKeplrWallet();
       });
 
-      await new Promise(r => setTimeout(r, 3000));
       await test.step('Unlock Keplr wallet', async () => {
+        await keplrPopup.invoke(k => k.unlockWalletIfNeeded());
+      });
+
+      let connApproved = false;
+      await test.step('Approve connection or signature', async () => {
         await keplrPopup.invoke(async (k) => {
-          await k.page.waitForTimeout(5000);
-          await k.unlockWallet();
-          // try {
-          //   await k.approveConnection();
-          // } catch {
-          //   //
-          // }
+          connApproved = await k.approveConnectionIfNeeded();
+          await k.approveSignatureIfNeeded();
         });
       });
 
-      await keplrPopup.invoke(async (k) => {
-        await k.page.waitForTimeout(5000);
-        if (await k.approveSignatureScreenLocator.isVisible()) {
-          await k.approveSignature();
-        }
-      });
+      if (connApproved) {
+        await test.step('Approve signature', async () => {
+          await keplrPopup.invoke(k => k.approveSignatureIfNeeded());
+        });
+      }
     });
   },
 });
