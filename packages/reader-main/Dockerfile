@@ -13,9 +13,6 @@ FROM base AS runtime
 ENV NODE_TLS_REJECT_UNAUTHORIZED=0
 WORKDIR /app
 
-COPY --from=build /workspace/packages/reader-main/package.json ./
-COPY --from=build /workspace/packages/reader-main/src ./src
-COPY --from=build /workspace/node_modules ./node_modules
-COPY --from=build /workspace/packages/lib-api-types ./node_modules/@atomone/dither-api-types
+COPY --from=build /workspace/packages/reader-main ./
 
 CMD ["bun", "run", "start"]
