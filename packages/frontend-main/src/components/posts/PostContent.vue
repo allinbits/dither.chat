@@ -18,7 +18,7 @@ const youtubeLink = computed(() => {
 </script>
 
 <template>
-  <div class="flex flex-col w-full gap-2">
+  <div class="flex flex-col w-full gap-2 max-w-[calc(min(100dvw,var(--main-min-width-desktop))-5.5rem)]">
     <PostMessage :message="props.message" />
 
     <div v-if="hasImage" class="flex flex-col gap-2 cursor-default" @click.stop="() => {}">
