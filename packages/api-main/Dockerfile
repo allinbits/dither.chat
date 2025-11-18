@@ -13,10 +13,7 @@ FROM base AS runtime
 WORKDIR /app
 
 # Copy workspace structure (needed for drizzle-kit workspace resolution)
-COPY --from=build /workspace/package.json ./
 COPY --from=build /workspace/packages/api-main ./packages/api-main
-COPY --from=build /workspace/node_modules ./node_modules
-COPY --from=build /workspace/packages/lib-api-types ./node_modules/@atomone/dither-api-types
 
 WORKDIR /app/packages/api-main
 
