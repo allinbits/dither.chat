@@ -1,5 +1,6 @@
 FROM oven/bun:1.3.2-slim
 WORKDIR /app
+ENV NODE_TLS_REJECT_UNAUTHORIZED=0
 COPY . .
 
 # Install all workspace dependencies
