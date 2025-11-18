@@ -46,7 +46,7 @@ export default defineConfig({
       testMatch: 'e2e/specs/logged-in/*.spec.ts',
       use: {
         launchOptions: {
-          slowMo: 2000,
+          slowMo: 1000,
           env: {
             userDataDir,
           },
