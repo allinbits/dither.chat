@@ -1,6 +1,6 @@
 [build]
 publish = "./packages/frontend-main/dist"
-command = "bun --cwd ./packages/frontend-main run build"
+command = "bun --filter @dither.chat/frontend-main run build"
 
 [[edge_functions]]
 function = "post-meta"
