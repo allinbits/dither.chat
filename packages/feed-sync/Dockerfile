@@ -12,8 +12,6 @@ RUN --mount=type=cache,id=bun-cache,target=/root/.bun/install/cache \
 FROM base AS runtime
 WORKDIR /app
 
-COPY --from=build /workspace/packages/feed-sync/package.json ./
-COPY --from=build /workspace/packages/feed-sync/src ./src
-COPY --from=build /workspace/node_modules ./node_modules
+COPY --from=build /workspace/packages/feed-sync ./
 
 CMD ["bun", "run", "start"]
