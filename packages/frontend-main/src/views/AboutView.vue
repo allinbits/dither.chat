@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ArrowUpRight } from 'lucide-vue-next';
 
-import Button from '@/components/ui/button/Button.vue';
 import { useExternalLink } from '@/composables/useExternalLink';
 import { useSEO } from '@/composables/useSEO';
 import { externalLinks } from '@/config/externalLinks';
@@ -44,15 +43,13 @@ const { openExternalLink } = useExternalLink();
           </p>
         </div>
 
-        <Button
-          variant="default"
-          size="lg"
-          class="group flex items-center gap-2 min-w-[220px]"
+        <button
+          class="text-sm text-muted-foreground/80 hover:text-foreground transition-colors flex items-center gap-1"
           @click="openExternalLink('protocolDocs')"
         >
-          <span>{{ $t('components.About.ctaDocs') }}</span>
-          <ArrowUpRight class="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-        </Button>
+          {{ $t('components.About.ctaDocs') }}
+          <ArrowUpRight class="size-3" />
+        </button>
 
         <div class="flex flex-wrap items-center justify-center gap-4 text-sm text-muted-foreground/80 mt-12 border-t border-border/40 pt-5 w-full">
           <button
