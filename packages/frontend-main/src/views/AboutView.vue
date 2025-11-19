@@ -45,7 +45,7 @@ const { openExternalLink } = useExternalLink();
         </div>
 
         <Button
-          variant="elevated"
+          variant="default"
           size="lg"
           class="group flex items-center gap-2 min-w-[220px]"
           @click="openExternalLink('protocolDocs')"
