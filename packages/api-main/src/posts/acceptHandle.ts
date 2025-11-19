@@ -5,7 +5,7 @@ import type { DbClient } from '../../drizzle/db';
 import { and, eq } from 'drizzle-orm';
 
 import { getDatabase } from '../../drizzle/db';
-import { HandleTable, HandleTransferTable } from '../../drizzle/schema';
+import { AccountTable, HandleTransferTable } from '../../drizzle/schema';
 import { lower } from '../utility';
 
 export async function AcceptHandle(body: Posts.AcceptHandleBody) {
@@ -16,9 +16,9 @@ export async function AcceptHandle(body: Posts.AcceptHandleBody) {
     }
 
     await db
-      .update(HandleTable)
+      .update(AccountTable)
       .set({ address: body.to_address.toLowerCase() })
-      .where(eq(lower(HandleTable.name), body.handle.toLowerCase()));
+      .where(eq(lower(AccountTable.handle), body.handle.toLowerCase()));
 
     return { status: 200 };
   } catch (err) {

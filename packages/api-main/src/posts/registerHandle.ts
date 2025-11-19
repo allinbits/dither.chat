@@ -5,7 +5,7 @@ import type { DbClient } from '../../drizzle/db';
 import { eq } from 'drizzle-orm';
 
 import { getDatabase } from '../../drizzle/db';
-import { HandleTable } from '../../drizzle/schema';
+import { AccountTable } from '../../drizzle/schema';
 import { notify } from '../shared/notify';
 import { lower } from '../utility';
 
@@ -33,14 +33,13 @@ export async function RegisterHandle(body: Posts.RegisterHandleBody) {
 
   const db = getDatabase();
   try {
-    const timestamp = new Date(body.timestamp);
     if (await doesHandleExists(db, body.handle)) {
       await notify({
         hash: body.hash,
         type: 'register',
         actor: body.from,
         owner: body.from,
-        timestamp,
+        timestamp: new Date(body.timestamp),
         subcontext: 'Handle is already taken',
       });
 
@@ -53,18 +52,16 @@ export async function RegisterHandle(body: Posts.RegisterHandleBody) {
     await db.transaction(async (tx) => {
       // Remove current handle if one is registered to address
       await tx
-        .delete(HandleTable)
-        .where(eq(HandleTable.address, address));
+        .delete(AccountTable)
+        .where(eq(AccountTable.address, address));
 
       // Register a new handle for the address
       await tx
-        .insert(HandleTable)
+        .insert(AccountTable)
         .values({
-          name: body.handle,
-          hash: body.hash.toLowerCase(),
+          handle: body.handle,
           address: body.from.toLowerCase(),
           display: display || null,
-          timestamp,
         });
     });
 
@@ -76,6 +73,6 @@ export async function RegisterHandle(body: Posts.RegisterHandleBody) {
 }
 
 async function doesHandleExists(db: DbClient, name: string): Promise<boolean> {
-  const count = await db.$count(HandleTable, eq(lower(HandleTable.name), name.toLowerCase()));
+  const count = await db.$count(AccountTable, eq(lower(AccountTable.handle), name.toLowerCase()));
   return count !== 0;
 }

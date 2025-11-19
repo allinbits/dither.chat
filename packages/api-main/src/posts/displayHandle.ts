@@ -3,14 +3,14 @@ import type { Posts } from '@atomone/dither-api-types';
 import { count, eq, sql } from 'drizzle-orm';
 
 import { getDatabase } from '../../drizzle/db';
-import { HandleTable } from '../../drizzle/schema';
+import { AccountTable } from '../../drizzle/schema';
 import { lower } from '../utility';
 import { MAX_DISPLAY_LENGTH } from './registerHandle';
 
 const handleAddressExistsStmt = getDatabase()
   .select({ count: count() })
-  .from(HandleTable)
-  .where(eq(lower(HandleTable.address), sql.placeholder('address')))
+  .from(AccountTable)
+  .where(eq(lower(AccountTable.address), sql.placeholder('address')))
   .prepare('stmt_handle_address_exists');
 
 export async function DisplayHandle(body: Posts.DisplayHandleBody) {
@@ -27,9 +27,9 @@ export async function DisplayHandle(body: Posts.DisplayHandleBody) {
     }
 
     await db
-      .update(HandleTable)
+      .update(AccountTable)
       .set({ display })
-      .where(eq(HandleTable.address, address));
+      .where(eq(AccountTable.address, address));
 
     return { status: 200 };
   } catch (err) {

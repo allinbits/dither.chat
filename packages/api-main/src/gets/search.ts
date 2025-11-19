@@ -3,7 +3,7 @@ import type { Gets } from '@atomone/dither-api-types';
 import { and, desc, eq, getTableColumns, gte, ilike, inArray, isNull, or, sql } from 'drizzle-orm';
 
 import { getDatabase } from '../../drizzle/db';
-import { FeedTable, HandleTable } from '../../drizzle/schema';
+import { AccountTable, FeedTable } from '../../drizzle/schema';
 
 export async function Search(query: Gets.SearchQuery) {
   try {
@@ -22,12 +22,12 @@ export async function Search(query: Gets.SearchQuery) {
     const matchedAuthors = await getDatabase()
       .selectDistinct({ author: FeedTable.author })
       .from(FeedTable)
-      .leftJoin(HandleTable, eq(FeedTable.author, HandleTable.address))
+      .leftJoin(AccountTable, eq(FeedTable.author, AccountTable.address))
       .where(
         and(
           or(
             eq(FeedTable.author, query.text.toLowerCase()), // Exact address
-            ilike(HandleTable.name, `%${query.text}%`), // Registered handle (partial match)
+            ilike(AccountTable.handle, `%${query.text}%`), // Registered handle (partial match)
           ),
           isNull(FeedTable.removed_at),
         ),
@@ -37,11 +37,11 @@ export async function Search(query: Gets.SearchQuery) {
     const matchedPosts = await getDatabase()
       .select({
         ...getTableColumns(FeedTable),
-        handle: HandleTable.name,
-        display: HandleTable.display,
+        handle: AccountTable.handle,
+        display: AccountTable.display,
       })
       .from(FeedTable)
-      .leftJoin(HandleTable, eq(FeedTable.author, HandleTable.address))
+      .leftJoin(AccountTable, eq(FeedTable.author, AccountTable.address))
       .where(
         and(
           or(

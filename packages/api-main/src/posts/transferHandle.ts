@@ -5,7 +5,7 @@ import type { DbClient } from '../../drizzle/db';
 import { and, eq } from 'drizzle-orm';
 
 import { getDatabase } from '../../drizzle/db';
-import { HandleTable, HandleTransferTable } from '../../drizzle/schema';
+import { AccountTable, HandleTransferTable } from '../../drizzle/schema';
 import { lower } from '../utility';
 
 export async function TransferHandle(body: Posts.TransferHandleBody) {
@@ -48,9 +48,9 @@ export async function TransferHandle(body: Posts.TransferHandleBody) {
 }
 
 async function isHandleOwner(db: DbClient, handle: string, address: string): Promise<boolean> {
-  const count = await db.$count(HandleTable, and(
-    eq(lower(HandleTable.name), handle.toLowerCase()),
-    eq(HandleTable.address, address.toLowerCase()),
+  const count = await db.$count(AccountTable, and(
+    eq(lower(AccountTable.handle), handle.toLowerCase()),
+    eq(AccountTable.address, address.toLowerCase()),
   ));
   return count !== 0;
 }

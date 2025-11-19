@@ -3,22 +3,22 @@ import type { Gets } from '@atomone/dither-api-types';
 import { eq, or, sql } from 'drizzle-orm';
 
 import { getDatabase } from '../../drizzle/db';
-import { HandleTable } from '../../drizzle/schema';
+import { AccountTable } from '../../drizzle/schema';
 
 const statement = getDatabase()
   .select({
-    name: HandleTable.name,
-    address: HandleTable.address,
-    display: HandleTable.display,
+    handle: AccountTable.handle,
+    address: AccountTable.address,
+    display: AccountTable.display,
   })
-  .from(HandleTable)
+  .from(AccountTable)
   .where(
     or(
-      eq(HandleTable.name, sql.placeholder('name')),
-      eq(HandleTable.address, sql.placeholder('address')),
+      eq(AccountTable.handle, sql.placeholder('handle')),
+      eq(AccountTable.address, sql.placeholder('address')),
     ),
   )
-  .orderBy(HandleTable.name)
+  .orderBy(AccountTable.handle)
   .limit(1)
   .prepare('stmnt_get_handle');
 
@@ -29,7 +29,7 @@ export async function Handle(query: Gets.HandleQuery) {
   }
 
   try {
-    const [handle] = await statement.execute({ address, name });
+    const [handle] = await statement.execute({ address, handle: name });
     if (!handle) {
       return { status: 404, rows: [] };
     }

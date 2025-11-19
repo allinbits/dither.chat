@@ -3,26 +3,26 @@ import type { Gets } from '@atomone/dither-api-types';
 import { and, eq, getTableColumns, isNull, sql } from 'drizzle-orm';
 
 import { getDatabase } from '../../drizzle/db';
-import { FeedTable, HandleTable } from '../../drizzle/schema';
+import { AccountTable, FeedTable } from '../../drizzle/schema';
 
 const statementGetPost = getDatabase()
   .select({
     ...getTableColumns(FeedTable),
-    handle: HandleTable.name,
-    display: HandleTable.display,
+    handle: AccountTable.handle,
+    display: AccountTable.display,
   })
   .from(FeedTable)
-  .leftJoin(HandleTable, eq(FeedTable.author, HandleTable.address))
+  .leftJoin(AccountTable, eq(FeedTable.author, AccountTable.address))
   .where(and(isNull(FeedTable.removed_at), eq(FeedTable.hash, sql.placeholder('hash'))))
   .prepare('stmnt_get_post');
 
 const statementGetReply = getDatabase()
   .select({
     ...getTableColumns(FeedTable),
-    handle: HandleTable.name,
+    handle: AccountTable.handle,
   })
   .from(FeedTable)
-  .leftJoin(HandleTable, eq(FeedTable.author, HandleTable.address))
+  .leftJoin(AccountTable, eq(FeedTable.author, AccountTable.address))
   .where(and(isNull(FeedTable.removed_at), eq(FeedTable.hash, sql.placeholder('hash')), eq(FeedTable.post_hash, sql.placeholder('post_hash'))))
   .prepare('stmnt_get_reply');
 

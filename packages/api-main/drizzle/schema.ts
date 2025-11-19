@@ -1,20 +1,18 @@
 import { sql } from 'drizzle-orm';
-import { bigint, boolean, index, integer, pgEnum, pgTable, primaryKey, serial, text, timestamp, varchar } from 'drizzle-orm/pg-core';
+import { bigint, boolean, index, integer, pgEnum, pgTable, primaryKey, serial, text, timestamp, unique, varchar } from 'drizzle-orm/pg-core';
 
 const MEMO_LENGTH = 512;
 
-export const HandleTable = pgTable(
-  'handle',
+export const AccountTable = pgTable(
+  'account',
   {
-    name: varchar({ length: 32 }).primaryKey(),
-    address: varchar({ length: 44 }).notNull(),
+    address: varchar({ length: 44 }).primaryKey(),
+    handle: varchar({ length: 32 }),
     display: varchar({ length: 128 }),
-    hash: varchar({ length: 64 }).notNull(),
-    timestamp: timestamp({ withTimezone: true }).notNull(),
   },
   t => [
-    index('handle_address_idx').on(t.address),
-    index('handle_display_idx').on(t.display),
+    unique('account_handle_idx').on(t.handle),
+    index('account_display_idx').on(t.display),
   ],
 );
 

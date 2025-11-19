@@ -3,16 +3,16 @@ import type { Gets } from '@atomone/dither-api-types';
 import { and, desc, eq, getTableColumns, gte, inArray, isNull, sql } from 'drizzle-orm';
 
 import { getDatabase } from '../../drizzle/db';
-import { FeedTable, FollowsTable, HandleTable } from '../../drizzle/schema';
+import { AccountTable, FeedTable, FollowsTable } from '../../drizzle/schema';
 
 const statement = getDatabase()
   .select({
     ...getTableColumns(FeedTable),
-    handle: HandleTable.name,
-    display: HandleTable.display,
+    handle: AccountTable.handle,
+    display: AccountTable.display,
   })
   .from(FeedTable)
-  .leftJoin(HandleTable, eq(FeedTable.author, HandleTable.address))
+  .leftJoin(AccountTable, eq(FeedTable.author, AccountTable.address))
   .where(
     and(
       eq(FeedTable.author, sql.placeholder('author')),
