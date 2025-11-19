@@ -1,326 +1,89 @@
 <script setup lang="ts">
-import { Github, Link as LinkIcon } from 'lucide-vue-next';
-import { onMounted, onUnmounted } from 'vue';
+import { ArrowUpRight } from 'lucide-vue-next';
 
 import Button from '@/components/ui/button/Button.vue';
-import WalletConnectButton from '@/components/wallet/WalletConnectButton/WalletConnectButton.vue';
+import { useSEO } from '@/composables/useSEO';
+import { externalLinks } from '@/config/externalLinks';
 import MainLayout from '@/layouts/MainLayout.vue';
 
-import ViewHeading from './ViewHeading.vue';
-
-// SEO: Update meta tags for About page
-onMounted(() => {
-  document.title = 'About Dither - Open Blockchain Messaging Protocol | dither.chat';
-  const metaDescription = document.querySelector('meta[name="description"]');
-  if (metaDescription) {
-    metaDescription.setAttribute('content', 'Dither is an open messaging protocol built on blockchain. Decentralized social messaging, onchain posts, and durable protocol for Web3. Built on AtomOne blockchain. Simple, extensible, and protocol-first.');
-  }
-
-  // Update OG tags
-  const ogTitle = document.querySelector('meta[property="og:title"]');
-  const ogDescription = document.querySelector('meta[property="og:description"]');
-  const ogUrl = document.querySelector('meta[property="og:url"]');
-
-  if (ogTitle) ogTitle.setAttribute('content', 'About Dither - Open Blockchain Messaging Protocol');
-  if (ogDescription) ogDescription.setAttribute('content', 'Open messaging protocol built on blockchain. Decentralized social messaging, onchain posts, and durable protocol for Web3. Built on AtomOne.');
-  if (ogUrl) ogUrl.setAttribute('content', 'https://dither.chat/about');
-
-  // Add structured data
-  const structuredData = {
-    '@context': 'https://schema.org',
-    '@type': 'WebPage',
-    'name': 'About Dither - Open Blockchain Messaging Protocol',
-    'description': 'Dither is an open messaging protocol built on blockchain. Decentralized social messaging, onchain posts, and durable protocol for Web3. Built on AtomOne blockchain.',
-    'url': 'https://dither.chat/about',
-    'keywords': 'blockchain messaging, decentralized social, onchain messaging, messaging protocol, Web3 social, crypto social media, AtomOne, Cosmos blockchain, open protocol, durable messaging',
-    'mainEntity': {
-      '@type': 'SoftwareApplication',
-      'name': 'Dither',
-      'applicationCategory': 'SocialNetworkingApplication',
-      'operatingSystem': 'Web',
-      'description': 'Open messaging protocol for publishing messages onchain. Built on AtomOne blockchain.',
-      'keywords': 'blockchain messaging, decentralized social, onchain messaging, messaging protocol, Web3',
-    },
-  };
-
-  const script = document.createElement('script');
-  script.type = 'application/ld+json';
-  script.text = JSON.stringify(structuredData);
-  script.id = 'about-structured-data';
-  document.head.appendChild(script);
+useSEO({
+  title: 'About Dither - Open Blockchain Messaging Protocol | dither.chat',
+  description: 'Dither is an open messaging protocol built on blockchain. Decentralized social messaging, onchain posts, and durable protocol for Web3. Built on AtomOne blockchain.',
+  ogTitle: 'About Dither - Open Blockchain Messaging Protocol',
+  ogDescription: 'Open messaging protocol built on blockchain. Decentralized social messaging, onchain posts, and durable protocol for Web3.',
+  ogUrl: `${externalLinks.siteUrl}/about`,
 });
 
-onUnmounted(() => {
-  const script = document.getElementById('about-structured-data');
-  if (script) script.remove();
-
-  // Reset to default
-  document.title = 'dither.chat';
-  const metaDescription = document.querySelector('meta[name="description"]');
-  if (metaDescription) {
-    metaDescription.setAttribute('content', 'Dither is a public messaging protocol that anyone can build on. All data is public and immutable on the AtomOne blockchain.');
-  }
-
-  const ogTitle = document.querySelector('meta[property="og:title"]');
-  const ogDescription = document.querySelector('meta[property="og:description"]');
-  const ogUrl = document.querySelector('meta[property="og:url"]');
-
-  if (ogTitle) ogTitle.setAttribute('content', 'dither.chat - The public protocol for thought');
-  if (ogDescription) ogDescription.setAttribute('content', 'Dither is a public messaging protocol that anyone can build on. All data is public and immutable on the AtomOne blockchain.');
-  if (ogUrl) ogUrl.setAttribute('content', 'https://dither.chat');
-});
-
-function handleTelegramBot() {
-  window.open('https://t.me/dither_chat_bot', '_blank');
-}
-
-function handleApiDocs() {
-  window.open('https://github.com/allinbits/dither.chat', '_blank');
-}
-
-function handleGitHub() {
-  window.open('https://github.com/allinbits/dither.chat', '_blank');
-}
-
-function handleProtocolDocs() {
-  window.open('https://docs.dither.chat', '_blank');
-}
-
-function handlePrivacyPolicy() {
-  window.open('https://docs.dither.chat/policies/privacy-policy', '_blank');
-}
-
-function handleTermsOfService() {
-  window.open('https://docs.dither.chat/policies/terms-of-service', '_blank');
+function openLink(url: string) {
+  window.open(url, '_blank', 'noopener,noreferrer');
 }
 </script>
 
 <template>
   <MainLayout>
     <div class="flex flex-col min-h-full">
-      <ViewHeading :title="$t('components.Headings.about')" />
+      <div class="flex flex-col items-center justify-center gap-12 px-6 py-20 max-w-3xl mx-auto w-full min-h-[calc(100vh-220px)] text-center">
+        <h1 class="text-7xl font-bold tracking-tight leading-none">
+          dither
+        </h1>
 
-      <div class="flex flex-col gap-12 px-6 py-8 max-w-3xl mx-auto w-full">
-        <!-- Hero Section -->
-        <section class="flex flex-col items-center gap-5 text-center py-4">
-          <h1 class="text-5xl font-bold tracking-tight">
-            dither
-          </h1>
-          <p class="text-xl text-muted-foreground max-w-2xl">
+        <div class="flex flex-col gap-4 max-w-2xl">
+          <p class="text-3xl text-foreground font-semibold leading-snug tracking-tight">
             {{ $t('components.About.heroTagline') }}
           </p>
-          <p class="text-sm text-muted-foreground/70 tracking-wide uppercase">
-            {{ $t('components.About.heroSubheading') }}
-          </p>
-        </section>
-
-        <!-- What is Dither Section -->
-        <section class="flex flex-col gap-6">
-          <h2 class="text-2xl font-semibold">
-            {{ $t('components.About.whatTitle') }}
-          </h2>
-          <p class="text-muted-foreground max-w-2xl">
-            {{ $t('components.About.whatDesc') }}
-          </p>
-
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-            <div class="p-4 rounded-lg border bg-card">
-              <h3 class="font-semibold text-sm mb-2">
-                {{ $t('components.About.whatProtocol') }}
-              </h3>
-              <p class="text-sm text-muted-foreground">
-                {{ $t('components.About.whatProtocolDesc') }}
-              </p>
-            </div>
-
-            <div class="p-4 rounded-lg border bg-card">
-              <h3 class="font-semibold text-sm mb-2">
-                {{ $t('components.About.whatMinimal') }}
-              </h3>
-              <p class="text-sm text-muted-foreground">
-                {{ $t('components.About.whatMinimalDesc') }}
-              </p>
-            </div>
-
-            <div class="p-4 rounded-lg border bg-card">
-              <h3 class="font-semibold text-sm mb-2">
-                {{ $t('components.About.whatPermanent') }}
-              </h3>
-              <p class="text-sm text-muted-foreground">
-                {{ $t('components.About.whatPermanentDesc') }}
-              </p>
-            </div>
-          </div>
-        </section>
-
-        <!-- How it works Section -->
-        <section class="flex flex-col gap-6">
-          <h2 class="text-2xl font-semibold">
-            {{ $t('components.About.howTitle') }}
-          </h2>
-          <p class="text-muted-foreground max-w-2xl">
-            {{ $t('components.About.howDesc') }}
-          </p>
-
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-            <div class="p-4 rounded-lg border bg-card flex flex-col">
-              <h3 class="font-semibold text-sm mb-2">
-                {{ $t('components.About.howWeb') }}
-              </h3>
-              <p class="text-sm text-muted-foreground mb-4 flex-1">
-                {{ $t('components.About.howWebDesc') }}
-              </p>
-              <div class="w-full [&_button]:w-full [&_button]:h-10">
-                <WalletConnectButton />
-              </div>
-            </div>
-
-            <div class="p-4 rounded-lg border bg-card flex flex-col">
-              <h3 class="font-semibold text-sm mb-2">
-                {{ $t('components.About.howTelegram') }}
-              </h3>
-              <p class="text-sm text-muted-foreground mb-4 flex-1">
-                {{ $t('components.About.howTelegramDesc') }}
-              </p>
-              <Button
-                variant="outline"
-                size="sm"
-                class="w-full"
-                @click="handleTelegramBot"
-              >
-                Open Bot
-              </Button>
-            </div>
-
-            <div class="p-4 rounded-lg border bg-card flex flex-col">
-              <h3 class="font-semibold text-sm mb-2">
-                {{ $t('components.About.howCli') }}
-              </h3>
-              <p class="text-sm text-muted-foreground mb-4 flex-1">
-                {{ $t('components.About.howCliDesc') }}
-              </p>
-              <Button
-                variant="outline"
-                size="sm"
-                class="w-full"
-                @click="handleProtocolDocs"
-              >
-                Protocol Docs
-              </Button>
-            </div>
-          </div>
-        </section>
-
-        <!-- FAQ Section -->
-        <section class="flex flex-col gap-4">
-          <h2 class="text-2xl font-semibold">
-            {{ $t('components.About.faqTitle') }}
-          </h2>
-
-          <div class="flex flex-col gap-3">
-            <div class="flex flex-col gap-2 p-4 rounded-lg border bg-card">
-              <h3 class="font-semibold text-sm">
-                {{ $t('components.About.faqCrypto') }}
-              </h3>
-              <p class="text-sm text-muted-foreground">
-                {{ $t('components.About.faqCryptoAnswer') }}
-              </p>
-            </div>
-
-            <div class="flex flex-col gap-2 p-4 rounded-lg border bg-card">
-              <h3 class="font-semibold text-sm">
-                {{ $t('components.About.faqDelete') }}
-              </h3>
-              <p class="text-sm text-muted-foreground">
-                {{ $t('components.About.faqDeleteAnswer') }}
-              </p>
-            </div>
-
-            <div class="flex flex-col gap-2 p-4 rounded-lg border bg-card">
-              <h3 class="font-semibold text-sm">
-                {{ $t('components.About.faqCost') }}
-              </h3>
-              <p class="text-sm text-muted-foreground">
-                {{ $t('components.About.faqCostAnswer') }}
-              </p>
-            </div>
-          </div>
-        </section>
-
-        <!-- Developers Section -->
-        <section class="flex flex-col gap-4">
-          <h2 class="text-2xl font-semibold">
-            {{ $t('components.About.developersTitle') }}
-          </h2>
-          <p class="text-sm text-muted-foreground max-w-2xl">
-            {{ $t('components.About.developersDesc') }}
-          </p>
-          <div class="flex flex-col sm:flex-row gap-3 mt-2">
-            <Button
-              variant="outline"
-              size="sm"
-              class="flex items-center gap-2"
-              @click="handleApiDocs"
-            >
-              <LinkIcon class="size-4" />
-              {{ $t('components.About.developersApi') }}
-            </Button>
-
-            <Button
-              variant="outline"
-              size="sm"
-              class="flex items-center gap-2"
-              @click="handleGitHub"
-            >
-              <Github class="size-4" />
-              {{ $t('components.About.developersGithub') }}
-            </Button>
-          </div>
-        </section>
-
-        <!-- Links & Legal Footer -->
-        <section class="flex flex-col gap-8 pt-12 border-t">
-          <div class="flex flex-wrap items-center justify-center gap-6 text-sm">
+          <p class="text-base text-muted-foreground leading-relaxed">
+            Posts are stored permanently on
             <button
-              class="text-muted-foreground hover:text-foreground transition-colors"
-              @click="handlePrivacyPolicy"
+              class="text-foreground hover:underline transition-colors"
+              @click="openLink(externalLinks.atomoneWebsite)"
             >
-              {{ $t('components.About.privacyPolicy') }}
+              {{ $t('components.About.atomoneLink') }}
             </button>
-            <span class="text-muted-foreground/50">•</span>
-            <button
-              class="text-muted-foreground hover:text-foreground transition-colors"
-              @click="handleTermsOfService"
-            >
-              {{ $t('components.About.termsAndConditions') }}
-            </button>
-          </div>
+          </p>
+          <p class="text-base text-muted-foreground/75">
+            {{ $t('components.About.coreDesc') }}
+          </p>
+        </div>
 
-          <div class="flex flex-col items-center gap-4 py-8">
-            <!-- All in Bits logo -->
-            <svg
-              viewBox="0 0 80 53"
-              width="120"
-              height="80"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              class="opacity-60"
-              aria-label="All in Bits logo"
-              role="img"
-            >
-              <path
-                fill-rule="evenodd"
-                clip-rule="evenodd"
-                d="M24.9998 19.9998 30 30H0L5.00021 19.9998H24.9998zM15 0l4.9998 9.99979H10.0002L15 0zM41.6667.0c2.7614.0 5 2.23858 5 5s-2.2386 5-5 5c-2.7615.0-5-2.23858-5-5s2.2385-5 5-5zm-5 30V20h10V30h-10zM75 20H56.6667V30H75C77.7614 30 80 27.7614 80 25S77.7614 20 75 20zM56.6667.0H68.3333c2.76150000000001.0 5 2.23858 5 5S71.0948 10 68.3333 10H56.6667V0zM77.5939 43.8512C77.9255 44.0839 78.1137 44.4092 78.1583 44.827H79.866C79.8564 44.2753 79.7018 43.7874 79.402 43.3633 79.1022 42.9359 78.6893 42.6027 78.1631 42.3635 77.6401 42.1212 77.0311 42 76.3359 42 75.6503 42 75.0364 42.1212 74.4943 42.3635 73.9522 42.6027 73.5233 42.9391 73.2076 43.3728 72.895 43.8065 72.7388 44.312 72.7388 44.8891 72.7388 45.5907 72.9716 46.1535 73.4372 46.5777 73.9059 46.9986 74.5437 47.3127 75.3505 47.52L76.465 47.807C76.8158 47.8963 77.1219 47.9983 77.3834 48.1131 77.6481 48.2247 77.8538 48.3651 78.0005 48.5341 78.1472 48.6999 78.2221 48.9104 78.2253 49.1655 78.2221 49.4461 78.1376 49.6916 77.9718 49.9021 77.806 50.1094 77.5764 50.272 77.283 50.39 76.9928 50.5048 76.6548 50.5622 76.2689 50.5622 75.899 50.5622 75.5642 50.5064 75.2644 50.3948 74.9678 50.2832 74.7271 50.1142 74.5421 49.8878 74.3572 49.6613 74.2519 49.3775 74.2264 49.0363H72.4805C72.506 49.6869 72.675 50.2385 72.9875 50.6914 73.3032 51.1442 73.7401 51.4886 74.2982 51.7246 74.8594 51.9605 75.5211 52.0785 76.2832 52.0785 77.0677 52.0785 77.7358 51.9573 78.2875 51.715 78.8423 51.4694 79.2665 51.1298 79.5599 50.6961 79.8532 50.2593 79.9999 49.7538 79.9999 49.1798 79.9999 48.7557 79.9202 48.3858 79.7607 48.0701 79.6013 47.7544 79.3845 47.4849 79.1102 47.2617 78.8392 47.0385 78.5314 46.8535 78.187 46.7068 77.8458 46.5601 77.4903 46.4437 77.1203 46.3576L76.2019 46.128C76.001 46.0802 75.8017 46.0212 75.604 45.951 75.4063 45.8809 75.2261 45.7948 75.0635 45.6927 74.9009 45.5875 74.7717 45.46 74.676 45.3101 74.5836 45.1602 74.5373 44.9832 74.5373 44.7791 74.5405 44.5336 74.6123 44.3151 74.7526 44.1238 74.8929 43.9325 75.0954 43.781 75.3601 43.6694 75.6247 43.5578 75.942 43.502 76.312 43.502 76.8381 43.502 77.2654 43.6184 77.5939 43.8512zM62.973 42.1339v1.4877h3.0279v8.3087h1.7603V43.6216H70.789V42.1339H62.973zm-2.03.0V51.9303H59.1684V42.1339H60.943zm-11.1662.0V51.9303h3.9654C54.4916 51.9303 55.1134 51.8139 55.6077 51.5811 56.102 51.3483 56.4719 51.031 56.7174 50.6292 56.963 50.2242 57.0857 49.7682 57.0857 49.2611 57.0857 48.7637 56.9837 48.3396 56.7796 47.9888 56.5755 47.638 56.3124 47.3669 55.9903 47.1756 55.6714 46.9811 55.3382 46.8743 54.9906 46.8551V46.7595C55.3095 46.6829 55.5981 46.557 55.8564 46.3816 56.1147 46.2062 56.3204 45.9782 56.4735 45.6975 56.6265 45.4137 56.7031 45.0725 56.7031 44.6739 56.7031 44.1892 56.5851 43.7555 56.3491 43.3728 56.1163 42.9902 55.7639 42.6888 55.292 42.4688 54.8232 42.2456 54.2348 42.1339 53.5269 42.1339H49.7768zM53.4599 50.4474H51.5514v-2.87h1.9564C53.8745 47.5774 54.1902 47.646 54.4549 47.7831 54.7196 47.917 54.9236 48.102 55.0672 48.338 55.2107 48.5708 55.2824 48.8322 55.2824 49.1224 55.2824 49.5115 55.1389 49.8304 54.8519 50.0791 54.5681 50.3246 54.1041 50.4474 53.4599 50.4474zM53.3069 46.3003H51.5514V43.5977h1.7937C53.8681 43.5977 54.262 43.7204 54.5266 43.966 54.7945 44.2115 54.9284 44.524 54.9284 44.9035 54.9284 45.1905 54.8567 45.4392 54.7132 45.6497 54.5729 45.857 54.3799 46.018 54.1344 46.1328 53.8889 46.2444 53.613 46.3003 53.3069 46.3003zm-9.8827-4.1664V51.9303H41.8457l-4.6159-6.6728H37.1484v6.6728H35.3738V42.1339h1.5881L41.5731 48.8115H41.6592V42.1339h1.765zM32.9133 51.9303V42.1339H31.1386V51.9303h1.7747zm-13.8228.0V42.1339h1.7747v8.3087h4.3145v1.4877H19.0905zM10.9222 42.1339V51.9303h6.0892V50.4426H12.6969V42.1339H10.9222zM1.89421 51.9303H0L3.4488 42.1339H5.63958L9.09316 51.9303H7.19895L6.38732 49.5147H2.70435L1.89421 51.9303zM4.58245 44.143l1.32593 3.9462H3.18242l1.3235-3.9462h.07653z"
-                fill="currentcolor"
-              />
-            </svg>
+        <Button
+          variant="elevated"
+          size="lg"
+          class="group flex items-center gap-2 min-w-[220px]"
+          @click="openLink(externalLinks.protocolDocs)"
+        >
+          <span>{{ $t('components.About.ctaDocs') }}</span>
+          <ArrowUpRight class="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+        </Button>
 
-            <span class="text-sm text-muted-foreground">
-              &copy; All in Bits 2025
-            </span>
-          </div>
-        </section>
+        <div class="flex flex-wrap items-center justify-center gap-4 text-sm text-muted-foreground/80 mt-12 border-t border-border/40 pt-5 w-full">
+          <button
+            class="hover:text-foreground transition-colors"
+            @click="openLink(externalLinks.privacyPolicy)"
+          >
+            {{ $t('components.About.ctaPrivacy') }}
+          </button>
+          <span aria-hidden="true">•</span>
+          <button
+            class="hover:text-foreground transition-colors"
+            @click="openLink(externalLinks.termsOfService)"
+          >
+            {{ $t('components.About.ctaTerms') }}
+          </button>
+          <span aria-hidden="true">•</span>
+          <button
+            class="hover:text-foreground transition-colors"
+            @click="openLink(externalLinks.githubRepo)"
+          >
+            {{ $t('components.About.ctaGitHub') }}
+          </button>
+          <span aria-hidden="true">•</span>
+          <button
+            class="hover:text-foreground transition-colors"
+            @click="openLink(externalLinks.telegramBot)"
+          >
+            {{ $t('components.About.ctaTelegram') }}
+          </button>
+        </div>
       </div>
     </div>
   </MainLayout>
