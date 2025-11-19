@@ -32,43 +32,48 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Install pnpm with npm
-        run: npm install -g pnpm
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.2
 
       - name: Create Directory
         run: mkdir -p ./packages/api-main/data/postgres_data
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: .nvmrc
-          cache: pnpm
-
-      - name: Install dependencies with pnpm
-        run: pnpm install
+      - name: Install dependencies
+        run: bun install
 
       - name: Set up Docker
         uses: docker/setup-docker-action@v4
-
-      - name: Build API Types
-        working-directory: ./packages/lib-api-types
-        run: pnpm build
 
       - name: Run Docker Compose Up
         working-directory: ./packages/api-main
         run: docker compose -f ./docker-compose-github.yml up --build -d --wait --wait-timeout 30
 
-      - name: Push database migrations
+      - name: Wait for database to be ready
         working-directory: ./packages/api-main
         run: |
-          cp .env.example .env
-          pnpm db:push:force
+          until docker exec postgres_db pg_isready -U default; do
+            sleep 1
+          done
 
-      - name: Run tests with pnpm
+      - name: Push database migrations
         working-directory: ./packages/api-main
-        run: pnpm test
+        run: bun run db:push:force
+        env:
+          PG_URI: postgresql://default:password@localhost:5432/postgres
+
+      - name: Run tests
+        working-directory: ./packages/api-main
+        run: bun run test
+        env:
+          NODE_OPTIONS: --experimental-global-webcrypto
+          PG_URI: postgresql://default:password@localhost:5432/postgres
+          JWT: default_jwt_secret
+          JWT_STRICTNESS: lax
+          AUTH: whatever
 
   build:
     needs: [detect-changes, test]
@@ -114,7 +119,7 @@ jobs:
 
   notify:
     needs: [build]
-    if: failure()
+    if: failure() && needs.build.result != 'skipped'
     runs-on: ubuntu-latest
     steps:
       - uses: appleboy/telegram-action@v1.0.1

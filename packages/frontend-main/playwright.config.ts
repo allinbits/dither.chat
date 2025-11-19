@@ -68,7 +68,7 @@ export default defineConfig({
   ],
 
   webServer: {
-    command: 'pnpm dev',
+    command: 'bun dev',
     port: 5173,
     reuseExistingServer: true,
   },

@@ -2,43 +2,23 @@
 import { computed, ref } from 'vue';
 
 import Button from '@/components/ui/button/Button.vue';
+import { extractImageUrl, extractVideoURL } from '@/utility/mediaUrls';
 
 import PostMessage from './PostMessage.vue';
 
 const props = defineProps<{ message: string }>();
 const isEmbedToggled = ref(false);
 
-function extractImageURL(msg: string) {
-  const regex = /(https?:\/\/\S+\.(?:jpg|jpeg|png|gif))/i;
-  const match = msg.match(regex);
+const imageUrl = computed(() => extractImageUrl(props.message) || '');
+const hasImage = computed(() => imageUrl.value.length > 0);
 
-  if (match && match[1]) {
-    return match[1];
-  }
-  return null;
-}
-
-const hasImage = computed(() => {
-  return extractImageURL(props.message) !== null;
-});
-
-const imageUrl = computed(() => {
-  return extractImageURL(props.message) ?? '';
-});
-
-const youtubeRegex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/g;
 const youtubeLink = computed(() => {
-  const regex = youtubeRegex.exec(props.message);
-  if (!regex || !regex[1]) {
-    return undefined;
-  }
-
-  return `https://www.youtube.com/embed/${regex[1]}`;
+  return extractVideoURL(props.message);
 });
 </script>
 
 <template>
-  <div class="flex flex-col w-full gap-2">
+  <div class="flex flex-col w-full gap-2 max-w-[calc(min(100dvw,var(--main-min-width-desktop))-5.5rem)]">
     <PostMessage :message="props.message" />
 
     <div v-if="hasImage" class="flex flex-col gap-2 cursor-default" @click.stop="() => {}">
@@ -50,14 +30,14 @@ const youtubeLink = computed(() => {
           {{ $t('components.Button.hideImage') }}
         </Button>
         <div class="flex flex-col">
-          <img alt="embedded content" class="rounded" :src="imageUrl">
+          <img alt="embedded content" class="rounded" :src="imageUrl" referrerpolicy="no-referrer">
         </div>
       </template>
     </div>
 
     <iframe
       v-if="youtubeLink"
-      class="w-full aspect-video rounded-sm"
+      class="w-full aspect-video rounded-sm max-w-[calc(100%-0.5rem)]"
       :src="youtubeLink"
       title="YouTube Video"
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

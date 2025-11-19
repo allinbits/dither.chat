@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { RouteRecordNameGeneric } from 'vue-router';
 
-import { Bell, Feather, HelpCircle, House, Search, Settings, User } from 'lucide-vue-next';
+import { Bell, Feather, HelpCircle, House, Settings, User } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -25,10 +25,6 @@ const buttonClass = (routeName?: RouteRecordNameGeneric) => `flex justify-center
     <nav class="contents">
       <RouterLink to="/" :class="buttonClass(routesNames.home)">
         <House class="size-6" />
-      </RouterLink>
-
-      <RouterLink to="/explore" :class="buttonClass(routesNames.explore)">
-        <Search class="size-6" />
       </RouterLink>
 
       <RouterLink v-if="wallet.loggedIn.value" to="/notifications" :class="cn(buttonClass(routesNames.notifications), 'relative')">

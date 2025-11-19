@@ -57,10 +57,10 @@ export function isReaderAuthorizationValid(headers: Record<string, string | unde
 
 export async function getJsonbArrayCount(hash: string, tableName: string) {
   const result = await getDatabase().execute(sql`
-        SELECT jsonb_array_length(data)::integer AS array_count
+        SELECT jsonb_array_length(data) ::integer AS array_count
         FROM ${tableName}
         WHERE hash = ${hash}
-        `);
+    `);
 
   return result.rows.length > 0 ? result.rows[0].array_count : 0;
 }
@@ -74,11 +74,6 @@ export function getRequestIP(request: Request) {
   const realIp = request.headers.get('x-real-ip');
   if (realIp) {
     return realIp;
-  }
-
-  const flyClientIP = request.headers.get('fly-client-ip');
-  if (flyClientIP) {
-    return flyClientIP;
   }
 
   const cfIp = request.headers.get('cf-connecting-ip');

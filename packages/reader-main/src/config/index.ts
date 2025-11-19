@@ -13,8 +13,9 @@ export function useConfig(): typeof config {
     return config;
   }
 
-  if (typeof process.env.AUTH === 'undefined') {
-    console.warn(`AUTH env variable is set to default, ensure you provide an authorization key for reader communication`);
+  if (!process.env.AUTH || process.env.AUTH === 'default') {
+    console.error(`Failed to specify AUTH, no authorization secret provided`);
+    throw new Error(`AUTH must be set to a strong secret`);
   }
 
   config = {
@@ -25,7 +26,7 @@ export function useConfig(): typeof config {
     RECEIVER: process.env.RECEIVER,
     SENDER: process.env.SENDER,
     LOG: process.env.LOG === 'true',
-    AUTH: process.env.AUTH ?? 'default',
+    AUTH: process.env.AUTH,
 
     ECLESIA_GRAPHQL_ENDPOINT: process.env.ECLESIA_GRAPHQL_ENDPOINT,
     ECLESIA_GRAPHQL_SECRET: process.env.ECLESIA_GRAPHQL_SECRET,

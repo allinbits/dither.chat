@@ -11,7 +11,9 @@
     "https://github.com",
     "https://*.githubusercontent.com",
     "https://api.dicebear.com",
-    "https://i.ytimg.com"
+    "https://i.ytimg.com",
+    "https://*.medium.com",
+    "https://*.twimg.com"
   ],
   "font-src": ["'self'", "https://fonts.gstatic.com"],
   "frame-src": [

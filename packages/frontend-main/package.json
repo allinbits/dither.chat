@@ -1,12 +1,12 @@
 {
-  "name": "frontend-main",
+  "name": "@dither.chat/frontend",
   "type": "module",
   "version": "0.0.1",
   "private": true,
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc -b && vite build",
     "preview": "vite preview",
+    "build": "bunx vue-tsc -b && vite build",
     "test:e2e": "playwright test"
   },
   "dependencies": {
@@ -52,6 +52,6 @@
     "vite": "^6.3.7",
     "vite-plugin-node-polyfills": "^0.24.0",
     "vite-svg-loader": "^5.1.0",
-    "vue-tsc": "^2.2.12"
+    "vue-tsc": "^3.1.4"
   }
 }

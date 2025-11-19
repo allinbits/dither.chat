@@ -3,6 +3,8 @@ import { Decimal } from '@cosmjs/math';
 import { computed, ref } from 'vue';
 import { toast } from 'vue-sonner';
 
+import PostEditorToolbar from '@/components/posts/PostEditorToolbar.vue';
+import PostMediaThumbnail from '@/components/posts/PostMediaThumbnail.vue';
 import
 { Button }
   from '@/components/ui/button';
@@ -75,6 +77,19 @@ async function handleSubmit() {
     toast.dismiss(toastId);
   }
 }
+
+function handleInsertText(text: string) {
+  // Ensure there's a space before inserting new text
+  if (message.value.length > 0 && !message.value.endsWith(' ')) {
+    message.value += ' ';
+  }
+
+  message.value += text;
+}
+
+function handleRemoveText(text: string) {
+  message.value = message.value.replace(text, '').trim();
+}
 </script>
 
 <template>
@@ -83,7 +98,13 @@ async function handleSubmit() {
       <ResponsiveDialogContent>
         <DialogTitle>{{ $t('components.PopupTitles.newPost') }}</DialogTitle>
 
-        <Textarea v-model="message" :placeholder="$t('placeholders.post')" :maxlength="MAX_CHARS" />
+        <Textarea
+          v-model="message" :placeholder="$t('placeholders.post')" :maxlength="MAX_CHARS" class="min-h-[74px] w-full break-all"
+        />
+
+        <PostMediaThumbnail :content="message" @remove-text="handleRemoveText" />
+
+        <PostEditorToolbar :content="message" @insert-text="handleInsertText" />
 
         <!-- Transaction Form -->
         <div class="flex flex-col w-full gap-4">

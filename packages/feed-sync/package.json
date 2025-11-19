@@ -1,18 +1,16 @@
 {
-  "name": "feed-sync",
+  "name": "@dither.chat/feed-sync",
   "type": "module",
   "version": "1.0.0",
-  "packageManager": "pnpm@10.11.1",
   "description": "",
   "author": "",
-  "main": "dist/index.js",
+  "main": "src/index.ts",
   "scripts": {
-    "start": "vite-node ./src/index.ts",
-    "build": "pnpm build:deps && tsc",
-    "build:deps": "pnpm --filter {.}^... build"
+    "start": "bun ./src/index.ts",
+    "build": "tsc"
   },
   "dependencies": {
-    "dotenv": "^16.6.1",
+    "dotenv": "^17.2.3",
     "limiter": "^3.0.0",
     "pg": "^8.16.3",
     "pg-logical-replication": "^2.2.1",
@@ -21,7 +19,6 @@
     "winston": "^3.18.3"
   },
   "devDependencies": {
-    "@types/retry": "^0.12.5",
-    "vite-node": "^3.2.4"
+    "@types/retry": "^0.12.5"
   }
 }
