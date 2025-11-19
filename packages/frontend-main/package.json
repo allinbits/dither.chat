@@ -5,8 +5,9 @@
   "private": true,
   "scripts": {
     "dev": "vite",
+    "preview": "vite preview",
     "build": "bunx vue-tsc -b && vite build",
-    "preview": "vite preview"
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@cosmjs/amino": "^0.33.1",
@@ -43,6 +44,7 @@
   "devDependencies": {
     "@keplr-wallet/types": "^0.12.280",
     "@types/lodash.merge": "^4.6.9",
+    "@types/node": "^22.18.12",
     "@vitejs/plugin-vue": "^5.2.4",
     "@vue/tsconfig": "^0.7.0",
     "lodash.merge": "^4.6.2",
