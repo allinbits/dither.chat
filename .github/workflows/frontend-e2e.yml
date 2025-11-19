@@ -82,7 +82,7 @@ jobs:
 
       - name: Upload playwright results
         uses: actions/upload-artifact@v4
-        if: ${{ failure() }}
+        if: failure()
         with:
           name: playwright-results
           path: |
