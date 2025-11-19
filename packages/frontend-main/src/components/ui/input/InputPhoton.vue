@@ -11,7 +11,13 @@ import Input from './Input.vue';
 const emit = defineEmits(['update:modelValue', 'onValidityChange']);
 
 const fractionalDigits = useFractionalDigits();
-const model = defineModel<number | string>({ default: Decimal.fromAtomics('1', fractionalDigits).toFloatApproximation() });
+const model = defineModel<number | string>();
+function getModelValue() {
+  if (model.value === undefined || model.value === null || model.value === '') {
+    model.value = Decimal.fromAtomics('1', fractionalDigits).toFloatApproximation();
+  }
+  return model.value;
+}
 const min = computed(() => Decimal.fromAtomics('1', fractionalDigits).toFloatApproximation());
 const step = computed(() => Decimal.fromAtomics('1', fractionalDigits).toFloatApproximation());
 
@@ -27,11 +33,11 @@ const balanceAtomics = computed(() => {
 const balanceDecimal = computed(() => Decimal.fromAtomics(balanceAtomics.value, fractionalDigits));
 const hasEnoughBalance = computed(() =>
   balanceDecimal.value.isGreaterThanOrEqual(
-    Decimal.fromUserInput(model.value.toString(), fractionalDigits),
+    Decimal.fromUserInput(getModelValue().toString(), fractionalDigits),
   ),
 );
 const balanceDiffDisplay = computed(() =>
-  balanceDecimal.value.minus(Decimal.fromUserInput(model.value.toString(), fractionalDigits)).toString(),
+  balanceDecimal.value.minus(Decimal.fromUserInput(getModelValue().toString(), fractionalDigits)).toString(),
 );
 
 // Truncate the input value to respect fractionalDigits
