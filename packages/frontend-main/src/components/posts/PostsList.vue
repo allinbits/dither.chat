@@ -5,8 +5,6 @@ import type { Post } from 'api-main/types/feed';
 import { Loader } from 'lucide-vue-next';
 import { computed } from 'vue';
 
-import { cn } from '@/utility';
-
 import Button from '../ui/button/Button.vue';
 import PostItem from './PostItem.vue';
 
@@ -17,7 +15,7 @@ const flatPosts = computed(() => data.value?.pages.flat() ?? []);
 </script>
 
 <template>
-  <div :class="cn('flex flex-col w-full box-border', flatPosts.length && 'border-t')">
+  <div class="flex flex-col w-full box-border">
     <Loader v-if="isLoading" class="animate-spin w-full mt-10" />
 
     <span v-else-if="!flatPosts.length" class="self-center mt-4 text-md font-semibold text-base">{{
