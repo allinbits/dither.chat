@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { Camera, X } from 'lucide-vue-next';
+import { Camera } from 'lucide-vue-next';
 import { computed, ref, watch } from 'vue';
 
 import Avatar from '@/components/ui/avatar/Avatar.vue';
@@ -95,33 +95,14 @@ watch(isShown, (newValue) => {
 
 <template>
   <Dialog v-if="isShown" :open="isShown" @update:open="handleClose">
-    <ResponsiveDialogContent class="max-w-[600px] p-0">
+    <ResponsiveDialogContent>
       <!-- Header -->
-      <div class="sticky top-0 z-10 flex items-center justify-between border-b bg-background px-4 py-3">
-        <div class="flex items-center gap-4">
-          <button
-            type="button"
-            class="rounded-full p-2 transition-colors hover:bg-accent"
-            @click="handleClose"
-          >
-            <X class="size-5" />
-            <span class="sr-only">Close</span>
-          </button>
-          <DialogTitle class="text-xl font-semibold">
-            Edit profile
-          </DialogTitle>
-        </div>
-        <Button
-          :disabled="!canSave"
-          class="rounded-full px-4 py-2 font-semibold"
-          @click="handleSave"
-        >
-          Save
-        </Button>
-      </div>
+      <DialogTitle class="text-xl font-semibold">
+        Edit profile
+      </DialogTitle>
 
       <!-- Content -->
-      <div class="flex flex-col">
+      <div class="flex flex-col gap-4 -mx-6">
         <!-- Banner Section -->
         <div class="group relative h-[200px] w-full bg-muted">
           <img
@@ -152,7 +133,7 @@ watch(isShown, (newValue) => {
 
         <!-- Avatar Section -->
         <div class="relative -mt-16 mb-4 flex items-end px-4">
-          <div class="relative">
+          <div class="relative" @click="avatarFileInput?.click()">
             <Avatar class="size-32 border-4 border-background">
               <AvatarImage
                 v-if="avatarPreview"
@@ -170,7 +151,6 @@ watch(isShown, (newValue) => {
             <button
               type="button"
               class="absolute bottom-0 right-0 flex items-center justify-center rounded-full bg-black/75 p-2 text-white backdrop-blur-sm transition-opacity hover:bg-black/85"
-              @click="avatarFileInput?.click()"
             >
               <Camera class="size-5" />
               <span class="sr-only">Add avatar photo</span>
@@ -186,7 +166,7 @@ watch(isShown, (newValue) => {
         </div>
 
         <!-- Form Fields -->
-        <div class="flex flex-col gap-4 px-4 pb-4">
+        <div class="flex flex-col gap-4 px-6">
           <!-- Name -->
           <div class="flex flex-col gap-2">
             <label class="text-sm font-medium text-muted-foreground">
@@ -217,6 +197,12 @@ watch(isShown, (newValue) => {
           </div>
         </div>
       </div>
+      <Button
+        :disabled="!canSave"
+        @click="handleSave"
+      >
+        Save
+      </Button>
     </ResponsiveDialogContent>
   </Dialog>
 </template>
