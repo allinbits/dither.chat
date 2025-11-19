@@ -13,8 +13,8 @@ const router = useRouter();
   <aside class="flex flex-col h-full w-full max-w-[358px] gap-8 p-6">
     <ColorModeSwitch />
 
-    <FilterPhoton v-if="router.currentRoute.value.name !== routesNames.explore && router.currentRoute.value.name !== routesNames.about" />
+    <FilterPhoton v-if="router.currentRoute.value.name !== routesNames.about" />
 
-    <SearchInput v-if="router.currentRoute.value.name !== routesNames.explore && router.currentRoute.value.name !== routesNames.about" />
+    <SearchInput v-if="router.currentRoute.value.name !== routesNames.about" />
   </aside>
 </template>
