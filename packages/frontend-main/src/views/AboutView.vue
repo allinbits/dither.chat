@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ArrowUpRight } from 'lucide-vue-next';
 
-import { useExternalLink } from '@/composables/useExternalLink';
 import { useSEO } from '@/composables/useSEO';
 import { externalLinks } from '@/config/externalLinks';
 import MainLayout from '@/layouts/MainLayout.vue';
@@ -13,8 +12,6 @@ useSEO({
   ogDescription: 'Open messaging protocol built on blockchain. Decentralized social messaging, onchain posts, and durable protocol for Web3.',
   ogUrl: `${externalLinks.siteUrl}/about`,
 });
-
-const { openExternalLink } = useExternalLink();
 </script>
 
 <template>
@@ -31,54 +28,66 @@ const { openExternalLink } = useExternalLink();
           </p>
           <p class="text-base text-muted-foreground leading-relaxed">
             Posts are stored permanently on
-            <button
+            <a
+              :href="externalLinks.atomoneWebsite"
+              target="_blank"
+              rel="noopener noreferrer"
               class="text-foreground hover:underline transition-colors"
-              @click="openExternalLink('atomoneWebsite')"
             >
               {{ $t('components.About.atomoneLink') }}
-            </button>.
+            </a>.
           </p>
           <p class="text-base text-muted-foreground/75">
             {{ $t('components.About.coreDesc') }}
           </p>
         </div>
 
-        <button
+        <a
+          :href="externalLinks.protocolDocs"
+          target="_blank"
+          rel="noopener noreferrer"
           class="text-sm text-muted-foreground/80 hover:text-foreground transition-colors flex items-center gap-1"
-          @click="openExternalLink('protocolDocs')"
         >
           {{ $t('components.About.ctaDocs') }}
           <ArrowUpRight class="size-3" />
-        </button>
+        </a>
 
         <div class="flex flex-wrap items-center justify-center gap-4 text-sm text-muted-foreground/80 mt-12 border-t border-border/40 pt-5 w-full">
-          <button
+          <a
+            :href="externalLinks.privacyPolicy"
+            target="_blank"
+            rel="noopener noreferrer"
             class="hover:text-foreground transition-colors"
-            @click="openExternalLink('privacyPolicy')"
           >
             {{ $t('components.About.ctaPrivacy') }}
-          </button>
+          </a>
           <span aria-hidden="true">•</span>
-          <button
+          <a
+            :href="externalLinks.termsOfService"
+            target="_blank"
+            rel="noopener noreferrer"
             class="hover:text-foreground transition-colors"
-            @click="openExternalLink('termsOfService')"
           >
             {{ $t('components.About.ctaTerms') }}
-          </button>
+          </a>
           <span aria-hidden="true">•</span>
-          <button
+          <a
+            :href="externalLinks.githubRepo"
+            target="_blank"
+            rel="noopener noreferrer"
             class="hover:text-foreground transition-colors"
-            @click="openExternalLink('githubRepo')"
           >
             {{ $t('components.About.ctaGitHub') }}
-          </button>
+          </a>
           <span aria-hidden="true">•</span>
-          <button
+          <a
+            :href="externalLinks.telegramBot"
+            target="_blank"
+            rel="noopener noreferrer"
             class="hover:text-foreground transition-colors"
-            @click="openExternalLink('telegramBot')"
           >
             {{ $t('components.About.ctaTelegram') }}
-          </button>
+          </a>
         </div>
       </div>
     </div>

@@ -1,3 +1,7 @@
+// TODO: Consider migrating to @unhead/vue for reactivity-first SEO management
+// See: https://unhead.unjs.io/
+// This would provide better SSR support and reactive composables that could be extended to other pages.
+
 interface SeoOptions {
   title?: string;
   description?: string;
