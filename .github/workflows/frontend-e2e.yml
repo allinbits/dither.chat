@@ -73,7 +73,7 @@ jobs:
 
       - name: Run Playwright Tests
         working-directory: packages/frontend-main
-        run: pnpm test:e2e
+        run: bun test:e2e
         env:
           VITE_ENVIRONMENT_TYPE: testnet
           VITE_API_ROOT_TESTNET: https://api.testnet.dither.chat/v1
