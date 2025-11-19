@@ -12,6 +12,7 @@ import { useFractionalDigits } from './useFractionalDigits';
 import { useTxNotification } from './useTxNotification';
 import { userPosts } from './useUserPosts';
 import { useWallet } from './useWallet';
+
 interface CreatePostRequestMutation {
   message: string;
   amountAtomics: string;

@@ -1,11 +1,12 @@
 import type { Ref } from 'vue';
 
+import type { PopupState } from './usePopups';
+
 import { Decimal } from '@cosmjs/math';
 import { computed, ref, watch } from 'vue';
 
 import { useBalanceFetcher } from './useBalanceFetcher';
 import { useFractionalDigits } from './useFractionalDigits';
-import type { PopupState } from './usePopups';
 import { usePopups } from './usePopups';
 import { useWallet } from './useWallet';
 
