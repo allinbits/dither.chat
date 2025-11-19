@@ -17,8 +17,8 @@ onMounted(async () => {
 
 const tmaInfo = computed(() => {
   const params = tmaStore.launchParams;
-  const initData = tmaStore.initData;
-  const user = initData?.user;
+  const initDataValue = tmaStore.initData;
+  const user = initDataValue?.user;
 
   if (!user) {
     return {
