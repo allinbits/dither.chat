@@ -2,7 +2,7 @@
 import type { InfiniteData, UseInfiniteQueryReturnType } from '@tanstack/vue-query';
 import type { Post } from 'api-main/types/feed';
 
-import { Frown, Loader } from 'lucide-vue-next';
+import { Inbox, Loader } from 'lucide-vue-next';
 import { computed } from 'vue';
 
 import Button from '../ui/button/Button.vue';
@@ -27,7 +27,7 @@ const flatPosts = computed(() => data.value?.pages.flat() ?? []);
     <Empty v-else-if="!flatPosts.length" class="mt-4">
       <EmptyHeader>
         <EmptyMedia variant="icon">
-          <Frown class="size-6" />
+          <Inbox class="size-6" />
         </EmptyMedia>
       </EmptyHeader>
       <EmptyTitle>
