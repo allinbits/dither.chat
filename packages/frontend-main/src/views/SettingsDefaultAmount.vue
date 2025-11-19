@@ -3,10 +3,9 @@ import { Decimal } from '@cosmjs/math';
 import { debouncedWatch } from '@vueuse/core';
 import { ref, watch } from 'vue';
 
-import { useFractionalDigits } from '@/composables/useFractionalDigits';
-
 import InputPhoton from '@/components/ui/input/InputPhoton.vue';
 import Switch from '@/components/ui/switch/Switch.vue';
+import { useFractionalDigits } from '@/composables/useFractionalDigits';
 import MainLayout from '@/layouts/MainLayout.vue';
 import { useConfigStore } from '@/stores/useConfigStore';
 import { showInfoToast } from '@/utility/toast';

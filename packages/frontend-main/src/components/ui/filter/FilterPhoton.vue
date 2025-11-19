@@ -2,9 +2,8 @@
 import { Decimal } from '@cosmjs/math';
 import { computed } from 'vue';
 
-import { useFractionalDigits } from '@/composables/useFractionalDigits';
-
 import { Slider } from '@/components/ui/slider';
+import { useFractionalDigits } from '@/composables/useFractionalDigits';
 import { useFiltersStore } from '@/stores/useFiltersStore';
 
 const store = useFiltersStore();
