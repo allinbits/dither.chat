@@ -100,39 +100,39 @@ export const UnfollowBodySchema = t.Object({
 });
 export type UnfollowBody = Static<typeof UnfollowBodySchema>;
 
-export const RegisterBodySchema = t.Object({
+export const RegisterHandleBodySchema = t.Object({
   hash: t.String(),
   from: t.String(),
   handle: t.String(),
   display: t.String(),
   timestamp: t.String(),
 });
-export type RegisterBody = Static<typeof RegisterBodySchema>;
+export type RegisterHandleBody = Static<typeof RegisterHandleBodySchema>;
 
-export const DisplayBodySchema = t.Object({
+export const DisplayHandleBodySchema = t.Object({
   hash: t.String(),
   from: t.String(),
   display: t.String(),
   timestamp: t.String(),
 });
-export type DisplayBody = Static<typeof DisplayBodySchema>;
+export type DisplayHandleBody = Static<typeof DisplayHandleBodySchema>;
 
-export const TransferBodySchema = t.Object({
+export const TransferHandleBodySchema = t.Object({
   hash: t.String(),
   handle: t.String(),
   from_address: t.String(),
   to_address: t.String(),
   timestamp: t.String(),
 });
-export type TransferBody = Static<typeof TransferBodySchema>;
+export type TransferHandleBody = Static<typeof TransferHandleBodySchema>;
 
-export const AcceptBodySchema = t.Object({
+export const AcceptHandleBodySchema = t.Object({
   hash: t.String(),
   from: t.String(),
   handle: t.String(),
   timestamp: t.String(),
 });
-export type AcceptBody = Static<typeof AcceptBodySchema>;
+export type AcceptHandleBody = Static<typeof AcceptHandleBodySchema>;
 
 export const AddPublicKeySchema = t.Object({
   key: t.String(),

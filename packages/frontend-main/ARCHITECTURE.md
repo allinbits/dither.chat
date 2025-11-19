@@ -195,12 +195,12 @@ dither.Unfollow('cosmos1user...');
 dither.Dislike('0xjkl012...');
 
 // Username registration and transfer to a new address
-dither.Register('handle', 'display text');
-dither.Transfer('handle', '0xabc123...');
-dither.Accept('handle');
+dither.RegisterHandle('handle', 'display text');
+dither.TransferHandle('handle', '0xabc123...');
+dither.AcceptHandle('handle');
 
 // Display text change for registered user handle
-dither.Display('display text');
+dither.SetDisplayHandle('display text');
 ```
 
 ### Supported Wallets

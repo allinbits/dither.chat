@@ -5,7 +5,7 @@ import { count, eq, sql } from 'drizzle-orm';
 import { getDatabase } from '../../drizzle/db';
 import { HandleTable } from '../../drizzle/schema';
 import { lower } from '../utility';
-import { maxDisplayLength } from './register';
+import { maxDisplayLength } from './registerHandle';
 
 const handleAddressExistsStmt = getDatabase()
   .select({ count: count() })
@@ -13,7 +13,7 @@ const handleAddressExistsStmt = getDatabase()
   .where(eq(lower(HandleTable.address), sql.placeholder('address')))
   .prepare('stmt_handle_address_exists');
 
-export async function Display(body: Posts.DisplayBody) {
+export async function DisplayHandle(body: Posts.DisplayHandleBody) {
   const display = (body.display || '').trim();
   if (display.length > maxDisplayLength) {
     return { status: 400, error: `maximum display length is ${maxDisplayLength} characters long` };
@@ -34,7 +34,7 @@ export async function Display(body: Posts.DisplayBody) {
     return { status: 200 };
   } catch (err) {
     console.error(err);
-    return { status: 400, error: 'failed to register handle' };
+    return { status: 400, error: 'failed to update display handle' };
   }
 }
 

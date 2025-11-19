@@ -8,7 +8,7 @@ import { getDatabase } from '../../drizzle/db';
 import { HandleTable, HandleTransferTable } from '../../drizzle/schema';
 import { lower } from '../utility';
 
-export async function Accept(body: Posts.AcceptBody) {
+export async function AcceptHandle(body: Posts.AcceptHandleBody) {
   const db = getDatabase();
   try {
     if (!await doesTransferToAddressExists(db, body.handle, body.to_address)) {

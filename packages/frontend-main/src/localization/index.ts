@@ -117,7 +117,7 @@ export const messages = {
         flag: 'Redflagged your post',
         follow: 'Followed you',
         reply: 'Replied to your post',
-        register: 'User handle registration',
+        registerHandle: 'User handle registration',
         empty: 'Nothing to show',
       },
       FollowingList: {

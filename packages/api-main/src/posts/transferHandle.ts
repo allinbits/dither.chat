@@ -8,7 +8,7 @@ import { getDatabase } from '../../drizzle/db';
 import { HandleTable, HandleTransferTable } from '../../drizzle/schema';
 import { lower } from '../utility';
 
-export async function Transfer(body: Posts.TransferBody) {
+export async function TransferHandle(body: Posts.TransferHandleBody) {
   const db = getDatabase();
   try {
     if (!await isHandleOwner(db, body.handle, body.from_address)) {

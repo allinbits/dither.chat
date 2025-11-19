@@ -164,7 +164,7 @@ export const notificationTypeEnum = pgEnum('notification_type', [
   'flag',
   'follow',
   'reply',
-  'register',
+  'registerHandle',
 ]);
 
 export const NotificationTable = pgTable(

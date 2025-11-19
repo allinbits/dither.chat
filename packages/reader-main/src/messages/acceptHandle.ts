@@ -12,7 +12,7 @@ import { useConfig } from '../config/index';
 declare module '@atomone/chronostate' {
   export namespace MemoExtractor {
     export interface TypeMap {
-      'dither.Accept': [string];
+      'dither.AcceptHandle': [string];
     }
   }
 }
@@ -20,17 +20,17 @@ declare module '@atomone/chronostate' {
 const { AUTH } = useConfig();
 const apiRoot = process.env.API_ROOT ?? 'http://localhost:3000/v1';
 
-export async function Accept(action: ActionWithData): Promise<ResponseStatus> {
+export async function AcceptHandle(action: ActionWithData): Promise<ResponseStatus> {
   try {
-    const [handle] = extractMemoContent(action.memo, 'dither.Accept');
-    const postBody: Posts.AcceptBody = {
+    const [handle] = extractMemoContent(action.memo, 'dither.AcceptHandle');
+    const postBody: Posts.AcceptHandleBody = {
       hash: action.hash,
       from: action.sender,
       handle,
       timestamp: action.timestamp,
     };
 
-    const rawResponse = await fetch(`${apiRoot}/accept`, {
+    const rawResponse = await fetch(`${apiRoot}/accept-handle`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -47,21 +47,21 @@ export async function Accept(action: ActionWithData): Promise<ResponseStatus> {
 
     const response = await rawResponse.json() as { status: number; error?: string };
     if (response.status === 200) {
-      console.log(`dither.Accept message processed successfully: ${action.hash}`);
+      console.log(`dither.AcceptHandle message processed successfully: ${action.hash}`);
       return 'SUCCESS';
     }
 
     if (response.status === 500) {
-      console.log(`dither.Accept could not reach database: ${action.hash}`);
+      console.log(`dither.AcceptHandle could not reach database: ${action.hash}`);
       return 'RETRY';
     }
 
     if (response.status === 401) {
-      console.log(`dither.Accept message skipped, invalid address provided: ${action.hash}`);
+      console.log(`dither.AcceptHandle message skipped, invalid address provided: ${action.hash}`);
       return 'SKIP';
     }
 
-    console.warn(`dither.Accept failed: ${action.hash} (${response.error})`);
+    console.warn(`dither.AcceptHandle failed: ${action.hash} (${response.error})`);
     return 'RETRY';
   } catch (error) {
     console.error('Error processing message:', error);

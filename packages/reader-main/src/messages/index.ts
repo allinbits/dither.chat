@@ -1,27 +1,27 @@
-import { Accept } from './accept';
+import { AcceptHandle } from './acceptHandle';
 import { Dislike } from './dislike';
-import { Display } from './display';
 import { Flag } from './flag';
 import { Follow } from './follow';
 import { Like } from './like';
 import { Post } from './post';
-import { Register } from './register';
+import { RegisterHandle } from './registerHandle';
 import { Remove } from './remove';
 import { Reply } from './reply';
-import { Transfer } from './transfer';
+import { SetDisplayHandle } from './setDisplayHandle';
+import { TransferHandle } from './transferHandle';
 import { Unfollow } from './unfollow';
 
 export const MessageHandlers = {
-  Accept,
+  AcceptHandle,
   Dislike,
-  Display,
+  SetDisplayHandle,
   Flag,
   Follow,
   Like,
   Post,
-  Register,
+  RegisterHandle,
   Remove,
   Reply,
-  Transfer,
+  TransferHandle,
   Unfollow,
 };

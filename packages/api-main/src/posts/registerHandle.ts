@@ -15,7 +15,7 @@ const maxHandleLength = 32;
 export const maxDisplayLength = 128;
 export const tgHandleRegex = /^[a-z]{3}\w*$/i;
 
-export async function Register(body: Posts.RegisterBody) {
+export async function RegisterHandle(body: Posts.RegisterHandleBody) {
   if (!tgHandleRegex.test(body.handle)) {
     return {
       status: 400,
