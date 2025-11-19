@@ -1,4 +1,4 @@
-import type { InitData, RetrieveLaunchParamsError, RetrieveLaunchParamsResult } from '@tma.js/sdk-vue';
+import type { InitData, RetrieveLaunchParamsResult } from '@tma.js/sdk-vue';
 
 import {
   initData,
