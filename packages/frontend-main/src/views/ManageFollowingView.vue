@@ -1,10 +1,16 @@
 <script setup lang="ts">
 import type { PopupState } from '@/composables/usePopups';
 
-import { Loader } from 'lucide-vue-next';
+import { Loader, UserX } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 
 import Button from '@/components/ui/button/Button.vue';
+import {
+  Empty,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/ui/empty';
 import UserAvatarUsername from '@/components/users/UserAvatarUsername.vue';
 import { useDefaultAmount } from '@/composables/useDefaultAmount';
 import { useFollowing } from '@/composables/useFollowing';
@@ -58,9 +64,16 @@ async function onClickUnfollow(address: string) {
       <div class="flex flex-col">
         <Loader v-if="isLoading" class="animate-spin w-full mt-10" />
 
-        <span v-else-if="!flatFollowingList.length" class="self-center text-md font-semibold text-base mt-10">
-          {{ $t('components.FollowingList.empty') }}
-        </span>
+        <Empty v-else-if="!flatFollowingList.length" class="mt-10">
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <UserX class="size-6" />
+            </EmptyMedia>
+          </EmptyHeader>
+          <EmptyTitle>
+            {{ $t('components.FollowingList.empty') }}
+          </EmptyTitle>
+        </Empty>
 
         <div
           v-for="(following, index) in flatFollowingList" :key="index"
