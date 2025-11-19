@@ -5,7 +5,7 @@ import { count, eq, sql } from 'drizzle-orm';
 import { getDatabase } from '../../drizzle/db';
 import { HandleTable } from '../../drizzle/schema';
 import { lower } from '../utility';
-import { maxDisplayLength } from './registerHandle';
+import { MAX_DISPLAY_LENGTH } from './registerHandle';
 
 const handleAddressExistsStmt = getDatabase()
   .select({ count: count() })
@@ -15,8 +15,8 @@ const handleAddressExistsStmt = getDatabase()
 
 export async function DisplayHandle(body: Posts.DisplayHandleBody) {
   const display = (body.display || '').trim();
-  if (display.length > maxDisplayLength) {
-    return { status: 400, error: `maximum display length is ${maxDisplayLength} characters long` };
+  if (display.length > MAX_DISPLAY_LENGTH) {
+    return { status: 400, error: `maximum display length is ${MAX_DISPLAY_LENGTH} characters long` };
   }
 
   const db = getDatabase();

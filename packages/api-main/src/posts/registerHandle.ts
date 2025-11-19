@@ -9,27 +9,26 @@ import { HandleTable } from '../../drizzle/schema';
 import { notify } from '../shared/notify';
 import { lower } from '../utility';
 
-const minHandleLength = 5;
-const maxHandleLength = 32;
-
-export const maxDisplayLength = 128;
-export const tgHandleRegex = /^[a-z]{3}\w*$/i;
+export const MIN_HANDLE_LENGTH = 5;
+export const MAX_HANDLE_LENGTH = 32;
+export const MAX_DISPLAY_LENGTH = 128;
+export const HANDLE_REGEX = /^[a-z]{3}\w*$/i;
 
 export async function RegisterHandle(body: Posts.RegisterHandleBody) {
-  if (!tgHandleRegex.test(body.handle)) {
+  if (!HANDLE_REGEX.test(body.handle)) {
     return {
       status: 400,
       error: 'handle must start with three letters and can only include letters, numbers and underscores',
     };
   }
 
-  if (body.handle.length < minHandleLength || body.handle.length > maxHandleLength) {
-    return { status: 400, error: `handle must have between ${minHandleLength} and ${maxHandleLength} characters long` };
+  if (body.handle.length < MIN_HANDLE_LENGTH || body.handle.length > MAX_HANDLE_LENGTH) {
+    return { status: 400, error: `handle must have between ${MIN_HANDLE_LENGTH} and ${MAX_HANDLE_LENGTH} characters long` };
   }
 
   const display = (body.display || '').trim();
-  if (display.length > maxDisplayLength) {
-    return { status: 400, error: `maximum display length is ${maxDisplayLength} characters long` };
+  if (display.length > MAX_DISPLAY_LENGTH) {
+    return { status: 400, error: `maximum display length is ${MAX_DISPLAY_LENGTH} characters long` };
   }
 
   const db = getDatabase();
