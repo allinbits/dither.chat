@@ -34,7 +34,7 @@ const flatNotifications = computed(() => data.value?.pages.flat() ?? []);
 
       <div :class="cn('flex flex-col flex-1')">
         <Loader v-if="isLoading" class="animate-spin m-auto" />
-        <Empty v-else-if="!flatNotifications.length" class="mt-4">
+        <Empty v-else-if="!flatNotifications.length">
           <EmptyHeader>
             <EmptyMedia variant="icon">
               <Bell class="size-6" />
