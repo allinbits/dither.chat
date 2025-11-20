@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { Notification } from 'api-main/types/notifications';
 
-import { Flag, MessageCircle, ThumbsDown, ThumbsUp, UserLock, UserPlus } from 'lucide-vue-next';
+import { Flag, MessageCircle, ThumbsDown, ThumbsUp, UserCheck, UserLock, UserPlus } from 'lucide-vue-next';
 
 import { cn } from '@/utility';
 
@@ -17,7 +17,8 @@ defineProps<{ notification: Notification }>();
             : notification.type === 'follow' ? UserPlus
               : notification.type === 'flag' ? Flag
                 : notification.type === 'reply' ? MessageCircle
-                  : notification.type === 'registerHandle' ? UserLock : null"
+                  : notification.type === 'registerHandle' ? UserLock
+                    : notification.type === 'transferHandle' ? UserCheck : null"
         :class="cn('size-5', notification.type === 'dislike' && 'scale-x-[-1]')"
       />
     </div>

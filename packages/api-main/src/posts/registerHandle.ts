@@ -32,7 +32,7 @@ export async function RegisterHandle(body: Posts.RegisterHandleBody) {
     if (await doesHandleExists(db, body.handle)) {
       await notify({
         hash: body.hash,
-        type: 'register',
+        type: 'registerHandle',
         actor: address,
         owner: address,
         timestamp: new Date(body.timestamp),

@@ -4,6 +4,7 @@ import { and, count, eq, sql } from 'drizzle-orm';
 
 import { getDatabase } from '../../drizzle/db';
 import { AccountTable, HandleTransferTable } from '../../drizzle/schema';
+import { notify } from '../shared/notify';
 import { lower } from '../utility';
 
 const handleOwnerExistsStmt = getDatabase()
@@ -19,6 +20,8 @@ const handleOwnerExistsStmt = getDatabase()
 
 export async function TransferHandle(body: Posts.TransferHandleBody) {
   const fromAddress = body.from_address.toLowerCase();
+  const toAddress = body.to_address.toLowerCase();
+  const timestamp = new Date(body.timestamp);
 
   try {
     if (!await isHandleOwner(fromAddress, body.handle)) {
@@ -32,8 +35,17 @@ export async function TransferHandle(body: Posts.TransferHandleBody) {
         name: body.handle,
         from_address: fromAddress,
         to_address: body.to_address.toLowerCase(),
-        timestamp: new Date(body.timestamp),
+        timestamp,
       });
+
+    await notify({
+      hash: body.hash,
+      type: 'transferHandle',
+      actor: fromAddress,
+      owner: toAddress,
+      subcontext: `You received @${body.handle} handle`,
+      timestamp,
+    });
 
     return { status: 200 };
   } catch (err) {
