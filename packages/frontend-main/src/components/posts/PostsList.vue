@@ -21,10 +21,10 @@ const flatPosts = computed(() => data.value?.pages.flat() ?? []);
 </script>
 
 <template>
-  <div class="flex flex-col w-full box-border">
-    <Loader v-if="isLoading" class="animate-spin w-full mt-10" />
+  <div class="flex flex-col box-border flex-1">
+    <Loader v-if="isLoading" class="animate-spin m-auto" />
 
-    <Empty v-else-if="!flatPosts.length" class="mt-4">
+    <Empty v-else-if="!flatPosts.length">
       <EmptyHeader>
         <EmptyMedia variant="icon">
           <Inbox class="size-6" />

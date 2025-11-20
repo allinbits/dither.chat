@@ -39,10 +39,9 @@ const repliesGroups = computed(() => {
 </script>
 
 <template>
-  <div :class="cn('flex flex-col w-full', repliesGroups.length && 'border-t')">
-    <Loader v-if="isLoading" class="animate-spin w-full mt-10" />
-
-    <Empty v-else-if="!repliesGroups.length" class="mt-4">
+  <div :class="cn('flex flex-col flex-1')">
+    <Loader v-if="isLoading" class="animate-spin m-auto" />
+    <Empty v-else-if="!repliesGroups.length">
       <EmptyHeader>
         <EmptyMedia variant="icon">
           <MessageCircle class="size-6" />

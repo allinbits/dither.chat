@@ -29,10 +29,10 @@ const flatNotifications = computed(() => data.value?.pages.flat() ?? []);
 
 <template>
   <MainLayout>
-    <div class="flex flex-col">
+    <div class="flex flex-col flex-1">
       <ViewHeading :title="$t('components.Headings.notifications')" />
 
-      <div :class="cn('flex flex-col w-full', flatNotifications.length && 'border-t')">
+      <div :class="cn('flex flex-col flex-1')">
         <Loader v-if="isLoading" class="animate-spin w-full mt-10" />
         <Empty v-else-if="!flatNotifications.length" class="mt-4">
           <EmptyHeader>

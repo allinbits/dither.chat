@@ -123,7 +123,7 @@ async function handleReply() {
         </div>
       </div>
     </div>
-    <div class="flex flex-row p-3 border-t border-gray-200 items-center justify-between">
+    <div class="flex flex-row p-3 border-t-2 items-center justify-between">
       <div class="text-lg font-semibold">
         Replies
       </div>
