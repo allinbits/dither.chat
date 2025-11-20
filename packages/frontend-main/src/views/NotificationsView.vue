@@ -33,7 +33,7 @@ const flatNotifications = computed(() => data.value?.pages.flat() ?? []);
       <ViewHeading :title="$t('components.Headings.notifications')" />
 
       <div :class="cn('flex flex-col flex-1')">
-        <Loader v-if="isLoading" class="animate-spin w-full mt-10" />
+        <Loader v-if="isLoading" class="animate-spin m-auto" />
         <Empty v-else-if="!flatNotifications.length" class="mt-4">
           <EmptyHeader>
             <EmptyMedia variant="icon">
