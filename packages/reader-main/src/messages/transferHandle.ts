@@ -24,10 +24,10 @@ export async function TransferHandle(action: ActionWithData): Promise<ResponseSt
   try {
     const [handle, to_address] = extractMemoContent(action.memo, 'dither.TransferHandle');
     const postBody: Posts.TransferHandleBody = {
-      hash: action.hash,
-      from_address: action.sender,
       to_address,
       handle,
+      hash: action.hash,
+      from_address: action.sender,
       timestamp: action.timestamp,
     };
 

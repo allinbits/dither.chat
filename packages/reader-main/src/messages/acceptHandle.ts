@@ -24,10 +24,8 @@ export async function AcceptHandle(action: ActionWithData): Promise<ResponseStat
   try {
     const [handle] = extractMemoContent(action.memo, 'dither.AcceptHandle');
     const postBody: Posts.AcceptHandleBody = {
-      hash: action.hash,
-      from: action.sender,
       handle,
-      timestamp: action.timestamp,
+      address: action.sender,
     };
 
     const rawResponse = await fetch(`${apiRoot}/accept-handle`, {

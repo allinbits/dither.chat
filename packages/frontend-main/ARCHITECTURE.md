@@ -195,11 +195,11 @@ dither.Unfollow('cosmos1user...');
 dither.Dislike('0xjkl012...');
 
 // Username registration and transfer to a new address
-dither.RegisterHandle('handle', 'display text');
+dither.RegisterHandle('handle');
 dither.TransferHandle('handle', '0xabc123...');
 dither.AcceptHandle('handle');
 
-// Display text change for registered user handle
+// Modify user display text
 dither.SetDisplayHandle('display text');
 ```
 

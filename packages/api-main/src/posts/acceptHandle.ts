@@ -1,24 +1,65 @@
 import type { Posts } from '@atomone/dither-api-types';
 
-import type { DbClient } from '../../drizzle/db';
-
-import { and, eq } from 'drizzle-orm';
+import { and, count, eq, sql } from 'drizzle-orm';
 
 import { getDatabase } from '../../drizzle/db';
 import { AccountTable, HandleTransferTable } from '../../drizzle/schema';
 import { lower } from '../utility';
 
+const transferToAddressExistsStmt = getDatabase()
+  .select({ count: count() })
+  .from(HandleTransferTable)
+  .where(
+    and(
+      eq(lower(HandleTransferTable.name), sql.placeholder('handle')),
+      eq(HandleTransferTable.to_address, sql.placeholder('address')),
+      eq(HandleTransferTable.accepted, false),
+    ),
+  )
+  .prepare('stmt_transfer_to_adress_exists');
+
 export async function AcceptHandle(body: Posts.AcceptHandleBody) {
-  const db = getDatabase();
+  const address = body.address.toLowerCase();
+  const handle = body.handle.toLowerCase();
+
   try {
-    if (!await doesTransferToAddressExists(db, body.handle, body.to_address)) {
+    if (!await doesTransferToAddressExists(handle, address)) {
       return { status: 400, error: 'handle not found or not transferred to address' };
     }
 
-    await db
-      .update(AccountTable)
-      .set({ address: body.to_address.toLowerCase() })
-      .where(eq(lower(AccountTable.handle), body.handle.toLowerCase()));
+    await getDatabase().transaction(async (tx) => {
+      // Remove handle from current owner
+      await tx
+        .update(AccountTable)
+        .set({ handle: null })
+        .where(eq(lower(AccountTable.handle), handle));
+
+      // Assign handle to new owner
+      await tx
+        .insert(AccountTable)
+        .values({
+          address,
+          handle: body.handle,
+        })
+        .onConflictDoUpdate({
+          target: AccountTable.address,
+          set: {
+            handle: body.handle,
+          },
+        });
+
+      // Mark transfer(s) as finished to disallow potential future usage of this transfer
+      await tx
+        .update(HandleTransferTable)
+        .set({ accepted: true })
+        .where(
+          and(
+            eq(lower(HandleTransferTable.name), handle),
+            eq(HandleTransferTable.to_address, address),
+            eq(HandleTransferTable.accepted, false),
+          ),
+        );
+    });
 
     return { status: 200 };
   } catch (err) {
@@ -27,10 +68,7 @@ export async function AcceptHandle(body: Posts.AcceptHandleBody) {
   }
 }
 
-async function doesTransferToAddressExists(db: DbClient, handle: string, address: string): Promise<boolean> {
-  const count = await db.$count(HandleTransferTable, and(
-    eq(lower(HandleTransferTable.name), handle.toLowerCase()),
-    eq(HandleTransferTable.to_address, address.toLowerCase()),
-  ));
-  return count !== 0;
+async function doesTransferToAddressExists(handle: string, address: string): Promise<boolean> {
+  const [result] = await transferToAddressExistsStmt.execute({ address, handle });
+  return (result?.count ?? 0) !== 0;
 }

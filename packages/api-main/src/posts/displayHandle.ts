@@ -1,17 +1,9 @@
 import type { Posts } from '@atomone/dither-api-types';
 
-import { count, eq, sql } from 'drizzle-orm';
-
 import { getDatabase } from '../../drizzle/db';
 import { AccountTable } from '../../drizzle/schema';
-import { lower } from '../utility';
-import { MAX_DISPLAY_LENGTH } from './registerHandle';
 
-const handleAddressExistsStmt = getDatabase()
-  .select({ count: count() })
-  .from(AccountTable)
-  .where(eq(lower(AccountTable.address), sql.placeholder('address')))
-  .prepare('stmt_handle_address_exists');
+const MAX_DISPLAY_LENGTH = 128;
 
 export async function DisplayHandle(body: Posts.DisplayHandleBody) {
   const display = (body.display || '').trim();
@@ -19,26 +11,21 @@ export async function DisplayHandle(body: Posts.DisplayHandleBody) {
     return { status: 400, error: `maximum display length is ${MAX_DISPLAY_LENGTH} characters long` };
   }
 
-  const db = getDatabase();
   try {
-    const address = body.from.toLowerCase();
-    if (!await hasHandle(address)) {
-      return { status: 400, error: 'account requires a handle to set a display text' };
-    }
-
-    await db
-      .update(AccountTable)
-      .set({ display })
-      .where(eq(AccountTable.address, address));
+    await getDatabase()
+      .insert(AccountTable)
+      .values({
+        address: body.address.toLowerCase(),
+        display,
+      })
+      .onConflictDoUpdate({
+        target: AccountTable.address,
+        set: { display },
+      });
 
     return { status: 200 };
   } catch (err) {
     console.error(err);
     return { status: 400, error: 'failed to update display handle' };
   }
-}
-
-async function hasHandle(address: string): Promise<boolean> {
-  const [result] = await handleAddressExistsStmt.execute({ address });
-  return (result?.count ?? 0) !== 0;
 }

@@ -23,6 +23,7 @@ export const HandleTransferTable = pgTable(
     name: varchar({ length: 32 }).notNull(),
     from_address: varchar({ length: 44 }).notNull(),
     to_address: varchar({ length: 44 }).notNull(),
+    accepted: boolean().default(false).notNull(),
     timestamp: timestamp({ withTimezone: true }).notNull(),
   },
   t => [

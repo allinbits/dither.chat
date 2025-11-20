@@ -12,7 +12,7 @@ import { useConfig } from '../config/index';
 declare module '@atomone/chronostate' {
   export namespace MemoExtractor {
     export interface TypeMap {
-      'dither.RegisterHandle': [string, string];
+      'dither.RegisterHandle': [string];
     }
   }
 }
@@ -22,12 +22,11 @@ const apiRoot = process.env.API_ROOT ?? 'http://localhost:3000/v1';
 
 export async function RegisterHandle(action: ActionWithData): Promise<ResponseStatus> {
   try {
-    const [handle, display] = extractMemoContent(action.memo, 'dither.RegisterHandle');
+    const [handle] = extractMemoContent(action.memo, 'dither.RegisterHandle');
     const postBody: Posts.RegisterHandleBody = {
       hash: action.hash,
-      from: action.sender,
+      address: action.sender,
       handle,
-      display,
       timestamp: action.timestamp,
     };
 

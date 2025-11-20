@@ -9,10 +9,9 @@ import { AccountTable } from '../../drizzle/schema';
 import { notify } from '../shared/notify';
 import { lower } from '../utility';
 
-export const MIN_HANDLE_LENGTH = 5;
-export const MAX_HANDLE_LENGTH = 32;
-export const MAX_DISPLAY_LENGTH = 128;
-export const HANDLE_REGEX = /^[a-z]{3}\w*$/i;
+const MIN_HANDLE_LENGTH = 5;
+const MAX_HANDLE_LENGTH = 32;
+const HANDLE_REGEX = /^[a-z]{3}\w*$/i;
 
 export async function RegisterHandle(body: Posts.RegisterHandleBody) {
   if (!HANDLE_REGEX.test(body.handle)) {
@@ -26,44 +25,35 @@ export async function RegisterHandle(body: Posts.RegisterHandleBody) {
     return { status: 400, error: `handle must have between ${MIN_HANDLE_LENGTH} and ${MAX_HANDLE_LENGTH} characters long` };
   }
 
-  const display = (body.display || '').trim();
-  if (display.length > MAX_DISPLAY_LENGTH) {
-    return { status: 400, error: `maximum display length is ${MAX_DISPLAY_LENGTH} characters long` };
-  }
-
   const db = getDatabase();
+  const address = body.address.toLowerCase();
+
   try {
     if (await doesHandleExists(db, body.handle)) {
       await notify({
         hash: body.hash,
         type: 'register',
-        actor: body.from,
-        owner: body.from,
+        actor: address,
+        owner: address,
         timestamp: new Date(body.timestamp),
         subcontext: 'Handle is already taken',
       });
 
-      // Succeed to stop reader from keep trying to register
-      return { status: 200, error: 'handle is already registered' };
+      return { status: 400, error: 'handle is already registered' };
     }
 
-    const address = body.from.toLowerCase();
-
-    await db.transaction(async (tx) => {
-      // Remove current handle if one is registered to address
-      await tx
-        .delete(AccountTable)
-        .where(eq(AccountTable.address, address));
-
-      // Register a new handle for the address
-      await tx
-        .insert(AccountTable)
-        .values({
+    await db
+      .insert(AccountTable)
+      .values({
+        address,
+        handle: body.handle,
+      })
+      .onConflictDoUpdate({
+        target: AccountTable.address,
+        set: {
           handle: body.handle,
-          address: body.from.toLowerCase(),
-          display: display || null,
-        });
-    });
+        },
+      });
 
     return { status: 200 };
   } catch (err) {

@@ -102,18 +102,16 @@ export type UnfollowBody = Static<typeof UnfollowBodySchema>;
 
 export const RegisterHandleBodySchema = t.Object({
   hash: t.String(),
-  from: t.String(),
+  address: t.String(),
   handle: t.String(),
-  display: t.String(),
   timestamp: t.String(),
 });
 export type RegisterHandleBody = Static<typeof RegisterHandleBodySchema>;
 
 export const DisplayHandleBodySchema = t.Object({
   hash: t.String(),
-  from: t.String(),
+  address: t.String(),
   display: t.String(),
-  timestamp: t.String(),
 });
 export type DisplayHandleBody = Static<typeof DisplayHandleBodySchema>;
 
@@ -127,10 +125,8 @@ export const TransferHandleBodySchema = t.Object({
 export type TransferHandleBody = Static<typeof TransferHandleBodySchema>;
 
 export const AcceptHandleBodySchema = t.Object({
-  hash: t.String(),
-  from: t.String(),
+  address: t.String(),
   handle: t.String(),
-  timestamp: t.String(),
 });
 export type AcceptHandleBody = Static<typeof AcceptHandleBodySchema>;
 

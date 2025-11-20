@@ -24,10 +24,9 @@ export async function SetDisplayHandle(action: ActionWithData): Promise<Response
   try {
     const [display] = extractMemoContent(action.memo, 'dither.SetDisplayHandle');
     const postBody: Posts.DisplayHandleBody = {
-      hash: action.hash,
-      from: action.sender,
       display,
-      timestamp: action.timestamp,
+      hash: action.hash,
+      address: action.sender,
     };
 
     const rawResponse = await fetch(`${apiRoot}/display-handle`, {
