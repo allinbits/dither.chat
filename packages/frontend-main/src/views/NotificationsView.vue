@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Loader } from 'lucide-vue-next';
+import { Bell, Loader } from 'lucide-vue-next';
 import { computed } from 'vue';
 
 import DislikeNotification from '@/components/notifications/DislikeNotification.vue';
@@ -8,6 +8,12 @@ import FollowNotification from '@/components/notifications/FollowNotification.vu
 import LikeNotification from '@/components/notifications/LikeNotification.vue';
 import ReplyNotification from '@/components/notifications/ReplyNotification.vue';
 import Button from '@/components/ui/button/Button.vue';
+import {
+  Empty,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/ui/empty';
 import { useNotifications } from '@/composables/useNotifications';
 import { useWallet } from '@/composables/useWallet';
 import MainLayout from '@/layouts/MainLayout.vue';
@@ -23,14 +29,21 @@ const flatNotifications = computed(() => data.value?.pages.flat() ?? []);
 
 <template>
   <MainLayout>
-    <div class="flex flex-col">
+    <div class="flex flex-col flex-1">
       <ViewHeading :title="$t('components.Headings.notifications')" />
 
-      <div :class="cn('flex flex-col w-full', flatNotifications.length && 'border-t')">
-        <Loader v-if="isLoading" class="animate-spin w-full mt-10" />
-        <span v-else-if="!flatNotifications.length" class="self-center mt-4 text-md font-semibold text-base">
-          {{ $t('components.Notifications.empty') }}
-        </span>
+      <div :class="cn('flex flex-col flex-1')">
+        <Loader v-if="isLoading" class="animate-spin m-auto" />
+        <Empty v-else-if="!flatNotifications.length">
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <Bell class="size-6" />
+            </EmptyMedia>
+          </EmptyHeader>
+          <EmptyTitle>
+            {{ $t('components.Notifications.empty') }}
+          </EmptyTitle>
+        </Empty>
 
         <template v-for="(notification, index) in flatNotifications">
           <LikeNotification v-if="notification.type === 'like'" :key="index" :notification="notification" />

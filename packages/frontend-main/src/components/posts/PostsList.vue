@@ -2,10 +2,16 @@
 import type { InfiniteData, UseInfiniteQueryReturnType } from '@tanstack/vue-query';
 import type { Post } from 'api-main/types/feed';
 
-import { Loader } from 'lucide-vue-next';
+import { Inbox, Loader } from 'lucide-vue-next';
 import { computed } from 'vue';
 
 import Button from '../ui/button/Button.vue';
+import {
+  Empty,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '../ui/empty';
 import PostItem from './PostItem.vue';
 
 type PostsInfiniteQueryReturnType = UseInfiniteQueryReturnType<InfiniteData<Post[], unknown>, Error>;
@@ -15,11 +21,19 @@ const flatPosts = computed(() => data.value?.pages.flat() ?? []);
 </script>
 
 <template>
-  <div class="flex flex-col w-full box-border">
-    <Loader v-if="isLoading" class="animate-spin w-full mt-10" />
+  <div class="flex flex-col box-border flex-1">
+    <Loader v-if="isLoading" class="animate-spin m-auto" />
 
-    <span v-else-if="!flatPosts.length" class="self-center mt-4 text-md font-semibold text-base">{{
-      emptyText || $t('components.PostsList.empty') }}</span>
+    <Empty v-else-if="!flatPosts.length">
+      <EmptyHeader>
+        <EmptyMedia variant="icon">
+          <Inbox class="size-6" />
+        </EmptyMedia>
+      </EmptyHeader>
+      <EmptyTitle>
+        {{ emptyText || $t('components.PostsList.empty') }}
+      </EmptyTitle>
+    </Empty>
 
     <PostItem v-for="post in flatPosts" v-else :key="post.hash" :post="post" class="flex flex-wrap w-full break-words" />
 

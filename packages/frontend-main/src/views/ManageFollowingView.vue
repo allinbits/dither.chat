@@ -1,10 +1,16 @@
 <script setup lang="ts">
 import type { PopupState } from '@/composables/usePopups';
 
-import { Loader } from 'lucide-vue-next';
+import { Inbox, Loader } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 
 import Button from '@/components/ui/button/Button.vue';
+import {
+  Empty,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/ui/empty';
 import UserAvatarUsername from '@/components/users/UserAvatarUsername.vue';
 import { useDefaultAmount } from '@/composables/useDefaultAmount';
 import { useFollowing } from '@/composables/useFollowing';
@@ -52,15 +58,22 @@ async function onClickUnfollow(address: string) {
 
 <template>
   <MainLayout>
-    <div class="flex flex-col">
+    <div class="flex flex-col flex-1">
       <HeaderBack :title="$t('components.Headings.manageFollows')" />
 
-      <div class="flex flex-col">
-        <Loader v-if="isLoading" class="animate-spin w-full mt-10" />
+      <div class="flex flex-col flex-1">
+        <Loader v-if="isLoading" class="animate-spin w-full m-auto" />
 
-        <span v-else-if="!flatFollowingList.length" class="self-center text-md font-semibold text-base mt-10">
-          {{ $t('components.FollowingList.empty') }}
-        </span>
+        <Empty v-else-if="!flatFollowingList.length">
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <Inbox class="size-6" />
+            </EmptyMedia>
+          </EmptyHeader>
+          <EmptyTitle>
+            {{ $t('components.PostsList.empty') }}
+          </EmptyTitle>
+        </Empty>
 
         <div
           v-for="(following, index) in flatFollowingList" :key="index"

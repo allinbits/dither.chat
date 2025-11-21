@@ -66,13 +66,13 @@ onUnmounted(() => {
 
     <div
       ref="leftPanelRef"
-      class="fixed top-0 bottom-0 left-0 overflow-y-auto [overscroll-behavior:contain] md:border-r"
+      class="fixed top-0 bottom-0 left-0 overflow-y-auto overscroll-contain md:border-r"
     >
       <LeftPanel v-if="isXl" />
       <LeftPanelTablet v-else />
     </div>
 
-    <main class="sm:w-[var(--main-min-width-desktop)] min-w-[var(--main-min-width-desktop)]">
+    <main class="sm:w-(--main-min-width-desktop) min-w-(--main-min-width-desktop) border min-h-dvh flex flex-col flex-1">
       <slot />
     </main>
 
@@ -83,7 +83,7 @@ onUnmounted(() => {
 
     <div
       ref="rightPanelRef"
-      class="fixed top-0 bottom-0 right-0 overflow-y-auto [overscroll-behavior:contain] md:border-l"
+      class="fixed top-0 bottom-0 right-0 overflow-y-auto overscroll-contain md:border-l"
     >
       <RightPanel class="hidden lg:flex" />
     </div>
