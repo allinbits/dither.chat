@@ -11,13 +11,13 @@ import { toast } from 'vue-sonner';
 import { useDefaultAmount } from '@/composables/useDefaultAmount';
 import { useDislikePost } from '@/composables/useDislikePost';
 import { useFlagPost } from '@/composables/useFlagPost';
+import { useFractionalDigits } from '@/composables/useFractionalDigits';
 import { useLikePost } from '@/composables/useLikePost';
 import { usePopups } from '@/composables/usePopups';
 import { useWallet } from '@/composables/useWallet';
 import { useConfigStore } from '@/stores/useConfigStore';
 import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
 import { cn } from '@/utility';
-import { fractionalDigits } from '@/utility/atomics';
 import { formatCompactAtomics, formatCompactNumber } from '@/utility/text';
 import { showBroadcastingToast } from '@/utility/toast';
 
@@ -36,6 +36,7 @@ const wallet = useWallet();
 const popups = usePopups();
 const walletDialogStore = useWalletDialogStore();
 const configStore = useConfigStore();
+const fractionalDigits = useFractionalDigits();
 const { isDefaultAmountInvalid } = useDefaultAmount();
 
 const { likePost } = useLikePost();

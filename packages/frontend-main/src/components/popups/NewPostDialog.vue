@@ -5,9 +5,7 @@ import { toast } from 'vue-sonner';
 
 import PostEditorToolbar from '@/components/posts/PostEditorToolbar.vue';
 import PostMediaThumbnail from '@/components/posts/PostMediaThumbnail.vue';
-import
-{ Button }
-  from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogTitle,
@@ -17,9 +15,9 @@ import InputPhoton from '@/components/ui/input/InputPhoton.vue';
 import { Textarea } from '@/components/ui/textarea';
 import { useConfirmDialog } from '@/composables/useConfirmDialog';
 import { useCreatePost } from '@/composables/useCreatePost';
+import { useFractionalDigits } from '@/composables/useFractionalDigits';
 import { useTxDialog } from '@/composables/useTxDialog';
 import { useConfigStore } from '@/stores/useConfigStore';
-import { fractionalDigits } from '@/utility/atomics';
 import { showBroadcastingToast } from '@/utility/toast';
 
 const MAX_CHARS = 512 - 'dither.Post("")'.length;
@@ -31,15 +29,18 @@ const { showConfirmDialog } = useConfirmDialog();
 
 const { isShown, inputPhotonModel, handleClose } = useTxDialog<object>('newPost', txSuccess, txError);
 const configStore = useConfigStore();
-const amountAtomics = computed(() => configStore.config.defaultAmountEnabled ? configStore.config.defaultAmountAtomics : Decimal.fromUserInput(inputPhotonModel.value.toString(), fractionalDigits).atomics);
+const fractionalDigits = useFractionalDigits();
+const amountAtomics = computed(() =>
+  configStore.config.defaultAmountEnabled
+    ? configStore.config.defaultAmountAtomics
+    : Decimal.fromUserInput(inputPhotonModel.value.toString(), fractionalDigits).atomics,
+);
 
 function handleInputValidity(value: boolean) {
   isBalanceInputValid.value = value;
 }
 
-const canSubmit = computed(() => {
-  return isBalanceInputValid.value && message.value.length > 0;
-});
+const canSubmit = computed(() => isBalanceInputValid.value && message.value.length > 0);
 
 function handleCloseWithSaveDraft() {
   handleClose();

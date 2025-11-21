@@ -5,13 +5,13 @@ import type { PopupState } from './usePopups';
 import { Decimal } from '@cosmjs/math';
 import { computed, ref, watch } from 'vue';
 
-import { fractionalDigits } from '@/utility/atomics';
-
 import { useBalanceFetcher } from './useBalanceFetcher';
+import { useFractionalDigits } from './useFractionalDigits';
 import { usePopups } from './usePopups';
 import { useWallet } from './useWallet';
 
 export function useTxDialog<T>(dialogType: keyof PopupState, txSuccess: Ref<string | undefined>, txError: Ref<string | undefined>) {
+  const fractionalDigits = useFractionalDigits();
   const inputPhotonModel = ref(Decimal.fromAtomics('1', fractionalDigits).toFloatApproximation());
   const wallet = useWallet();
   const balanceFetcher = useBalanceFetcher();
@@ -23,6 +23,7 @@ export function useTxDialog<T>(dialogType: keyof PopupState, txSuccess: Ref<stri
     popups.state[dialogType] = null;
     txError.value = undefined;
     txSuccess.value = undefined;
+    inputPhotonModel.value = Decimal.fromAtomics('1', fractionalDigits).toFloatApproximation();
   };
 
   watch([wallet.loggedIn, wallet.address], async () => {

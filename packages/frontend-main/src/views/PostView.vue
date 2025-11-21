@@ -17,13 +17,13 @@ import UserAvatar from '@/components/users/UserAvatar.vue';
 import UserAvatarUsername from '@/components/users/UserAvatarUsername.vue';
 import { useCreateReply } from '@/composables/useCreateReply';
 import { useDefaultAmount } from '@/composables/useDefaultAmount';
+import { useFractionalDigits } from '@/composables/useFractionalDigits';
 import { usePost } from '@/composables/usePost';
 import { useReplies } from '@/composables/useReplies';
 import { useWallet } from '@/composables/useWallet';
 import MainLayout from '@/layouts/MainLayout.vue';
 import { routesNames } from '@/router';
 import { useConfigStore } from '@/stores/useConfigStore';
-import { fractionalDigits } from '@/utility/atomics';
 import { showBroadcastingToast } from '@/utility/toast';
 
 import ViewHeading from './ViewHeading.vue';
@@ -44,9 +44,14 @@ const MAX_CHARS = 512 - ('dither.Reply("", "")'.length + POST_HASH_LEN);
 const reply = ref('');
 const showReply = ref(false);
 const isBalanceInputValid = ref(false);
+const fractionalDigits = useFractionalDigits();
 const inputPhotonModel = ref(Decimal.fromAtomics('1', fractionalDigits).toFloatApproximation());
 const configStore = useConfigStore();
-const amountAtomics = computed(() => configStore.config.defaultAmountEnabled ? configStore.config.defaultAmountAtomics : Decimal.fromUserInput(inputPhotonModel.value.toString(), fractionalDigits).atomics);
+const amountAtomics = computed(() =>
+  configStore.config.defaultAmountEnabled
+    ? configStore.config.defaultAmountAtomics
+    : Decimal.fromUserInput(inputPhotonModel.value.toString(), fractionalDigits).atomics,
+);
 const { createReply } = useCreateReply();
 
 const canReply = computed(() => {
