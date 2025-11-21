@@ -53,6 +53,7 @@ export const messages = {
         viewOnExplorer: 'View on explorer',
         tip: 'Tip',
         adjustDefaultAmount: 'Adjust Default Amount',
+        editProfile: 'Edit Profile',
       },
       InputPhoton: {
         notEnough: 'Not enough balance',

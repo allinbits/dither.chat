@@ -3,6 +3,7 @@ import { nextTick, onMounted } from 'vue';
 
 import ConfirmDialog from './components/popups/ConfirmDialog.vue';
 import DislikePostDialog from './components/popups/DislikePostDialog.vue';
+import EditProfilePopup from './components/popups/EditProfilePopup.vue';
 import FlagPostDialog from './components/popups/FlagPostDialog.vue';
 import FollowDialog from './components/popups/FollowUserDialog.vue';
 import InvalidDefaultAmountDialog from './components/popups/InvalidDefaultAmountDialog.vue';
@@ -45,4 +46,5 @@ onMounted(() => {
   <TipUserDialog />
   <ConfirmDialog />
   <InvalidDefaultAmountDialog />
+  <EditProfilePopup />
 </template>

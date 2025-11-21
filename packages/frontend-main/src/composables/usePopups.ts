@@ -12,6 +12,7 @@ export interface PopupState {
   unfollow: string | null;
   tipUser: string | null;
   invalidDefaultAmount: string | null;
+  editProfile: object | null;
 }
 
 const state = reactive<PopupState>({
@@ -24,6 +25,7 @@ const state = reactive<PopupState>({
   unfollow: null,
   tipUser: null,
   invalidDefaultAmount: null,
+  editProfile: null,
 });
 
 export function usePopups() {
