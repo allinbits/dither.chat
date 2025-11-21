@@ -6,11 +6,13 @@ import pg from 'pg';
 
 dotenv.config();
 
+export type DbClient = ReturnType<typeof drizzle>;
+
 const { Pool } = pg;
 
-let db: ReturnType<typeof drizzle>;
+let db: DbClient;
 
-export function getDatabase() {
+export function getDatabase(): DbClient {
   if (!db) {
     const client = new Pool({
       connectionString: process.env.PG_URI!,

@@ -1,6 +1,8 @@
+export * from './acceptHandle';
 export * from './auth';
 export * from './authCreate';
 export * from './dislike';
+export * from './displayHandle';
 export * from './flag';
 export * from './follow';
 export * from './like';
@@ -8,6 +10,8 @@ export * from './logout';
 export * from './mod';
 export * from './post';
 export * from './postRemove';
+export * from './registerHandle';
 export * from './reply';
+export * from './transferHandle';
 export * from './unfollow';
 export * from './updateState';
