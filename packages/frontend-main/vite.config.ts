@@ -37,4 +37,7 @@ export default defineConfig({
       ),
     },
   },
+  optimizeDeps: {
+    include: ['@sinclair/typebox', 'drizzle-typebox'],
+  },
 });
