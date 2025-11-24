@@ -2,11 +2,12 @@ import { Decimal } from '@cosmjs/math';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
-import { fractionalDigits } from '@/utility/atomics';
+import { useFractionalDigits } from '@/composables/useFractionalDigits';
 
 export const useFiltersStore = defineStore(
   'filtersStateStore',
   () => {
+    const fractionalDigits = useFractionalDigits();
     const filterAmountAtomics = ref(Decimal.fromAtomics('1', fractionalDigits).atomics);
 
     const setFilterAmountAtomics = (newAmount: string) => {

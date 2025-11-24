@@ -3,11 +3,12 @@ import { Decimal } from '@cosmjs/math';
 import { computed } from 'vue';
 
 import { Slider } from '@/components/ui/slider';
+import { useFractionalDigits } from '@/composables/useFractionalDigits';
 import { useFiltersStore } from '@/stores/useFiltersStore';
-import { fractionalDigits } from '@/utility/atomics';
 
 const store = useFiltersStore();
 
+const fractionalDigits = useFractionalDigits();
 const minDecimal = Decimal.fromAtomics('1', fractionalDigits);
 const maxDecimal = Decimal.fromUserInput('99', fractionalDigits);
 const stepDecimal = Decimal.fromAtomics('1', fractionalDigits);

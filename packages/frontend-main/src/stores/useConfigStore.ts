@@ -3,7 +3,7 @@ import { defineStore } from 'pinia';
 import { computed, reactive } from 'vue';
 
 import { envConfigs } from '@/env-config';
-import { fractionalDigits } from '@/utility/atomics';
+import { defaultMinimalCoinDenom, getFractionalDigitsFromChainConfig } from '@/utility/atomics';
 
 interface Config {
   selectedChain: keyof typeof envConfigs;
@@ -12,10 +12,14 @@ interface Config {
   defaultAmountEnabled: boolean;
 }
 
+const initialSelectedChain = (import.meta.env.VITE_ENVIRONMENT_TYPE as keyof typeof envConfigs | undefined) ?? 'mainnet';
+const initialChainConfig = envConfigs[initialSelectedChain].chainConfig;
+const initialFractionalDigits = getFractionalDigitsFromChainConfig(initialChainConfig, defaultMinimalCoinDenom);
+
 const defaultConfig: Config = {
   envConfigs,
-  selectedChain: import.meta.env.VITE_ENVIRONMENT_TYPE ?? 'mainnet',
-  defaultAmountAtomics: Decimal.fromUserInput('0.1', fractionalDigits).atomics,
+  selectedChain: initialSelectedChain,
+  defaultAmountAtomics: Decimal.fromUserInput('0.1', initialFractionalDigits).atomics,
   defaultAmountEnabled: false,
 };
 

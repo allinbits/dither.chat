@@ -8,10 +8,10 @@ import { toast } from 'vue-sonner';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogDescription, DialogTitle, ResponsiveDialogContent } from '@/components/ui/dialog';
 import InputPhoton from '@/components/ui/input/InputPhoton.vue';
+import { useFractionalDigits } from '@/composables/useFractionalDigits';
 import { useLikePost } from '@/composables/useLikePost';
 import { useTxDialog } from '@/composables/useTxDialog';
 import { useConfigStore } from '@/stores/useConfigStore';
-import { fractionalDigits } from '@/utility/atomics';
 import { shorten } from '@/utility/text';
 import { showBroadcastingToast } from '@/utility/toast';
 
@@ -19,11 +19,14 @@ const isBalanceInputValid = ref(false);
 const { likePost, txError, txSuccess } = useLikePost();
 const { isShown, inputPhotonModel, handleClose, popupState: like } = useTxDialog<Post>('like', txSuccess, txError);
 const configStore = useConfigStore();
-const amountAtomics = computed(() => configStore.config.defaultAmountEnabled ? configStore.config.defaultAmountAtomics : Decimal.fromUserInput(inputPhotonModel.value.toString(), fractionalDigits).atomics);
+const fractionalDigits = useFractionalDigits();
+const amountAtomics = computed(() =>
+  configStore.config.defaultAmountEnabled
+    ? configStore.config.defaultAmountAtomics
+    : Decimal.fromUserInput(inputPhotonModel.value.toString(), fractionalDigits).atomics,
+);
 
-const canSubmit = computed(() => {
-  return isBalanceInputValid.value;
-});
+const canSubmit = computed(() => isBalanceInputValid.value);
 
 function handleInputValidity(value: boolean) {
   isBalanceInputValid.value = value;
@@ -33,9 +36,11 @@ async function handleSubmit() {
   if (!canSubmit.value || !like.value) {
     return;
   }
+
   const post = ref(like.value);
   handleClose();
   const toastId = showBroadcastingToast('Like');
+
   try {
     await likePost({ post, amountAtomics: amountAtomics.value });
   } finally {

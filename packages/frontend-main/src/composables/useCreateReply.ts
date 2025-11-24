@@ -6,9 +6,9 @@ import { Decimal } from '@cosmjs/math';
 import { useMutation, useQueryClient } from '@tanstack/vue-query';
 import { ref } from 'vue';
 
-import { fractionalDigits } from '@/utility/atomics';
 import { infiniteDataWithNewItem, newPost } from '@/utility/optimisticBuilders';
 
+import { useFractionalDigits } from './useFractionalDigits';
 import { post } from './usePost';
 import { replies } from './useReplies';
 import { useTxNotification } from './useTxNotification';
@@ -21,10 +21,10 @@ interface CreateReplyRequestMutation {
   amountAtomics: string;
 }
 
-export function useCreateReply(
-) {
+export function useCreateReply() {
   const queryClient = useQueryClient();
   const wallet = useWallet();
+  const fractionalDigits = useFractionalDigits();
   const txError = ref<string>();
   const txSuccess = ref<string>();
   const isToastShown = ref(false);
@@ -38,7 +38,7 @@ export function useCreateReply(
       txSuccess.value = undefined;
       isToastShown.value = true;
 
-      const msg = message.replace(/&/g, '&amp;')
+      const sanitizedMessage = message.replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
@@ -46,7 +46,7 @@ export function useCreateReply(
 
       const result = await wallet.dither.send(
         'Reply',
-        { args: [parentPost.value.hash, msg], amount: amountAtomics },
+        { args: [parentPost.value.hash, sanitizedMessage], amount: amountAtomics },
       );
 
       if (!result.broadcast) {
@@ -96,12 +96,22 @@ export function useCreateReply(
           ? { ...context.previousParentPost, replies: (context.previousParentPost.replies || 0) + 1 }
           : { ...variables.parentPost.value, replies: (variables.parentPost.value.replies || 0) + 1 };
       // Created Post with parent hash as post_hash
-      const optimisticNewReply: Post = newPost({ message: variables.message, quantity: Decimal.fromAtomics(variables.amountAtomics, fractionalDigits).atomics, hash: createdHash, postHash: variables.parentPost.value.hash, author: wallet.address.value });
+      const optimisticNewReply: Post = newPost({
+        message: variables.message,
+        quantity: Decimal.fromAtomics(variables.amountAtomics, fractionalDigits).atomics,
+        hash: createdHash,
+        postHash: variables.parentPost.value.hash,
+        author: wallet.address.value,
+      });
       // Created Post in ReplyWithParent
       const optimisticNewUserReply: ReplyWithParent = {
-        reply: newPost(
-          { message: variables.message, quantity: Decimal.fromAtomics(variables.amountAtomics, fractionalDigits).atomics, hash: createdHash, postHash: variables.parentPost.value.hash, author: wallet.address.value },
-        ),
+        reply: newPost({
+          message: variables.message,
+          quantity: Decimal.fromAtomics(variables.amountAtomics, fractionalDigits).atomics,
+          hash: createdHash,
+          postHash: variables.parentPost.value.hash,
+          author: wallet.address.value,
+        }),
         parent: optimisticParentPost,
       };
 
