@@ -153,6 +153,20 @@ export const messages = {
       PostActions: {
         replies: 'reply | replies',
       },
+      PostEditorToolbar: {
+        insertImageTitle: 'Insert Image URL',
+        insertImagePlaceholder: 'https://i.imgur.com/example.jpg',
+        insertImageError: 'Provide a direct Imgur image URL (e.g. https://i.imgur.com/example.png)',
+        insertVideoTitle: 'Insert Youtube URL',
+        insertVideoPlaceholder: 'https://www.youtube.com/watch?v=example',
+        insertVideoError: 'Provide a valid Youtube video URL',
+        insertButton: 'Insert',
+      },
+      PostMediaThumbnail: {
+        multipleImagesWarning: 'Multiple images detected. Only the first image will be shown.',
+        invalidFormatWarning: 'Image URL must end with a valid extension (.gif, .jpg, .png).',
+        untrustedDomainWarning: 'Only Imgur images are supported.',
+      },
       About: {
         privacyPolicy: 'Privacy Policy',
         termsAndConditions: 'Terms & Conditions',

@@ -1,0 +1,65 @@
+import { createInternalErrorResponse, createNotFoundResponse, createTextResponse } from './lib/http.ts';
+import { escapeHtml, formatAuthorAddress, getPost } from './lib/shared.ts';
+
+/**
+ * Generates HTML with dynamic meta tags for post pages.
+ *
+ * Intercepts `/post/{hash}` requests and returns HTML with updated Open Graph and Twitter Card meta tags.
+ *
+ * @param request - The incoming HTTP request
+ * @returns HTML response with updated meta tags
+ * @throws {404} Invalid path or post not found
+ * @throws {500} Error fetching post or template
+ */
+export default async (request: Request) => {
+  const url = new URL(request.url);
+  const pathParts = url.pathname.split('/').filter(Boolean);
+
+  if (pathParts[0] !== 'post' || pathParts.length < 2) {
+    return createNotFoundResponse();
+  }
+
+  try {
+    const post = await getPost(pathParts[1]);
+    if (!post) {
+      return createNotFoundResponse('Post not found');
+    }
+
+    const htmlResponse = await fetch(`${url.origin}/index.html`);
+    if (!htmlResponse.ok) {
+      return createInternalErrorResponse('Failed to load template');
+    }
+
+    const siteUrl = url.origin;
+    const postUrl = `${siteUrl}/post/${post.hash}`;
+    const ogImageUrl = `${siteUrl}/og-image/${post.hash}`;
+    const title = `Post by ${formatAuthorAddress(post.author)} | dither.chat`;
+    const escapedDescription = escapeHtml(post.message);
+    const escapedTitle = escapeHtml(title);
+
+    const replacements: [RegExp, string][] = [
+      [/<title>.*?<\/title>/, `<title>${escapedTitle}</title>`],
+      [/<meta\s+name="title"\s+content=".*?"\s*\/?>/, `<meta name="title" content="${escapedTitle}" />`],
+      [/<meta\s+name="description"\s+content=".*?"\s*\/?>/, `<meta name="description" content="${escapedDescription}" />`],
+      [/<meta\s+property="og:type"\s+content=".*?"\s*\/?>/, '<meta property="og:type" content="article" />'],
+      [/<meta\s+property="og:url"\s+content=".*?"\s*\/?>/, `<meta property="og:url" content="${postUrl}" />`],
+      [/<meta\s+property="og:title"\s+content=".*?"\s*\/?>/, `<meta property="og:title" content="${escapedTitle}" />`],
+      [/<meta\s+property="og:description"\s+content=".*?"\s*\/?>/, `<meta property="og:description" content="${escapedDescription}" />`],
+      [/<meta\s+property="og:image"\s+content=".*?"\s*\/?>/, `<meta property="og:image" content="${ogImageUrl}" />`],
+      [/<meta\s+property="twitter:card"\s+content=".*?"\s*\/?>/, '<meta property="twitter:card" content="summary_large_image" />'],
+      [/<meta\s+property="twitter:url"\s+content=".*?"\s*\/?>/, `<meta property="twitter:url" content="${postUrl}" />`],
+      [/<meta\s+property="twitter:title"\s+content=".*?"\s*\/?>/, `<meta property="twitter:title" content="${escapedTitle}" />`],
+      [/<meta\s+property="twitter:description"\s+content=".*?"\s*\/?>/, `<meta property="twitter:description" content="${escapedDescription}" />`],
+      [/<meta\s+property="twitter:image"\s+content=".*?"\s*\/?>/, `<meta property="twitter:image" content="${ogImageUrl}" />`],
+    ];
+
+    const html = await htmlResponse.text().then(html =>
+      replacements.reduce((html, [pattern, replacement]) => html.replace(pattern, replacement), html),
+    );
+
+    return createTextResponse(html, 'text/html; charset=utf-8');
+  } catch (error) {
+    console.error('Error in post-meta:', error);
+    return createInternalErrorResponse();
+  }
+};

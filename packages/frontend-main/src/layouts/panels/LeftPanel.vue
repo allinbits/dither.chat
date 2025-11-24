@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { RouteRecordNameGeneric } from 'vue-router';
 
-import { Bell, HelpCircle, House, Search, Settings, User } from 'lucide-vue-next';
+import { Bell, HelpCircle, House, Settings, User } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -37,11 +37,6 @@ const buttonLabelClass = 'text-lg font-semibold';
           <RouterLink to="/" :class="buttonClass(routesNames.home)">
             <House class="size-6" />
             <span :class="buttonLabelClass">Home</span>
-          </RouterLink>
-
-          <RouterLink to="/explore" :class="buttonClass(routesNames.explore)">
-            <Search class="size-6" />
-            <span :class="buttonLabelClass">Explore</span>
           </RouterLink>
 
           <RouterLink v-if="wallet.loggedIn.value" to="/notifications" :class="cn(buttonClass(routesNames.notifications), 'relative')">

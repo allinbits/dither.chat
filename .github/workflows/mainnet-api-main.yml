@@ -1,33 +1,55 @@
-name: mainnet-api-main
+name: '[Mainnet] Api Main'
 
 on:
   push:
     tags:
-      - 'v*'
+      - 'api/v*'
 
 jobs:
-  deploy-mainnet:
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+  build:
     runs-on: ubuntu-latest
-    environment: mainnet
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Setup Fly.io CLI
-        uses: superfly/flyctl-actions/setup-flyctl@master
-
-      - name: Deploy api-main to Fly.io
+      - name: Get version from tag
+        id: git_tag
         run: |
-          flyctl deploy \
-            --remote-only \
-            --config ./packages/api-main/fly.mainnet.toml \
-            --dockerfile ./packages/api-main/Dockerfile
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_API_MAIN }}
+          VERSION="${GITHUB_REF_NAME#api/-}"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Auth GCloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.SERVICE_ACCOUNT }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v3
+
+      - name: Configure Docker
+        run: gcloud auth configure-docker ${{ secrets.REGION }}-docker.pkg.dev --quiet
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./packages/api-main/Dockerfile
+          push: true
+          tags:
+            ${{ secrets.REGION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/dither-chat/api-main:${{ steps.get_tag.outputs.version }}
 
   notify:
-    needs: [deploy-mainnet]
+    needs: [build]
     if: failure()
     runs-on: ubuntu-latest
     steps:
@@ -47,11 +69,3 @@ jobs:
             🔍 [View Logs](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
 
             Please investigate and fix *ASAP*! 🔧
-
-  smoke-tests:
-    needs: [deploy-mainnet]
-    if: needs.deploy-mainnet.result == 'success'
-    uses: ./.github/workflows/smoke-tests.yml
-    secrets: inherit
-    with:
-      app_name: dither-mainnet-api-main

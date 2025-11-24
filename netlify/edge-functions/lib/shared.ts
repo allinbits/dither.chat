@@ -1,0 +1,90 @@
+import { AVATAR_BASE_URL } from './config.ts';
+
+export interface Post {
+  hash: string;
+  author: string;
+  message: string;
+  timestamp: Date;
+}
+
+function getAPIRoot() {
+  const environmentType = Deno.env.get('VITE_ENVIRONMENT_TYPE');
+
+  switch (environmentType) {
+    case 'testnet':
+      return Deno.env.get('VITE_API_ROOT_TESTNET');
+    case 'devnet':
+      return Deno.env.get('VITE_API_ROOT_DEVNET');
+    case 'mainnet':
+      return Deno.env.get('VITE_API_ROOT_MAINNET');
+    default:
+      throw new Error(`Unknown environment type: ${environmentType}`);
+  }
+}
+
+export async function getPost(hash: string): Promise<Post | null> {
+  const apiRoot = getAPIRoot();
+
+  if (!apiRoot) {
+    throw new Error('API_ROOT environment variable is not set');
+  }
+
+  const response = await fetch(`${apiRoot}/post?hash=${hash}`);
+  if (!response.ok) {
+    return response.status === 404 ? null : null;
+  }
+
+  const result = await response.json();
+  if (result.status === 404 || !result.rows?.length) {
+    return null;
+  }
+
+  return {
+    ...result.rows[0],
+    timestamp: new Date(result.rows[0].timestamp),
+  };
+}
+
+export function formatAuthorAddress(address: string): string {
+  return address.length <= 20 ? address : `${address.slice(0, 10)}...${address.slice(-8)}`;
+}
+
+export function escapeHtml(text: string): string {
+  return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+}
+
+export function formatDate(date: Date): string {
+  return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(date);
+}
+
+/**
+ * Converts a UTF-8 string to base64.
+ * Handles Unicode characters properly unlike btoa which only works with Latin1.
+ * @param str - The string to encode
+ * @returns Base64-encoded string
+ */
+export function utf8ToBase64(str: string): string {
+  const bytes = new TextEncoder().encode(str);
+  let binary = '';
+  for (let i = 0; i < bytes.length; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
+}
+
+/**
+ * Loads a Dicebear avatar SVG from the Dicebear API.
+ * @param author - The author address
+ * @returns The SVG content as a string
+ * @throws {Error} If the avatar cannot be loaded
+ */
+export async function loadAvatarDataUri(author: string): Promise<string> {
+  const encodedSeed = encodeURIComponent(author);
+  const dicebearUrl = `${AVATAR_BASE_URL}?seed=${encodedSeed}&size=48&backgroundColor=EFEFEF&radius=50`;
+  const avatarResponse = await fetch(dicebearUrl);
+  if (!avatarResponse.ok) {
+    throw new Error(`Failed to load Dicebear avatar: ${avatarResponse.status}`);
+  }
+  const avatarSvg = await avatarResponse.text();
+  return `data:image/svg+xml;base64,${utf8ToBase64(avatarSvg)}`;
+}

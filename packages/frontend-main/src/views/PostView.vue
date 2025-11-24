@@ -6,7 +6,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { toast } from 'vue-sonner';
 
 import PostActions from '@/components/posts/PostActions.vue';
-import PostMessage from '@/components/posts/PostMessage.vue';
+import PostContent from '@/components/posts/PostContent.vue';
 import PostMoreActions from '@/components/posts/PostMoreActions.vue';
 import PostsList from '@/components/posts/PostsList.vue';
 import PrettyTimestamp from '@/components/posts/PrettyTimestamp.vue';
@@ -88,7 +88,7 @@ async function handleReply() {
         </RouterLink>
         <PostMoreActions :post="post" />
       </div>
-      <PostMessage :message="post.message" class="mt-2" />
+      <PostContent :message="post.message" class="mt-2" />
       <PrettyTimestamp :timestamp="new Date(post.timestamp)" is-full-date class="self-start mt-4" />
 
       <div class="pr-2">
@@ -123,7 +123,7 @@ async function handleReply() {
         </div>
       </div>
     </div>
-    <div class="flex flex-row p-3 border-t border-gray-200 items-center justify-between">
+    <div class="flex flex-row p-3 border-t-2 items-center justify-between">
       <div class="text-lg font-semibold">
         Replies
       </div>

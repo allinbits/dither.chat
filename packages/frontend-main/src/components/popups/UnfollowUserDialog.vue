@@ -7,8 +7,8 @@ import { Button }
   from '@/components/ui/button';
 import {
   Dialog,
-  DialogContent,
   DialogTitle,
+  ResponsiveDialogContent,
 } from '@/components/ui/dialog';
 import InputPhoton from '@/components/ui/input/InputPhoton.vue';
 import { useTxDialog } from '@/composables/useTxDialog';
@@ -58,7 +58,7 @@ async function handleSubmit() {
 
 <template>
   <Dialog v-if="isShown" open @update:open="handleClose">
-    <DialogContent>
+    <ResponsiveDialogContent>
       <DialogTitle>{{ $t('components.PopupTitles.unfollow') }}</DialogTitle>
       <DialogDescription>
         <UserAvatarUsername :user-address="unfollow" />
@@ -71,6 +71,6 @@ async function handleSubmit() {
           {{ $t('components.Button.submit') }}
         </Button>
       </div>
-    </DialogContent>
+    </ResponsiveDialogContent>
   </Dialog>
 </template>

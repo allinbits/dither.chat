@@ -1,12 +1,13 @@
 {
-  "name": "frontend-main",
+  "name": "@dither.chat/frontend",
   "type": "module",
   "version": "0.0.1",
   "private": true,
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "build": "bunx vue-tsc -b && vite build",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@cosmjs/amino": "^0.33.1",
@@ -43,6 +44,7 @@
   "devDependencies": {
     "@keplr-wallet/types": "^0.12.280",
     "@types/lodash.merge": "^4.6.9",
+    "@types/node": "^22.18.12",
     "@vitejs/plugin-vue": "^5.2.4",
     "@vue/tsconfig": "^0.7.0",
     "lodash.merge": "^4.6.2",
@@ -50,6 +52,6 @@
     "vite": "^6.3.7",
     "vite-plugin-node-polyfills": "^0.24.0",
     "vite-svg-loader": "^5.1.0",
-    "vue-tsc": "^2.2.12"
+    "vue-tsc": "^3.1.4"
   }
 }

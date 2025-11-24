@@ -14,7 +14,6 @@ services:
       - '5432:5432'
     volumes:
       - ./packages/postgresql/postgresql.conf:/etc/postgresql/postgresql.conf:ro
-      - ./packages/postgresql/setup-replication.sql:/docker-entrypoint-initdb.d/setup-replication.sql
       - ./data/postgres_data:/var/lib/postgresql/18/data
     healthcheck:
       test: [CMD, pg_isready, -U, default]
@@ -28,7 +27,9 @@ services:
   # ================================
   api-main:
     container_name: api-main
-    build: ./packages/api-main
+    build:
+      context: .
+      dockerfile: ./packages/api-main/Dockerfile
     image: ditherchat/api-main
     restart: always
     depends_on:
@@ -37,6 +38,7 @@ services:
     environment:
       PG_URI: 'postgresql://default:password@postgres:5432/postgres'
       AUTH: dev
+      JWT: dev-jwt-secret
     ports:
       - 3000:3000
     healthcheck:
@@ -51,10 +53,12 @@ services:
   # ================================
   reader-main:
     container_name: reader-main
-    build: ./packages/reader-main
+    build:
+      context: .
+      dockerfile: ./packages/reader-main/Dockerfile
     image: ditherchat/reader-main
     restart: always
-    command: [pnpm, start]
+    command: [bun, run, start]
     depends_on:
       postgres:
         condition: service_healthy
