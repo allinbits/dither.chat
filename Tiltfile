@@ -5,7 +5,7 @@ docker_compose('docker-compose.yml')
 docker_build('ditherchat/api-main', '.',
   dockerfile = './packages/api-main/Dockerfile',
   live_update = [
-    sync('./packages/api-main/src', '/app'),
+    sync('./packages/api-main/src', '/app/packages/api-main/src'),
     run('bun install', trigger='package.json'),
     restart_container(),
   ])
@@ -13,7 +13,7 @@ docker_build('ditherchat/api-main', '.',
 docker_build('ditherchat/reader-main', '.',
   dockerfile = './packages/reader-main/Dockerfile',
   live_update = [
-    sync('./packages/reader-main/src', '/app'),
+    sync('./packages/reader-main/src', '/app/packages/reader-main/src'),
     run('bun install', trigger='package.json'),
     restart_container(),
   ])
