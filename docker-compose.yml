@@ -14,7 +14,6 @@ services:
       - '5432:5432'
     volumes:
       - ./packages/postgresql/postgresql.conf:/etc/postgresql/postgresql.conf:ro
-      - ./packages/postgresql/setup-replication.sql:/docker-entrypoint-initdb.d/setup-replication.sql
       - ./data/postgres_data:/var/lib/postgresql/18/data
     healthcheck:
       test: [CMD, pg_isready, -U, default]
