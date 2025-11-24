@@ -6,11 +6,12 @@ services:
     restart: always
     container_name: chronosync
     environment:
-      # Note: It seems all in bits node is not keeping a big history, so REST requests
-      #       fail when trying to get previous TXs, poluting logs.
-      # API_URLS: 'https://atomone-api.allinbits.com,https://atomone-rest.publicnode.com'
+      # Mainnet
+      # API_URLS: 'https://atomone-rest.publicnode.com'
+      #
+      # Testnet
+      API_URLS: 'https://atomone-testnet-1-api.allinbits.services'
 
-      API_URLS: 'https://atomone-rest.publicnode.com'
       START_BLOCK: '2605764'
       BATCH_SIZE: 50
       MEMO_PREFIX: dither.
