@@ -1,3 +1,5 @@
+import type { DisplayableAuthor, DisplayableUser } from '@/types';
+
 import { Decimal } from '@cosmjs/math';
 
 export function shorten(text: string, start = 8, end = 8) {
@@ -28,4 +30,14 @@ export function formatCompactAtomics(amountAtomics: string | bigint | null, frac
   if (!amountAtomics)
     return '0';
   return formatCompactNumber(Decimal.fromAtomics(amountAtomics.toString(), fractionalDigits).toFloatApproximation());
+}
+
+export function displayAuthor(item: DisplayableAuthor): string {
+  const handle = item.author_handle ? `@${item.author_handle}` : undefined;
+  return item.author_display || handle || item.author;
+}
+
+export function displayUser(item: DisplayableUser): string {
+  const handle = item.handle ? `@${item.handle}` : undefined;
+  return item.display || handle || item.address;
 }

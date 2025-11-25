@@ -8,8 +8,8 @@ import { AccountTable, FeedTable, FollowsTable } from '../../drizzle/schema';
 const statement = getDatabase()
   .select({
     ...getTableColumns(FeedTable),
-    handle: AccountTable.handle,
-    display: AccountTable.display,
+    author_handle: AccountTable.handle,
+    author_display: AccountTable.display,
   })
   .from(FeedTable)
   .leftJoin(AccountTable, eq(FeedTable.author, AccountTable.address))
@@ -53,8 +53,13 @@ export async function Posts(query: Gets.PostsQuery) {
 }
 
 const followingPostsStatement = getDatabase()
-  .select()
+  .select({
+    ...getTableColumns(FeedTable),
+    author_handle: AccountTable.handle,
+    author_display: AccountTable.display,
+  })
   .from(FeedTable)
+  .leftJoin(AccountTable, eq(FeedTable.author, AccountTable.address))
   .where(
     and(
       inArray(FeedTable.author, getDatabase()

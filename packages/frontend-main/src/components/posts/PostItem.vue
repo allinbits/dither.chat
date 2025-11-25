@@ -5,6 +5,7 @@ import { computed, ref } from 'vue';
 
 import { usePost } from '@/composables/usePost';
 import { cn } from '@/utility';
+import { displayAuthor } from '@/utility/text';
 
 import PostActions from '../posts/PostActions.vue';
 import PrettyTimestamp from '../posts/PrettyTimestamp.vue';
@@ -40,7 +41,7 @@ const usedPost = computed(() => cachedPost.value || props.post);
           <div class="flex flex-row justify-between">
             <div class="flex items-center gap-3">
               <RouterLink :to="`/profile/${usedPost.author}`">
-                <Username :user-address="usedPost.author" />
+                <Username :user-address="displayAuthor(usedPost)" />
               </RouterLink>
               <PrettyTimestamp :timestamp="new Date(usedPost.timestamp)" />
             </div>

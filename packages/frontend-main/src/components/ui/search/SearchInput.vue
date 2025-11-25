@@ -5,6 +5,7 @@ import { RouterLink } from 'vue-router';
 import PostMessage from '@/components/posts/PostMessage.vue';
 import UserAvatarUsername from '@/components/users/UserAvatarUsername.vue';
 import { useSearchPosts } from '@/composables/useSearchPosts';
+import { displayAuthor } from '@/utility/text';
 
 import Input from '../input/Input.vue';
 
@@ -57,7 +58,7 @@ function clearSearch() {
           @click="clearSearch"
         >
           <PostMessage :message="post.message" class="line-clamp-2" />
-          <UserAvatarUsername :user-address="post.author" size="sm" />
+          <UserAvatarUsername :user-address="displayAuthor(post)" size="sm" />
         </RouterLink>
       </div>
     </div>

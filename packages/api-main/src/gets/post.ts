@@ -8,8 +8,8 @@ import { AccountTable, FeedTable } from '../../drizzle/schema';
 const statementGetPost = getDatabase()
   .select({
     ...getTableColumns(FeedTable),
-    handle: AccountTable.handle,
-    display: AccountTable.display,
+    author_handle: AccountTable.handle,
+    author_display: AccountTable.display,
   })
   .from(FeedTable)
   .leftJoin(AccountTable, eq(FeedTable.author, AccountTable.address))
@@ -19,7 +19,8 @@ const statementGetPost = getDatabase()
 const statementGetReply = getDatabase()
   .select({
     ...getTableColumns(FeedTable),
-    handle: AccountTable.handle,
+    author_handle: AccountTable.handle,
+    author_display: AccountTable.display,
   })
   .from(FeedTable)
   .leftJoin(AccountTable, eq(FeedTable.author, AccountTable.address))

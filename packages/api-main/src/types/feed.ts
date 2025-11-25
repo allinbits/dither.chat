@@ -5,7 +5,10 @@ import { createSelectSchema } from 'drizzle-typebox';
 
 import { FeedTable } from '../../drizzle/schema';
 
-export type Post = InferSelectModel<typeof FeedTable>;
+export type Post = InferSelectModel<typeof FeedTable> & {
+  author_handle?: string;
+  author_display?: string;
+};
 export const postSchema = createSelectSchema(FeedTable);
 
 export interface ReplyWithParent {

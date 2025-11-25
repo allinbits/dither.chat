@@ -16,3 +16,15 @@ export interface DitherTypes {
   // PostHash
   Flag: [string];
 };
+
+export interface DisplayableAuthor {
+  author: string;
+  author_handle?: string;
+  author_display?: string;
+}
+
+export interface DisplayableUser {
+  address: string;
+  handle?: string;
+  display?: string;
+}
