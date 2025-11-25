@@ -6,11 +6,7 @@ import { getDatabase } from '../../drizzle/db';
 import { AccountTable } from '../../drizzle/schema';
 
 const statement = getDatabase()
-  .select({
-    handle: AccountTable.handle,
-    address: AccountTable.address,
-    display: AccountTable.display,
-  })
+  .select()
   .from(AccountTable)
   .where(
     or(
@@ -18,23 +14,21 @@ const statement = getDatabase()
       eq(AccountTable.address, sql.placeholder('address')),
     ),
   )
-  .orderBy(AccountTable.handle)
-  .limit(1)
   .prepare('stmnt_get_handle');
 
-export async function Handle(query: Gets.HandleQuery) {
-  const { address, name } = query;
-  if (!address && !name) {
-    return { status: 400, error: 'handle name or address is required' };
+export async function Account(query: Gets.AccountQuery) {
+  const { address, handle } = query;
+  if (!address && !handle) {
+    return { status: 400, error: 'handle or address is required' };
   }
 
   try {
-    const [handle] = await statement.execute({ address, handle: name });
-    if (!handle) {
+    const [account] = await statement.execute({ address, handle });
+    if (!account) {
       return { status: 404, rows: [] };
     }
 
-    return { status: 200, rows: [handle] };
+    return { status: 200, rows: [account] };
   } catch (error) {
     console.error(error);
     return { error: 'failed to read data from database' };
