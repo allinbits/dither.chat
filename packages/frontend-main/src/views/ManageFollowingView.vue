@@ -20,6 +20,7 @@ import { useWallet } from '@/composables/useWallet';
 import MainLayout from '@/layouts/MainLayout.vue';
 import { useConfigStore } from '@/stores/useConfigStore';
 import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
+import { displayUser } from '@/utility/text';
 import HeaderBack from '@/views/ViewHeading.vue';
 
 const wallet = useWallet();
