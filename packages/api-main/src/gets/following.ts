@@ -13,7 +13,7 @@ const statementGetFollowing = getDatabase()
     hash: FollowsTable.hash,
   })
   .from(FollowsTable)
-  .leftJoin(AccountTable, eq(AccountTable.address, FollowsTable.follower))
+  .leftJoin(AccountTable, eq(AccountTable.address, FollowsTable.following))
   .where(and(eq(FollowsTable.follower, sql.placeholder('follower')), isNull(FollowsTable.removed_at)))
   .limit(sql.placeholder('limit'))
   .offset(sql.placeholder('offset'))
