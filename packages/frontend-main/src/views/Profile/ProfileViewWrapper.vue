@@ -2,7 +2,7 @@
 import type { PopupState } from '@/composables/usePopups';
 
 import { Loader } from 'lucide-vue-next';
-import { computed } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
 import { toast } from 'vue-sonner';
@@ -10,6 +10,7 @@ import { toast } from 'vue-sonner';
 import Button from '@/components/ui/button/Button.vue';
 import Tabs from '@/components/ui/tabs/RouterTabs.vue';
 import UserAvatarUsername from '@/components/users/UserAvatarUsername.vue';
+import { useAccount } from '@/composables/useAccount';
 import { useDefaultAmount } from '@/composables/useDefaultAmount';
 import { useFollowUser } from '@/composables/useFollowUser';
 import { useIsFollowing } from '@/composables/useIsFollowing';
@@ -34,13 +35,11 @@ const { followUser } = useFollowUser();
 const { unfollowUser } = useUnfollowUser();
 const { t } = useI18n();
 
-const address = computed(() =>
-  typeof route.params.address === 'string' ? route.params.address : '',
-);
-const isMyProfile = computed(() =>
-  address.value === wallet.address.value,
-);
+const address = computed(() => typeof route.params.address === 'string' ? route.params.address : '');
+const isMyProfile = computed(() => address.value === wallet.address.value);
+
 const { data: isFollowing, isFetching: isFetchingIsFollowing } = useIsFollowing({ followingAddress: address, followerAddress: wallet.address });
+const { data: account } = useAccount({ address });
 
 const tabs = computed(() => [
   {
@@ -53,7 +52,14 @@ const tabs = computed(() => [
   },
 ]);
 
+const userDisplay = ref(account?.value?.handle ? `@${account.value.handle}` : address.value);
+
+watch([address, account], ([address, account]) => {
+  userDisplay.value = account?.handle ? `@${account.handle}` : address;
+});
+
 const walletDialogStore = useWalletDialogStore();
+
 function handleAction(type: keyof PopupState, userAddress: string) {
   if (wallet.loggedIn.value) {
     popups.show(type, userAddress);
@@ -114,7 +120,7 @@ async function onClickUnfollow() {
       <ViewHeading :title="$t(`components.Headings.${isMyProfile ? 'myProfile' : 'profile'}`)" />
 
       <div class="flex flex-row justify-between items-center p-4">
-        <UserAvatarUsername :user-address="address" size="lg" disabled />
+        <UserAvatarUsername :user-address="userDisplay" size="lg" disabled />
         <Loader v-if="isFetchingIsFollowing" class="animate-spin w-[80px]" />
         <template v-else-if="!isMyProfile && wallet.loggedIn.value">
           <div class="flex flex-row gap-2">
