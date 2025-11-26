@@ -10,7 +10,7 @@ import { notify } from '../shared/notify';
 import { lower } from '../utility';
 
 const MIN_HANDLE_LENGTH = 5;
-const MAX_HANDLE_LENGTH = 32;
+const MAX_HANDLE_LENGTH = 25;
 const HANDLE_REGEX = /^[a-z]{3}\w*$/i;
 
 export async function RegisterHandle(body: Posts.RegisterHandleBody) {

@@ -7,7 +7,7 @@ export const AccountTable = pgTable(
   'account',
   {
     address: varchar({ length: 44 }).primaryKey(),
-    handle: varchar({ length: 32 }),
+    handle: varchar({ length: 25 }),
     display: varchar({ length: 128 }),
   },
   t => [
