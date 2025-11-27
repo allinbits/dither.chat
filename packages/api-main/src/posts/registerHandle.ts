@@ -8,21 +8,13 @@ import { getDatabase } from '../../drizzle/db';
 import { AccountTable } from '../../drizzle/schema';
 import { notify } from '../shared/notify';
 import { lower } from '../utility';
-
-const MIN_HANDLE_LENGTH = 5;
-const MAX_HANDLE_LENGTH = 25;
-const HANDLE_REGEX = /^[a-z]{3}\w*$/i;
+import { checkAccountHandleIsValid } from '../utility/handle';
 
 export async function RegisterHandle(body: Posts.RegisterHandleBody) {
-  if (!HANDLE_REGEX.test(body.handle)) {
-    return {
-      status: 400,
-      error: 'handle must start with three letters and can only include letters, numbers and underscores',
-    };
-  }
-
-  if (body.handle.length < MIN_HANDLE_LENGTH || body.handle.length > MAX_HANDLE_LENGTH) {
-    return { status: 400, error: `handle must have between ${MIN_HANDLE_LENGTH} and ${MAX_HANDLE_LENGTH} characters long` };
+  try {
+    checkAccountHandleIsValid(body.handle);
+  } catch (e) {
+    return { status: 400, error: (e as Error).message };
   }
 
   const db = getDatabase();
