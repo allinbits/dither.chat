@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Loader } from 'lucide-vue-next';
 import { ref, watch } from 'vue';
+import { toast } from 'vue-sonner';
 
 import Button from '@/components/ui/button/Button.vue';
 import Input from '@/components/ui/input/Input.vue';
@@ -16,13 +17,13 @@ import HeaderBack from '@/views/ViewHeading.vue';
 const wallet = useWallet();
 const popups = usePopups();
 const configStore = useConfigStore();
-const { data: account, isFetching } = useAccount({ address: wallet.address.value });
+const { data: account, isFetching } = useAccount({ address: wallet.address });
 const { registerHandle } = useRegisterHandle();
 
-const handle = ref<string>(account?.value?.handle);
+const handle = ref<string>(account?.value?.handle ?? '');
 
 watch(account, (account) => {
-  handle.value = account.handle;
+  handle.value = account?.handle ?? '';
 });
 
 async function onClickRegister() {
