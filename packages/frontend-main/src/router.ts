@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 
 import { useWalletStateStore } from './stores/useWalletStateStore';
 import AboutView from './views/AboutView.vue';
+import AccountView from './views/AccountView.vue';
 import EnvConfigView from './views/EnvConfigView.vue';
 import HomeFeedView from './views/Home/HomeFeedView.vue';
 import HomeFollowingView from './views/Home/HomeFollowingView.vue';
@@ -23,6 +24,7 @@ export const routesNames = {
   profile: 'Profile',
   profileReplies: 'Profile Replies',
   settings: 'Settings',
+  settingsAccount: 'Settings Account',
   settingsManageFollowers: 'Settings Manage Followers',
   settingsConfig: 'Settings Config',
   settingsSingleSession: 'Settings Single Session',
@@ -40,6 +42,7 @@ const routes = [
   { path: '/profile/:address', name: routesNames.profile, component: ProfilePostsView },
   { path: '/profile/:address/replies', name: routesNames.profileReplies, component: ProfileRepliesView },
   { path: '/settings', name: routesNames.settings, component: SettingsView, meta: { authRequired: true } },
+  { path: '/settings/account', name: routesNames.settingsAccount, component: AccountView, meta: { authRequired: true } },
   { path: '/settings/manage-following', name: routesNames.settingsManageFollowers, component: ManageFollowingView, meta: { authRequired: true } },
   { path: '/settings/env-config', name: routesNames.settingsConfig, component: EnvConfigView, meta: { authRequired: true } },
   { path: '/settings/settings-single-session', name: routesNames.settingsSingleSession, component: SettingsSingleSession, meta: { authRequired: true } },

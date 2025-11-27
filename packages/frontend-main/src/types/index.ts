@@ -15,6 +15,8 @@ export interface DitherTypes {
   Dislike: [string];
   // PostHash
   Flag: [string];
+  // Handle
+  RegisterHandle: [string];
 };
 
 export interface DisplayableAuthor {
