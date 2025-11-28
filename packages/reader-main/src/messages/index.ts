@@ -15,9 +15,9 @@ const config = useConfig();
 // different one.
 //
 // Dither protocol is open, it uses a memo field and a send message, so anyone
-// can "polute" Dither namespace sending multiple transactions using different
+// can "pollute" Dither namespace sending multiple transactions using different
 // non existent function names, which might be expected to be supported in the
-// future. Apart from poluting the namespace they could also generate issues
+// future. Apart from polluting the namespace they could also generate issues
 // when replaying historical transactions to restore the data.
 export const messages = new Messages({
   [config.COMMUNITY_ACCOUNT_V1]: v1,
