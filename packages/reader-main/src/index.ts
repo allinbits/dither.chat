@@ -9,7 +9,7 @@ import { ChronoState } from '@atomone/chronostate';
 
 import { useConfig } from './config/index';
 import { EclesiaClient } from './eclesia/client';
-import { MessageHandlers } from './messages/index';
+import { messages } from './messages';
 import { useQueue } from './queue';
 
 const config = useConfig();
@@ -97,13 +97,6 @@ async function processAction(action: Action): Promise<ResponseStatus> {
   }
 
   const actionType = match[1];
-
-  const actionTypeKey = actionType as keyof typeof MessageHandlers;
-  if (!MessageHandlers[actionTypeKey]) {
-    console.warn(`Skipped ${action.hash}, unknown action type: ${actionType}`);
-    return 'SKIP';
-  }
-
   const transfer = getTransferMessage(action.messages as unknown as Array<MsgGeneric>);
   const quantity = getTransferQuantities(action.messages as unknown as Array<MsgGeneric>);
   if (!transfer) {
@@ -111,7 +104,13 @@ async function processAction(action: Action): Promise<ResponseStatus> {
     return 'SKIP';
   }
 
-  return await MessageHandlers[actionTypeKey]({ ...action, sender: transfer.from_address, quantity });
+  const handler = messages.get(transfer.to_address, actionType);
+  if (!handler) {
+    console.warn(`Skipped ${action.hash}, unknown action type: ${actionType}`);
+    return 'SKIP';
+  }
+
+  return await handler({ ...action, sender: transfer.from_address, quantity });
 }
 
 async function updateLastBlock(height: string, attempt = 0) {

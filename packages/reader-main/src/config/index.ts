@@ -6,6 +6,7 @@ let config: Config & {
   AUTH: string;
   ECLESIA_GRAPHQL_ENDPOINT?: string;
   ECLESIA_GRAPHQL_SECRET?: string;
+  COMMUNITY_ACCOUNT_V1: string;
 };
 
 export function useConfig(): typeof config {
@@ -16,6 +17,10 @@ export function useConfig(): typeof config {
   if (!process.env.AUTH || process.env.AUTH === 'default') {
     console.error(`Failed to specify AUTH, no authorization secret provided`);
     throw new Error(`AUTH must be set to a strong secret`);
+  }
+
+  if (!process.env.COMMUNITY_ACCOUNT_V1) {
+    throw new Error(`COMMUNITY_ACCOUNT_V1 value is required`);
   }
 
   config = {
@@ -30,6 +35,8 @@ export function useConfig(): typeof config {
 
     ECLESIA_GRAPHQL_ENDPOINT: process.env.ECLESIA_GRAPHQL_ENDPOINT,
     ECLESIA_GRAPHQL_SECRET: process.env.ECLESIA_GRAPHQL_SECRET,
+
+    COMMUNITY_ACCOUNT_V1: process.env.COMMUNITY_ACCOUNT_V1,
   };
 
   return config;
