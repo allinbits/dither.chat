@@ -7,7 +7,7 @@ import { Remove } from './remove';
 import { Reply } from './reply';
 import { Unfollow } from './unfollow';
 
-export default {
+export const v1 = {
   Dislike,
   Flag,
   Follow,

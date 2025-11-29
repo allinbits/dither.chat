@@ -1,6 +1,6 @@
 import { useConfig } from '../config';
 import { Messages } from './messages';
-import v1 from './v1';
+import { v1 } from './v1';
 
 const config = useConfig();
 
