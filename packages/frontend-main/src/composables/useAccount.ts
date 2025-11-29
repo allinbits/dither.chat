@@ -26,7 +26,8 @@ export function account(params: Params) {
 
       const result = await response.json();
       if (result.status === 404 || !result.rows?.length) {
-        throw new Error('Account not found');
+        console.warn(`Account ${params.address.value} not found`);
+        return;
       }
 
       return (result.rows[0] as Account);
