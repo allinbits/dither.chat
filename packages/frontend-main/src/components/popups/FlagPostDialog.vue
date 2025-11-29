@@ -12,7 +12,6 @@ import { useFlagPost } from '@/composables/useFlagPost';
 import { useTxDialog } from '@/composables/useTxDialog';
 import { useConfigStore } from '@/stores/useConfigStore';
 import { fractionalDigits } from '@/utility/atomics';
-import { displayAuthor } from '@/utility/text';
 import { showBroadcastingToast } from '@/utility/toast';
 
 import PostMessage from '../posts/PostMessage.vue';
@@ -54,6 +53,7 @@ async function handleSubmit() {
     toast.dismiss(toastId);
   }
 }
+console.log(flag);
 </script>
 
 <template>
@@ -65,7 +65,7 @@ async function handleSubmit() {
         <UserAvatar :user-address="flag.author" />
         <div class="flex flex-col w-full gap-3">
           <div class="flex flex-row gap-3 pt-2.5">
-            <Username :user-address="displayAuthor(flag)" />
+            <Username :user-address="flag.author" :user-handle="flag.author_handle" />
             <PrettyTimestamp :timestamp="new Date(flag.timestamp)" />
           </div>
           <PostMessage :message="flag.message" />

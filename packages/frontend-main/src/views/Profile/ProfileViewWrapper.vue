@@ -2,7 +2,7 @@
 import type { PopupState } from '@/composables/usePopups';
 
 import { Loader } from 'lucide-vue-next';
-import { computed, ref, watch } from 'vue';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
 import { toast } from 'vue-sonner';
@@ -51,12 +51,6 @@ const tabs = computed(() => [
     to: `/profile/${address.value}/replies`,
   },
 ]);
-
-const userDisplay = ref(account?.value?.handle ? `@${account.value.handle}` : address.value);
-
-watch([address, account], ([address, account]) => {
-  userDisplay.value = account?.handle ? `@${account.handle}` : address;
-});
 
 const walletDialogStore = useWalletDialogStore();
 
@@ -120,7 +114,7 @@ async function onClickUnfollow() {
       <ViewHeading :title="$t(`components.Headings.${isMyProfile ? 'myProfile' : 'profile'}`)" />
 
       <div class="flex flex-row justify-between items-center p-4">
-        <UserAvatarUsername :user-address="userDisplay" size="lg" disabled />
+        <UserAvatarUsername :user-address="address" :user-handle="account?.handle" size="lg" disabled />
         <Loader v-if="isFetchingIsFollowing" class="animate-spin w-[80px]" />
         <template v-else-if="!isMyProfile && wallet.loggedIn.value">
           <div class="flex flex-row gap-2">

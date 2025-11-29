@@ -6,6 +6,7 @@ import Username from './Username.vue';
 
 export interface UserAvatarUsernameProps {
   userAddress?: string;
+  userHandle?: string;
   size?: 'lg' | 'md' | 'sm';
   disabled?: boolean;
 }

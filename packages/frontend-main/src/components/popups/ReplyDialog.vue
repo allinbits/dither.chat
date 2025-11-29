@@ -17,7 +17,6 @@ import { useCreateReply } from '@/composables/useCreateReply';
 import { useTxDialog } from '@/composables/useTxDialog';
 import { useConfigStore } from '@/stores/useConfigStore';
 import { fractionalDigits } from '@/utility/atomics';
-import { displayAuthor } from '@/utility/text';
 import { showBroadcastingToast } from '@/utility/toast';
 
 const POST_HASH_LEN = 64;
@@ -67,7 +66,7 @@ function handleInputValidity(value: boolean) {
           <UserAvatar :user-address="reply.author" />
           <div class="flex flex-col w-full gap-3">
             <div class="flex flex-row gap-3 pt-2.5">
-              <Username :user-address="displayAuthor(reply)" />
+              <Username :user-address="reply.author" :user-handle="reply.author_handle" />
               <PrettyTimestamp :timestamp="new Date(reply.timestamp)" />
             </div>
             <!-- clamp content width to prevent overflow. 6rem accounts for the left offset -->
