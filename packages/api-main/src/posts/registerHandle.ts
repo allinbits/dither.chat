@@ -28,7 +28,7 @@ export async function RegisterHandle(body: Posts.RegisterHandleBody) {
         actor: address,
         owner: address,
         timestamp: new Date(body.timestamp),
-        subcontext: 'Handle is already taken',
+        subcontext: `Handle @${body.handle} is already taken`,
       });
 
       return { status: 400, error: 'handle is already registered' };
