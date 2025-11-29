@@ -17,5 +17,6 @@ services:
       MEMO_PREFIX: dither.
       RECEIVER: atone1uq6zjslvsa29cy6uu75y8txnl52mw06j6fzlep
       AUTH: dev
+      MIN_REGISTER_HANDLE_FEE: '0.000001'
       # LOG: process.env.LOG === 'true' ? true : false,
     command: [bun, run, start]

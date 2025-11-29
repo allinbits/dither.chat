@@ -36,6 +36,8 @@ async function handleSubmit() {
   const toastId = showBroadcastingToast('Register Handle');
   try {
     await registerHandle({ handle: handle.value, amountAtomics: amountAtomics.value });
+  } catch (e) {
+    console.error((e as Error).message);
   } finally {
     toast.dismiss(toastId);
   }

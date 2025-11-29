@@ -53,7 +53,6 @@ async function handleSubmit() {
     toast.dismiss(toastId);
   }
 }
-console.log(flag);
 </script>
 
 <template>

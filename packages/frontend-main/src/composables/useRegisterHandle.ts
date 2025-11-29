@@ -1,6 +1,9 @@
+import { Decimal } from '@cosmjs/math';
 import { useMutation } from '@tanstack/vue-query';
 import { ref } from 'vue';
 
+import { useConfigStore } from '@/stores/useConfigStore';
+import { fractionalDigits } from '@/utility/atomics';
 import { showInfoToast } from '@/utility/toast';
 
 import { useTxNotification } from './useTxNotification';
@@ -12,11 +15,14 @@ interface RegisterHandleRequestMutation {
 }
 
 export function useRegisterHandle() {
+  const configStore = useConfigStore();
   const wallet = useWallet();
   const txError = ref<string>();
   const txSuccess = ref<string>();
   const isToastShown = ref(false);
   useTxNotification('Register Handle', txSuccess, txError);
+
+  const minAmount = Decimal.fromAtomics(configStore.config.minRegisterHandleFee, fractionalDigits);
 
   const {
     mutateAsync,
@@ -25,6 +31,13 @@ export function useRegisterHandle() {
       txError.value = undefined;
       txSuccess.value = undefined;
       isToastShown.value = true;
+
+      const amount = Decimal.fromAtomics(amountAtomics, fractionalDigits);
+      if (amount.isLessThan(minAmount)) {
+        const msg = `Handle registration requires a minimum of ${minAmount} PHOTON`;
+        txError.value = msg;
+        throw new Error(msg);
+      }
 
       const result = await wallet.dither.send('RegisterHandle', {
         args: [handle],
