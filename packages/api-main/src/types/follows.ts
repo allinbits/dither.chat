@@ -11,4 +11,7 @@ export const followingSchema = Type.Object({
   address: followSchema.properties.following,
   hash: followSchema.properties.hash,
 });
-export type Following = Static<typeof followingSchema>;
+export type Following = Static<typeof followingSchema> & {
+  display?: string;
+  handle?: string;
+};
