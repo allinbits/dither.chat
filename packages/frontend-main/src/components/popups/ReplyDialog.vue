@@ -1,39 +1,47 @@
 <script lang="ts" setup>
 import type { Post } from 'api-main/types/feed';
 
-import { Decimal } from '@cosmjs/math';
 import { computed, ref } from 'vue';
 import { toast } from 'vue-sonner';
 
 import PostMessage from '@/components/posts/PostMessage.vue';
 import PrettyTimestamp from '@/components/posts/PrettyTimestamp.vue';
+import PromoteToggle from '@/components/posts/PromoteToggle.vue';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogTitle, ResponsiveDialogContent } from '@/components/ui/dialog';
-import InputPhoton from '@/components/ui/input/InputPhoton.vue';
 import { Textarea } from '@/components/ui/textarea';
 import UserAvatar from '@/components/users/UserAvatar.vue';
 import Username from '@/components/users/Username.vue';
 import { useCreateReply } from '@/composables/useCreateReply';
 import { useTxDialog } from '@/composables/useTxDialog';
 import { useConfigStore } from '@/stores/useConfigStore';
-import { fractionalDigits } from '@/utility/atomics';
 import { showBroadcastingToast } from '@/utility/toast';
 
 const POST_HASH_LEN = 64;
 const MAX_CHARS = 512 - ('dither.Reply("", "")'.length + POST_HASH_LEN);
 const message = ref('');
-const isBalanceInputValid = ref(false);
+const isPromoted = ref(false);
 const configStore = useConfigStore();
 
 const { createReply, txError, txSuccess } = useCreateReply();
 const {
   isShown,
-  inputPhotonModel,
   popupState: reply,
   handleClose,
 } = useTxDialog<Post>('reply', txSuccess, txError);
-const amountAtomics = computed(() => configStore.config.defaultAmountEnabled ? configStore.config.defaultAmountAtomics : Decimal.fromUserInput(inputPhotonModel.value.toString(), fractionalDigits).atomics);
-const canSubmit = computed(() => configStore.config.defaultAmountEnabled || (isBalanceInputValid.value && message.value.length > 0));
+const amountAtomics = computed(() => {
+  if (isPromoted.value) {
+    return configStore.config.promotionSendAmountAtomics;
+  }
+
+  if (configStore.config.defaultAmountEnabled) {
+    return configStore.config.defaultAmountAtomics;
+  }
+
+  return configStore.config.regularSendAmountAtomics;
+});
+// TODO: Verify wallet has enough balance for amountAtomics before allowing submit
+const canSubmit = computed(() => message.value.length > 0);
 
 async function handleSubmit() {
   if (!canSubmit.value || !reply.value) {
@@ -49,10 +57,6 @@ async function handleSubmit() {
   } finally {
     toast.dismiss(toastId);
   }
-}
-
-function handleInputValidity(value: boolean) {
-  isBalanceInputValid.value = value;
 }
 </script>
 
@@ -80,7 +84,7 @@ function handleInputValidity(value: boolean) {
 
         <!-- Transaction Form -->
         <div class="flex flex-col w-full gap-4">
-          <InputPhoton v-if="!configStore.config.defaultAmountEnabled" v-model="inputPhotonModel" @on-validity-change="handleInputValidity" />
+          <PromoteToggle v-model="isPromoted" :show-promote-button="true" />
           <span v-if="txError" class="text-red-500 text-xs">{{ txError }}</span>
           <Button class="w-full" :disabled="!canSubmit" @click="handleSubmit">
             {{ $t('components.Button.submit') }}
