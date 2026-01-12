@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import { Decimal } from '@cosmjs/math';
 import { computed, ref } from 'vue';
 import { toast } from 'vue-sonner';
 
 import PostEditorToolbar from '@/components/posts/PostEditorToolbar.vue';
 import PostMediaThumbnail from '@/components/posts/PostMediaThumbnail.vue';
+import PromoteToggle from '@/components/posts/PromoteToggle.vue';
 import
 { Button }
   from '@/components/ui/button';
@@ -13,32 +13,39 @@ import {
   DialogTitle,
   ResponsiveDialogContent,
 } from '@/components/ui/dialog';
-import InputPhoton from '@/components/ui/input/InputPhoton.vue';
 import { Textarea } from '@/components/ui/textarea';
 import { useConfirmDialog } from '@/composables/useConfirmDialog';
 import { useCreatePost } from '@/composables/useCreatePost';
 import { useTxDialog } from '@/composables/useTxDialog';
 import { useConfigStore } from '@/stores/useConfigStore';
-import { fractionalDigits } from '@/utility/atomics';
 import { showBroadcastingToast } from '@/utility/toast';
 
 const MAX_CHARS = 512 - 'dither.Post("")'.length;
 const message = ref('');
-const isBalanceInputValid = ref(false);
+const isPromoted = ref(false);
 
 const { createPost, txError, txSuccess } = useCreatePost();
 const { showConfirmDialog } = useConfirmDialog();
 
-const { isShown, inputPhotonModel, handleClose } = useTxDialog<object>('newPost', txSuccess, txError);
+const { isShown, handleClose } = useTxDialog<object>('newPost', txSuccess, txError);
 const configStore = useConfigStore();
-const amountAtomics = computed(() => configStore.config.defaultAmountEnabled ? configStore.config.defaultAmountAtomics : Decimal.fromUserInput(inputPhotonModel.value.toString(), fractionalDigits).atomics);
+const amountAtomics = computed(() => {
+  if (isPromoted.value) {
+    // When promoted, use promotion amount
+    return configStore.config.promotionSendAmountAtomics;
+  }
 
-function handleInputValidity(value: boolean) {
-  isBalanceInputValid.value = value;
-}
+  // Otherwise use default amount from settings or regular amount from env
+  if (configStore.config.defaultAmountEnabled) {
+    return configStore.config.defaultAmountAtomics;
+  }
 
+  return configStore.config.regularSendAmountAtomics;
+});
+
+// TODO: Verify wallet has enough balance for amountAtomics before allowing submit
 const canSubmit = computed(() => {
-  return isBalanceInputValid.value && message.value.length > 0;
+  return message.value.length > 0;
 });
 
 function handleCloseWithSaveDraft() {
@@ -108,7 +115,7 @@ function handleRemoveText(text: string) {
 
         <!-- Transaction Form -->
         <div class="flex flex-col w-full gap-4">
-          <InputPhoton v-if="!configStore.config.defaultAmountEnabled" v-model="inputPhotonModel" @on-validity-change="handleInputValidity" />
+          <PromoteToggle v-model="isPromoted" :show-promote-button="true" />
           <Button class="w-full" :disabled="!canSubmit" @click="handleSubmit">
             {{ $t('components.Button.submit') }}
           </Button>

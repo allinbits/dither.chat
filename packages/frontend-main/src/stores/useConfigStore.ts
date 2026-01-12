@@ -10,6 +10,8 @@ interface Config {
   envConfigs: typeof envConfigs;
   defaultAmountAtomics: string;
   defaultAmountEnabled: boolean;
+  regularSendAmountAtomics: string;
+  promotionSendAmountAtomics: string;
 }
 
 const defaultConfig: Config = {
@@ -17,6 +19,8 @@ const defaultConfig: Config = {
   selectedChain: import.meta.env.VITE_ENVIRONMENT_TYPE ?? 'mainnet',
   defaultAmountAtomics: Decimal.fromUserInput('0.1', fractionalDigits).atomics,
   defaultAmountEnabled: false,
+  regularSendAmountAtomics: import.meta.env.VITE_DEFAULT_SEND_AMOUNT_ATOMICS,
+  promotionSendAmountAtomics: import.meta.env.VITE_PROMOTION_SEND_AMOUNT_ATOMICS,
 };
 
 // deep clone the default config to avoid mutating the original object

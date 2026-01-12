@@ -1,17 +1,15 @@
 <script lang="ts" setup>
 import type { Post } from 'api-main/types/feed';
 
-import { Decimal } from '@cosmjs/math';
 import { computed, ref } from 'vue';
 import { toast } from 'vue-sonner';
 
+import PromoteToggle from '@/components/posts/PromoteToggle.vue';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogTitle, ResponsiveDialogContent } from '@/components/ui/dialog';
-import InputPhoton from '@/components/ui/input/InputPhoton.vue';
 import { useFlagPost } from '@/composables/useFlagPost';
 import { useTxDialog } from '@/composables/useTxDialog';
 import { useConfigStore } from '@/stores/useConfigStore';
-import { fractionalDigits } from '@/utility/atomics';
 import { showBroadcastingToast } from '@/utility/toast';
 
 import PostMessage from '../posts/PostMessage.vue';
@@ -19,24 +17,25 @@ import PrettyTimestamp from '../posts/PrettyTimestamp.vue';
 import UserAvatar from '../users/UserAvatar.vue';
 import Username from '../users/Username.vue';
 
-const isBalanceInputValid = ref(false);
 const { flagPost, txError, txSuccess } = useFlagPost();
 const {
   isShown,
-  inputPhotonModel,
   popupState: flag,
   handleClose,
 } = useTxDialog<Post>('flag', txSuccess, txError);
 const configStore = useConfigStore();
-const amountAtomics = computed(() => configStore.config.defaultAmountEnabled ? configStore.config.defaultAmountAtomics : Decimal.fromUserInput(inputPhotonModel.value.toString(), fractionalDigits).atomics);
+const amountAtomics = computed(() => {
+  if (configStore.config.defaultAmountEnabled) {
+    return configStore.config.defaultAmountAtomics;
+  }
 
-const canSubmit = computed(() => {
-  return isBalanceInputValid.value;
+  return configStore.config.regularSendAmountAtomics;
 });
 
-function handleInputValidity(value: boolean) {
-  isBalanceInputValid.value = value;
-}
+// TODO: Verify wallet has enough balance for amountAtomics before allowing submit
+const canSubmit = computed(() => {
+  return true;
+});
 
 async function handleSubmit() {
   if (!canSubmit.value || !flag.value) {
@@ -73,8 +72,8 @@ async function handleSubmit() {
 
       <!-- Transaction Form -->
       <div class="flex flex-col w-full gap-4">
-        <InputPhoton v-if="!configStore.config.defaultAmountEnabled" v-model="inputPhotonModel" @on-validity-change="handleInputValidity" />
-        <Button class="w-full" :disabled="!isBalanceInputValid" @click="handleSubmit">
+        <PromoteToggle :show-promote-button="false" />
+        <Button class="w-full" :disabled="!canSubmit" @click="handleSubmit">
           {{ $t('components.Button.submit') }}
         </Button>
       </div>

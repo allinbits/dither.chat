@@ -26,7 +26,7 @@ import PopoverContent from '../ui/popover/PopoverContent.vue';
 import PopoverTrigger from '../ui/popover/PopoverTrigger.vue';
 
 const props = defineProps<{ post: Post }>();
-const buttonWrapperClass = 'flex items-center flex-1 min-w-[84px]';
+const buttonWrapperClass = 'flex items-center gap-0.5 flex-1';
 const buttonClass = 'flex flex-row items-center gap-1 p-2 rounded-full hover:bg-accent active:bg-accent transition-colors';
 const amountTextClass = 'text-[#A2A2A9] text-xs font-medium hover:underline active:underline transition-colors';
 const amountPopoverContentClass = 'py-2 px-3 size-fit';
@@ -41,6 +41,16 @@ const { isDefaultAmountInvalid } = useDefaultAmount();
 const { likePost } = useLikePost();
 const { dislikePost } = useDislikePost();
 const { flagPost } = useFlagPost();
+
+// Check if post is promoted
+const isPromoted = ref(false);
+try {
+  const postQuantity = Decimal.fromAtomics(props.post.quantity ?? '0', fractionalDigits);
+  const promotionAmount = Decimal.fromAtomics(configStore.config.promotionSendAmountAtomics, fractionalDigits);
+  isPromoted.value = postQuantity.isGreaterThanOrEqual(promotionAmount);
+} catch {
+  isPromoted.value = false;
+}
 
 function handleAction(type: keyof PopupState, post: Post) {
   if (wallet.loggedIn.value) {
@@ -105,70 +115,76 @@ async function onClickFlag() {
 </script>
 
 <template>
-  <div :class="cn('flex flex-row items-center justify-between pr-2 flex-wrap')">
-    <div :class="buttonWrapperClass">
-      <button :class="buttonClass" @click.stop="onClickReply">
-        <MessageCircle class="size-5" color="#A2A2A9" />
-      </button>
-      <Popover>
-        <PopoverTrigger @click.stop>
-          <span :class="amountTextClass">{{ formatCompactNumber(post.replies) }}</span>
+  <div :class="cn('flex flex-row items-center justify-between flex-wrap w-full')">
+    <!-- Left: Action Buttons -->
+    <div class="flex flex-1">
+      <div :class="buttonWrapperClass">
+        <button :class="buttonClass" @click.stop="onClickReply">
+          <MessageCircle class="size-5" color="#A2A2A9" />
+        </button>
+        <Popover>
+          <PopoverTrigger @click.stop>
+            <span :class="amountTextClass">{{ formatCompactNumber(post.replies) }}</span>
+          </PopoverTrigger>
+          <PopoverContent :class="amountPopoverContentClass">
+            <span :class="fullAmountTextClass">{{ `${formatCompactNumber(post.replies)} ${$t('components.PostActions.replies', post.replies ?? 0)}` }}</span>
+          </PopoverContent>
+        </Popover>
+      </div>
+
+      <div :class="buttonWrapperClass">
+        <button :class="buttonClass" @click.stop="onClickLike">
+          <ThumbsUp class="size-5" color="#A2A2A9" />
+        </button>
+        <Popover>
+          <PopoverTrigger @click.stop>
+            <span :class="amountTextClass">{{ formatCompactAtomics(post.likes_burnt, fractionalDigits) }}</span>
+          </PopoverTrigger>
+          <PopoverContent :class="amountPopoverContentClass">
+            <span :class="fullAmountTextClass">{{ Decimal.fromAtomics(post.likes_burnt ?? '0', fractionalDigits).toString() }} PHOTON</span>
+          </PopoverContent>
+        </Popover>
+      </div>
+
+      <div :class="buttonWrapperClass">
+        <button :class="buttonClass" @click.stop="onClickDislike">
+          <ThumbsDown class="size-5 scale-x-[-1]" color="#A2A2A9" />
+        </button>
+        <Popover>
+          <PopoverTrigger @click.stop>
+            <span :class="amountTextClass">{{ formatCompactAtomics(post.dislikes_burnt, fractionalDigits) }}</span>
+          </PopoverTrigger>
+          <PopoverContent :class="amountPopoverContentClass">
+            <span :class="fullAmountTextClass">{{ Decimal.fromAtomics(post.dislikes_burnt ?? '0', fractionalDigits).toString() }} PHOTON</span>
+          </PopoverContent>
+        </Popover>
+      </div>
+
+      <div :class="buttonWrapperClass">
+        <button :class="buttonClass" @click.stop="onClickFlag">
+          <Flag class="size-5" color="#A2A2A9" />
+        </button>
+        <Popover>
+          <PopoverTrigger @click.stop>
+            <span :class="amountTextClass">{{ formatCompactAtomics(post.flags_burnt, fractionalDigits) }}</span>
+          </PopoverTrigger>
+          <PopoverContent :class="amountPopoverContentClass">
+            <span :class="fullAmountTextClass">{{ Decimal.fromAtomics(post.flags_burnt ?? '0', fractionalDigits).toString() }} PHOTON</span>
+          </PopoverContent>
+        </Popover>
+      </div>
+    </div>
+
+    <!-- Right: Promoted Badge -->
+    <div class="flex items-center min-w-18 justify-end">
+      <Popover v-if="isPromoted">
+        <PopoverTrigger class="text-right" @click.stop>
+          <span :class="amountTextClass">{{ $t('components.PostActions.promoted') }}</span>
         </PopoverTrigger>
         <PopoverContent :class="amountPopoverContentClass">
-          <span :class="fullAmountTextClass">{{ `${formatCompactNumber(post.replies)} ${$t('components.PostActions.replies', post.replies ?? 0)}` }}</span>
+          <span :class="fullAmountTextClass">{{ Decimal.fromAtomics(post.quantity ?? '0', fractionalDigits).toString() }} PHOTON</span>
         </PopoverContent>
       </Popover>
     </div>
-
-    <div :class="buttonWrapperClass">
-      <button :class="buttonClass" @click.stop="onClickLike">
-        <ThumbsUp class="size-5" color="#A2A2A9" />
-      </button>
-      <Popover>
-        <PopoverTrigger @click.stop>
-          <span :class="amountTextClass">{{ formatCompactAtomics(post.likes_burnt, fractionalDigits) }}</span>
-        </PopoverTrigger>
-        <PopoverContent :class="amountPopoverContentClass">
-          <span :class="fullAmountTextClass">{{ Decimal.fromAtomics(post.likes_burnt ?? '0', fractionalDigits).toString() }} PHOTON</span>
-        </PopoverContent>
-      </Popover>
-    </div>
-
-    <div :class="buttonWrapperClass">
-      <button :class="buttonClass" @click.stop="onClickDislike">
-        <ThumbsDown class="size-5 scale-x-[-1]" color="#A2A2A9" />
-      </button>
-      <Popover>
-        <PopoverTrigger @click.stop>
-          <span :class="amountTextClass">{{ formatCompactAtomics(post.dislikes_burnt, fractionalDigits) }}</span>
-        </PopoverTrigger>
-        <PopoverContent :class="amountPopoverContentClass">
-          <span :class="fullAmountTextClass">{{ Decimal.fromAtomics(post.dislikes_burnt ?? '0', fractionalDigits).toString() }} PHOTON</span>
-        </PopoverContent>
-      </Popover>
-    </div>
-
-    <div :class="buttonWrapperClass">
-      <button :class="buttonClass" @click.stop="onClickFlag">
-        <Flag class="size-5" color="#A2A2A9" />
-      </button>
-      <Popover>
-        <PopoverTrigger @click.stop>
-          <span :class="amountTextClass">{{ formatCompactAtomics(post.flags_burnt, fractionalDigits) }}</span>
-        </PopoverTrigger>
-        <PopoverContent :class="amountPopoverContentClass">
-          <span :class="fullAmountTextClass">{{ Decimal.fromAtomics(post.flags_burnt ?? '0', fractionalDigits).toString() }} PHOTON</span>
-        </PopoverContent>
-      </Popover>
-    </div>
-
-    <Popover>
-      <PopoverTrigger class="min-w-[114px] ml-auto text-right" @click.stop>
-        <span :class="amountTextClass">{{ formatCompactAtomics(post.quantity, fractionalDigits) }} PHOTON</span>
-      </PopoverTrigger>
-      <PopoverContent :class="amountPopoverContentClass">
-        <span :class="fullAmountTextClass">{{ Decimal.fromAtomics(post.quantity ?? '0', fractionalDigits).toString() }} PHOTON</span>
-      </PopoverContent>
-    </Popover>
   </div>
 </template>

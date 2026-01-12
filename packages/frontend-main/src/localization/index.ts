@@ -59,6 +59,21 @@ export const messages = {
         placeholder: 'Type amount',
         remaining: 'remaining',
       },
+      PromoteToggle: {
+        willSend: 'This will send',
+        learnMore: 'Learn more',
+        sendExplainTitle: 'Where does this PHOTON go?',
+        sendExplainDescription: 'PHOTON is sent to the community wallet to support the network and prioritize your content.',
+        promoteButton: 'Promote',
+        popoverTitle: 'Promote your post',
+        popoverDescription: 'Send {amount} PHOTON to boost your post and increase its visibility in the feed.',
+        regularAmount: 'Regular amount',
+        promotionBoost: 'Promotion boost',
+        total: 'Total',
+        enablePromotion: 'Enable Promotion',
+        promotionEnabled: 'Promotion enabled',
+        remove: 'Remove',
+      },
       PopupTitles: {
         likePost: 'Like Post',
         dislikePost: 'Dislike Post',
@@ -150,6 +165,7 @@ export const messages = {
       },
       PostActions: {
         replies: 'reply | replies',
+        promoted: 'Promoted',
       },
       PostEditorToolbar: {
         insertImageTitle: 'Insert Image URL',

@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import { Decimal } from '@cosmjs/math';
 import { computed, ref } from 'vue';
 import { toast } from 'vue-sonner';
 
+import PromoteToggle from '@/components/posts/PromoteToggle.vue';
 import { Button }
   from '@/components/ui/button';
 import {
@@ -10,11 +10,9 @@ import {
   DialogTitle,
   ResponsiveDialogContent,
 } from '@/components/ui/dialog';
-import InputPhoton from '@/components/ui/input/InputPhoton.vue';
 import { useTxDialog } from '@/composables/useTxDialog';
 import { useUnfollowUser } from '@/composables/useUnfollowUser';
 import { useConfigStore } from '@/stores/useConfigStore';
-import { fractionalDigits } from '@/utility/atomics';
 import { showBroadcastingToast } from '@/utility/toast';
 
 import DialogDescription from '../ui/dialog/DialogDescription.vue';
@@ -22,23 +20,24 @@ import UserAvatarUsername from '../users/UserAvatarUsername.vue';
 
 const { unfollowUser, txError, txSuccess } = useUnfollowUser();
 
-const isBalanceInputValid = ref(false);
 const {
   isShown,
-  inputPhotonModel,
   popupState: unfollow,
   handleClose,
 } = useTxDialog<string>('unfollow', txSuccess, txError);
 const configStore = useConfigStore();
-const amountAtomics = computed(() => configStore.config.defaultAmountEnabled ? configStore.config.defaultAmountAtomics : Decimal.fromUserInput(inputPhotonModel.value.toString(), fractionalDigits).atomics);
+const amountAtomics = computed(() => {
+  if (configStore.config.defaultAmountEnabled) {
+    return configStore.config.defaultAmountAtomics;
+  }
 
-const canSubmit = computed(() => {
-  return isBalanceInputValid.value;
+  return configStore.config.regularSendAmountAtomics;
 });
 
-function handleInputValidity(value: boolean) {
-  isBalanceInputValid.value = value;
-}
+// TODO: Verify wallet has enough balance for amountAtomics before allowing submit
+const canSubmit = computed(() => {
+  return true;
+});
 
 async function handleSubmit() {
   if (!canSubmit.value || !unfollow.value) {
@@ -66,8 +65,8 @@ async function handleSubmit() {
 
       <!-- Transaction Form -->
       <div class="flex flex-col w-full gap-4">
-        <InputPhoton v-if="!configStore.config.defaultAmountEnabled" v-model="inputPhotonModel" @on-validity-change="handleInputValidity" />
-        <Button class="w-full xl:inline hidden" :disabled="!isBalanceInputValid" @click="handleSubmit">
+        <PromoteToggle :show-promote-button="false" />
+        <Button class="w-full xl:inline hidden" :disabled="!canSubmit" @click="handleSubmit">
           {{ $t('components.Button.submit') }}
         </Button>
       </div>
