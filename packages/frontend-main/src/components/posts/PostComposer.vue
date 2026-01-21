@@ -24,7 +24,7 @@ const message = defineModel<string>({ required: true });
 const isBalanceInputValid = ref(false);
 const configStore = useConfigStore();
 const inputPhotonModel = ref('0.1');
-const textareaRef = ref<HTMLTextAreaElement>();
+const textareaRef = ref<InstanceType<typeof Textarea>>();
 
 const amountAtomics = computed(() => {
   if (configStore.config.defaultAmountEnabled) {
@@ -34,7 +34,7 @@ const amountAtomics = computed(() => {
 });
 
 const canSubmit = computed(() => {
-  return isBalanceInputValid.value && message.value.length > 0;
+  return isBalanceInputValid.value && message.value.length > 0 && message.value.length <= props.maxChars;
 });
 
 const remainingChars = computed(() => props.maxChars - message.value.length);
