@@ -92,6 +92,15 @@ export const ReplyBodySchema = t.Object({
 });
 export type ReplyBody = Static<typeof ReplyBodySchema>;
 
+export const RepostBodySchema = t.Object({
+  hash: t.String(),
+  from: t.String(),
+  post_hash: t.String(),
+  quantity: t.String(),
+  timestamp: t.String(),
+});
+export type RepostBody = Static<typeof RepostBodySchema>;
+
 export const UnfollowBodySchema = t.Object({
   hash: t.String(),
   from: t.String(),
