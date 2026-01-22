@@ -24,10 +24,10 @@
     "build": "tsc"
   },
   "dependencies": {
-    "elysia": "~1.2.25"
+    "elysia": "^1.4.21"
   },
   "devDependencies": {
-    "@sinclair/typebox": "^0.34.41",
+    "@sinclair/typebox": "^0.34.47",
     "typescript": "^5.9.3"
   }
 }

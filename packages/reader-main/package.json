@@ -13,12 +13,12 @@
   "dependencies": {
     "@atomone/chronostate": "^2.3.0",
     "@atomone/dither-api-types": "workspace:*",
-    "graphql": "^16.11.0",
-    "graphql-request": "^7.3.1"
+    "graphql": "^16.12.0",
+    "graphql-request": "^7.4.0"
   },
   "devDependencies": {
-    "@types/pg": "^8.15.5",
+    "@types/pg": "^8.16.0",
     "typescript": "^5.9.3",
-    "vitest": "^4.0.10"
+    "vitest": "^4.0.16"
   }
 }
