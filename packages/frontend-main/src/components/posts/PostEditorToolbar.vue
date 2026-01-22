@@ -53,18 +53,18 @@ function insertVideoUrl() {
 </script>
 
 <template>
-  <div class="flex gap-2 items-center border-t pt-2">
+  <div class="flex gap-2 items-center">
     <!-- Image URL Popover -->
     <ResponsivePopoverDialog v-model:open="isImagePopoverOpen" modal>
       <template #trigger>
         <Button
           variant="ghost"
-          size="icon"
+          size="sm"
           type="button"
           :title="$t('components.PostEditorToolbar.insertImageTitle')"
-          :class="{ 'text-blue-500': hasImageInContent }"
+          class="px-1.5 py-1.5 h-auto" :class="[{ 'text-blue-500': hasImageInContent }]"
         >
-          <Image class="size-5" />
+          <Image class="size-4" />
         </Button>
       </template>
       <div class="flex flex-col gap-2">
@@ -93,12 +93,12 @@ function insertVideoUrl() {
       <template #trigger>
         <Button
           variant="ghost"
-          size="icon"
+          size="sm"
           type="button"
           :title="$t('components.PostEditorToolbar.insertVideoTitle')"
-          :class="{ 'text-blue-500': hasVideoInContent }"
+          class="px-1.5 py-1.5 h-auto" :class="[{ 'text-blue-500': hasVideoInContent }]"
         >
-          <Video class="size-5" />
+          <Video class="size-4" />
         </Button>
       </template>
       <div class="flex flex-col gap-2">
