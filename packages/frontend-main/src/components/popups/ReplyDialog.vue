@@ -1,67 +1,60 @@
 <script lang="ts" setup>
 import type { Post } from 'api-main/types/feed';
 
-import { Decimal } from '@cosmjs/math';
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 import { toast } from 'vue-sonner';
 
+import PostComposer from '@/components/posts/PostComposer.vue';
 import PostMessage from '@/components/posts/PostMessage.vue';
 import PrettyTimestamp from '@/components/posts/PrettyTimestamp.vue';
-import { Button } from '@/components/ui/button';
 import { Dialog, DialogTitle, ResponsiveDialogContent } from '@/components/ui/dialog';
-import InputPhoton from '@/components/ui/input/InputPhoton.vue';
-import { Textarea } from '@/components/ui/textarea';
 import UserAvatar from '@/components/users/UserAvatar.vue';
 import Username from '@/components/users/Username.vue';
 import { useCreateReply } from '@/composables/useCreateReply';
 import { useTxDialog } from '@/composables/useTxDialog';
-import { useConfigStore } from '@/stores/useConfigStore';
-import { fractionalDigits } from '@/utility/atomics';
 import { showBroadcastingToast } from '@/utility/toast';
 
 const POST_HASH_LEN = 64;
 const MAX_CHARS = 512 - ('dither.Reply("", "")'.length + POST_HASH_LEN);
 const message = ref('');
-const isBalanceInputValid = ref(false);
-const configStore = useConfigStore();
 
 const { createReply, txError, txSuccess } = useCreateReply();
 const {
   isShown,
-  inputPhotonModel,
   popupState: reply,
   handleClose,
 } = useTxDialog<Post>('reply', txSuccess, txError);
-const amountAtomics = computed(() => configStore.config.defaultAmountEnabled ? configStore.config.defaultAmountAtomics : Decimal.fromUserInput(inputPhotonModel.value.toString(), fractionalDigits).atomics);
-const canSubmit = computed(() => configStore.config.defaultAmountEnabled || (isBalanceInputValid.value && message.value.length > 0));
 
-async function handleSubmit() {
-  if (!canSubmit.value || !reply.value) {
+function handleCloseWithCleanup() {
+  message.value = '';
+  handleClose();
+}
+
+async function handleSubmit({ message: msgValue, amountAtomics }: { message: string; amountAtomics: string }) {
+  if (!reply.value) {
     return;
   }
 
   const parentPost = ref(reply.value);
+  message.value = '';
   handleClose();
   const toastId = showBroadcastingToast('Reply');
 
   try {
-    await createReply({ parentPost, message: message.value, amountAtomics: amountAtomics.value });
+    await createReply({ parentPost, message: msgValue, amountAtomics });
   } finally {
     toast.dismiss(toastId);
   }
-}
-
-function handleInputValidity(value: boolean) {
-  isBalanceInputValid.value = value;
 }
 </script>
 
 <template>
   <div>
-    <Dialog v-if="isShown" open @update:open="handleClose">
+    <Dialog v-if="isShown" open @update:open="handleCloseWithCleanup">
       <ResponsiveDialogContent>
         <DialogTitle>{{ $t('components.PopupTitles.reply') }}</DialogTitle>
 
+        <!-- Parent Post Display -->
         <div class="flex flex-row gap-3 border-b pb-3">
           <UserAvatar :user-address="reply.author" />
           <div class="flex flex-col w-full gap-3">
@@ -76,16 +69,12 @@ function handleInputValidity(value: boolean) {
           </div>
         </div>
 
-        <Textarea v-model="message" :placeholder="$t('placeholders.reply')" :maxlength="MAX_CHARS" />
-
-        <!-- Transaction Form -->
-        <div class="flex flex-col w-full gap-4">
-          <InputPhoton v-if="!configStore.config.defaultAmountEnabled" v-model="inputPhotonModel" @on-validity-change="handleInputValidity" />
-          <span v-if="txError" class="text-red-500 text-xs">{{ txError }}</span>
-          <Button class="w-full" :disabled="!canSubmit" @click="handleSubmit">
-            {{ $t('components.Button.submit') }}
-          </Button>
-        </div>
+        <PostComposer
+          v-model="message"
+          :max-chars="MAX_CHARS"
+          :placeholder="$t('placeholders.reply')"
+          @submit="handleSubmit"
+        />
       </ResponsiveDialogContent>
     </Dialog>
   </div>
