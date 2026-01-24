@@ -6,7 +6,6 @@ import { getDatabase } from '../../drizzle/db';
 import { FeedTable } from '../../drizzle/schema';
 import { notify } from '../shared/notify';
 import { useSharedQueries } from '../shared/useSharedQueries';
-import { postToDiscord } from '../utility';
 
 const sharedQueries = useSharedQueries();
 
@@ -64,7 +63,6 @@ export async function Reply(body: Posts.ReplyBody) {
       });
     }
 
-    await postToDiscord(`${body.msg}`, `https://dither.chat/post/${body.hash.toLowerCase()}`);
     return { status: 200 };
   } catch (err) {
     console.error(err);

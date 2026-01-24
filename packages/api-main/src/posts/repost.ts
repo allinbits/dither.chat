@@ -6,7 +6,6 @@ import { getDatabase } from '../../drizzle/db';
 import { FeedTable, RepostsTable } from '../../drizzle/schema';
 import { notify } from '../shared/notify';
 import { useSharedQueries } from '../shared/useSharedQueries';
-import { postToDiscord } from '../utility';
 
 const sharedQueries = useSharedQueries();
 
@@ -61,7 +60,6 @@ export async function Repost(body: Posts.RepostBody) {
       });
     }
 
-    await postToDiscord(`Reposted by ${body.from.toLowerCase()}`, `https://dither.chat/post/${body.hash.toLowerCase()}`);
     return { status: 200 };
   } catch (err) {
     console.error(err);
