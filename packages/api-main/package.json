@@ -13,8 +13,8 @@
     "db:generate": "bunx drizzle-kit generate",
     "db:migrate": "bunx drizzle-kit migrate",
     "db:push": "bunx drizzle-kit push",
-    "db:push:force": "bunx drizzle-kit push --force",
-    "push-and-start": "bunx drizzle-kit push --force && bun start"
+    "db:push:force": "drizzle-kit push --force",
+    "push-and-start": "drizzle-kit push --force && bun start"
   },
   "dependencies": {
     "@atomone/chronostate": "^2.3.0",
@@ -40,7 +40,7 @@
     "@cosmjs/amino": "^0.33.1",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/pg": "^8.15.5",
-    "drizzle-kit": "^0.31.5",
+    "drizzle-kit": "^0.31.8",
     "pino-pretty": "^13.1.2",
     "vitest": "^4.0.10"
   }
