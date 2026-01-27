@@ -5,6 +5,8 @@ import { Value } from '@sinclair/typebox/value';
 export interface RawRow {
   timestamp?: unknown;
   reposts?: unknown;
+  reposted_by?: unknown;
+  reposted_at?: unknown;
   [key: string]: unknown;
 };
 
@@ -20,6 +22,11 @@ function preprocessRow<T extends RawRow>(row: T): T {
   // Default reposts to 0 for older posts that don't have this field
   if (processed.reposts === undefined) {
     processed.reposts = 0;
+  }
+
+  // Handle repost fields (convert reposted_at string to Date)
+  if (typeof processed.reposted_at === 'string') {
+    processed.reposted_at = new Date(processed.reposted_at);
   }
 
   return processed;

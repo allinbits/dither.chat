@@ -1,9 +1,12 @@
 import type { Gets } from '@atomone/dither-api-types';
 
-import { and, desc, eq, gte, inArray, isNull, sql } from 'drizzle-orm';
+import { and, desc, eq, getTableColumns, gte, inArray, isNull, sql } from 'drizzle-orm';
+import { unionAll } from 'drizzle-orm/pg-core';
 
 import { getDatabase } from '../../drizzle/db';
-import { FeedTable, FollowsTable } from '../../drizzle/schema';
+import { FeedTable, FollowsTable, RepostsTable } from '../../drizzle/schema';
+
+const feedColumns = getTableColumns(FeedTable);
 
 const statement = getDatabase()
   .select()
@@ -21,10 +24,48 @@ const statement = getDatabase()
   .orderBy(desc(FeedTable.timestamp))
   .prepare('stmnt_get_posts');
 
+function createPostsQuery(db: ReturnType<typeof getDatabase>, author: string, minQuantity: string) {
+  return db
+    .select({
+      ...feedColumns,
+      effective_timestamp: FeedTable.timestamp,
+      reposted_by: sql<string | null>`null`,
+      reposted_at: sql<Date | null>`null`,
+    })
+    .from(FeedTable)
+    .where(
+      and(
+        eq(FeedTable.author, author),
+        isNull(FeedTable.removed_at),
+        isNull(FeedTable.post_hash),
+        gte(sql`CAST(${FeedTable.quantity} AS NUMERIC)`, sql`CAST(${minQuantity} AS NUMERIC)`),
+      ),
+    );
+}
+
+function createRepostsQuery(db: ReturnType<typeof getDatabase>, author: string) {
+  return db
+    .select({
+      ...feedColumns,
+      effective_timestamp: RepostsTable.timestamp,
+      reposted_by: RepostsTable.author,
+      reposted_at: RepostsTable.timestamp,
+    })
+    .from(RepostsTable)
+    .innerJoin(FeedTable, eq(FeedTable.hash, RepostsTable.post_hash))
+    .where(
+      and(
+        eq(RepostsTable.author, author),
+        isNull(FeedTable.removed_at),
+      ),
+    );
+}
+
 export async function Posts(query: Gets.PostsQuery) {
   let limit = typeof query.limit !== 'undefined' ? Number(query.limit) : 100;
   const offset = typeof query.offset !== 'undefined' ? Number(query.offset) : 0;
   const minQuantity = typeof query.minQuantity !== 'undefined' ? query.minQuantity : '0';
+  const withReposts = query.withReposts === true;
 
   if (limit > 100) {
     limit = 100;
@@ -39,11 +80,24 @@ export async function Posts(query: Gets.PostsQuery) {
   }
 
   try {
-    const results = await statement.execute({ author: query.address, limit, offset, minQuantity });
+    if (!withReposts) {
+      const results = await statement.execute({ author: query.address, limit, offset, minQuantity });
+      return { status: 200, rows: results };
+    }
+
+    const db = getDatabase();
+    const postsQuery = createPostsQuery(db, query.address, minQuantity);
+    const repostsQuery = createRepostsQuery(db, query.address);
+
+    const results = await unionAll(postsQuery, repostsQuery)
+      .orderBy(desc(sql`effective_timestamp`))
+      .limit(limit)
+      .offset(offset);
+
     return { status: 200, rows: results };
   } catch (error) {
     console.error(error);
-    return { status: 404, error: 'failed to find matching reply' };
+    return { status: 404, error: 'failed to find matching posts' };
   }
 }
 

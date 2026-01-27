@@ -150,6 +150,9 @@ export const messages = {
         title: 'Page Not Found',
         message: 'The page you are looking for does not exist.',
       },
+      PostItem: {
+        reposted: 'reposted',
+      },
       PostActions: {
         replies: 'reply | replies',
         reposts: 'repost | reposts',

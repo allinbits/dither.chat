@@ -59,6 +59,7 @@ export const PostsQuerySchema = t.Object({
   offset: t.Optional(t.Number()),
   address: t.String(),
   minQuantity: t.Optional(t.String()),
+  withReposts: t.Optional(t.Boolean()),
 });
 export type PostsQuery = Static<typeof PostsQuerySchema>;
 
