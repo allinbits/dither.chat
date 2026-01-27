@@ -4,18 +4,25 @@ import { Value } from '@sinclair/typebox/value';
 
 export interface RawRow {
   timestamp?: unknown;
+  reposts?: unknown;
   [key: string]: unknown;
 };
 
-// This function preprocesses a row to ensure that the timestamp is a Date object.
+// This function preprocesses a row to ensure that the timestamp is a Date object
+// and that optional fields have default values.
 function preprocessRow<T extends RawRow>(row: T): T {
-  if (typeof row.timestamp === 'string') {
-    return {
-      ...row,
-      timestamp: new Date(row.timestamp),
-    };
+  const processed = { ...row };
+
+  if (typeof processed.timestamp === 'string') {
+    processed.timestamp = new Date(processed.timestamp);
   }
-  return row;
+
+  // Default reposts to 0 for older posts that don't have this field
+  if (processed.reposts === undefined) {
+    processed.reposts = 0;
+  }
+
+  return processed;
 }
 
 // This function checks an array of fetched rows against a given Typebox schema and returns the validated rows.

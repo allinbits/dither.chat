@@ -68,6 +68,7 @@ export const messages = {
         follow: 'Follow User',
         unfollow: 'Unfollow User',
         tipUser: 'Tip User',
+        repostPost: 'Repost',
         invalidDefaultAmount: 'Not enough balance',
       },
       PopupDescriptions: {
@@ -117,6 +118,7 @@ export const messages = {
         flag: 'Redflagged your post',
         follow: 'Followed you',
         reply: 'Replied to your post',
+        repost: 'Reposted your post',
         empty: 'Nothing to show',
       },
       FollowingList: {
@@ -150,6 +152,7 @@ export const messages = {
       },
       PostActions: {
         replies: 'reply | replies',
+        reposts: 'repost | reposts',
       },
       PostEditorToolbar: {
         insertImageTitle: 'Insert Image URL',

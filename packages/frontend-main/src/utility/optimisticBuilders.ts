@@ -24,6 +24,7 @@ export function newPost({ message, hash, postHash, author, quantity }: NewPostPa
     message,
     quantity,
     replies: 0,
+    reposts: 0,
     likes: 0,
     dislikes: 0,
     flags: null,
