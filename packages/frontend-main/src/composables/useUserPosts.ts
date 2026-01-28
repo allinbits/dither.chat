@@ -3,7 +3,7 @@ import type { Ref } from 'vue';
 
 import { infiniteQueryOptions, useInfiniteQuery, useQueryClient } from '@tanstack/vue-query';
 import { refDebounced } from '@vueuse/core';
-import { postSchema } from 'api-main/types/feed';
+import { postWithRepostSchema } from 'api-main/types/feed';
 import { storeToRefs } from 'pinia';
 import { ref } from 'vue';
 
@@ -29,11 +29,11 @@ export function userPosts(params: Params) {
     queryKey: ['posts', params.userAddress, debouncedFilterAmount],
     queryFn: async ({ pageParam = 0 }) => {
       const queryClient = useQueryClient();
-      const res = await fetch(`${apiRoot}/posts?address=${params.userAddress.value}&offset=${pageParam}&limit=${LIMIT}&minQuantity=${debouncedFilterAmount.value}&withReposts=true`);
+      const res = await fetch(`${apiRoot}/posts?address=${params.userAddress.value}&offset=${pageParam}&limit=${LIMIT}&minQuantity=${debouncedFilterAmount.value}`);
       const json = await res.json();
 
       // Check if the fetched rows match the post schema
-      const checkedRows = checkRowsSchema(postSchema, json.rows ?? []) as PostWithRepost[];
+      const checkedRows = checkRowsSchema(postWithRepostSchema, json.rows ?? []) as PostWithRepost[];
 
       // Update the query cache with the posts
       checkedRows.forEach((row) => {
