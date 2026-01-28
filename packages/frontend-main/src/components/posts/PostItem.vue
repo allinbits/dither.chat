@@ -30,12 +30,12 @@ const isRepost = computed(() => !!props.post.reposted_by);
   <RouterLink v-if="usedPost" v-slot="{ navigate }" :to="`/post/${usedPost.hash}`" custom>
     <div :class="cn('flex flex-col cursor-pointer pb-2 pt-4 pl-4 pr-2 relative hover:bg-accent/30 active:bg-accent/30 transition-colors', !showTimeline && 'border-b')" @click="navigate">
       <!-- Repost header -->
-      <div v-if="isRepost" class="flex items-center gap-2 text-muted-foreground text-sm ml-13 mb-2">
+      <div v-if="isRepost" class="flex items-center gap-2 text-muted-foreground ml-5 mb-2 text-xs">
         <Repeat2 class="size-4" />
         <RouterLink :to="`/profile/${post.reposted_by}`" class="hover:underline" @click.stop>
-          <Username :user-address="post.reposted_by!" :show-avatar="false" />
+          <Username :user-address="post.reposted_by!" :show-avatar="false" class="text-xs" />
+          {{ $t('components.PostItem.reposted') }}
         </RouterLink>
-        <span>{{ $t('components.PostItem.reposted') }}</span>
       </div>
 
       <!-- Post content -->
