@@ -1,5 +1,3 @@
-import type { Static, TSchema } from '@sinclair/typebox';
-
 import { Value } from '@sinclair/typebox/value';
 
 export interface RawRow {
@@ -33,19 +31,18 @@ function preprocessRow<T extends RawRow>(row: T): T {
 }
 
 // This function checks an array of fetched rows against a given Typebox schema and returns the validated rows.
-export function checkRowsSchema<T extends TSchema>(
-  schema: T,
+export function checkRowsSchema<T>(
+  schema: unknown,
   rows: RawRow[],
-): Static<T>[] {
+): T[] {
   return rows
     .map((rawRow, i) => {
       const row = preprocessRow(rawRow);
-      if (!Value.Check(schema, row)) {
-        console.warn(`Invalid row at index ${i}`, [...Value.Errors(schema, row)]);
+      if (!Value.Check(schema as any, row)) {
+        console.warn(`Invalid row at index ${i}`, [...Value.Errors(schema as any, row)]);
         return null;
       }
-      const validatedRow = row as Static<T>;
-      return validatedRow;
+      return row as T;
     })
-    .filter((row): row is Static<T> => !!row);
+    .filter((row): row is T => !!row);
 }
