@@ -1,18 +1,18 @@
 /* eslint-disable ts/no-namespace */
 import type { Posts } from '@atomone/dither-api-types';
 
-import type { ActionWithData, ResponseStatus } from '../types/index';
+import type { ActionWithData, ResponseStatus } from '../../types/index';
 
 import process from 'node:process';
 
 import { extractMemoContent } from '@atomone/chronostate';
 
-import { useConfig } from '../config/index';
+import { useConfig } from '../../config';
 
 declare module '@atomone/chronostate' {
   export namespace MemoExtractor {
     export interface TypeMap {
-      'dither.Like': [string];
+      'dither.Flag': [string];
     }
   }
 }
@@ -20,10 +20,10 @@ declare module '@atomone/chronostate' {
 const { AUTH } = useConfig();
 const apiRoot = process.env.API_ROOT ?? 'http://localhost:3000/v1';
 
-export async function Like(action: ActionWithData): Promise<ResponseStatus> {
+export async function Flag(action: ActionWithData): Promise<ResponseStatus> {
   try {
-    const [post_hash] = extractMemoContent(action.memo, 'dither.Like');
-    const postBody: Posts.LikeBody = {
+    const [post_hash] = extractMemoContent(action.memo, 'dither.Flag');
+    const postBody: Posts.FlagBody = {
       hash: action.hash,
       from: action.sender,
       post_hash,
@@ -31,7 +31,7 @@ export async function Like(action: ActionWithData): Promise<ResponseStatus> {
       quantity: action.quantity,
     };
 
-    const rawResponse = await fetch(`${apiRoot}/like`, {
+    const rawResponse = await fetch(`${apiRoot}/flag`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -48,26 +48,26 @@ export async function Like(action: ActionWithData): Promise<ResponseStatus> {
 
     const response = await rawResponse.json() as { status: number; error?: string };
     if (response.status === 200) {
-      console.log(`dither.Like message processed successfully: ${action.hash}`);
+      console.log(`dither.Flag message processed successfully: ${action.hash}`);
       return 'SUCCESS';
     }
 
     if (response.status === 500) {
-      console.log(`dither.Like could not reach database: ${action.hash}`);
+      console.log(`dither.Flag could not reach database: ${action.hash}`);
       return 'RETRY';
     }
 
     if (response.status === 400) {
-      console.log(`dither.Like message skipped, invalid post hash provided: ${action.hash}`);
+      console.log(`dither.Flag message skipped, invalid post hash provided: ${action.hash}`);
       return 'SKIP';
     }
 
     if (response.status === 404) {
-      console.log(`dither.Like message skipped, invalid post provided: ${action.hash}`);
+      console.log(`dither.Flag message skipped, invalid post provided: ${action.hash}`);
       return 'SKIP';
     }
 
-    console.warn(`dither.Like message failed: ${action.hash} (${response.error})`);
+    console.warn(`dither.Flag message failed: ${action.hash} (${response.error})`);
     return 'RETRY';
   } catch (error) {
     console.error('Error processing message:', error);
