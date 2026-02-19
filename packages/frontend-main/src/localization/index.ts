@@ -53,6 +53,7 @@ export const messages = {
         viewOnExplorer: 'View on explorer',
         tip: 'Tip',
         adjustDefaultAmount: 'Adjust Default Amount',
+        pinFeed: 'Pin Feed',
       },
       InputPhoton: {
         notEnough: 'Not enough balance',
@@ -93,6 +94,7 @@ export const messages = {
         post: 'Post',
         explore: 'Explore',
         about: 'About',
+        feeds: 'Feeds',
       },
       SearchInput: {
         noResults: 'No results found',
@@ -121,6 +123,12 @@ export const messages = {
       },
       FollowingList: {
         empty: 'You are not following anyone yet',
+      },
+      FeedsList: {
+        empty: 'No Feeds Available',
+        feedBy: 'Feed by {author}',
+        by: 'by {author}',
+        featuredFeed: 'Featured feed',
       },
       Toast: {
         broadcasting: 'Signing and broadcasting transaction',
