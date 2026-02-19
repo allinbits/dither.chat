@@ -1,7 +1,35 @@
 import { sql } from 'drizzle-orm';
-import { bigint, boolean, index, integer, pgEnum, pgTable, primaryKey, serial, text, timestamp, varchar } from 'drizzle-orm/pg-core';
+import { bigint, boolean, index, integer, pgEnum, pgTable, primaryKey, serial, text, timestamp, unique, varchar } from 'drizzle-orm/pg-core';
 
 const MEMO_LENGTH = 512;
+
+export const AccountTable = pgTable(
+  'account',
+  {
+    address: varchar({ length: 44 }).primaryKey(),
+    handle: varchar({ length: 25 }),
+    display: varchar({ length: 128 }),
+  },
+  t => [
+    unique('account_handle_idx').on(t.handle),
+    index('account_display_idx').on(t.display),
+  ],
+);
+
+export const HandleTransferTable = pgTable(
+  'handle_transfer',
+  {
+    hash: varchar({ length: 64 }).notNull(),
+    name: varchar({ length: 32 }).notNull(),
+    from_address: varchar({ length: 44 }).notNull(),
+    to_address: varchar({ length: 44 }).notNull(),
+    accepted: boolean().default(false).notNull(),
+    timestamp: timestamp({ withTimezone: true }).notNull(),
+  },
+  t => [
+    index('handle_transfer_to_idx').on(t.name, t.to_address),
+  ],
+);
 
 export const FeedTable = pgTable(
   'feed',
@@ -129,7 +157,15 @@ export const ModeratorTable = pgTable('moderators', {
   deleted_at: timestamp({ withTimezone: true }),
 });
 
-export const notificationTypeEnum = pgEnum('notification_type', ['like', 'dislike', 'flag', 'follow', 'reply']);
+export const notificationTypeEnum = pgEnum('notification_type', [
+  'like',
+  'dislike',
+  'flag',
+  'follow',
+  'reply',
+  'registerHandle',
+  'transferHandle',
+]);
 
 export const NotificationTable = pgTable(
   'notifications',
@@ -166,4 +202,6 @@ export const tables = [
   'state',
   'authrequests',
   'ratelimits',
+  'handle',
+  'handle_transfer',
 ];

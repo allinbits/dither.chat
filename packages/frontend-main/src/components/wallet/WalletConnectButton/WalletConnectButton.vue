@@ -7,6 +7,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import UserAvatarUsername from '@/components/users/UserAvatarUsername.vue';
+import { useAccount } from '@/composables/useAccount';
 import { useWallet } from '@/composables/useWallet';
 import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
 
@@ -16,6 +17,7 @@ const isConnecting = ref(false);
 const isError = ref(false);
 
 const { address, loggedIn } = useWallet();
+const { data: account } = useAccount({ address });
 const walletDialogStore = useWalletDialogStore();
 
 const connectedState = computed(() => !isConnecting.value && loggedIn.value && !isError.value);
@@ -27,9 +29,8 @@ const connectedState = computed(() => !isConnecting.value && loggedIn.value && !
     <template v-if="connectedState">
       <Popover>
         <PopoverTrigger class="w-full">
-          <UserAvatarUsername :user-address="address" disabled class="h-[52px] px-4 gap-3 rounded-sm hover:bg-accent active:bg-accent transition-colors" />
+          <UserAvatarUsername :user-address="address" :user-handle="account?.handle" disabled class="h-[52px] px-4 gap-3 rounded-sm hover:bg-accent active:bg-accent transition-colors" />
         </PopoverTrigger>
-
         <WalletConnectPopoverContent />
       </Popover>
     </template>

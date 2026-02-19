@@ -5,7 +5,8 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "api-main/types/*": ["../api-main/src/types/*"]
+      "api-main/types/*": ["../api-main/src/types/*"],
+      "api-main/utility/*": ["../api-main/src/utility/*"]
     },
     "strict": true,
     "noFallthroughCasesInSwitch": true,

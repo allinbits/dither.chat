@@ -37,6 +37,10 @@ export async function notify(data: {
     }
     owner ??= post.author;
 
+    if (owner === data.actor) {
+      return;
+    }
+
     if (!data.subcontext) {
       const subcontext = post.message.length >= 64 ? `${post.message.slice(0, 61)}...` : post.message;
       data.subcontext = subcontext;
@@ -45,10 +49,6 @@ export async function notify(data: {
 
   if (!owner) {
     throw new Error('failed to add owner');
-  }
-
-  if (owner === data.actor) {
-    return;
   }
 
   await statementInsertNotification.execute({

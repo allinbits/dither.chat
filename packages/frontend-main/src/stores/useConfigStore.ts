@@ -10,6 +10,7 @@ interface Config {
   envConfigs: typeof envConfigs;
   defaultAmountAtomics: string;
   defaultAmountEnabled: boolean;
+  minRegisterHandleFee: string;
 }
 
 const defaultConfig: Config = {
@@ -17,6 +18,7 @@ const defaultConfig: Config = {
   selectedChain: import.meta.env.VITE_ENVIRONMENT_TYPE ?? 'mainnet',
   defaultAmountAtomics: Decimal.fromUserInput('0.1', fractionalDigits).atomics,
   defaultAmountEnabled: false,
+  minRegisterHandleFee: Decimal.fromUserInput(import.meta.env.VITE_MIN_REGISTER_HANDLE_FEE ?? '1', fractionalDigits).atomics,
 };
 
 // deep clone the default config to avoid mutating the original object

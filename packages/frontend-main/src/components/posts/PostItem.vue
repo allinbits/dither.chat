@@ -40,7 +40,7 @@ const usedPost = computed(() => cachedPost.value || props.post);
           <div class="flex flex-row justify-between">
             <div class="flex items-center gap-3">
               <RouterLink :to="`/profile/${usedPost.author}`">
-                <Username :user-address="usedPost.author" />
+                <Username :user-address="usedPost.author" :user-handle="usedPost.author_handle" />
               </RouterLink>
               <PrettyTimestamp :timestamp="new Date(usedPost.timestamp)" />
             </div>

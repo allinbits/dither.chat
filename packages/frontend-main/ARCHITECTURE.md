@@ -193,6 +193,14 @@ dither.Flag('0xghi789...', 'spam');
 // User management
 dither.Unfollow('cosmos1user...');
 dither.Dislike('0xjkl012...');
+
+// Username registration and transfer to a new address
+dither.RegisterHandle('handle');
+dither.TransferHandle('handle', '0xabc123...');
+dither.AcceptHandle('handle');
+
+// Modify user display text
+dither.SetDisplayHandle('display text');
 ```
 
 ### Supported Wallets
@@ -212,3 +220,4 @@ dither.Dislike('0xjkl012...');
 - **Reply threading** with nested conversations
 - **User tipping** and social interactions
 - **Content moderation** through flagging system
+- **Usernames and display text** by registering transferable handles
