@@ -46,3 +46,9 @@ dither.Dislike("0xjkl012...")
 // Flag: Expects a single argument (the PostHash to flag).
 dither.Flag("0xmnp345...")
 ```
+
+- **On-Chain Commit**: AtomOne includes the transaction in a block. The memo and PHOTON transfer are public and immutable.
+- **Frontend Consumption**: `frontend-main` fetches paginated feeds and notifications from `api-main` using Vue Query. When a user loads the app, they see the new post pulled from Postgres.
+- **Optional Integrations**: Discord webhooks, CLI tools, or future data pipelines can subscribe to the same REST endpoints or replicate the reader logic.
+
+> Document updates should accompany any protocol change. If new memo signatures are introduced, update this guide, the reader parser (`packages/reader-main/src/messages`), and shared type definitions (`packages/lib-api-types`).
