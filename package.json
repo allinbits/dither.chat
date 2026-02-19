@@ -35,5 +35,5 @@
     "*.{js,jsx,ts,tsx,mjs,cjs,vue}": "eslint --fix",
     "*.{json,yml,yaml,md}": "eslint --fix"
   },
-  "packageManager": "bun@1.3.2"
+  "packageManager": "bun@1.3.6"
 }

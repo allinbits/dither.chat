@@ -12,7 +12,6 @@ interface Config {
   AUTH: string;
   JWT: string;
   JWT_STRICTNESS: JWT_STRICTNESS;
-  DISCORD_WEBHOOK_URL: string;
 }
 
 let config: Config;
@@ -41,18 +40,12 @@ export function useConfig(): Config {
     process.env.JWT_STRICTNESS = 'lax';
   }
 
-  if (typeof process.env.DISCORD_WEBHOOK_URL === 'undefined') {
-    console.warn(`DISCORD_WEBHOOK_URL not set, defaulting to empty`);
-    process.env.DISCORD_WEBHOOK_URL = '';
-  }
-
   config = {
     PORT: process.env.PORT ? Number.parseInt(process.env.PORT) : 3000,
     PG_URI: process.env.PG_URI,
     AUTH: process.env.AUTH as string,
     JWT: process.env.JWT as string,
     JWT_STRICTNESS: process.env.JWT_STRICTNESS as JWT_STRICTNESS,
-    DISCORD_WEBHOOK_URL: process.env.DISCORD_WEBHOOK_URL,
   };
 
   return config;

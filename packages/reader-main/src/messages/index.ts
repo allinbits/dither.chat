@@ -5,6 +5,7 @@ import { Like } from './like';
 import { Post } from './post';
 import { Remove } from './remove';
 import { Reply } from './reply';
+import { Repost } from './repost';
 import { Unfollow } from './unfollow';
 
 export const MessageHandlers = {
@@ -15,5 +16,6 @@ export const MessageHandlers = {
   Post,
   Remove,
   Reply,
+  Repost,
   Unfollow,
 };

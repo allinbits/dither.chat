@@ -6,7 +6,6 @@ import { getDatabase } from '../../drizzle/db';
 import { DislikesTable, FeedTable } from '../../drizzle/schema';
 import { notify } from '../shared/notify';
 import { useSharedQueries } from '../shared/useSharedQueries';
-import { postToDiscord } from '../utility';
 
 const sharedQueries = useSharedQueries();
 
@@ -62,7 +61,6 @@ export async function Dislike(body: Posts.DislikeBody) {
       });
     }
 
-    await postToDiscord(`Disliked by ${body.from.toLowerCase()}`, `https://dither.chat/post/${body.hash.toLowerCase()}`);
     return { status: 200 };
   } catch (err) {
     console.error(err);

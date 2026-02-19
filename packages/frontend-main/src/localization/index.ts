@@ -68,6 +68,7 @@ export const messages = {
         follow: 'Follow User',
         unfollow: 'Unfollow User',
         tipUser: 'Tip User',
+        repostPost: 'Repost',
         invalidDefaultAmount: 'Not enough balance',
       },
       PopupDescriptions: {
@@ -117,6 +118,7 @@ export const messages = {
         flag: 'Redflagged your post',
         follow: 'Followed you',
         reply: 'Replied to your post',
+        repost: 'Reposted your post',
         empty: 'Nothing to show',
       },
       FollowingList: {
@@ -148,8 +150,12 @@ export const messages = {
         title: 'Page Not Found',
         message: 'The page you are looking for does not exist.',
       },
+      PostItem: {
+        reposted: 'reposted',
+      },
       PostActions: {
         replies: 'reply | replies',
+        reposts: 'repost | reposts',
       },
       PostEditorToolbar: {
         insertImageTitle: 'Insert Image URL',

@@ -1,9 +1,9 @@
-import type { Post } from 'api-main/types/feed';
+import type { PostWithRepost } from 'api-main/types/feed';
 import type { Ref } from 'vue';
 
 import { infiniteQueryOptions, useInfiniteQuery, useQueryClient } from '@tanstack/vue-query';
 import { refDebounced } from '@vueuse/core';
-import { postSchema } from 'api-main/types/feed';
+import { postWithRepostSchema } from 'api-main/types/feed';
 import { storeToRefs } from 'pinia';
 import { ref } from 'vue';
 
@@ -33,7 +33,7 @@ export function userPosts(params: Params) {
       const json = await res.json();
 
       // Check if the fetched rows match the post schema
-      const checkedRows: Post[] = checkRowsSchema(postSchema, json.rows ?? []);
+      const checkedRows = checkRowsSchema(postWithRepostSchema, json.rows ?? []) as PostWithRepost[];
 
       // Update the query cache with the posts
       checkedRows.forEach((row) => {

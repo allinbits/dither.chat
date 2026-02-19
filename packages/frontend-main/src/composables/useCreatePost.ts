@@ -86,13 +86,13 @@ export function useCreatePost(
       const newUserPostsData = infiniteDataWithNewItem<Post>({ previousItems: context.previousUserPosts, newItem: optimisticNewPost });
 
       queryClient.setQueryData(feedOpts.queryKey, newFeedData);
-      queryClient.setQueryData(userPostsOpts.queryKey, newUserPostsData);
+      queryClient.setQueryData(userPostsOpts.queryKey, newUserPostsData as any);
     },
     onError: (_, __, context) => {
       const feedOpts = feed(queryClient);
       const userPostsOpts = userPosts({ userAddress: wallet.address });
       queryClient.setQueryData(feedOpts.queryKey, context?.previousFeed);
-      queryClient.setQueryData(userPostsOpts.queryKey, context?.previousUserPosts);
+      queryClient.setQueryData(userPostsOpts.queryKey, context?.previousUserPosts as any);
     },
     onSettled: () => {
       isToastShown.value = false;

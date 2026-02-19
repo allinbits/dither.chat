@@ -4,7 +4,6 @@ import { desc, eq, sql } from 'drizzle-orm';
 
 import { getDatabase } from '../../drizzle/db';
 import { AuditTable, FeedTable } from '../../drizzle/schema';
-import { postToDiscord } from '../utility';
 
 const statement = getDatabase()
   .insert(FeedTable)
@@ -33,8 +32,6 @@ export async function Post(body: Posts.PostBody) {
     });
 
     await removePostIfBanned(body);
-
-    await postToDiscord(body.msg, `https://dither.chat/post/${body.hash.toLowerCase()}`);
 
     return { status: 200 };
   } catch (err) {

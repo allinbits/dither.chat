@@ -50,14 +50,14 @@ export async function sendMemo(
 ): Promise<DeliverTxResponse | undefined> {
   try {
     const fee = {
-      amount: [{ denom: 'uphoton', amount: '500' }],
-      gas: '200000',
+      amount: [{ denom: 'uphoton', amount: String(500_000) }],
+      gas: '500000',
     };
 
     const result = await spammer.client.sendTokens(
       spammer.address,
       receiverAddress,
-      [{ denom: 'uatone', amount: '1' }],
+      [{ denom: 'uphoton', amount: '1' }],
       fee,
       memo,
     );

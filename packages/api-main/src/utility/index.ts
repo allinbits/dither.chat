@@ -8,7 +8,7 @@ import { sql } from 'drizzle-orm';
 import { getDatabase } from '../../drizzle/db';
 import { useConfig } from '../config';
 
-const { AUTH, DISCORD_WEBHOOK_URL } = useConfig();
+const { AUTH } = useConfig();
 
 export function getTransferMessage(messages: Array<T.MsgGeneric>) {
   const msgTransfer = messages.find(msg => msg['@type'] === '/cosmos.bank.v1beta1.MsgSend');
@@ -83,44 +83,4 @@ export function getRequestIP(request: Request) {
 
   // We'll just default to `host` if not found
   return request.headers.get('host') ?? 'localhost:3000';
-}
-
-export async function postToDiscord(content: string, url: string) {
-  if (!DISCORD_WEBHOOK_URL) {
-    console.log(`DISCORD_WEBHOOK_URL was not provided.`);
-    return;
-  }
-
-  const payload = {
-    content: '',
-    username: 'dither.chat',
-    embeds: [
-      {
-        title: 'New Activity',
-        description: content,
-        color: 3447003,
-        url,
-      },
-    ],
-  };
-
-  try {
-    const response = await fetch(DISCORD_WEBHOOK_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    });
-
-    if (response.ok) {
-      console.log('Discord webhook message sent successfully! 🎉');
-    } else {
-      console.error(`Failed to send Discord message. Status: ${response.status}`);
-      const errorText = await response.text();
-      console.error('Response body:', errorText);
-    }
-  } catch (error) {
-    console.error('An error occurred during the fetch request:', error);
-  }
 }

@@ -1,5 +1,5 @@
 # Stage 1: Dependencies installation
-FROM oven/bun:1.3.2-slim AS deps
+FROM oven/bun:1.3.6-slim AS deps
 WORKDIR /app
 
 # Copy all monorepo files, excluding the ones ignored by dockerignore.
@@ -11,7 +11,7 @@ RUN --mount=type=cache,id=bun-cache,target=/root/.bun/install/cache \
     bun install --frozen-lockfile
 
 # Stage 2: Runtime
-FROM oven/bun:1.3.2-slim AS runtime
+FROM oven/bun:1.3.6-slim AS runtime
 WORKDIR /app
 
 # Copy installed dependencies from deps stage (only root node_modules, bun hoists workspace deps)
