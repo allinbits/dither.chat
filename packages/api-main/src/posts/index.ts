@@ -9,5 +9,6 @@ export * from './mod';
 export * from './post';
 export * from './postRemove';
 export * from './reply';
+export * from './social';
 export * from './unfollow';
 export * from './updateState';

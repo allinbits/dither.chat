@@ -20,4 +20,5 @@ export const readerRoutes = new Elysia()
   .post('/post-remove', ({ body }) => PostRequests.PostRemove(body), { body: Posts.PostRemoveBodySchema })
   .post('/update-state', ({ body }) => PostRequests.UpdateState(body), {
     body: t.Object({ last_block: t.String() }),
-  });
+  })
+  .post('/social/proof', ({ body }) => PostRequests.SocialProof(body), { body: Posts.SocialProofBodySchema });
