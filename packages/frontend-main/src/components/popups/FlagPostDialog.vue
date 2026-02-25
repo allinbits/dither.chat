@@ -64,7 +64,7 @@ async function handleSubmit() {
         <UserAvatar :user-address="flag.author" />
         <div class="flex flex-col w-full gap-3">
           <div class="flex flex-row gap-3 pt-2.5">
-            <Username :user-address="flag.author" />
+            <Username :user-address="flag.author" :user-handle="flag.author_handle" />
             <PrettyTimestamp :timestamp="new Date(flag.timestamp)" />
           </div>
           <PostMessage :message="flag.message" />

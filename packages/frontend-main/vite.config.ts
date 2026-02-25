@@ -35,6 +35,9 @@ export default defineConfig({
       'api-main/types': fileURLToPath(
         new URL('../api-main/src/types', import.meta.url),
       ),
+      'api-main/utility': fileURLToPath(
+        new URL('../api-main/src/utility', import.meta.url),
+      ),
     },
   },
 });

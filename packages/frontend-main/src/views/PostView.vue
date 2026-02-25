@@ -83,7 +83,7 @@ async function handleReply() {
       <div class="flex flex-row justify-between items-center h-[40px]">
         <RouterLink :to="`/profile/${post.author}`">
           <div class="flex flex-row gap-3">
-            <UserAvatarUsername :user-address="post.author" />
+            <UserAvatarUsername :user-address="post.author" :user-handle="post.author_handle" />
           </div>
         </RouterLink>
         <PostMoreActions :post="post" />

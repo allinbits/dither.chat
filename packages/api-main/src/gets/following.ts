@@ -3,11 +3,17 @@ import type { Gets } from '@atomone/dither-api-types';
 import { and, desc, eq, isNull, sql } from 'drizzle-orm';
 
 import { getDatabase } from '../../drizzle/db';
-import { FollowsTable } from '../../drizzle/schema';
+import { AccountTable, FollowsTable } from '../../drizzle/schema';
 
 const statementGetFollowing = getDatabase()
-  .select({ address: FollowsTable.following, hash: FollowsTable.hash })
+  .select({
+    address: FollowsTable.following,
+    handle: AccountTable.handle,
+    display: AccountTable.display,
+    hash: FollowsTable.hash,
+  })
   .from(FollowsTable)
+  .leftJoin(AccountTable, eq(AccountTable.address, FollowsTable.following))
   .where(and(eq(FollowsTable.follower, sql.placeholder('follower')), isNull(FollowsTable.removed_at)))
   .limit(sql.placeholder('limit'))
   .offset(sql.placeholder('offset'))

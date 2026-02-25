@@ -6,6 +6,7 @@ let config: Config & {
   AUTH: string;
   ECLESIA_GRAPHQL_ENDPOINT?: string;
   ECLESIA_GRAPHQL_SECRET?: string;
+  MIN_REGISTER_HANDLE_FEE: string;
 };
 
 export function useConfig(): typeof config {
@@ -27,6 +28,7 @@ export function useConfig(): typeof config {
     SENDER: process.env.SENDER,
     LOG: process.env.LOG === 'true',
     AUTH: process.env.AUTH,
+    MIN_REGISTER_HANDLE_FEE: process.env.MIN_REGISTER_HANDLE_FEE ?? '1',
 
     ECLESIA_GRAPHQL_ENDPOINT: process.env.ECLESIA_GRAPHQL_ENDPOINT,
     ECLESIA_GRAPHQL_SECRET: process.env.ECLESIA_GRAPHQL_SECRET,

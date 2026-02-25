@@ -8,6 +8,7 @@ import FollowDialog from './components/popups/FollowUserDialog.vue';
 import InvalidDefaultAmountDialog from './components/popups/InvalidDefaultAmountDialog.vue';
 import LikePostDialog from './components/popups/LikePostDialog.vue';
 import NewPostDialog from './components/popups/NewPostDialog.vue';
+import RegisterHandleDialog from './components/popups/RegisterHandleDialog.vue';
 import ReplyDialog from './components/popups/ReplyDialog.vue';
 import TipUserDialog from './components/popups/TipUserDialog.vue';
 import UnfollowDialog from './components/popups/UnfollowUserDialog.vue';
@@ -43,6 +44,7 @@ onMounted(() => {
   <UnfollowDialog />
   <Sonner close-button expand dismissible :visible-toasts="5" />
   <TipUserDialog />
+  <RegisterHandleDialog />
   <ConfirmDialog />
   <InvalidDefaultAmountDialog />
 </template>

@@ -107,3 +107,9 @@ export const NotificationsCountQuerySchema = t.Object({
   address: t.String(),
 });
 export type NotificationsCountQuery = Static<typeof NotificationsCountQuerySchema>;
+
+export const AccountQuerySchema = t.Object({
+  address: t.Optional(t.String()),
+  handle: t.Optional(t.String()),
+});
+export type AccountQuery = Static<typeof AccountQuerySchema>;

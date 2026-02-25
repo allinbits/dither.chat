@@ -1,13 +1,18 @@
 import type { Gets } from '@atomone/dither-api-types';
 
-import { and, count, desc, gte, isNull, sql } from 'drizzle-orm';
+import { and, count, desc, eq, getTableColumns, gte, isNull, sql } from 'drizzle-orm';
 
 import { getDatabase } from '../../drizzle/db';
-import { FeedTable } from '../../drizzle/schema';
+import { AccountTable, FeedTable } from '../../drizzle/schema';
 
 const statement = getDatabase()
-  .select()
+  .select({
+    ...getTableColumns(FeedTable),
+    author_handle: AccountTable.handle,
+    author_display: AccountTable.display,
+  })
   .from(FeedTable)
+  .leftJoin(AccountTable, eq(FeedTable.author, AccountTable.address))
   .limit(sql.placeholder('limit'))
   .offset(sql.placeholder('offset'))
   .where(

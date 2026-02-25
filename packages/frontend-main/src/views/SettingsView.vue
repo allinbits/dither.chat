@@ -13,6 +13,15 @@ import ViewHeading from './ViewHeading.vue';
       <ViewHeading :title="$t('components.Headings.settings')" />
 
       <div class="flex flex-col">
+        <RouterLink to="/settings/account" class="border-b">
+          <Button size="sm" class="w-full text-left py-8" variant="ghost">
+            <span class="grow pl-2">
+              {{ $t('components.Headings.account') }}
+            </span>
+            <ChevronRight class="size-4" />
+          </Button>
+        </RouterLink>
+
         <RouterLink to="/settings/manage-following" class="border-b">
           <Button size="sm" class="w-full text-left py-8" variant="ghost">
             <span class="grow pl-2">

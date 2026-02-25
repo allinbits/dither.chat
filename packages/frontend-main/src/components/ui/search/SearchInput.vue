@@ -57,7 +57,7 @@ function clearSearch() {
           @click="clearSearch"
         >
           <PostMessage :message="post.message" class="line-clamp-2" />
-          <UserAvatarUsername :user-address="post.author" size="sm" />
+          <UserAvatarUsername :user-address="post.author" :user-handle="post.author_handle" size="sm" />
         </RouterLink>
       </div>
     </div>

@@ -6,11 +6,17 @@ services:
     restart: always
     container_name: chronosync
     environment:
-      API_URLS: 'https://atomone-api.allinbits.com,https://atomone-rest.publicnode.com'
+      # Mainnet
+      # API_URLS: 'https://atomone-rest.publicnode.com'
+      #
+      # Testnet
+      API_URLS: 'https://atomone-testnet-1-api.allinbits.services'
+
       START_BLOCK: '2605764'
       BATCH_SIZE: 50
       MEMO_PREFIX: dither.
       RECEIVER: atone1uq6zjslvsa29cy6uu75y8txnl52mw06j6fzlep
       AUTH: dev
+      MIN_REGISTER_HANDLE_FEE: '0.000001'
       # LOG: process.env.LOG === 'true' ? true : false,
     command: [bun, run, start]

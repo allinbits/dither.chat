@@ -216,7 +216,7 @@ export async function start() {
 
   if (Number.parseInt(config.START_BLOCK) > lastBlockStored) {
     console.info(`START_BLOCK is higher than last block stored, starting from START_BLOCK=${config.START_BLOCK}`);
-    config.START_BLOCK = lastBlockStored.toString();
+    startBlock = Number.parseInt(config.START_BLOCK);
   } else {
     startBlock = lastBlockStored;
   }

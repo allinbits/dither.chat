@@ -80,7 +80,7 @@ async function onClickUnfollow(address: string) {
           class="flex flex-row items-center justify-between p-4 border-b"
         >
           <RouterLink :to="`/profile/${following.address}`">
-            <UserAvatarUsername :user-address="following.address" />
+            <UserAvatarUsername :user-address="following.address" :user-handle="following.handle" />
           </RouterLink>
           <Button size="sm" class="w-[100px]" @click="onClickUnfollow(following.address)">
             {{ $t('components.Button.unfollow') }}

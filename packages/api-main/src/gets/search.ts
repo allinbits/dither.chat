@@ -1,9 +1,9 @@
 import type { Gets } from '@atomone/dither-api-types';
 
-import { and, desc, gte, ilike, inArray, isNull, or, sql } from 'drizzle-orm';
+import { and, desc, eq, getTableColumns, gte, ilike, inArray, isNull, or, sql } from 'drizzle-orm';
 
 import { getDatabase } from '../../drizzle/db';
-import { FeedTable } from '../../drizzle/schema';
+import { AccountTable, FeedTable } from '../../drizzle/schema';
 
 export async function Search(query: Gets.SearchQuery) {
   try {
@@ -22,12 +22,26 @@ export async function Search(query: Gets.SearchQuery) {
     const matchedAuthors = await getDatabase()
       .selectDistinct({ author: FeedTable.author })
       .from(FeedTable)
-      .where(and(ilike(FeedTable.author, `%${query.text}%`), isNull(FeedTable.removed_at)));
+      .leftJoin(AccountTable, eq(FeedTable.author, AccountTable.address))
+      .where(
+        and(
+          or(
+            eq(FeedTable.author, query.text.toLowerCase()), // Exact address
+            ilike(AccountTable.handle, `%${query.text}%`), // Registered handle (partial match)
+          ),
+          isNull(FeedTable.removed_at),
+        ),
+      );
     const matchedAuthorAddresses = matchedAuthors.map(a => a.author);
 
     const matchedPosts = await getDatabase()
-      .select()
+      .select({
+        ...getTableColumns(FeedTable),
+        author_handle: AccountTable.handle,
+        author_display: AccountTable.display,
+      })
       .from(FeedTable)
+      .leftJoin(AccountTable, eq(FeedTable.author, AccountTable.address))
       .where(
         and(
           or(
@@ -40,8 +54,8 @@ export async function Search(query: Gets.SearchQuery) {
       )
       .limit(100)
       .offset(0)
-      .orderBy(desc(FeedTable.timestamp))
-      .execute();
+      .orderBy(desc(FeedTable.timestamp));
+
     return { status: 200, rows: [...matchedPosts], users: matchedAuthorAddresses };
   } catch (error) {
     console.error(error);
