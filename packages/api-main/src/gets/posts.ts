@@ -1,13 +1,23 @@
 import type { Gets } from '@atomone/dither-api-types';
 
-import { and, desc, eq, gte, inArray, isNull, sql } from 'drizzle-orm';
+import { and, desc, eq, getTableColumns, gte, inArray, isNull, sql } from 'drizzle-orm';
 
 import { getDatabase } from '../../drizzle/db';
-import { FeedTable, FollowsTable } from '../../drizzle/schema';
+import { FeedTable, FollowsTable, RepostsTable } from '../../drizzle/schema';
+
+const feedColumns = {
+  ...getTableColumns(FeedTable),
+  reposted_by: RepostsTable.author,
+  reposted_at: RepostsTable.timestamp,
+};
 
 const statement = getDatabase()
-  .select()
+  .select(feedColumns)
   .from(FeedTable)
+  .leftJoin(
+    RepostsTable,
+    eq(FeedTable.hash, RepostsTable.post_hash),
+  )
   .where(
     and(
       eq(FeedTable.author, sql.placeholder('author')),
@@ -18,7 +28,7 @@ const statement = getDatabase()
   )
   .limit(sql.placeholder('limit'))
   .offset(sql.placeholder('offset'))
-  .orderBy(desc(FeedTable.timestamp))
+  .orderBy(desc(sql`COALESCE(${RepostsTable.timestamp}, ${FeedTable.timestamp})`))
   .prepare('stmnt_get_posts');
 
 export async function Posts(query: Gets.PostsQuery) {
@@ -40,10 +50,11 @@ export async function Posts(query: Gets.PostsQuery) {
 
   try {
     const results = await statement.execute({ author: query.address, limit, offset, minQuantity });
+
     return { status: 200, rows: results };
   } catch (error) {
     console.error(error);
-    return { status: 404, error: 'failed to find matching reply' };
+    return { status: 404, error: 'failed to find matching posts' };
   }
 }
 

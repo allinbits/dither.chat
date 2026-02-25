@@ -16,6 +16,7 @@ export const FeedTable = pgTable(
     likes: integer().default(0), // The amount of likes this post / reply has
     dislikes: integer().default(0), // The amount of dislikes this post / reply has
     flags: integer().default(0), // The amount of flags this post / reply has
+    reposts: integer().default(0), // The amount of reposts this post / reply has
     likes_burnt: text().default('0'), // The amount of tokens burnt from each user who liked this post / reply
     dislikes_burnt: text().default('0'), // The amount of tokens burnt from each user who disliked this post / reply
     flags_burnt: text().default('0'), // The amount of tokens burnt from each user who wante dto flag this post / reply
@@ -75,6 +76,21 @@ export const FlagsTable = pgTable(
   ],
 );
 
+export const RepostsTable = pgTable(
+  'reposts',
+  {
+    hash: varchar({ length: 64 }).primaryKey(),
+    post_hash: varchar({ length: 64 }).notNull(),
+    author: varchar({ length: 44 }).notNull(),
+    quantity: text().default('0'),
+    timestamp: timestamp({ withTimezone: true }).notNull(),
+  },
+  t => [
+    index('repost_post_hash_idx').on(t.post_hash),
+    index('repost_author_idx').on(t.author),
+  ],
+);
+
 export const FollowsTable = pgTable(
   'follows',
   {
@@ -129,7 +145,7 @@ export const ModeratorTable = pgTable('moderators', {
   deleted_at: timestamp({ withTimezone: true }),
 });
 
-export const notificationTypeEnum = pgEnum('notification_type', ['like', 'dislike', 'flag', 'follow', 'reply']);
+export const notificationTypeEnum = pgEnum('notification_type', ['like', 'dislike', 'flag', 'follow', 'reply', 'repost']);
 
 export const NotificationTable = pgTable(
   'notifications',
@@ -159,6 +175,7 @@ export const tables = [
   'likes',
   'dislikes',
   'flags',
+  'reposts',
   'follows',
   'audits',
   'moderators',

@@ -6,5 +6,5 @@ export const keplrData = {
   },
   extensionPath: './playwright/.cache/keplr-wallet-extension',
   repository: 'https://github.com/chainapsis/keplr-wallet',
-  version: 'v0.12.287',
+  version: 'v0.13.1',
 };

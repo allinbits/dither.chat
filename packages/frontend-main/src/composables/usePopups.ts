@@ -7,6 +7,7 @@ export interface PopupState {
   dislike: Post | null;
   flag: Post | null;
   reply: Post | null;
+  repost: Post | null;
   newPost: object | null;
   follow: string | null;
   unfollow: string | null;
@@ -19,6 +20,7 @@ const state = reactive<PopupState>({
   dislike: null,
   flag: null,
   reply: null,
+  repost: null,
   newPost: null,
   follow: null,
   unfollow: null,

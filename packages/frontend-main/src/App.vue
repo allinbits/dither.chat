@@ -9,6 +9,7 @@ import InvalidDefaultAmountDialog from './components/popups/InvalidDefaultAmount
 import LikePostDialog from './components/popups/LikePostDialog.vue';
 import NewPostDialog from './components/popups/NewPostDialog.vue';
 import ReplyDialog from './components/popups/ReplyDialog.vue';
+import RepostDialog from './components/popups/RepostDialog.vue';
 import TipUserDialog from './components/popups/TipUserDialog.vue';
 import UnfollowDialog from './components/popups/UnfollowUserDialog.vue';
 import Sonner from './components/ui/sonner/Sonner.vue';
@@ -38,6 +39,7 @@ onMounted(() => {
   <DislikePostDialog />
   <NewPostDialog />
   <ReplyDialog />
+  <RepostDialog />
   <FlagPostDialog />
   <FollowDialog />
   <UnfollowDialog />

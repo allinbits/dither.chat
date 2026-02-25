@@ -13,8 +13,8 @@
     "db:generate": "bunx drizzle-kit generate",
     "db:migrate": "bunx drizzle-kit migrate",
     "db:push": "bunx drizzle-kit push",
-    "db:push:force": "bunx drizzle-kit push --force",
-    "push-and-start": "bunx drizzle-kit push --force && bun start"
+    "db:push:force": "drizzle-kit push --force",
+    "push-and-start": "drizzle-kit push --force && bun start"
   },
   "dependencies": {
     "@atomone/chronostate": "^2.3.0",

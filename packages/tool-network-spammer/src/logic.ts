@@ -39,7 +39,7 @@ function getRandomHash(): hash {
   return hashes[Math.floor(Math.random() * hashes.length)];
 }
 
-const actions = ['post', 'reply', 'like', 'dislike', 'delete', 'flag'] as const;
+const actions = ['post', 'reply', 'like', 'dislike', 'delete', 'flag', 'repost'] as const;
 type ActionType = (typeof actions)[number];
 
 function chooseRandomAction(): ActionType {
@@ -81,6 +81,10 @@ export async function publishSomething(client: spammerClient) {
       memo = `dither.Remove("${postHash.hash}")`;
       break;
     }
+    case 'repost': {
+      memo = `dither.Repost("${postHash.hash}")`;
+      break;
+    }
   }
 
   const result = await sendMemo(client, memo);
@@ -91,7 +95,7 @@ export async function publishSomething(client: spammerClient) {
   console.log(`[${action}] Result: ${result.transactionHash}`);
 
   if (['post', 'reply'].includes(action)) {
-    storeHash(result?.transactionHash || '', action === 'reply');
+    storeHash(result?.transactionHash?.toLowerCase() || '', action === 'reply');
   }
 
   if (action === 'delete') {

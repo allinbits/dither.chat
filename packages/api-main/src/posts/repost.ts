@@ -3,14 +3,14 @@ import type { Posts } from '@atomone/dither-api-types';
 import { eq, sql } from 'drizzle-orm';
 
 import { getDatabase } from '../../drizzle/db';
-import { FeedTable, LikesTable } from '../../drizzle/schema';
+import { FeedTable, RepostsTable } from '../../drizzle/schema';
 import { notify } from '../shared/notify';
 import { useSharedQueries } from '../shared/useSharedQueries';
 
 const sharedQueries = useSharedQueries();
 
 const statement = getDatabase()
-  .insert(LikesTable)
+  .insert(RepostsTable)
   .values({
     post_hash: sql.placeholder('post_hash'),
     hash: sql.placeholder('hash'),
@@ -19,20 +19,19 @@ const statement = getDatabase()
     timestamp: sql.placeholder('timestamp'),
   })
   .onConflictDoNothing()
-  .prepare('stmnt_add_like');
+  .prepare('stmnt_add_repost');
 
-const statementAddLikeToPost = getDatabase()
+const statementAddRepostToPost = getDatabase()
   .update(FeedTable)
   .set({
-    likes: sql`${FeedTable.likes} + 1`,
-    likes_burnt: sql`(${FeedTable.likes_burnt})::int + ${sql.placeholder('quantity')}`,
+    reposts: sql`${FeedTable.reposts} + 1`,
   })
   .where(eq(FeedTable.hash, sql.placeholder('post_hash')))
-  .prepare('stmnt_add_like_count_to_post');
+  .prepare('stmnt_add_repost_count_to_post');
 
-export async function Like(body: Posts.LikeBody) {
+export async function Repost(body: Posts.RepostBody) {
   if (body.post_hash.length !== 64) {
-    return { status: 400, error: 'Provided post_hash is not valid for like' };
+    return { status: 400, error: 'Provided post_hash is not valid for repost' };
   }
 
   try {
@@ -49,13 +48,13 @@ export async function Like(body: Posts.LikeBody) {
       timestamp: new Date(body.timestamp),
     });
 
-    // Ensure that 'like' was triggered, and not already existing.
+    // Ensure that 'repost' was triggered, and not already existing.
     if (typeof resultChanges.rowCount === 'number' && resultChanges.rowCount >= 1) {
-      await statementAddLikeToPost.execute({ post_hash: body.post_hash, quantity: body.quantity });
+      await statementAddRepostToPost.execute({ post_hash: body.post_hash });
       await notify({
         post_hash: body.post_hash,
         hash: body.hash,
-        type: 'like',
+        type: 'repost',
         timestamp: new Date(body.timestamp),
         actor: body.from,
       });
@@ -64,6 +63,6 @@ export async function Like(body: Posts.LikeBody) {
     return { status: 200 };
   } catch (err) {
     console.error(err);
-    return { status: 400, error: 'failed to upsert data for like, like already exists' };
+    return { status: 400, error: 'failed to upsert data for repost, repost already exists' };
   }
 }
