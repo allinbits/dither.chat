@@ -4,6 +4,7 @@ import { and, desc, eq, gte, inArray, isNull, sql } from 'drizzle-orm';
 
 import { getDatabase } from '../../drizzle/db';
 import { FeedTable, FollowsTable } from '../../drizzle/schema';
+import { fetchSocialByAddresses } from './social';
 
 const statement = getDatabase()
   .select()
@@ -85,7 +86,11 @@ export async function FollowingPosts(query: Gets.PostsQuery) {
 
   try {
     const results = await followingPostsStatement.execute({ address: query.address, limit, offset, minQuantity });
-    return { status: 200, rows: results };
+    if (results.length === 0) {
+      return { status: 200, rows: results };
+    }
+    const social = await fetchSocialByAddresses(results.map(r => r.author));
+    return { status: 200, rows: results, social };
   } catch (error) {
     console.error(error);
     return { status: 404, error: 'failed to posts from followed users' };

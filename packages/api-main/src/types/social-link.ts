@@ -7,4 +7,5 @@ export const SOCIAL_LINK_STATUS = {
 export const SOCIAL_LINK_ERROR_REASON = {
   PROOF_MISMATCH: 'proof_mismatch',
   VERIFICATION_FAILED: 'verification_failed',
+  HANDLE_ALREADY_CLAIMED: 'handle_already_claimed',
 } as const;

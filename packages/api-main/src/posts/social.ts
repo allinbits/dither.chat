@@ -58,7 +58,7 @@ export async function SocialProof(body: Posts.SocialProofBody) {
   // Verification runs in background, we don't want to block the API response.
   // Future improvement: if we had a job queue system, we could push a job here instead of this.
   verifyLink(insertedId, body.platform.toLowerCase(), body.proof_url, body.from.toLowerCase(), body.username.toLowerCase()).catch(
-    err => console.error(`verifyLink fire-and-forget error for id=${insertedId}:`, err),
+    err => console.error(`verifySocialLink error for id=${insertedId}:`, err),
   );
 
   return { status: 200 };

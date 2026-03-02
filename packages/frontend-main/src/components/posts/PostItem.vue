@@ -36,7 +36,7 @@ const usedPost = computed(() => cachedPost.value || props.post);
           </RouterLink>
         </div>
 
-        <div class="flex flex-col w-full gap-3">
+        <div class="flex flex-col w-full gap-2">
           <div class="flex flex-row justify-between">
             <div class="flex items-center gap-3">
               <RouterLink :to="`/profile/${usedPost.author}`">

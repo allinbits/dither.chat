@@ -5,7 +5,7 @@ import { cva } from 'class-variance-authority';
 export { default as Button } from './Button.vue';
 
 export const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xs text-base font-semibold transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\'size-\'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive',
+  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xs font-semibold transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\'size-\'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive',
   {
     variants: {
       variant: {
@@ -22,10 +22,10 @@ export const buttonVariants = cva(
         link: 'text-primary underline-offset-4 hover:underline active:underline',
       },
       size: {
-        default: 'h-13 px-4 has-[>svg]:px-3',
-        xs: 'h-8 rounded-xs gap-1 px-2 has-[>svg]:px-1.5',
-        sm: 'h-10 rounded-xs gap-1.5 px-3 has-[>svg]:px-2.5',
-        lg: 'h-15 rounded-xs px-6 has-[>svg]:px-4',
+        default: 'h-13 text-base px-4 has-[>svg]:px-3',
+        xs: 'h-8 text-xs rounded-xs gap-1 px-2 has-[>svg]:px-1.5',
+        sm: 'h-9 text-sm rounded-xs gap-1.5 px-3 has-[>svg]:px-2.5',
+        lg: 'h-15 text-base rounded-xs px-6 has-[>svg]:px-4',
         icon: 'size-10',
       },
     },

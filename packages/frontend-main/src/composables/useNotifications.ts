@@ -1,9 +1,11 @@
+import type { QueryClient } from '@tanstack/vue-query';
 import type { Notification } from 'api-main/types/notifications';
 import type { Ref } from 'vue';
 
-import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/vue-query';
+import { infiniteQueryOptions, useInfiniteQuery, useQueryClient } from '@tanstack/vue-query';
 import { notificationSchema } from 'api-main/types/notifications';
 
+import { hydrateSocialLinks } from '@/features/social';
 import { useConfigStore } from '@/stores/useConfigStore';
 import { checkRowsSchema } from '@/utility/sanitize';
 
@@ -13,7 +15,7 @@ interface Params {
   userAddress: Ref<string>;
 }
 
-export function notifications(params: Params) {
+export function notifications(params: Params, queryClient: QueryClient) {
   const configStore = useConfigStore();
   const apiRoot = configStore.envConfig.apiRoot ?? 'http://localhost:3000/v1';
 
@@ -29,6 +31,9 @@ export function notifications(params: Params) {
       const json = await res.json();
       // Check if the fetched rows match the notification schema
       const checkedRows: Notification[] = checkRowsSchema(notificationSchema, json.rows ?? []);
+      if (json.social && typeof json.social === 'object') {
+        hydrateSocialLinks(queryClient, json.social);
+      }
       return checkedRows;
     },
     initialPageParam: 0,
@@ -43,5 +48,5 @@ export function notifications(params: Params) {
 }
 
 export function useNotifications(params: Params) {
-  return useInfiniteQuery(notifications(params));
+  return useInfiniteQuery(notifications(params, useQueryClient()));
 }

@@ -1,10 +1,11 @@
 import process from 'node:process';
 
-import { eq } from 'drizzle-orm';
+import { and, eq, ne } from 'drizzle-orm';
 
 import { getDatabase } from '../../drizzle/db';
 import { SocialLinksTable } from '../../drizzle/schema';
 import { SOCIAL_LINK_ERROR_REASON, SOCIAL_LINK_STATUS } from '../types/social-link';
+import { verifyGitHubGist } from './providers/github';
 import { verifyXTweet } from './providers/x';
 
 const MAX_RETRIES = 3;
@@ -13,6 +14,7 @@ const STATUS_VERIFIED = SOCIAL_LINK_STATUS.VERIFIED;
 const STATUS_FAILED = SOCIAL_LINK_STATUS.FAILED;
 const ERROR_REASON_PROOF_MISMATCH = SOCIAL_LINK_ERROR_REASON.PROOF_MISMATCH;
 const ERROR_REASON_VERIFICATION_FAILED = SOCIAL_LINK_ERROR_REASON.VERIFICATION_FAILED;
+const ERROR_REASON_HANDLE_ALREADY_CLAIMED = SOCIAL_LINK_ERROR_REASON.HANDLE_ALREADY_CLAIMED;
 
 /**
  * Fetches the proof link, verifies it according to the platform, and updates the DB record with the result.
@@ -28,6 +30,14 @@ export async function verifyLink(
   // Dev bypass: skip external verification and immediately mark as verified.
   // Set SKIP_SOCIAL_VERIFICATION=true in .env to enable.
   if (process.env.SKIP_SOCIAL_VERIFICATION === 'true') {
+    if (await isHandleAlreadyClaimed(username, platform, id)) {
+      await getDatabase()
+        .update(SocialLinksTable)
+        .set({ status: STATUS_FAILED, error_reason: ERROR_REASON_HANDLE_ALREADY_CLAIMED })
+        .where(eq(SocialLinksTable.id, id));
+      return;
+    }
+
     await getDatabase()
       .update(SocialLinksTable)
       .set({ status: STATUS_VERIFIED, error_reason: null })
@@ -48,6 +58,14 @@ export async function verifyLink(
       const verified = await verifyWithProvider(platform, proofUrl, address, username);
 
       if (verified) {
+        if (await isHandleAlreadyClaimed(username, platform, id)) {
+          await getDatabase()
+            .update(SocialLinksTable)
+            .set({ status: STATUS_FAILED, error_reason: ERROR_REASON_HANDLE_ALREADY_CLAIMED })
+            .where(eq(SocialLinksTable.id, id));
+          return;
+        }
+
         await getDatabase()
           .update(SocialLinksTable)
           .set({ status: STATUS_VERIFIED, error_reason: null })
@@ -86,7 +104,6 @@ export async function verifyLink(
 
 /**
  * Selects the correct provider verify function based on platform.
- * Currently only 'x' is supported; extend here to add new platforms.
  */
 async function verifyWithProvider(
   platform: string,
@@ -97,9 +114,29 @@ async function verifyWithProvider(
   switch (platform) {
     case 'x':
       return verifyXTweet(proofUrl, address, username);
+    case 'github':
+      return verifyGitHubGist(proofUrl, address, username);
     default:
       throw new Error(`Unsupported platform: ${platform}`);
   }
+}
+
+// Checks if the given handle is already claimed by another user (excluding the current record ID)
+async function isHandleAlreadyClaimed(username: string, platform: string, excludeId: number): Promise<boolean> {
+  const handle = `${username}@${platform}`;
+  const existing = await getDatabase()
+    .select({ id: SocialLinksTable.id })
+    .from(SocialLinksTable)
+    .where(
+      and(
+        eq(SocialLinksTable.handle, handle),
+        eq(SocialLinksTable.platform, platform),
+        eq(SocialLinksTable.status, STATUS_VERIFIED),
+        ne(SocialLinksTable.id, excludeId),
+      ),
+    )
+    .limit(1);
+  return existing.length > 0;
 }
 
 function sleep(ms: number): Promise<void> {

@@ -1,7 +1,7 @@
 {
-  "rpc": "https://atomone-testnet-1-rpc.allinbits.services/",
-  "rest": "https://atomone-testnet-1-api.allinbits.services/",
-  "chainId": "atomone-testnet-1",
+  "rpc": "http://localhost:26657/",
+  "rest": "http://localhost:1317/",
+  "chainId": "localnet",
   "chainName": "AtomOne",
   "bip44": {
     "coinType": 118

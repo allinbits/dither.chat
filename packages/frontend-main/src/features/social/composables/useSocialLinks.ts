@@ -1,3 +1,4 @@
+import type { QueryClient } from '@tanstack/vue-query';
 import type { Ref } from 'vue';
 
 import { queryOptions, useQuery } from '@tanstack/vue-query';
@@ -34,10 +35,23 @@ export function socialLinks(params: Params) {
       return (json.rows ?? []) as SocialLink[];
     },
     enabled: () => !!params.address.value,
-    staleTime: 10_000,
+    staleTime: Infinity,
   });
 }
 
-export function useSocialLinks(params: Params) {
-  return useQuery(socialLinks(params));
+export function hydrateSocialLinks(queryClient: QueryClient, social: Record<string, unknown>) {
+  for (const [address, links] of Object.entries(social)) {
+    queryClient.setQueryData(['social-links', address], links);
+  }
+}
+
+interface UseSocialLinksOptions extends Params {
+  refetchInterval?: Ref<number | false>;
+}
+
+export function useSocialLinks(options: UseSocialLinksOptions) {
+  return useQuery({
+    ...socialLinks(options),
+    refetchInterval: options.refetchInterval,
+  });
 }

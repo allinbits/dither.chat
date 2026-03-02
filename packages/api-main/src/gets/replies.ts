@@ -5,6 +5,7 @@ import { alias } from 'drizzle-orm/pg-core';
 
 import { getDatabase } from '../../drizzle/db';
 import { FeedTable } from '../../drizzle/schema';
+import { fetchSocialByAddresses } from './social';
 
 const statement = getDatabase()
   .select()
@@ -40,7 +41,11 @@ export async function Replies(query: Gets.RepliesQuery) {
 
   try {
     const results = await statement.execute({ hash: query.hash, limit, offset, minQuantity });
-    return { status: 200, rows: results };
+    if (results.length === 0) {
+      return { status: 200, rows: results };
+    }
+    const social = await fetchSocialByAddresses(results.map(r => r.author));
+    return { status: 200, rows: results, social };
   } catch (error) {
     console.error(error);
     return { status: 404, error: 'failed to find matching reply' };
