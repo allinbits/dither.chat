@@ -26,6 +26,7 @@
     "https://cloud.umami.is",
     "https://api-gateway.umami.dev",
     "https://*.dither.chat",
-    "https://*.allinbits.com"
+    "https://*.allinbits.com",
+    "https://*.allinbits.services"
   ]
 }
