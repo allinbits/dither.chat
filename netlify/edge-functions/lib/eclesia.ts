@@ -81,10 +81,10 @@ export class EclesiaClient {
       }
     `;
     const response = await fetch(this.endpoint, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
-        "x-hasura-admin-secret": this.secret,
+        'Content-Type': 'application/json',
+        'x-hasura-admin-secret': this.secret,
       },
       body: JSON.stringify({
         query: QUERY,
@@ -98,17 +98,17 @@ export class EclesiaClient {
       );
     }
 
-    const json =
-      (await response.json()) as GraphQLResponse<GetTransactionsResponse>;
+    const json
+      = (await response.json()) as GraphQLResponse<GetTransactionsResponse>;
 
     if (json.errors && json.errors.length > 0) {
       throw new Error(
-        `GraphQL errors: ${json.errors.map((e) => e.message).join(", ")}`,
+        `GraphQL errors: ${json.errors.map(e => e.message).join(', ')}`,
       );
     }
 
     if (!json.data) {
-      throw new Error("GraphQL response contained no data");
+      throw new Error('GraphQL response contained no data');
     }
 
     console.log(json.data);

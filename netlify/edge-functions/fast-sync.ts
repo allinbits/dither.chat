@@ -13,20 +13,25 @@
  *   - offset      (optional, default: 0)   – pagination offset
  */
 
-import { EclesiaClient, type Transaction } from "./lib/eclesia.ts";
+import type { Transaction } from './lib/eclesia.ts';
+
+import { EclesiaClient } from './lib/eclesia.ts';
 import {
   createClientErrorResponse,
   createInternalErrorResponse,
   createJsonResponse,
-} from "./lib/http.ts";
+} from './lib/http.ts';
 
 // ---------------------------------------------------------------------------
 // Configuration
 // ---------------------------------------------------------------------------
 
-const ENDPOINT = Deno.env.get("ECLESIA_GRAPHQL_ENDPOINT");
-const SECRET = Deno.env.get("ECLESIA_GRAPHQL_SECRET");
-const MAX_LIMIT = parseInt(Deno.env.get("FAST_SYNC_MAX_LIMIT") ?? "500", 10);
+const ENDPOINT = Deno.env.get('ECLESIA_GRAPHQL_ENDPOINT');
+const SECRET = Deno.env.get('ECLESIA_GRAPHQL_SECRET');
+const MAX_LIMIT = Number.parseInt(
+  Deno.env.get('FAST_SYNC_MAX_LIMIT') ?? '500',
+  10,
+);
 
 // ---------------------------------------------------------------------------
 // Types
@@ -49,44 +54,45 @@ interface FastSyncResponse {
 
 export default async (request: Request): Promise<Response> => {
   // Only allow GET requests
-  if (request.method !== "GET") {
-    return createClientErrorResponse("Method not allowed. Use GET.");
+  if (request.method !== 'GET') {
+    return createClientErrorResponse('Method not allowed. Use GET.');
   }
 
   if (!ENDPOINT || !SECRET) {
     console.error(
-      "fast-sync: ECLESIA_GRAPHQL_ENDPOINT or ECLESIA_GRAPHQL_SECRET is not set",
+      'fast-sync: ECLESIA_GRAPHQL_ENDPOINT or ECLESIA_GRAPHQL_SECRET is not set',
     );
-    return createInternalErrorResponse("Indexer is not configured.");
+    return createInternalErrorResponse('Indexer is not configured.');
   }
 
   const url = new URL(request.url);
   const params = url.searchParams;
 
   // Parse & validate query parameters
-  const rawMinHeight = params.get("min_height");
-  const rawLimit = params.get("limit");
-  const rawOffset = params.get("offset");
+  const rawMinHeight = params.get('min_height');
+  const rawLimit = params.get('limit');
+  const rawOffset = params.get('offset');
 
-  const min_height = rawMinHeight !== null ? parseInt(rawMinHeight, 10) : 0;
-  const offset = rawOffset !== null ? parseInt(rawOffset, 10) : 0;
-  let limit = rawLimit !== null ? parseInt(rawLimit, 10) : MAX_LIMIT;
+  const min_height
+    = rawMinHeight !== null ? Number.parseInt(rawMinHeight, 10) : 0;
+  const offset = rawOffset !== null ? Number.parseInt(rawOffset, 10) : 0;
+  let limit = rawLimit !== null ? Number.parseInt(rawLimit, 10) : MAX_LIMIT;
 
-  if (isNaN(min_height) || min_height < 0) {
+  if (Number.isNaN(min_height) || min_height < 0) {
     return createClientErrorResponse(
-      "Invalid min_height: must be a non-negative integer.",
+      'Invalid min_height: must be a non-negative integer.',
     );
   }
 
-  if (isNaN(offset) || offset < 0) {
+  if (Number.isNaN(offset) || offset < 0) {
     return createClientErrorResponse(
-      "Invalid offset: must be a non-negative integer.",
+      'Invalid offset: must be a non-negative integer.',
     );
   }
 
-  if (isNaN(limit) || limit <= 0) {
+  if (Number.isNaN(limit) || limit <= 0) {
     return createClientErrorResponse(
-      "Invalid limit: must be a positive integer.",
+      'Invalid limit: must be a positive integer.',
     );
   }
 
@@ -119,9 +125,9 @@ export default async (request: Request): Promise<Response> => {
       cacheMaxAge: 0,
     });
   } catch (error) {
-    console.error("fast-sync: failed to fetch transactions:", error);
+    console.error('fast-sync: failed to fetch transactions:', error);
     return createInternalErrorResponse(
-      "Failed to fetch transactions from indexer.",
+      'Failed to fetch transactions from indexer.',
     );
   }
 };
