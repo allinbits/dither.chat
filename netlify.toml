@@ -16,7 +16,7 @@ path = "/link-meta"
 
 [[edge_functions]]
 function = "fast-sync"
-path = "/fast-sync"
+path = "/api/fast-sync"
 
 # Redirect all routes to index.html
 # Note: Edge functions take precedence over redirects.
