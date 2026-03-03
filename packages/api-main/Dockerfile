@@ -8,11 +8,14 @@ COPY . .
 
 # Install dependencies with cache
 RUN --mount=type=cache,id=bun-cache,target=/root/.bun/install/cache \
-    bun install --frozen-lockfile
+    bun install
 
 # Stage 2: Runtime
 FROM oven/bun:1.3.2-slim AS runtime
 WORKDIR /app
+
+RUN apt-get update && apt-get install -y \
+    curl
 
 # Copy installed dependencies from deps stage (only root node_modules, bun hoists workspace deps)
 COPY --from=deps /app/node_modules ./node_modules

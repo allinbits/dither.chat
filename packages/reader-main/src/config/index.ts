@@ -4,8 +4,7 @@ import process from 'node:process';
 
 let config: Config & {
   AUTH: string;
-  ECLESIA_GRAPHQL_ENDPOINT?: string;
-  ECLESIA_GRAPHQL_SECRET?: string;
+  FAST_SYNC_URL?: string;
 };
 
 export function useConfig(): typeof config {
@@ -28,8 +27,7 @@ export function useConfig(): typeof config {
     LOG: process.env.LOG === 'true',
     AUTH: process.env.AUTH,
 
-    ECLESIA_GRAPHQL_ENDPOINT: process.env.ECLESIA_GRAPHQL_ENDPOINT,
-    ECLESIA_GRAPHQL_SECRET: process.env.ECLESIA_GRAPHQL_SECRET,
+    FAST_SYNC_URL: process.env.FAST_SYNC_URL,
   };
 
   return config;

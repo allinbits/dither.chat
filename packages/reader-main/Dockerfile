@@ -8,7 +8,7 @@ COPY . .
 
 # Install dependencies with cache
 RUN --mount=type=cache,id=bun-cache,target=/root/.bun/install/cache \
-    bun install --frozen-lockfile
+    bun install
 
 # Stage 2: Runtime
 FROM oven/bun:1.3.2-slim AS runtime
