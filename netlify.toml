@@ -14,6 +14,10 @@ path = "/og-image/*"
 function = "link-meta"
 path = "/link-meta"
 
+[[edge_functions]]
+function = "fast-sync"
+path = "/fast-sync"
+
 # Redirect all routes to index.html
 # Note: Edge functions take precedence over redirects.
 # will be handled by edge functions before this redirect rule applies
