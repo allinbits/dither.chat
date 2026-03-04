@@ -28,10 +28,8 @@ import {
 
 const ENDPOINT = Deno.env.get('ECLESIA_GRAPHQL_ENDPOINT');
 const SECRET = Deno.env.get('ECLESIA_GRAPHQL_SECRET');
-const MAX_LIMIT = Number.parseInt(
-  Deno.env.get('FAST_SYNC_MAX_LIMIT') ?? '500',
-  10,
-);
+const MAX_LIMIT
+  = Number.parseInt(Deno.env.get('FAST_SYNC_MAX_LIMIT'), 10) || 500;
 
 // ---------------------------------------------------------------------------
 // Types
@@ -44,7 +42,7 @@ interface FastSyncResponse {
     offset: number;
     limit: number;
     count: number;
-    has_more: boolean;
+    may_have_more: boolean;
   };
 }
 
@@ -116,7 +114,7 @@ export default async (request: Request): Promise<Response> => {
         offset,
         limit,
         count: transactions.length,
-        has_more: transactions.length === limit,
+        may_have_more: transactions.length === limit,
       },
     };
 

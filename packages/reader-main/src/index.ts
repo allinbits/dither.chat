@@ -257,24 +257,24 @@ export async function start() {
   if (isFastSync) {
     const fastSyncClient = new FastSyncClient(config.FAST_SYNC_URL!);
 
-    const response = await fastSyncClient.getTransactions(startBlock);
+    for await (const page of fastSyncClient.getTransactions(startBlock)) {
+      console.info(`Fast-sync page: ${page.transactions.length} transactions`);
+      for (const transaction of page.transactions) {
+        await processAction({
+          hash: transaction.hash,
+          height: transaction.block.height.toString(),
+          timestamp: transaction.block.timestamp,
+          memo: transaction.memo,
+          messages: transaction.messages.map(msg => ({
+            ...msg,
+            from_address: msg.fromAddress,
+            to_address: msg.toAddress,
+          })),
+        } as Action);
+      }
 
-    console.info(`Found ${response.transactions.length} transactions`);
-    for (const transaction of response.transactions) {
-      await processAction({
-        hash: transaction.hash,
-        height: transaction.block.height.toString(),
-        timestamp: transaction.block.timestamp,
-        memo: transaction.memo,
-        messages: transaction.messages.map(msg => ({
-          ...msg,
-          from_address: msg.fromAddress,
-          to_address: msg.toAddress,
-        })),
-      } as Action);
+      startBlock = page.latest_block_height;
     }
-
-    startBlock = response.latest_block_height;
   }
 
   state = new ChronoState({

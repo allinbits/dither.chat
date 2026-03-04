@@ -8,7 +8,7 @@ export interface Transaction {
   messages: any[];
 }
 
-export interface FastSyncResult {
+export interface FastSyncPage {
   latest_block_height: number;
   transactions: Transaction[];
 }
@@ -20,7 +20,7 @@ interface FastSyncResponse {
     offset: number;
     limit: number;
     count: number;
-    has_more: boolean;
+    may_have_more: boolean;
   };
 }
 
@@ -34,10 +34,8 @@ export class FastSyncClient {
     this.url = url;
   }
 
-  async getTransactions(min_height: number = 0, limit: number = 500): Promise<FastSyncResult> {
-    const transactions: Transaction[] = [];
+  async* getTransactions(min_height: number = 0, limit: number = 500): AsyncGenerator<FastSyncPage> {
     let offset = 0;
-    let latest_block_height = 0;
 
     while (true) {
       const url = new URL(this.url);
@@ -52,19 +50,16 @@ export class FastSyncClient {
 
       const data = (await response.json()) as FastSyncResponse;
 
-      latest_block_height = data.latest_block_height;
-      transactions.push(...data.transactions);
+      yield {
+        latest_block_height: data.latest_block_height,
+        transactions: data.transactions,
+      };
 
-      if (!data.pagination.has_more) {
+      if (!data.pagination.may_have_more) {
         break;
       }
 
       offset += limit;
     }
-
-    return {
-      latest_block_height,
-      transactions,
-    };
   }
 }
