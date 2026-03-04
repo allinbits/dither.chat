@@ -3,6 +3,8 @@ import { createRouter, createWebHistory } from 'vue-router';
 import { useWalletStateStore } from './stores/useWalletStateStore';
 import AboutView from './views/AboutView.vue';
 import EnvConfigView from './views/EnvConfigView.vue';
+import FeedDetailView from './views/FeedDetailView.vue';
+import FeedsView from './views/FeedsView.vue';
 import HomeFeedView from './views/Home/HomeFeedView.vue';
 import HomeFollowingView from './views/Home/HomeFollowingView.vue';
 import ManageFollowingView from './views/ManageFollowingView.vue';
@@ -19,6 +21,8 @@ import UnauthorizedView from './views/UnauthorizedView.vue';
 export const routesNames = {
   home: 'Home',
   homeFollowing: 'Home Following',
+  feeds: 'Feeds',
+  feedDetail: 'Feed Detail',
   notifications: 'Notifications',
   profile: 'Profile',
   profileReplies: 'Profile Replies',
@@ -36,6 +40,8 @@ export const routesNames = {
 const routes = [
   { path: '/', name: routesNames.home, component: HomeFeedView },
   { path: '/following', name: routesNames.homeFollowing, component: HomeFollowingView, meta: { authRequired: true } },
+  { path: '/feeds', name: routesNames.feeds, component: FeedsView },
+  { path: '/feed/:slug', name: routesNames.feedDetail, component: FeedDetailView },
   { path: '/notifications', name: routesNames.notifications, component: NotificationsView, meta: { authRequired: true } },
   { path: '/profile/:address', name: routesNames.profile, component: ProfilePostsView },
   { path: '/profile/:address/replies', name: routesNames.profileReplies, component: ProfileRepliesView },
