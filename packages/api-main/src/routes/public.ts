@@ -21,4 +21,6 @@ export const publicRoutes = new Elysia()
   .get('/search', ({ query }) => GetRequests.Search(query), { query: Gets.SearchQuerySchema })
   .get('/user-replies', ({ query }) => GetRequests.UserReplies(query), { query: Gets.UserRepliesQuerySchema })
   .get('/following-posts', ({ query }) => GetRequests.FollowingPosts(query), { query: Gets.PostsQuerySchema })
-  .get('/last-block', GetRequests.LastBlock);
+  .get('/last-block', GetRequests.LastBlock)
+  .get('/social/links', ({ query, cookie: { auth } }) => GetRequests.SocialLinks(query, auth.value as string | undefined), { query: Gets.SocialLinksQuerySchema })
+  .get('/social/resolve', ({ query }) => GetRequests.SocialResolve(query), { query: Gets.SocialResolveQuerySchema });

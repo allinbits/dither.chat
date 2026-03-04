@@ -1,3 +1,4 @@
+import type { QueryClient } from '@tanstack/vue-query';
 import type { Post } from 'api-main/types/feed';
 import type { Ref } from 'vue';
 
@@ -5,6 +6,7 @@ import { infiniteQueryOptions, useInfiniteQuery, useQueryClient } from '@tanstac
 import { postSchema } from 'api-main/types/feed';
 import { ref } from 'vue';
 
+import { hydrateSocialLinks } from '@/features/social';
 import { useConfigStore } from '@/stores/useConfigStore';
 import { checkRowsSchema } from '@/utility/sanitize';
 
@@ -16,14 +18,13 @@ interface Params {
   userAddress: Ref<string>;
 }
 
-export function followingPosts(params: Params) {
+export function followingPosts(params: Params, queryClient: QueryClient) {
   const configStore = useConfigStore();
   const apiRoot = configStore.envConfig.apiRoot ?? 'http://localhost:3000/v1';
 
   return infiniteQueryOptions({
     queryKey: ['following-posts', params.userAddress],
     queryFn: async ({ pageParam = 0 }) => {
-      const queryClient = useQueryClient();
       const res = await fetch(`${apiRoot}/following-posts?address=${params.userAddress.value}&offset=${pageParam}&limit=${LIMIT}`);
       const json = await res.json();
 
@@ -35,6 +36,10 @@ export function followingPosts(params: Params) {
         const postOpts = post({ hash: ref(row.hash) });
         queryClient.setQueryData(postOpts.queryKey, row);
       });
+
+      if (json.social && typeof json.social === 'object') {
+        hydrateSocialLinks(queryClient, json.social);
+      }
 
       return checkedRows;
     },
@@ -50,5 +55,5 @@ export function followingPosts(params: Params) {
 }
 
 export function useFollowingPosts(params: Params) {
-  return useInfiniteQuery(followingPosts(params));
+  return useInfiniteQuery(followingPosts(params, useQueryClient()));
 }

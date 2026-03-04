@@ -4,6 +4,7 @@ import { and, count, desc, gte, isNull, sql } from 'drizzle-orm';
 
 import { getDatabase } from '../../drizzle/db';
 import { FeedTable } from '../../drizzle/schema';
+import { fetchSocialByAddresses } from './social';
 
 const statement = getDatabase()
   .select()
@@ -48,7 +49,11 @@ export async function Feed(query: Gets.FeedQuery) {
 
   try {
     const results = await statement.execute({ offset, limit, minQuantity });
-    return { status: 200, rows: results };
+    if (results.length === 0) {
+      return { status: 200, rows: results };
+    }
+    const social = await fetchSocialByAddresses(results.map(r => r.author));
+    return { status: 200, rows: results, social };
   } catch (error) {
     console.error(error);
     return { status: 400, error: 'failed to read data from database' };

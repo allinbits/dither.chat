@@ -131,6 +131,8 @@ export const ModeratorTable = pgTable('moderators', {
 
 export const notificationTypeEnum = pgEnum('notification_type', ['like', 'dislike', 'flag', 'follow', 'reply']);
 
+export const socialLinkStatusEnum = pgEnum('social_link_status', ['pending', 'verified', 'failed']);
+
 export const NotificationTable = pgTable(
   'notifications',
   {
@@ -154,6 +156,26 @@ export const ReaderState = pgTable('state', {
   last_block: varchar().notNull(),
 });
 
+export const SocialLinksTable = pgTable(
+  'social_links',
+  {
+    id: serial().primaryKey(),
+    hash: varchar({ length: 64 }).notNull(),
+    address: varchar({ length: 44 }).notNull(),
+    handle: varchar({ length: 128 }).notNull(),
+    platform: varchar({ length: 32 }).notNull(),
+    status: socialLinkStatusEnum().notNull().default('pending'),
+    error_reason: text(),
+    proof_url: varchar({ length: 512 }).notNull(),
+    created_at: timestamp({ withTimezone: true }).notNull().defaultNow(),
+  },
+  t => [
+    index('social_links_address_idx').on(t.address),
+    index('social_links_handle_idx').on(t.handle),
+    index('social_links_status_idx').on(t.status),
+  ],
+);
+
 export const tables = [
   'feed',
   'likes',
@@ -166,4 +188,5 @@ export const tables = [
   'state',
   'authrequests',
   'ratelimits',
+  'social_links',
 ];
