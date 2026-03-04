@@ -8,7 +8,7 @@ import process from 'node:process';
 import { ChronoState } from '@atomone/chronostate';
 
 import { useConfig } from './config/index';
-import { EclesiaClient } from './eclesia/client';
+import { FastSyncClient } from './fast-sync/client';
 import { MessageHandlers } from './messages/index';
 import { useQueue } from './queue';
 
@@ -24,7 +24,9 @@ let lastActionProcessed = Date.now();
 let isUpdating = false;
 
 export function getTransferMessage(messages: Array<MsgGeneric>) {
-  const msgTransfer = messages.find(msg => msg['@type'] === '/cosmos.bank.v1beta1.MsgSend');
+  const msgTransfer = messages.find(
+    msg => msg['@type'] === '/cosmos.bank.v1beta1.MsgSend',
+  );
   if (!msgTransfer) {
     return null;
   }
@@ -32,8 +34,13 @@ export function getTransferMessage(messages: Array<MsgGeneric>) {
   return msgTransfer as unknown as MsgTransfer;
 }
 
-export function getTransferQuantities(messages: Array<MsgGeneric>, denom = 'uphoton') {
-  const msgTransfers = messages.filter(msg => msg['@type'] === '/cosmos.bank.v1beta1.MsgSend') as unknown as MsgTransfer[];
+export function getTransferQuantities(
+  messages: Array<MsgGeneric>,
+  denom = 'uphoton',
+) {
+  const msgTransfers = messages.filter(
+    msg => msg['@type'] === '/cosmos.bank.v1beta1.MsgSend',
+  ) as unknown as MsgTransfer[];
   let amount = BigInt('0');
 
   for (const msg of msgTransfers) {
@@ -65,7 +72,10 @@ async function handleLastBlock(block: string) {
 
   isUpdating = true;
 
-  if (lastActionProcessed + msCheckpointTime < Date.now() && queue.size() <= 0) {
+  if (
+    lastActionProcessed + msCheckpointTime < Date.now()
+    && queue.size() <= 0
+  ) {
     lastActionProcessed = Date.now();
     const didUpdate = await updateLastBlock(block);
     if (!didUpdate) {
@@ -76,7 +86,9 @@ async function handleLastBlock(block: string) {
   }
 
   if (queue.size() >= 1) {
-    console.log(`Updated | Block: ${block} | Queue Size: ${queue.size()} | Retry Count: ${queue.getRetryCount()}`);
+    console.log(
+      `Updated | Block: ${block} | Queue Size: ${queue.size()} | Retry Count: ${queue.getRetryCount()}`,
+    );
   }
 
   isUpdating = false;
@@ -104,14 +116,22 @@ async function processAction(action: Action): Promise<ResponseStatus> {
     return 'SKIP';
   }
 
-  const transfer = getTransferMessage(action.messages as unknown as Array<MsgGeneric>);
-  const quantity = getTransferQuantities(action.messages as unknown as Array<MsgGeneric>);
+  const transfer = getTransferMessage(
+    action.messages as unknown as Array<MsgGeneric>,
+  );
+  const quantity = getTransferQuantities(
+    action.messages as unknown as Array<MsgGeneric>,
+  );
   if (!transfer) {
     console.warn(`No transfer provided, skipping. ${actionType}`);
     return 'SKIP';
   }
 
-  return await MessageHandlers[actionTypeKey]({ ...action, sender: transfer.from_address, quantity });
+  return await MessageHandlers[actionTypeKey]({
+    ...action,
+    sender: transfer.from_address,
+    quantity,
+  });
 }
 
 async function updateLastBlock(height: string, attempt = 0) {
@@ -137,7 +157,10 @@ async function updateLastBlock(height: string, attempt = 0) {
     return updateLastBlock(height, attempt + 1);
   }
 
-  const response = (await rawResponse.json()) as { status: number; error?: string };
+  const response = (await rawResponse.json()) as {
+    status: number;
+    error?: string;
+  };
   if (response.status === 500) {
     console.warn(`Update state failed, trying again.`);
     console.info(rawResponse);
@@ -193,13 +216,20 @@ async function getLastBlock() {
   const rawResponse = await fetch(`${apiRoot}/last-block`);
 
   if (rawResponse.status !== 200) {
-    console.warn(`Block Height Not Stored, Starting from ${config.START_BLOCK}`);
+    console.warn(
+      `Block Height Not Stored, Starting from ${config.START_BLOCK}`,
+    );
     return null;
   }
 
-  const response = (await rawResponse.json()) as { status: number; rows: { last_block: string }[] };
+  const response = (await rawResponse.json()) as {
+    status: number;
+    rows: { last_block: string }[];
+  };
   if (response.status === 404) {
-    console.warn(`Block Height Not Stored, Starting from ${config.START_BLOCK}`);
+    console.warn(
+      `Block Height Not Stored, Starting from ${config.START_BLOCK}`,
+    );
     return null;
   }
 
@@ -215,40 +245,53 @@ export async function start() {
   console.info(`Last Block: `, lastBlockStored);
 
   if (Number.parseInt(config.START_BLOCK) > lastBlockStored) {
-    console.info(`START_BLOCK is higher than last block stored, starting from START_BLOCK=${config.START_BLOCK}`);
+    console.info(
+      `START_BLOCK is higher than last block stored, starting from: ${lastBlockStored}`,
+    );
     config.START_BLOCK = lastBlockStored.toString();
   } else {
     startBlock = lastBlockStored;
   }
 
-  const isFastSync = config.ECLESIA_GRAPHQL_ENDPOINT && config.ECLESIA_GRAPHQL_SECRET;
+  const isFastSync = !!config.FAST_SYNC_URL;
   if (isFastSync) {
-    const eclesiaClient = new EclesiaClient(config.ECLESIA_GRAPHQL_ENDPOINT!, config.ECLESIA_GRAPHQL_SECRET!);
+    const fastSyncClient = new FastSyncClient(config.FAST_SYNC_URL!);
 
-    const response = await eclesiaClient.getTransactions(startBlock);
+    for await (const page of fastSyncClient.getTransactions(startBlock)) {
+      console.info(`Fast-sync page: ${page.transactions.length} transactions`);
+      for (const transaction of page.transactions) {
+        await processAction({
+          hash: transaction.hash,
+          height: transaction.block.height.toString(),
+          timestamp: transaction.block.timestamp,
+          memo: transaction.memo,
+          messages: transaction.messages.map(msg => ({
+            ...msg,
+            from_address: msg.fromAddress,
+            to_address: msg.toAddress,
+          })),
+        } as Action);
+      }
 
-    console.info(`Found ${response.transaction.length} transactions`);
-    for (const transaction of response.transaction) {
-      await processAction({
-        hash: transaction.hash,
-        height: transaction.block.height.toString(),
-        timestamp: transaction.block.timestamp,
-        memo: transaction.memo,
-        messages: transaction.messages.map(msg => ({
-          ...msg,
-          from_address: msg.fromAddress,
-          to_address: msg.toAddress,
-        })),
-      } as Action);
+      startBlock = page.latest_block_height;
     }
   }
 
-  state = new ChronoState({ ...config, START_BLOCK: startBlock.toString(), LOG: true });
+  state = new ChronoState({
+    ...config,
+    START_BLOCK: startBlock.toString(),
+    LOG: true,
+  });
   state.onLastBlock(handleLastBlock);
   state.onAction(handleAction);
   state.start();
-  console.info(`ChronoState Started`);
-  setInterval(handleQueue, process.env.QUEUE_CHECK_MS ? Number.parseInt(process.env.QUEUE_CHECK_MS) : 10);
+  console.info(`ChronoState Started on block: ${startBlock}`);
+  setInterval(
+    handleQueue,
+    process.env.QUEUE_CHECK_MS
+      ? Number.parseInt(process.env.QUEUE_CHECK_MS)
+      : 1_000_000,
+  );
 }
 
 async function main() {

@@ -1,3 +1,6 @@
+volumes:
+  postgres_data:
+
 services:
   # ================================
   # Database Services
@@ -14,7 +17,7 @@ services:
       - '5432:5432'
     volumes:
       - ./packages/postgresql/postgresql.conf:/etc/postgresql/postgresql.conf:ro
-      - ./data/postgres_data:/var/lib/postgresql/18/data
+      - postgres_data:/var/lib/postgresql/18/data
     healthcheck:
       test: [CMD, pg_isready, -U, default]
       interval: 10s
@@ -42,7 +45,7 @@ services:
     ports:
       - 3000:3000
     healthcheck:
-      test: 'curl http://localhost:3000/v1/health  || exit 1'
+      test: 'curl -s http://api-main:3000/v1/health || exit 1'
       interval: 5s
       timeout: 3s
       retries: 30
@@ -66,6 +69,7 @@ services:
         condition: service_healthy
     environment:
       API_URLS: 'https://atomone-testnet-1-api.allinbits.services'
+      # API_URLS: "https://atomone-api.allinbits.services"
       START_BLOCK: '1979480'
       BATCH_SIZE: 500
       MEMO_PREFIX: dither.
@@ -73,8 +77,7 @@ services:
       API_ROOT: 'http://api-main:3000/v1'
       AUTH: dev
       # Uncomment to enable fast sync
-      # ECLESIA_GRAPHQL_ENDPOINT: "https://graphql-atomone-testnet-1.allinbits.services/v1/graphql"
-      # ECLESIA_GRAPHQL_SECRET: ""
+      FAST_SYNC_URL: 'https://deploy-preview-516--dither-staging.netlify.app/api/fast-sync'
 
       # PG_URI: postgres://username:password@postgres-feed:5432/feed
       # LOG: process.env.LOG === 'true' ? true : false,
