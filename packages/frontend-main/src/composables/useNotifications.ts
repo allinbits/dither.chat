@@ -15,7 +15,7 @@ interface Params {
   userAddress: Ref<string>;
 }
 
-export function notifications(params: Params, queryClient: QueryClient) {
+export function notifications(params: Params, queryClient?: QueryClient) {
   const configStore = useConfigStore();
   const apiRoot = configStore.envConfig.apiRoot ?? 'http://localhost:3000/v1';
 
@@ -31,7 +31,7 @@ export function notifications(params: Params, queryClient: QueryClient) {
       const json = await res.json();
       // Check if the fetched rows match the notification schema
       const checkedRows: Notification[] = checkRowsSchema(notificationSchema, json.rows ?? []);
-      if (json.social && typeof json.social === 'object') {
+      if (queryClient && json.social && typeof json.social === 'object') {
         hydrateSocialLinks(queryClient, json.social);
       }
       return checkedRows;

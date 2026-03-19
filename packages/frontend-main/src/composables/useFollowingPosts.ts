@@ -18,7 +18,7 @@ interface Params {
   userAddress: Ref<string>;
 }
 
-export function followingPosts(params: Params, queryClient: QueryClient) {
+export function followingPosts(params: Params, queryClient?: QueryClient) {
   const configStore = useConfigStore();
   const apiRoot = configStore.envConfig.apiRoot ?? 'http://localhost:3000/v1';
 
@@ -32,13 +32,15 @@ export function followingPosts(params: Params, queryClient: QueryClient) {
       const checkedRows: Post[] = checkRowsSchema(postSchema, json.rows ?? []);
 
       // Update the query cache with the posts
-      checkedRows.forEach((row) => {
-        const postOpts = post({ hash: ref(row.hash) });
-        queryClient.setQueryData(postOpts.queryKey, row);
-      });
+      if (queryClient) {
+        checkedRows.forEach((row) => {
+          const postOpts = post({ hash: ref(row.hash) });
+          queryClient.setQueryData(postOpts.queryKey, row);
+        });
 
-      if (json.social && typeof json.social === 'object') {
-        hydrateSocialLinks(queryClient, json.social);
+        if (json.social && typeof json.social === 'object') {
+          hydrateSocialLinks(queryClient, json.social);
+        }
       }
 
       return checkedRows;
