@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getSocialProofCode } from '../src/social/code';
 import { verifyGitHubGist } from '../src/social/providers/github';
@@ -8,6 +8,10 @@ const username = 'dither';
 const gistId = 'abcdef1234567890';
 const proofUrl = `https://gist.github.com/${username}/${gistId}`;
 const originalFetch = globalThis.fetch;
+
+beforeEach(() => {
+  process.env.GITHUB_BEARER_TOKEN = 'test-token';
+});
 
 function jsonResponse(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
