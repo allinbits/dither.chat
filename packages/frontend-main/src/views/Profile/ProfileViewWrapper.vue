@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { PopupState } from '@/composables/usePopups';
 
+import { getSocialProofCode } from '@atomone/dither-api-types';
 import { Loader } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -20,10 +21,10 @@ import { useUnfollowUser } from '@/composables/useUnfollowUser';
 import { useWallet } from '@/composables/useWallet';
 import SocialAccountsPanel from '@/features/social/components/SocialAccountsPanel.vue';
 import { useAddressHandle } from '@/features/social/composables/useAddressHandle';
+import { useResolveProfile } from '@/features/social/composables/useResolveProfile';
 import MainLayout from '@/layouts/MainLayout.vue';
 import { useConfigStore } from '@/stores/useConfigStore';
 import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
-import { getSocialProofCode } from '@/utility/social';
 import { shorten } from '@/utility/text';
 import { showBroadcastingToast } from '@/utility/toast';
 
@@ -39,13 +40,14 @@ const { followUser } = useFollowUser();
 const { unfollowUser } = useUnfollowUser();
 const { t } = useI18n();
 
-const address = computed(() =>
+const identifier = computed(() =>
   typeof route.params.address === 'string' ? route.params.address : '',
 );
+const { address, isPending: isResolvingProfile, notFound: profileNotFound } = useResolveProfile(identifier);
 const isMyProfile = computed(() =>
   address.value === wallet.address.value,
 );
-const hasVerifiedHandle = useAddressHandle(address);
+const { handle: verifiedHandle } = useAddressHandle(address);
 
 const { data: isFollowing, isFetching: isFetchingIsFollowing } = useIsFollowing({ followingAddress: address, followerAddress: wallet.address });
 
@@ -121,7 +123,15 @@ async function onClickUnfollow() {
 
 <template>
   <MainLayout>
-    <div class="flex flex-col">
+    <div v-if="isResolvingProfile" class="flex items-center justify-center p-8">
+      <Loader class="animate-spin w-6 h-6" />
+    </div>
+    <div v-else-if="profileNotFound" class="flex flex-col items-center justify-center p-8 gap-2">
+      <p class="text-muted-foreground">
+        {{ $t('components.Profile.notFound') }}
+      </p>
+    </div>
+    <div v-else class="flex flex-col">
       <ViewHeading :title="$t(`components.Headings.${isMyProfile ? 'myProfile' : 'profile'}`)" />
 
       <!-- Profile header -->
@@ -129,7 +139,7 @@ async function onClickUnfollow() {
         <div class="flex flex-col gap-1">
           <UserAvatarUsername :user-address="address" size="lg" disabled>
             <CopyToClipboard
-              v-if="hasVerifiedHandle"
+              v-if="verifiedHandle"
               :text="address"
               class="text-xs text-muted-foreground font-mono"
               copy-tooltip="Copy full address"
@@ -162,7 +172,7 @@ async function onClickUnfollow() {
         :editable="isMyProfile"
       >
         <template v-if="isMyProfile" #helper>
-          <p class="text-xs text-muted-foreground">
+          <p class="text-sm text-muted-foreground pb-1">
             Register a username by linking one of your social accounts, then follow the proof instructions to verify ownership.
           </p>
         </template>

@@ -209,7 +209,7 @@ async function getLastBlock() {
 export async function start() {
   console.info('Starting Application');
 
-  let startBlock = 0;
+  let startBlock = 1;
 
   const lastBlockStored = Number.parseInt((await getLastBlock()) ?? '0');
   console.info(`Last Block: `, lastBlockStored);

@@ -4,7 +4,7 @@ import type { Component } from 'vue';
 import type { SocialLink } from '../composables/useSocialLinks';
 import type { SocialProvider } from '../providers/registry';
 
-import { ArrowUpRight, ChevronDown, ChevronUp } from 'lucide-vue-next';
+import { ArrowUpRight, ChevronRight } from 'lucide-vue-next';
 import { computed, reactive, ref, toRef, watchEffect } from 'vue';
 
 import { useWallet } from '@/composables/useWallet';
@@ -115,12 +115,11 @@ async function onClaim(provider: SocialProvider) {
 <template>
   <div v-if="editable || verifiedLinksWithProvider.length" class="border-t px-4 py-3">
     <button
-      class="w-full flex items-center justify-between text-sm text-muted-foreground hover:text-foreground transition-colors"
+      class="w-full flex items-center justify-between text-sm font-medium text-foreground hover:text-foreground transition-colors"
       @click="isExpanded = !isExpanded"
     >
       <span>Social Accounts</span>
-      <ChevronDown v-if="!isExpanded" class="w-4 h-4" />
-      <ChevronUp v-else class="w-4 h-4" />
+      <ChevronRight class="w-4 h-4 transition-transform duration-200" :class="{ 'rotate-90': isExpanded }" />
     </button>
 
     <div v-if="isExpanded" class="mt-3 space-y-2">

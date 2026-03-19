@@ -2,11 +2,12 @@
 import type { SocialLink } from '../composables/useSocialLinks';
 import type { SocialProvider } from '../providers/registry';
 
-import { BadgeCheck, Circle, Clock, Loader, XCircle } from 'lucide-vue-next';
+import { BadgeCheck, ChevronRight, Clock, Loader, XCircle } from 'lucide-vue-next';
 import { computed } from 'vue';
 
 import Button from '@/components/ui/button/Button.vue';
 import { CopyToClipboard } from '@/components/ui/copy';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 const props = withDefaults(defineProps<{
   provider: SocialProvider;
@@ -27,6 +28,12 @@ defineEmits<{
   'update:proofUrl': [value: string];
   'claim': [];
 }>();
+
+const errorReasonKeys: Record<string, string> = {
+  proof_mismatch: 'proofMismatch',
+  verification_failed: 'verificationFailed',
+  handle_already_claimed: 'handleAlreadyClaimed',
+};
 
 const providerLinks = computed(() =>
   props.socialLinks
@@ -96,21 +103,31 @@ const proofContent = computed(() => props.provider.proofContent(props.verificati
       <Clock class="w-4 h-4 text-yellow-500" />
     </div>
 
-    <div
-      v-for="link in failedLinks"
-      :key="link.id"
-      title="Verification failed"
-      class="flex items-center justify-between p-3 text-sm border-b last:border-b-0"
-    >
-      <div class="flex items-center gap-2">
-        <component :is="provider.icon" class="w-4 h-4" />
-        <span>@{{ link.handle.split('@')[0] }}</span>
+    <template v-if="!verifiedLinks.length">
+      <div
+        v-for="link in failedLinks"
+        :key="link.id"
+        class="flex items-center justify-between p-3 text-sm text-muted-foreground border-b last:border-b-0"
+      >
+        <div class="flex items-center gap-2">
+          <component :is="provider.icon" class="w-4 h-4" />
+          <span>@{{ link.handle.split('@')[0] }}</span>
+        </div>
+        <TooltipProvider :delay-duration="300">
+          <Tooltip>
+            <TooltipTrigger as-child>
+              <XCircle class="w-4 h-4 text-destructive" />
+            </TooltipTrigger>
+            <TooltipContent>
+              {{ $t(`components.SocialVerification.${errorReasonKeys[link.error_reason ?? ''] ?? 'verificationFailed'}`) }}
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
-      <XCircle class="w-4 h-4 text-destructive" />
-    </div>
+    </template>
 
     <button
-      v-if="!hasAnyPending && (!verifiedLinks.length || hasActiveFailed)"
+      v-if="!hasAnyPending && !verifiedLinks.length"
       class="w-full flex items-center justify-between p-3 text-sm hover:bg-muted/50 transition-colors"
       @click="$emit('update:expanded', !expanded)"
     >
@@ -118,8 +135,7 @@ const proofContent = computed(() => props.provider.proofContent(props.verificati
         <component :is="provider.icon" class="w-4 h-4" />
         <span>{{ hasActiveFailed ? `Retry ${provider.label} verification` : `Prove your ${provider.label} account` }}</span>
       </div>
-      <XCircle v-if="hasActiveFailed" class="w-4 h-4 text-destructive" />
-      <Circle v-else class="w-4 h-4 text-muted-foreground" />
+      <ChevronRight class="w-4 h-4 text-muted-foreground transition-transform duration-200" :class="{ 'rotate-90': expanded }" />
     </button>
 
     <div v-if="expanded && !hasAnyPending" class="px-3 pb-3 space-y-3 border-t">

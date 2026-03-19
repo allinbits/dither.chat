@@ -148,6 +148,14 @@ export const messages = {
         title: 'Page Not Found',
         message: 'The page you are looking for does not exist.',
       },
+      Profile: {
+        notFound: 'Profile not found',
+      },
+      SocialVerification: {
+        proofMismatch: 'Proof content does not match',
+        verificationFailed: 'Verification failed',
+        handleAlreadyClaimed: 'Handle already claimed by another address',
+      },
       PostActions: {
         replies: 'reply | replies',
       },
