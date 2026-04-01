@@ -17,8 +17,6 @@ jobs:
             dockerfile: ./packages/api-main/Dockerfile
           - image: ghcr.io/${{ github.repository }}/reader-main
             dockerfile: ./packages/reader-main/Dockerfile
-          - image: ghcr.io/${{ github.repository }}/feed-sync
-            dockerfile: ./packages/feed-sync/Dockerfile
     permissions:
       contents: read
       packages: write
