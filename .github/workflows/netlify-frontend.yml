@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
 
 jobs:
   release:
@@ -15,7 +16,11 @@ jobs:
       - name: Get version from tag
         id: git_tag
         run: |
-          VERSION="${GITHUB_REF_NAME}"
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            VERSION="latest"
+          else
+            VERSION="${GITHUB_REF_NAME}"
+          fi
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Publish
