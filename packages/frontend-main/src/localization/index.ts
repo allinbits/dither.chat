@@ -168,7 +168,15 @@ export const messages = {
       About: {
         privacyPolicy: 'Privacy Policy',
         termsAndConditions: 'Terms & Conditions',
-        docs: 'Documentation',
+        heroTagline: 'Social protocol for decentralized networking',
+        atomoneLink: 'AtomOne',
+        coreDesc: 'Anyone can run the service or build their own client.',
+        ctaDocs: 'Protocol Docs',
+        ctaPrivacy: 'Privacy Policy',
+        ctaTerms: 'Terms & Conditions',
+        ctaGitHub: 'Source Code',
+        ctaTelegram: 'Telegram Bot',
+        copyright: 'All in Bits',
       },
       Authz: {
         title: 'Authz',
