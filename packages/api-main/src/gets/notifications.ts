@@ -6,6 +6,7 @@ import { and, eq, sql } from 'drizzle-orm';
 import { getDatabase } from '../../drizzle/db';
 import { NotificationTable } from '../../drizzle/schema';
 import { verifyJWT } from '../shared/jwt';
+import { fetchSocialByAddresses } from './social';
 
 const getNotificationsStatement = getDatabase()
   .select()
@@ -38,7 +39,11 @@ export async function Notifications(query: Gets.NotificationsQuery, auth: Cookie
 
   try {
     const results = await getNotificationsStatement.execute({ owner: response, limit, offset });
-    return { status: 200, rows: results };
+    if (results.length === 0) {
+      return { status: 200, rows: results };
+    }
+    const social = await fetchSocialByAddresses(results.map(r => r.actor));
+    return { status: 200, rows: results, social };
   } catch (error) {
     console.error(error);
     return { status: 404, error: 'failed to find matching reply' };

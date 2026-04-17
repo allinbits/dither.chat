@@ -7,6 +7,7 @@ import { postSchema } from 'api-main/types/feed';
 import { storeToRefs } from 'pinia';
 import { ref } from 'vue';
 
+import { hydrateSocialLinks } from '@/features/social';
 import { useConfigStore } from '@/stores/useConfigStore';
 import { useFiltersStore } from '@/stores/useFiltersStore';
 import { checkRowsSchema } from '@/utility/sanitize';
@@ -38,6 +39,10 @@ export function feed(queryClient: QueryClient) {
         const postOpts = post({ hash: ref(row.hash) });
         queryClient.setQueryData(postOpts.queryKey, row);
       });
+
+      if (json.social && typeof json.social === 'object') {
+        hydrateSocialLinks(queryClient, json.social);
+      }
 
       return checkedRows;
     },

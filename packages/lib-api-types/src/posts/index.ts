@@ -109,3 +109,13 @@ export const RemovePublicKeySchema = t.Object({
   key: t.String(),
 });
 export type RemovePublicKey = Static<typeof RemovePublicKeySchema>;
+
+export const SocialProofBodySchema = t.Object({
+  hash: t.String(),
+  from: t.String(),
+  username: t.String(),
+  platform: t.String(),
+  proof_url: t.String(),
+  timestamp: t.String(),
+});
+export type SocialProofBody = Static<typeof SocialProofBodySchema>;

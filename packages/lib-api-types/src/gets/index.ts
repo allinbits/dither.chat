@@ -107,3 +107,13 @@ export const NotificationsCountQuerySchema = t.Object({
   address: t.String(),
 });
 export type NotificationsCountQuery = Static<typeof NotificationsCountQuerySchema>;
+
+export const SocialLinksQuerySchema = t.Object({
+  address: t.String(),
+});
+export type SocialLinksQuery = Static<typeof SocialLinksQuerySchema>;
+
+export const SocialResolveQuerySchema = t.Object({
+  handle: t.String(),
+});
+export type SocialResolveQuery = Static<typeof SocialResolveQuerySchema>;

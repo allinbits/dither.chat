@@ -15,4 +15,6 @@ export interface DitherTypes {
   Dislike: [string];
   // PostHash
   Flag: [string];
+  // Username, Platform, ProofUrl
+  LinkSocial: [string, string, string];
 };

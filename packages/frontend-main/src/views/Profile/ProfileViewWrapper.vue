@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { PopupState } from '@/composables/usePopups';
 
+import { getSocialProofCode } from '@atomone/dither-api-types';
 import { Loader } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -8,6 +9,7 @@ import { useRoute } from 'vue-router';
 import { toast } from 'vue-sonner';
 
 import Button from '@/components/ui/button/Button.vue';
+import { CopyToClipboard } from '@/components/ui/copy';
 import Tabs from '@/components/ui/tabs/RouterTabs.vue';
 import UserAvatarUsername from '@/components/users/UserAvatarUsername.vue';
 import { useDefaultAmount } from '@/composables/useDefaultAmount';
@@ -17,9 +19,13 @@ import { usePopups } from '@/composables/usePopups';
 import { useTipUser } from '@/composables/useTipUser';
 import { useUnfollowUser } from '@/composables/useUnfollowUser';
 import { useWallet } from '@/composables/useWallet';
+import SocialAccountsPanel from '@/features/social/components/SocialAccountsPanel.vue';
+import { useAddressHandle } from '@/features/social/composables/useAddressHandle';
+import { useResolveProfile } from '@/features/social/composables/useResolveProfile';
 import MainLayout from '@/layouts/MainLayout.vue';
 import { useConfigStore } from '@/stores/useConfigStore';
 import { useWalletDialogStore } from '@/stores/useWalletDialogStore';
+import { shorten } from '@/utility/text';
 import { showBroadcastingToast } from '@/utility/toast';
 
 import ViewHeading from '../ViewHeading.vue';
@@ -34,13 +40,20 @@ const { followUser } = useFollowUser();
 const { unfollowUser } = useUnfollowUser();
 const { t } = useI18n();
 
-const address = computed(() =>
+const identifier = computed(() =>
   typeof route.params.address === 'string' ? route.params.address : '',
 );
+const { address, isPending: isResolvingProfile, notFound: profileNotFound } = useResolveProfile(identifier);
 const isMyProfile = computed(() =>
   address.value === wallet.address.value,
 );
+const { handle: verifiedHandle } = useAddressHandle(address);
+
 const { data: isFollowing, isFetching: isFetchingIsFollowing } = useIsFollowing({ followingAddress: address, followerAddress: wallet.address });
+
+const verificationCode = computed(() =>
+  wallet.address.value ? getSocialProofCode(wallet.address.value) : '',
+);
 
 const tabs = computed(() => [
   {
@@ -110,18 +123,38 @@ async function onClickUnfollow() {
 
 <template>
   <MainLayout>
-    <div class="flex flex-col">
+    <div v-if="isResolvingProfile" class="flex items-center justify-center p-8">
+      <Loader class="animate-spin w-6 h-6" />
+    </div>
+    <div v-else-if="profileNotFound" class="flex flex-col items-center justify-center p-8 gap-2">
+      <p class="text-muted-foreground">
+        {{ $t('components.Profile.notFound') }}
+      </p>
+    </div>
+    <div v-else class="flex flex-col">
       <ViewHeading :title="$t(`components.Headings.${isMyProfile ? 'myProfile' : 'profile'}`)" />
 
-      <div class="flex flex-row justify-between items-center p-4">
-        <UserAvatarUsername :user-address="address" size="lg" disabled />
+      <!-- Profile header -->
+      <div class="flex flex-row justify-between items-start p-4">
+        <div class="flex flex-col gap-1">
+          <UserAvatarUsername :user-address="address" size="lg" disabled>
+            <CopyToClipboard
+              v-if="verifiedHandle"
+              :text="address"
+              class="text-xs text-muted-foreground font-mono"
+              copy-tooltip="Copy full address"
+              copied-tooltip="Address copied"
+            >
+              <span class="">{{ shorten(address) }}</span>
+            </CopyToClipboard>
+          </UserAvatarUsername>
+        </div>
         <Loader v-if="isFetchingIsFollowing" class="animate-spin w-[80px]" />
         <template v-else-if="!isMyProfile && wallet.loggedIn.value">
           <div class="flex flex-row gap-2">
             <Button size="sm" @click="onClickTip">
               {{ $t('components.Button.tip') }}
             </Button>
-
             <Button v-if="isFollowing" size="sm" @click="onClickUnfollow">
               {{ $t('components.Button.unfollow') }}
             </Button>
@@ -132,7 +165,20 @@ async function onClickUnfollow() {
         </template>
       </div>
 
-      <Tabs v-if="wallet.loggedIn.value" :tabs="tabs" layout="fill" class="border-t" />
+      <!-- Social Accounts -->
+      <SocialAccountsPanel
+        :address="address"
+        :verification-code="isMyProfile ? verificationCode : ''"
+        :editable="isMyProfile"
+      >
+        <template v-if="isMyProfile" #helper>
+          <p class="text-sm text-muted-foreground pb-1">
+            Register a username by linking one of your social accounts, then follow the proof instructions to verify ownership.
+          </p>
+        </template>
+      </SocialAccountsPanel>
+
+      <Tabs :tabs="tabs" layout="fill" class="border-t" />
     </div>
     <slot />
   </MainLayout>

@@ -29,7 +29,7 @@ export async function Remove(action: ActionWithData): Promise<ResponseStatus> {
       post_hash,
       timestamp: action.timestamp,
     };
-    const rawResponse = await fetch(`${apiRoot}/remove`, {
+    const rawResponse = await fetch(`${apiRoot}/post-remove`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
