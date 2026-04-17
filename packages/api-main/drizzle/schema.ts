@@ -154,6 +154,22 @@ export const ReaderState = pgTable('state', {
   last_block: varchar().notNull(),
 });
 
+export const CustomFeedsTable = pgTable(
+  'custom_feeds',
+  {
+    slug: varchar({ length: 64 }).notNull(),
+    author: varchar({ length: 44 }).notNull(),
+    name: varchar({ length: 64 }),
+    description: varchar({ length: 256 }),
+    query: text().notNull(),
+    timestamp: timestamp({ withTimezone: true }).notNull(),
+  },
+  t => [
+    primaryKey({ columns: [t.slug, t.author] }),
+    index('custom_feed_author_idx').on(t.author),
+  ],
+);
+
 export const tables = [
   'feed',
   'likes',
@@ -166,4 +182,5 @@ export const tables = [
   'state',
   'authrequests',
   'ratelimits',
+  'custom_feeds',
 ];

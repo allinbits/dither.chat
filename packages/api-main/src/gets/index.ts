@@ -1,6 +1,6 @@
 export * from './authVerify';
+export * from './customFeed';
 export * from './dislikes';
-export * from './feed';
 export * from './flags';
 export * from './followers';
 export * from './following';
